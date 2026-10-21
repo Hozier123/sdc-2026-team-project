@@ -210,13 +210,23 @@ unresolved_issue_ids[]
 
 ## 4. 状态与按钮
 
+`DraftStatus` 以 OpenAPI 闭集为准，只有：
+
+```text
+DISAMBIGUATION_REQUIRED
+READY_FOR_APPROVAL
+PENDING_OWNER_APPROVAL
+DO_GENERATED
+REJECTED
+```
+
 | 状态/字段 | 前端行为 |
 |---|---|
 | `DISAMBIGUATION_REQUIRED` | 显示疑点卡；批准按钮禁用 |
-| `DRAFT_READY` | 可保存/批准；按 `blocking_issues` 判断 |
+| `READY_FOR_APPROVAL` | 可保存/批准；按 `blocking_issues` 判断 |
 | `PENDING_OWNER_APPROVAL` | 只读；显示“等待老板审批” |
-| `APPROVED` / DO 已生成 | 只读；显示 DO |
-| `REJECTED` / `CANCELLED` | 只读终止页 |
+| `DO_GENERATED` | 只读；显示 DO |
+| `REJECTED` | 只读终止页 |
 | `blocking_issues[]` 非空 | 批准禁用，显示对应 Issue |
 | `allowed_actions[]` | 只渲染服务端允许的动作 |
 | `blocked_actions{}` | 禁用原因按 code 映射 |
