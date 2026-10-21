@@ -7,7 +7,8 @@ added without changing the byte-for-byte Gate 0 baseline.
 
 - `确认书.md`: the four-party confirmation record supplied by the team.
 - Evidence SHA-256: `ED0366A7FE23B7114741D2AC2C5A681B1425DB9F6C94B817579B816F2F82E48E`.
-- Intended Git tag after final consistency review: `gate0-baseline-v1`.
+- Frozen Git tag: [`gate0-baseline-v1`](https://github.com/Hozier123/sdc-2026-team-project/tree/gate0-baseline-v1).
+- Tag commit: `3478c31fbbcaf295130e87a992ccdff1a4fabf8e`.
 
 ## Baseline binding
 
@@ -23,3 +24,8 @@ Following the team's explicit authorization, the four confirmation blocks are
 bound to `gate0-v4` / `draft revision 5`, all 73 controlled files, and the
 `gate0-hashes.txt` SHA-256 shown above. The originally supplied confirmation
 times and role-specific approval statements are retained.
+
+The pending-signoff status inside `gate0/docs/gate0-signoff.md` and
+`gate0/baseline-manifest.json` records the preparation snapshot. Final approval
+is recorded in this external evidence and the frozen tag. Preserve the snapshot
+bytes and the tag target; subsequent evidence may be appended outside `gate0/`.
