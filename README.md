@@ -1,157 +1,112 @@
-# SDC Hackathon 2026 - Team Project Starter
+# KiraOrder for Orbyte
 
-This repository starts from the official SDC GitHub submission template. It is a command-line scaffold, **not a finished competition product**. Replace every TODO before submitting.
+SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
-## Team information
+**当前状态：项目目录模板。尚未实现前端、后端、AI 服务或业务功能。** 本次提交只调整仓库结构，不代表功能开发完成。
 
-| Field | Value |
+## 项目信息
+
+| 项目 | 内容 |
 | --- | --- |
-| Team name | TODO: registered team name |
-| Team domain | Domain 2 - Orbyte Smart SME Challenge (provided brief; confirm assignment) |
-| SDG track | SDG 8, targets 8.2 and 8.3; confirm against the final solution |
-| Project name | TODO |
-| Team leader | TODO: registered leader |
-| University | TODO |
-| Team members | 5; confirm registration |
-| Repository maintainer | [Hozier123](https://github.com/Hozier123) |
+| 产品名 | KiraOrder for Orbyte |
+| 注册队名 | TODO：填写报名队名 |
+| 赛道 | Domain 2（按最终分配确认） |
+| SDG | SDG 8，重点为 8.2、8.3 |
+| 队长、学校 | TODO：按报名信息填写 |
+| 成员及分工 | TODO：按团队最终分工填写 |
+| 仓库 | https://github.com/Hozier123/sdc-2026-team-project |
 
-## Necessary links
+计划解决的问题：将马来西亚批发商收到的 WhatsApp 混语订单，转为经核对、经人工批准、可追溯的送货单。不确定的信息交给适当的人处理。上述是项目目标，当前模板尚未实现。
 
-| Resource | Link / status |
-| --- | --- |
-| GitHub | https://github.com/Hozier123/sdc-2026-team-project |
-| Live demo / accessible build | TODO: actual working prototype |
-| Pitch video | TODO: 5-7 minute YouTube pitch with prototype demonstration |
-| Slide deck | TODO: accessible link |
-| Replit project / deployment | TODO: actual team links |
-| RunPod endpoint | TODO: actual endpoint, if used; no keys |
-| Official submission | [SDC website](https://sdchack.my/) - use the Submit page |
+## 仓库根目录
 
-## Problem, solution and scope
-
-- Problem: TODO - choose one recurring operational burden for Malaysian micro/small businesses.
-- Solution: TODO - describe the product and measurable benefit.
-- Core journey: business trigger -> connected data -> rules/AI decision -> human approval -> outcome and activity log.
-- Domain 2: use team-created synthetic business data; no live Orbyte access is required. Permissions and roles may be simulated. Do not process real payments or statutory filings.
-- Current implementation: sample welcome message and statistics only. No web UI, business automation or actual model integration exists yet.
-
-## Overall project structure
+本结构对应团队《KiraOrder 终版执行方案 v2（2026-10-21）》附录 B。文档中的 `kiraorder/` 指本仓库根目录，不需要再嵌套一层同名文件夹。
 
 ```text
-.
-|-- README.md
-|-- LICENSE                       # Apache License 2.0
-|-- requirements.txt
-|-- .env.example                  # Names/placeholders, never real keys
-|-- .gitignore
-|-- .replit
-|-- src/
-|   |-- main.py                   # Replace sample application
-|   `-- utils.py
-|-- runpod/
-|   `-- handler.py                # Echo example, not a deployed model
-|-- tests/
-|   `-- test_utils.py
-|-- docs/
-|   |-- setup-windows.md
-|   `-- competition-checklist.md
-`-- submission/
-    |-- README.md
-    |-- REPLIT PROOF OF USE.pdf    # EXAMPLE ONLY: replace
-    |-- RUNPOD PROOF OF USE.pdf    # EXAMPLE ONLY: replace
-    `-- Submission Template SDC Hackathon.pdf  # Blank form
+sdc-2026-team-project/
+├── backend/                    # 后端，计划使用 FastAPI
+├── frontend/
+│   └── src/
+│       └── pages/              # 前端页面，计划 React + TypeScript + Vite
+├── data/
+│   └── seed/                   # 团队自建合成种子数据
+├── tests/                      # 测试代码、测试数据及冻结集记录
+├── scripts/                    # 评测、初始化、演示重置等辅助脚本
+├── evidence/
+│   └── README.md               # 基线、测试结果与截图的归档说明
+├── docs/
+│   ├── setup-windows.md
+│   └── competition-checklist.md
+├── submission/                 # 保留赛事要求的正式提交材料目录
+│   ├── README.md
+│   ├── Submission Template SDC Hackathon.pdf  # 空白表，待填写
+│   ├── REPLIT PROOF OF USE.pdf  # EXAMPLE ONLY，待替换
+│   └── RUNPOD PROOF OF USE.pdf  # EXAMPLE ONLY，待替换
+├── LICENSE                     # Apache License 2.0
+├── README.md
+├── .env.example                # 只列配置名称，真实值留在本地或 Secrets
+├── .gitignore
+└── .gitattributes              # PDF 按二进制处理，防止换行转换
 ```
 
-Update this tree to match the real project before submission.
+空目录中的 `.gitkeep` 仅用于让 Git 保留目录；后续加入实际文件后可移除占位文件。前端工程直接放在 `frontend/`，后端直接放在 `backend/`。
 
-## How to run the project
+## 环境与运行方式
 
-The starter uses Python 3.10 or later; record the team's chosen version before submitting. No API keys or GPU are needed for the sample. Record model/platform requirements when actually implemented.
+当前没有可启动的业务程序，不需要运行旧的 `python src/main.py`。旧的根目录 `src/`、`runpod/`、示例测试、仅供演示的 `requirements.txt` 和 `.replit` 已从当前版本移除，历史提交保留。
 
-### Windows PowerShell
-
+先克隆仓库：
 ```powershell
 git clone https://github.com/Hozier123/sdc-2026-team-project.git
 cd sdc-2026-team-project
-py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 Copy-Item -LiteralPath .env.example -Destination .env
-$env:PROJECT_NAME = "SDC Team Project"
-.\.venv\Scripts\python.exe src/main.py
-.\.venv\Scripts\python.exe -m unittest discover tests
 ```
 
-Expected output:
+仓库已有本地副本的组员，先妥善保存现有修改，再运行 `git pull --ff-only` 更新。真实 `.env` 已被 Git 忽略。
 
-```text
-Welcome to SDC Team Project!
-Result: {'count': 5, 'min': 3, 'max': 21, 'average': 10.4}
-```
+待各模块初始化后，由负责人添加实际依赖清单、启动命令和部署配置，并从干净环境验证后更新此处。安装与协作说明见 [docs/setup-windows.md](docs/setup-windows.md)。
 
-Current code uses `os.getenv` and does **not** automatically load `.env`. The environment variable above sets the sample project name. Never commit real keys. The example exits after printing; it does not run a website. The starter has three tests.
+计划采用的开发与部署方式：
+- 开发：Vite 将 API 请求代理到 FastAPI。
+- 部署：FastAPI 托管前端构建产物，合并到一个 Replit 部署。
+- 当前仅记录约定，尚未配置代理、构建或部署。
 
-### macOS / Linux
+## 配置项
 
-```bash
-git clone https://github.com/Hozier123/sdc-2026-team-project.git
-cd sdc-2026-team-project
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-cp .env.example .env
-PROJECT_NAME="SDC Team Project" .venv/bin/python src/main.py
-.venv/bin/python -m unittest discover tests
-```
+`.env.example` 保留方案中的六个变量名，值均为空：
+`DATABASE_URL`、`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`、`LLM_TIMEOUT_S`、`DEMO_MODE`、`SIM_INBOUND_KEY`。
 
-### Replit
+由模块负责人在实际接入时定义并记录其类型与用途。真实密钥只放本地环境或 Replit Secrets，不写入代码、文档或截图。业务演示只使用团队自建合成数据。
 
-1. Import this repository at https://replit.com/import .
-2. Install dependencies: `python -m pip install -r requirements.txt`.
-3. Set the run command to `python src/main.py`.
-4. Add `PROJECT_NAME` in Secrets. Add real RunPod secrets only after implementing the integration.
-5. Run. No web preview is expected until a web server/UI is built.
+## 必要链接与正式材料
 
-See [Windows setup and collaboration](docs/setup-windows.md). Replace these commands with the final prototype's real instructions and test from a fresh clone.
+| 内容 | 链接或状态 |
+| --- | --- |
+| 原型 / 可访问构建 | TODO：开发后填写 |
+| Replit 项目 / 部署 | TODO：实际使用后填写 |
+| RunPod 端点 | TODO：实际接入后填写，不含密钥 |
+| 幻灯片 | TODO |
+| 5–7 分钟 YouTube 路演及原型演示 | TODO |
+| 正式提案 | TODO：完成后放入 `submission/`，并在此添加链接 |
+| 技术与工具声明 | TODO：完成后放入 `submission/`，并在此添加链接 |
+| 平台使用证明 | 目前仅有示例页，必须替换并纳入工具声明 |
 
-## How we used Replit
+正式文件命名按官方模板填写实际队名：
+- `SDC2026_TeamName_Preliminary.pdf`
+- `SDC2026_TeamName_TechDeclaration.pdf`
 
-**Status: TODO - team usage has not been verified in this starter.**
+## Replit 使用说明
 
-Before submission, describe the actual development/testing/hosting work, modules running on Replit, project/deployment URLs, startup steps, and the team's own proof. Include proof in the technical/tools declaration.
+**待实际使用后填写。** 说明开发、测试或托管了哪些模块，提供团队自己的项目/部署链接及证明，并纳入技术与工具声明。当前表单中的证明为 EXAMPLE ONLY，不代表已使用平台。
 
-[Replit proof](submission/REPLIT%20PROOF%20OF%20USE.pdf) is currently **EXAMPLE ONLY** and must be replaced. Replit is required by the Participant Handbook.
+## RunPod 使用说明
 
-## How we used RunPod
+**待实际使用后填写。** 说明 GPU 工作负载、模型、Pod / Serverless 连接方式及团队自己的证明。原官方回声处理器已移除，不把示例代码当作平台使用证据。若最终不使用 GPU，需如实说明并向组委会确认要求。
 
-**Status: TODO - not deployed or integrated.** Installing the SDK is not evidence of platform use; the bundled handler merely echoes input.
+## 提交检查
 
-If used, document:
-- GPU workload, model/version and why a GPU is needed.
-- Pod/Serverless setup and connection to the application.
-- Environment variable names `RUNPOD_API_KEY` and `RUNPOD_ENDPOINT_ID`, never secret values.
-- Actual dashboard evidence: Pod ID (or Serverless endpoint URL), GPU type, runtime and team account, as applicable.
+参见 [docs/competition-checklist.md](docs/competition-checklist.md)。目录模板完成不等于参赛材料完成，GitHub 上传也不等于官网提交。最终需补齐可运行原型、文档、平台证明、幻灯片和视频，并按组委会要求开放评审访问、在官网提交。
 
-[RunPod proof](submission/RUNPOD%20PROOF%20OF%20USE.pdf) is currently **EXAMPLE ONLY** and must be replaced. The handbook requires GPU work to use RunPod; the template labels this section Required. If no GPU is used, retain an honest non-use explanation and clarify evidence requirements with organizers.
+## 许可证与来源
 
-## Submission and public visibility
-
-A public starter repository is not a complete competition entry.
-
-- [ ] Implement real source code and a functional prototype.
-- [ ] Fill team name, assigned domain, SDG, project name and real links.
-- [ ] Update run instructions, project structure and both platform-use sections.
-- [ ] Complete the official proposal and technical/tools declaration.
-- [ ] Replace example proof PDFs with team evidence.
-- [ ] Add slides and the 5-7 minute YouTube pitch/demo.
-- [ ] Retain Apache 2.0 LICENSE and applicable attribution.
-- [ ] Verify repository, prototype, slides and video in a signed-out browser.
-- [ ] Add organizers' designated GitHub accounts as instructed.
-- [ ] Keep this repository **Public** throughout judging.
-- [ ] Paste the repository URL on the SDC website's **Submit** page and complete submission.
-- [ ] Submit by **25 October 2026, 07:59:59 AM MYT (UTC+8)**; aim for 24 October evening.
-- [ ] Stop modifying submitted materials after cutoff unless explicitly authorized.
-
-For a private repository: **Settings -> General -> Danger Zone -> Change repository visibility -> Public**. Review all contents/history for secrets before changing visibility. See [the complete checklist](docs/competition-checklist.md).
-
-## License and attribution
-
-[Apache License 2.0](LICENSE). Adapted from the official SDC Hackathon GitHub Submission Template. The initial upload represents template setup, not completed competition development. Declare supporting templates, third-party resources and AI-assisted tools in the final submission.
+保留 [Apache License 2.0](LICENSE)。初始资料来自官方 SDC GitHub 提交模板；本次目录按团队终版执行方案附录 B 调整。最终提交时申报模板、第三方资源及 AI 辅助工具的实际使用。

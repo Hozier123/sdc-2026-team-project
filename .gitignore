@@ -1,16 +1,24 @@
-# Python
+# Python / backend environments
 __pycache__/
 *.py[cod]
-venv/
 .venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-# Environment
+# Frontend dependencies and generated bundles
+node_modules/
+frontend/dist/
+coverage/
+
+# Local configuration and credentials
 .env
+.env.*
+!.env.example
 
-# OS / Editor
+# OS / editor files
 .DS_Store
 .vscode/
 .idea/
-
-.env.*
-!.env.example

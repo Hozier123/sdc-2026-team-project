@@ -1,72 +1,49 @@
-# Windows setup and collaboration
+# Windows 安装与协作
 
-Install Git from https://git-scm.com/install/windows and Python from https://www.python.org/downloads/windows/ .
-Reopen PowerShell; check `git --version` and `py --version`.
+当前仓库是 KiraOrder 的目录模板，没有业务服务、依赖清单或启动脚本。不要沿用旧示例的 `python src/main.py` 或根目录 `requirements.txt`。
 
-## Clone, install, run
+## 获取仓库
+
+安装 Git：https://git-scm.com/install/windows 。
 
 ```powershell
 git clone https://github.com/Hozier123/sdc-2026-team-project.git
 cd sdc-2026-team-project
-py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 Copy-Item -LiteralPath .env.example -Destination .env
-$env:PROJECT_NAME = "SDC Team Project"
-.\.venv\Scripts\python.exe src/main.py
-.\.venv\Scripts\python.exe -m unittest discover tests
 ```
 
-Expect a welcome message, sample statistics and three passing tests. This starter has no web interface.
-Each teammate creates their own ignored .venv and .env.
-The program does not automatically load .env; use environment variables or implement explicit loading later.
-No environment activation or PowerShell execution-policy change is needed.
-
-## Collaborate
-
-The repository owner invites registered teammates in Settings -> Collaborators / Access.
-Use their correct GitHub usernames. Public visibility does not grant push permission.
-
-Set your own local commit identity:
-```powershell
-git config user.name "YOUR_NAME"
-git config user.email "YOUR_GITHUB_EMAIL_OR_NOREPLY_EMAIL"
-```
-
-Preserve existing edits before starting a new task:
+已有本地副本时，先保存或提交自己的实际修改，再更新：
 ```powershell
 git switch main
 git pull --ff-only
+```
+
+如发生冲突，保留双方工作并正常合并，不用强制推送覆盖队友的提交。
+
+## 模块放置
+
+- 后端：`backend/`，计划使用 FastAPI。
+- 前端：`frontend/`，计划使用 React + TypeScript + Vite；页面位于 `frontend/src/pages/`。
+- 合成种子数据：`data/seed/`。
+- 测试及冻结集：`tests/`。
+- 辅助脚本：`scripts/`。
+- 实测证据：`evidence/`。
+- 架构及接口说明：`docs/`。
+- 正式参赛材料：`submission/`。
+
+模块负责人开始实现时，再分别添加真实依赖清单和启动步骤；目前没有要求运行的安装或构建命令。前端工程不要额外套一层项目目录。
+
+## 团队协作
+
+使用自己的提交身份，示例值应替换：
+```powershell
+git config user.name "YOUR_NAME"
+git config user.email "YOUR_GITHUB_EMAIL_OR_NOREPLY_EMAIL"
 git switch -c feature/your-task-name
 ```
 
-Review and commit real progress:
-```powershell
-git status
-git add .
-git diff --cached --stat
-git commit -m "Describe the actual change"
-git push -u origin feature/your-task-name
-```
+开始功能实现后，按实际进度提交，发起 Pull Request 供队友审阅。不要把目录占位文件或模板初始化当作已经实现的功能。
 
-Open a Pull Request for teammate review. Use one branch per task and truthful commit history.
-Do not force-push over teammates' changes.
+## 后续部署约定
 
-## Replit
-
-Import via https://replit.com/import .
-Install with `python -m pip install -r requirements.txt`.
-Set startup to `python src/main.py`.
-Use Secrets for environment variables; never commit keys.
-Use Git tools to sync changes: GitHub and Replit edits are not always automatically synchronized.
-Document real web startup/deployment instructions after implementing a web prototype.
-
-## Troubleshooting
-
-| Symptom | Action |
-| --- | --- |
-| git / py unavailable | Check installation/PATH; reopen terminal. |
-| Activation blocked | Use .venv's Python directly, as above. |
-| Push denied | Check authenticated account and repository write access. |
-| .env changes ineffective | Starter has no automatic dotenv loading. |
-| No Replit web preview | Starter is a CLI; build a web server/UI. |
-
+开发时 Vite 代理到 FastAPI；部署时 FastAPI 托管前端构建产物，使用一个 Replit 部署。当前仅保留这一约定，尚未实现。由负责人接入后补齐项目链接、运行命令、Secrets 配置和平台证明。
