@@ -25,31 +25,41 @@ SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 ```text
 sdc-2026-team-project/
 ├── backend/                    # 后端，计划使用 FastAPI
-├── frontend/
-│   └── src/
-│       └── pages/              # 前端页面，计划 React + TypeScript + Vite
+│   └── .gitkeep
 ├── data/
-│   └── seed/                   # 团队自建合成种子数据
-├── tests/                      # 测试代码、测试数据及冻结集记录
-├── scripts/                    # 评测、初始化、演示重置等辅助脚本
+│   ├── seed/                   # 团队自建合成种子数据
+│   │   └── .gitkeep
+│   └── README.md               # 数据目录说明
+├── docs/
+│   ├── .gitkeep
+│   ├── competition-checklist.md
+│   └── setup-windows.md
 ├── evidence/
 │   └── README.md               # 基线、测试结果与截图的归档说明
-├── docs/
-│   ├── setup-windows.md
-│   └── competition-checklist.md
-├── submission/                 # 保留赛事要求的正式提交材料目录
+├── frontend/                   # 前端，计划 React + TypeScript + Vite
+│   ├── src/
+│   │   └── pages/              # 前端页面
+│   │       └── .gitkeep
+│   └── README.md               # 前端目录说明
+├── scripts/                    # 评测、初始化、演示重置等辅助脚本
+│   └── .gitkeep
+├── submission/                 # 赛事正式提交材料
 │   ├── README.md
-│   ├── Submission Template SDC Hackathon.pdf  # 空白表，待填写
 │   ├── REPLIT PROOF OF USE.pdf  # EXAMPLE ONLY，待替换
-│   └── RUNPOD PROOF OF USE.pdf  # EXAMPLE ONLY，待替换
-├── LICENSE                     # Apache License 2.0
-├── README.md
-├── .env.example                # 只列配置名称，真实值留在本地或 Secrets
+│   ├── RUNPOD PROOF OF USE.pdf  # EXAMPLE ONLY，待替换
+│   └── Submission Template SDC Hackathon.pdf  # 空白表，待填写
+├── tests/                      # 测试代码、测试数据及冻结集记录
+│   └── .gitkeep
+├── .env.example                # 配置变量示例，值为空
+├── .gitattributes              # PDF 按二进制处理
 ├── .gitignore
-└── .gitattributes              # PDF 按二进制处理，防止换行转换
+├── LICENSE                     # Apache License 2.0
+└── README.md
 ```
 
-空目录中的 `.gitkeep` 仅用于让 Git 保留目录；后续加入实际文件后可移除占位文件。前端工程直接放在 `frontend/`，后端直接放在 `backend/`。
+上面的目录树按 GitHub 文件列表的顺序排列：文件夹在前、文件在后，各自按名称排序，并列出当前跟踪的文件。GitHub 可能将只有一个子目录的路径折叠显示，例如 `src/pages`；这仍然表示嵌套的两个目录。
+
+空目录中的 `.gitkeep` 仅用于让 Git 保留目录；后续加入实际文件后可移除占位文件。`data/README.md` 和 `frontend/README.md` 提供目录说明，也让 GitHub 根目录分别显示 `data/` 和 `frontend/`。前端工程直接放在 `frontend/`，后端直接放在 `backend/`。
 
 ## 环境与运行方式
 
