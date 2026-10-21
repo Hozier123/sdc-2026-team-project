@@ -67,6 +67,10 @@ sdc-2026-team-project/
 
 `gate0/` 作为一个整体保存规格书、机器契约、迁移和验证工具，不拆分到业务目录，也不在冻结后静默修改。四方确认材料独立保存在 `evidence/gate0/`，通过受控文件清单哈希与对应 Git 标签关联。
 
+Gate 0 已冻结于 [`gate0-baseline-v1`](https://github.com/Hozier123/sdc-2026-team-project/tree/gate0-baseline-v1)，提交为 `3478c31fbbcaf295130e87a992ccdff1a4fabf8e`，对应内部 `gate0-v4 / draft revision 5`。正式四方确认见 [确认书](evidence/gate0/确认书.md) 及 [证据绑定说明](evidence/gate0/README.md)。`gate0/docs/gate0-signoff.md` 和 manifest 中的待签状态保留了制备快照，最终确认以外部证据及上述标签为准。维护说明不会改写冻结快照或移动标签。
+
+01—04 后续 v1.3 工作文档放在 `docs/rules/`，与后端实现同步更新；`gate0/external-inputs/protected/` 中的 v1.2 原件继续保留。
+
 ## 环境与运行方式
 
 当前没有可启动的业务程序，不需要运行旧的 `python src/main.py`。旧的根目录 `src/`、`runpod/`、示例测试、仅供演示的 `requirements.txt` 和 `.replit` 已从当前版本移除，历史提交保留。
