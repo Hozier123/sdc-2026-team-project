@@ -1,0 +1,47 @@
+{
+  "method": "POST",
+  "path": "/api/v1/orders/DRF_OWNER_001/approve",
+  "request": {"expected_version": 1},
+  "status": 200,
+  "headers": {"X-Request-ID": "req_owner_self_001"},
+  "body": {
+    "do_number": "DO-20261021-OWNER-01",
+    "draft_id": "DRF_OWNER_001",
+    "draft_version": 1,
+    "customer_id": "CUS_003",
+    "customer_name": "Restoran Sentosa",
+    "lines": [
+      {
+        "line_id": "LIN_OWNER_001",
+        "sku_id": "SKU_RICE_10KG",
+        "display_name": "Rice 10kg",
+        "quantity": 10,
+        "unit": "bag",
+        "tier_unit_price": "52.00",
+        "applied_unit_price": "52.00",
+        "subtotal_rm": "520.00",
+        "override_reason": null,
+        "picking_note": null
+      }
+    ],
+    "final_total_rm": "520.00",
+    "prepared_by": "USR_OWNER_01",
+    "approved_by": "USR_OWNER_01",
+    "escalation_reasons": [
+      {
+        "code": "AMOUNT_OVER_THRESHOLD",
+        "line_id": null,
+        "detail": {"threshold_rm": "500.00", "final_total_rm": "520.00"}
+      }
+    ],
+    "approval_mode": "OWNER_SELF_APPROVED",
+    "reply_draft": {
+      "language": "en",
+      "message": "Order DO-20261021-OWNER-01 is prepared for your confirmation.",
+      "do_number": "DO-20261021-OWNER-01",
+      "warnings": []
+    },
+    "related_do_number": null,
+    "approved_at": "2026-10-21T11:30:00Z"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "method": "GET",
+  "path": "/api/v1/delivery-orders/DO-20261021-0003",
+  "request": null,
+  "status": 200,
+  "headers": {
+    "X-Request-ID": "req_do_read_001"
+  },
+  "body": {
+    "do_number": "DO-20261021-0003",
+    "draft_id": "DRF_003",
+    "draft_version": 2,
+    "customer_id": "CUS_002",
+    "customer_name": "Kedai Harmoni",
+    "lines": [
+      {
+        "line_id": "LIN_020",
+        "sku_id": "SKU_OIL_1L",
+        "display_name": "Cooking Oil 1L",
+        "quantity": 3,
+        "unit": "ctn",
+        "tier_unit_price": "120.00",
+        "applied_unit_price": "120.00",
+        "subtotal_rm": "360.00",
+        "override_reason": null,
+        "picking_note": "1L x 12 per carton"
+      }
+    ],
+    "final_total_rm": "360.00",
+    "prepared_by": "USR_CLERK_01",
+    "approved_by": "USR_CLERK_01",
+    "escalation_reasons": [],
+    "approval_mode": "DIRECT",
+    "reply_draft": {
+      "language": "en",
+      "message": "Order DO-20261021-0003 is prepared for your confirmation.",
+      "do_number": "DO-20261021-0003",
+      "warnings": []
+    },
+    "related_do_number": null,
+    "approved_at": "2026-10-21T11:15:00Z"
+  }
+}

@@ -1,0 +1,44 @@
+KiraOrder Gate 0 gate0-v4 / draft revision 5 validation
+Date: 2026-10-21 Asia/Shanghai
+Mode: clean directory, no -SkipInstall, local offline mirrors for this sandbox
+
+Environment:
+  python=3.13.5
+  pytest=8.4.2
+  PyYAML=6.0.3
+  jsonschema=4.26.0
+  referencing=0.31.1
+  openapi-spec-validator=0.7.2
+  jsonschema-path=0.3.2
+  pathable=0.4.1
+  openapi-schema-validator=0.6.3
+  pglast=7.21
+  node=v24.19.0
+  pnpm=11.25.0
+  pglite=0.5.10
+
+Command:
+  powershell -ExecutionPolicy Bypass -File scripts/bootstrap_gate0.ps1
+
+Optional offline mirrors used in this sandbox:
+  GATE0_WHEELHOUSE=<workspace>/.gate0-wheelhouse
+  GATE0_PNPM=<workspace>/.gate0-tools/package/bin/pnpm.cjs
+  GATE0_NODE=<codex-runtime>/node.exe
+
+Output:
+  INSTALLED_WHEELS=26
+  pnpm install --frozen-lockfile: PGlite 0.5.10 installed
+  42 passed
+  GATE0_VERIFY_OK files=73
+  GATE0_BOOTSTRAP_VERIFY_OK
+
+Checks:
+  - PGlite: 18 tables; 12 trigger events; approval guard DELETE/UPDATE
+  - No test skipped; no business backend code created
+  - 73 Gate 0 output hashes verified
+  - Protected 01-04 and v2.1 hashes match baseline-manifest.json
+  - Gate 0 remains unsigned; no gate0-v4 tag was created
+  - condition_id, CLERK self-only approval reads and three PII mask tokens are machine checked
+  - H5 includes an executed UNIT-price positive case
+  - DeliveryOrder requires customer_name
+  - bootstrap_gate0.ps1 supports GATE0_PNPM / corepack / npx fallback and GATE0_WHEELHOUSE offline install

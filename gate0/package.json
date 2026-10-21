@@ -1,0 +1,12 @@
+{
+  "name": "kiraorder-gate0-contracts",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Gate 0 contract verification dependencies only",
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.10"
+  },
+  "scripts": {
+    "verify:migration": "node scripts/verify_migration_pglite.cjs"
+  }
+}

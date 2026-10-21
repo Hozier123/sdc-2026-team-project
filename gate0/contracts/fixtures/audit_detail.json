@@ -1,0 +1,83 @@
+{
+  "method": "GET",
+  "path": "/api/v1/orders/DO-20261021-0003/audit-detail",
+  "request": null,
+  "status": 200,
+  "headers": {
+    "X-Request-ID": "req_audit_001"
+  },
+  "body": {
+    "do_number": "DO-20261021-0003",
+    "draft_id": "DRF_003",
+    "draft_version": 2,
+    "ai_initial_snapshot": {
+      "masked_text": "Oil 3 ctn",
+      "ai_mode": "ALIAS_ONLY"
+    },
+    "final_snapshot": {
+      "do_number": "DO-20261021-0003",
+      "draft_id": "DRF_003",
+      "draft_version": 2,
+      "customer_id": "CUS_002",
+      "customer_name": "Kedai Harmoni",
+      "lines": [
+        {
+          "line_id": "LIN_020",
+          "sku_id": "SKU_OIL_1L",
+          "display_name": "Cooking Oil 1L",
+          "quantity": 3,
+          "unit": "ctn",
+          "tier_unit_price": "120.00",
+          "applied_unit_price": "120.00",
+          "subtotal_rm": "360.00",
+          "override_reason": null,
+          "picking_note": "1L x 12 per carton"
+        }
+      ],
+      "final_total_rm": "360.00",
+      "prepared_by": "USR_CLERK_01",
+      "approved_by": "USR_CLERK_01",
+      "escalation_reasons": [],
+      "approval_mode": "DIRECT",
+      "reply_draft": {
+        "language": "en",
+        "message": "Order DO-20261021-0003 is prepared for your confirmation.",
+        "do_number": "DO-20261021-0003",
+        "warnings": []
+      },
+      "related_do_number": null,
+      "approved_at": "2026-10-21T11:15:00Z"
+    },
+    "field_diffs": [
+      {
+        "draft_version": 2,
+        "line_id": "LIN_020",
+        "field_path": "sku_id",
+        "before_value": null,
+        "after_value": "SKU_OIL_1L",
+        "source": "ALIAS_RESOLVER",
+        "reason_code": "SKU_RESOLVED_FROM_ALIAS"
+      }
+    ],
+    "events": [
+      {
+        "event_type": "DRAFT_CREATED",
+        "actor_user_id": "USR_CLERK_01",
+        "actor_role": "CLERK",
+        "created_at": "2026-10-21T11:00:00Z",
+        "payload": {
+          "version": 1
+        }
+      },
+      {
+        "event_type": "DO_GENERATED",
+        "actor_user_id": "USR_CLERK_01",
+        "actor_role": "CLERK",
+        "created_at": "2026-10-21T11:15:00Z",
+        "payload": {
+          "draft_version": 2
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+pytest==8.4.2
+PyYAML==6.0.3
+jsonschema==4.26.0
+referencing==0.31.1
+openapi-spec-validator==0.7.2
+# 0.7.2 requires jsonschema-path<0.4 and openapi-schema-validator<0.7;
+# unpinned resolution picks incompatible 0.5.0/0.6.0 on a clean machine.
+jsonschema-path==0.3.2
+pathable==0.4.1
+openapi-schema-validator==0.6.3
+pglast==7.21

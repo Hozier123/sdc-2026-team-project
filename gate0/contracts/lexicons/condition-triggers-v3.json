@@ -1,0 +1,292 @@
+{
+  "version": "condition-triggers-v3",
+  "normalization": [
+    "NFKC",
+    "CASEFOLD",
+    "COLLAPSE_WHITESPACE"
+  ],
+  "price_trigger_rule": "NEGOTIATION_PHRASE OR AMOUNT_ALLOCATION OR (AMOUNT AND (CONDITIONAL_MARKER OR QUESTION_MARKER))",
+  "bare_amount_triggers": false,
+  "multi_label_allowed": true,
+  "stock_condition_blocking": false,
+  "triggers": [
+    {
+      "id": "cond_stock_ms_001",
+      "kind": "STOCK",
+      "language": "ms",
+      "pattern": "kalau ada"
+    },
+    {
+      "id": "cond_stock_ms_002",
+      "kind": "STOCK",
+      "language": "ms",
+      "pattern": "jika ada"
+    },
+    {
+      "id": "cond_stock_en_001",
+      "kind": "STOCK",
+      "language": "en",
+      "pattern": "if available"
+    },
+    {
+      "id": "cond_stock_en_002",
+      "kind": "STOCK",
+      "language": "en",
+      "pattern": "if in stock"
+    },
+    {
+      "id": "cond_stock_zh_001",
+      "kind": "STOCK",
+      "language": "zh",
+      "pattern": "有货的话"
+    },
+    {
+      "id": "cond_stock_zh_002",
+      "kind": "STOCK",
+      "language": "zh",
+      "pattern": "如果有货"
+    },
+    {
+      "id": "cond_price_ms_001",
+      "kind": "PRICE",
+      "language": "ms",
+      "pattern": "kalau\\s+rm\\s*\\d+(?:\\.\\d{1,2})?"
+    },
+    {
+      "id": "cond_price_ms_002",
+      "kind": "PRICE",
+      "language": "ms",
+      "pattern": "boleh kurang(?: sikit)?"
+    },
+    {
+      "id": "cond_price_en_001",
+      "kind": "PRICE",
+      "language": "en",
+      "pattern": "can\\s+(?:be\\s+)?(?:less|cheaper)"
+    },
+    {
+      "id": "cond_price_en_002",
+      "kind": "PRICE",
+      "language": "en",
+      "pattern": "discount",
+      "requires_context": true
+    },
+    {
+      "id": "cond_price_en_003",
+      "kind": "PRICE",
+      "language": "en",
+      "pattern": "can\\s+follow\\s+(?:the\\s+)?last\\s+price"
+    },
+    {
+      "id": "cond_price_zh_001",
+      "kind": "PRICE",
+      "language": "zh",
+      "pattern": "便宜一点|少一点|按老价钱|可以优惠"
+    },
+    {
+      "id": "cond_price_zh_002",
+      "kind": "PRICE",
+      "language": "zh",
+      "pattern": "便宜|老价钱|打折",
+      "requires_context": true
+    },
+    {
+      "id": "cond_price_ms_003",
+      "kind": "PRICE",
+      "language": "ms",
+      "pattern": "harga lama",
+      "requires_context": true
+    },
+    {
+      "id": "cond_price_ms_004",
+      "kind": "PRICE",
+      "language": "ms",
+      "pattern": "diskaun",
+      "requires_context": true
+    },
+    {
+      "id": "cond_price_unit_ms_001",
+      "kind": "PRICE",
+      "language": "ms",
+      "pattern": "rm\\s*\\d+(?:\\.\\d{1,2})?\\s+untuk\\s+1\\s+(?:ctn|carton|pack|kg|pc|bag)",
+      "price_basis": "UNIT"
+    },
+    {
+      "id": "cond_query_001",
+      "kind": "PRICE_HELPER",
+      "language": "any",
+      "pattern": "[?？]"
+    },
+    {
+      "id": "cond_other_ms_001",
+      "kind": "TIME_OR_OTHER",
+      "language": "ms",
+      "pattern": "kalau sempat"
+    },
+    {
+      "id": "cond_other_ms_002",
+      "kind": "TIME_OR_OTHER",
+      "language": "ms",
+      "pattern": "hantar sebelum"
+    }
+  ],
+  "negative_contexts": [
+    "last order was <amount>",
+    "total last time <amount>",
+    "stock code <code>",
+    "hantar esok",
+    "price is <amount>",
+    "not asking for discount",
+    "harga lama RM95 sudah bayar",
+    "价格不便宜也没关系"
+  ],
+  "truth_table": [
+    {
+      "id": 1,
+      "input": "Last order was RM95.",
+      "kinds": [],
+      "price_basis": null
+    },
+    {
+      "id": 2,
+      "input": "Total last time RM95.",
+      "kinds": [],
+      "price_basis": null
+    },
+    {
+      "id": 3,
+      "input": "kalau RM95 boleh",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 4,
+      "input": "RM95?",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 5,
+      "input": "boleh kurang sikit?",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 6,
+      "input": "kalau ada, boleh kurang",
+      "kinds": [
+        "STOCK",
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 7,
+      "input": "If available, send 5 ctn",
+      "kinds": [
+        "STOCK"
+      ],
+      "price_basis": null,
+      "blocking": false
+    },
+    {
+      "id": 8,
+      "input": "hantar esok",
+      "kinds": [],
+      "price_basis": null
+    },
+    {
+      "id": 9,
+      "input": "Stock code A95",
+      "kinds": [],
+      "price_basis": null
+    },
+    {
+      "id": 10,
+      "input": "RM95 for 5 ctn",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN",
+      "amount_allocation": "UNALLOCATED",
+      "blocking": true
+    },
+    {
+      "id": 11,
+      "input": "Can follow last price RM95?",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 12,
+      "input": "kalau RM95 untuk 1 ctn",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNIT",
+      "amount_allocation": "UNIT_EXPLICIT",
+      "blocking": true
+    },
+    {
+      "id": 13,
+      "input": "can less?",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 14,
+      "input": "老价钱?",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 15,
+      "input": "harga lama?",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    },
+    {
+      "id": 16,
+      "input": "boleh diskaun?",
+      "kinds": [
+        "PRICE"
+      ],
+      "price_basis": "UNKNOWN"
+    }
+  ],
+  "dismissal": {
+    "choice": "NOT_A_CONDITION",
+    "note_required": true,
+    "activity_event": "CONDITION_DISMISSED"
+  },
+  "context_markers": [
+    "?",
+    "？",
+    "boleh",
+    "can",
+    "want",
+    "ask",
+    "may",
+    "kurang",
+    "diskaun",
+    "discount",
+    "便宜",
+    "老价钱",
+    "harga lama",
+    "打折"
+  ]
+}
