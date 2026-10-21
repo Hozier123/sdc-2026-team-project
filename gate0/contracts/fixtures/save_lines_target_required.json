@@ -1,0 +1,44 @@
+{
+  "method": "PUT",
+  "path": "/api/v1/orders/drafts/DRF_002/lines",
+  "request": {
+    "expected_version": 1,
+    "lines": [
+      {
+        "line_id": "LIN_010",
+        "sku_id": "SKU_RICE_A",
+        "family_id": "FAM_RICE",
+        "match_source": "MANUAL_SELECTED"
+      },
+      {
+        "line_id": "LIN_011",
+        "sku_id": "SKU_OIL_A",
+        "family_id": "FAM_OIL",
+        "match_source": "MANUAL_SELECTED"
+      }
+    ],
+    "deleted_line_ids": [],
+    "resolutions": [
+      {
+        "issue_id": "ISS_PRICE_010",
+        "choice": "ACCEPT_REQUESTED_PRICE",
+        "target_line_ids": [],
+        "confirmed_unit_price": "95.00",
+        "price_basis": "UNIT",
+        "note": "Customer asked RM95"
+      }
+    ]
+  },
+  "status": 400,
+  "headers": {
+    "X-Request-ID": "req_save_target_001"
+  },
+  "body": {
+    "error_code": "TARGET_LINE_REQUIRED",
+    "message": "Select the line or lines affected by the price condition.",
+    "details": {
+      "issue_id": "ISS_PRICE_010",
+      "candidate_line_ids": ["LIN_010", "LIN_011"]
+    }
+  }
+}

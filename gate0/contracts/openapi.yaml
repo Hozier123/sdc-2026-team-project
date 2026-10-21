@@ -1,0 +1,2241 @@
+openapi: 3.1.0
+info:
+  title: KiraOrder v1.3 API
+  version: 1.3.0-gate0-v4
+  description: Gate 0 machine contract. Success responses return models directly; errors use Error. Every response carries
+    X-Request-ID. This file defines contracts only, not a business implementation.
+servers:
+- url: /api/v1
+security:
+- bearerAuth: []
+tags:
+- name: Drafts
+- name: Approvals
+- name: Audit
+- name: Identity
+- name: AI
+paths:
+  /orders/parse-draft:
+    post:
+      tags:
+      - Drafts
+      operationId: parseDraft
+      summary: Parse a masked order message and create draft version 1
+      description: Allowed roles are CLERK and OWNER. The backend performs local PII masking before persistence or logging;
+        raw message_text is request-scoped only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParseDraftRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/OrderDraftResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '429':
+          $ref: '#/components/responses/RateLimitedError'
+        '503':
+          $ref: '#/components/responses/UnavailableError'
+  /orders/drafts:
+    get:
+      tags:
+      - Drafts
+      operationId: listDrafts
+      summary: List drafts visible to the current tenant
+      parameters:
+      - $ref: '#/components/parameters/DraftStatusQuery'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          $ref: '#/components/responses/DraftListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /orders/drafts/{draft_id}:
+    get:
+      tags:
+      - Drafts
+      operationId: getDraft
+      summary: Get the current draft aggregate
+      parameters:
+      - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OrderDraftResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /orders/drafts/{draft_id}/lines:
+    put:
+      tags:
+      - Drafts
+      operationId: saveLines
+      summary: Atomically replace editable lines, resolve message issues and create a version
+      description: Every existing line_id must appear exactly once in lines or deleted_line_ids. The service recalculates
+        issues, prices, clarification, escalation and status.
+      parameters:
+      - $ref: '#/components/parameters/DraftId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveLinesRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/OrderDraftResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /orders/{draft_id}/approve:
+    post:
+      tags:
+      - Drafts
+      operationId: approve
+      summary: Approve the latest saved version or create an owner approval request
+      parameters:
+      - $ref: '#/components/parameters/DraftId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/DeliveryOrderResponse'
+        '202':
+          $ref: '#/components/responses/ApprovalRequestResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /approvals:
+    get:
+      tags:
+      - Approvals
+      operationId: listApprovals
+      summary: List approval work items visible to the current user
+      description: OWNER sees tenant approval work items and may use mine=true to filter to items personally submitted. CLERK
+        is always server-filtered to requested_by=current_user, regardless of the mine value, and receives read-only items
+        with allowed_actions=[]. WAREHOUSE is forbidden.
+      parameters:
+      - $ref: '#/components/parameters/ApprovalStatusQuery'
+      - $ref: '#/components/parameters/Mine'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          $ref: '#/components/responses/ApprovalListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /approvals/{approval_id}:
+    get:
+      tags:
+      - Approvals
+      operationId: getApproval
+      summary: Get immutable approval snapshot and allowed actions
+      description: OWNER may read any approval in the current tenant. CLERK may read only an item whose requested_by equals
+        the current user; other items are returned as 404 and allowed_actions is empty. WAREHOUSE is forbidden.
+      parameters:
+      - $ref: '#/components/parameters/ApprovalId'
+      responses:
+        '200':
+          $ref: '#/components/responses/ApprovalDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /approvals/{approval_id}/decide:
+    post:
+      tags:
+      - Approvals
+      operationId: decideApproval
+      summary: Approve or reject an owner approval request
+      description: OWNER only. REJECT requires a non-empty note.
+      parameters:
+      - $ref: '#/components/parameters/ApprovalId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecideRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/DecisionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /orders/{do_number}/audit-detail:
+    get:
+      tags:
+      - Audit
+      operationId: getAuditDetail
+      summary: Compare AI initial snapshot with the approved delivery order
+      parameters:
+      - $ref: '#/components/parameters/DoNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/AuditDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /activity:
+    get:
+      tags:
+      - Audit
+      operationId: listActivity
+      summary: List safe tenant activity events
+      parameters:
+      - name: entity_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          $ref: '#/components/responses/ActivityListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /me:
+    get:
+      tags:
+      - Identity
+      operationId: getMe
+      summary: Get identity, tenant, role and server-authoritative permissions
+      responses:
+        '200':
+          $ref: '#/components/responses/MeResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /ai/status:
+    get:
+      tags:
+      - AI
+      operationId: getAiStatus
+      summary: Get AI endpoint readiness and current mode
+      responses:
+        '200':
+          $ref: '#/components/responses/AiStatusResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /ai/wake:
+    post:
+      tags:
+      - AI
+      operationId: wakeAi
+      summary: Request AI warm-up
+      description: Allowed roles are CLERK and OWNER.
+      responses:
+        '200':
+          $ref: '#/components/responses/AiWakeResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/RateLimitedError'
+        '503':
+          $ref: '#/components/responses/UnavailableError'
+  /customers:
+    get:
+      tags:
+      - Customers
+      operationId: listCustomers
+      summary: List customers visible to CLERK/OWNER
+      description: P0 customer picker source. WAREHOUSE is forbidden. Phone is role-cropped.
+      parameters:
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          $ref: '#/components/responses/CustomerListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /delivery-orders/{do_number}:
+    get:
+      tags:
+      - DeliveryOrders
+      operationId: getDeliveryOrder
+      summary: Read a DO for CLERK/OWNER
+      description: P0 completion/refresh path. Requires CLERK or OWNER; WAREHOUSE must use the warehouse endpoint.
+      parameters:
+      - $ref: '#/components/parameters/DoNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/DeliveryOrderResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  /warehouse/delivery-orders/{do_number}:
+    get:
+      tags:
+      - Warehouse
+      operationId: getWarehouseDeliveryOrder
+      summary: Read a role-redacted DO for WAREHOUSE (P1 view binding)
+      description: P1 warehouse read endpoint; response schema has no price, phone, tier, raw message or AI fields.
+      parameters:
+      - $ref: '#/components/parameters/DoNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/WarehouseDeliveryOrderResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: demo-token
+  headers:
+    X-Request-ID:
+      description: Correlation identifier returned on every response.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    Retry-After:
+      description: Seconds until the request may be retried.
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+  parameters:
+    DraftId:
+      name: draft_id
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    ApprovalId:
+      name: approval_id
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    DoNumber:
+      name: do_number
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 50
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+    DraftStatusQuery:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/DraftStatus'
+    ApprovalStatusQuery:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/ApprovalStatus'
+    Mine:
+      name: mine
+      in: query
+      required: false
+      description: OWNER optional self-submission filter. CLERK is always restricted to self-submitted approvals even when
+        this parameter is omitted or false.
+      schema:
+        type: boolean
+        default: false
+  responses:
+    OrderDraftResponse:
+      description: Current draft aggregate.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrderDraft'
+    DraftListResponse:
+      description: Paginated drafts.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DraftListResponse'
+    DeliveryOrderResponse:
+      description: Approved immutable delivery order.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeliveryOrder'
+    ApprovalRequestResponse:
+      description: Owner approval request created or returned.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApprovalRequest'
+    ApprovalListResponse:
+      description: Paginated owner approval work items.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApprovalListResponse'
+    ApprovalDetailResponse:
+      description: Approval item with immutable snapshot and diffs.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApprovalDetail'
+    DecisionResponse:
+      description: APPROVE returns a delivery order; REJECT returns a rejection result.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/DeliveryOrder'
+            - $ref: '#/components/schemas/ApprovalDecisionResult'
+    AuditDetailResponse:
+      description: Immutable approved audit detail.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuditDetail'
+    ActivityListResponse:
+      description: Paginated activity events.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActivityListResponse'
+    MeResponse:
+      description: Authenticated principal and permissions.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MeResponse'
+    AiStatusResponse:
+      description: AI readiness state.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AiStatus'
+    AiWakeResponse:
+      description: AI wake request state.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AiWakeResult'
+    BadRequestError:
+      description: Business validation failed.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnauthorizedError:
+      description: Missing, expired or invalid bearer token.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Authenticated but action is forbidden or tenant mismatch was supplied.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Resource does not exist in the current tenant view.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ConflictError:
+      description: Resource state or optimistic version conflict.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: Request shape, field value or required configuration is invalid.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimitedError:
+      description: Parse or AI wake rate limit exceeded.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+        Retry-After:
+          $ref: '#/components/headers/Retry-After'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnavailableError:
+      description: AI and safe fallback are both unavailable.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    CustomerListResponse:
+      description: Customers visible in the current tenant; phone is role-cropped.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerListResponse'
+    WarehouseDeliveryOrderResponse:
+      description: Warehouse-facing DO with price, phone, tier and raw message removed.
+      headers:
+        X-Request-ID:
+          $ref: '#/components/headers/X-Request-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WarehouseDeliveryOrder'
+  schemas:
+    Role:
+      type: string
+      enum:
+      - CLERK
+      - OWNER
+      - WAREHOUSE
+    DraftStatus:
+      type: string
+      enum:
+      - DISAMBIGUATION_REQUIRED
+      - READY_FOR_APPROVAL
+      - PENDING_OWNER_APPROVAL
+      - DO_GENERATED
+      - REJECTED
+    TerminationReason:
+      type: string
+      enum:
+      - OWNER_REJECTED
+      - CLERK_DISCARDED
+      - SYSTEM_TERMINATED
+    IssueCode:
+      type: string
+      enum:
+      - MULTIPLE_PACK_SIZES
+      - MULTIPLE_GRADES
+      - MISSING_UOM
+      - LOW_CONFIDENCE_MATCH
+      - INSUFFICIENT_STOCK
+      - CUSTOMER_CONDITION
+      - SAME_DAY_ORDER
+      - UNUSUAL_QTY
+    IssueReasonCode:
+      type: string
+      enum:
+      - INVALID_QUANTITY
+      - FIELD_NOT_EVIDENCED
+      - FAMILY_NOT_EVIDENCED
+      - DUPLICATE_SPAN
+      - OVERLAPPING_SPAN
+      - SOURCE_EVIDENCE_INVALID
+      - UNKNOWN_PRODUCT
+      - NO_CANDIDATE
+      - LOW_SCORE
+      - SMALL_SCORE_GAP
+      - AMBIGUOUS_QUANTITY
+    ConditionKind:
+      type: string
+      enum:
+      - STOCK
+      - PRICE
+      - TIME
+      - OTHER
+    ConditionScope:
+      type: string
+      enum:
+      - SINGLE_LINE
+      - MULTI_LINE
+      - ORDER_LEVEL
+      - UNKNOWN
+    AskWho:
+      type: string
+      enum:
+      - CUSTOMER
+      - OWNER
+      - CLERK
+      - SYSTEM
+    ResolutionChoice:
+      type: string
+      enum:
+      - CONFIRMED_WITH_CUSTOMER
+      - ACCEPT_REQUESTED_PRICE
+      - NOT_A_CONDITION
+      - SEPARATE_ADD_ON
+      - DUPLICATE
+      - CHANGE_EXISTING
+    EscalationCode:
+      type: string
+      enum:
+      - PRICE_OVERRIDE_BELOW_TIER
+      - AMOUNT_OVER_THRESHOLD
+      - CUSTOMER_CREDIT_FLAG
+    MatchSource:
+      type: string
+      enum:
+      - SUGGESTED_DEFAULT
+      - LLM_EXTRACTED
+      - RAPIDFUZZ_FALLBACK
+      - MANUAL_SELECTED
+    AiMode:
+      type: string
+      enum:
+      - LLM
+      - FALLBACK
+      - ALIAS_ONLY
+      - MIXED
+    PriceBasis:
+      type: string
+      enum:
+      - UNIT
+      - TOTAL
+      - UNKNOWN
+    ApprovalStatus:
+      type: string
+      enum:
+      - PENDING
+      - APPROVED
+      - REJECTED
+    ApprovalDecision:
+      type: string
+      enum:
+      - APPROVE
+      - REJECT
+    AllowedAction:
+      type: string
+      enum:
+      - EDIT_DRAFT
+      - RESOLVE_ISSUE
+      - COPY_CLARIFICATION
+      - APPROVE_AND_GENERATE_DO
+      - SUBMIT_FOR_OWNER
+      - OWNER_APPROVE
+      - OWNER_REJECT
+      - CANCEL_DRAFT
+      - VIEW_ACTIVITY
+      - WAKE_AI
+    CreditFlag:
+      type: string
+      enum:
+      - NONE
+      - OVERDUE_NOTICE
+    AliasScope:
+      type: string
+      enum:
+      - CUSTOMER
+      - TENANT
+    AiState:
+      type: string
+      enum:
+      - OFFLINE
+      - WARMING
+      - READY
+      - DEGRADED
+    MaskToken:
+      type: string
+      enum:
+      - '[REDACTED_PHONE]'
+      - '[REDACTED_MYKAD]'
+      - '[REDACTED_EMAIL]'
+    ErrorCode:
+      type: string
+      enum:
+      - DISAMBIGUATION_UNRESOLVED
+      - INSUFFICIENT_STOCK
+      - TARGET_LINE_REQUIRED
+      - OVERRIDE_REQUIRED
+      - NOTE_REQUIRED
+      - EMPTY_ORDER
+      - INVALID_LINE_OPERATION
+      - INVALID_TOKEN
+      - FORBIDDEN_ACTION
+      - TENANT_MISMATCH
+      - RESOURCE_NOT_FOUND
+      - STALE_VERSION
+      - PENDING_OWNER_APPROVAL
+      - ALREADY_APPROVED
+      - DRAFT_REJECTED
+      - STOCK_CHANGED
+      - REQUEST_VALIDATION_FAILED
+      - MESSAGE_TOO_LONG
+      - REJECTION_REASON_REQUIRED
+      - INVALID_QUANTITY
+      - MISSING_TIER_PRICE
+      - RATE_LIMITED
+      - AI_AND_FALLBACK_UNAVAILABLE
+    DecimalString:
+      type: string
+      pattern: ^(0|[1-9][0-9]*)\.[0-9]{2}$
+      examples:
+      - '95.00'
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+      - error_code
+      - message
+      - details
+      properties:
+        error_code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          minLength: 1
+        details:
+          type: object
+          additionalProperties: true
+    SpanView:
+      type: object
+      additionalProperties: false
+      required:
+      - text
+      - start
+      - end
+      - normalizer_version
+      properties:
+        text:
+          type: string
+        start:
+          type: integer
+          minimum: 0
+        end:
+          type: integer
+          minimum: 1
+        normalizer_version:
+          type: string
+          minLength: 1
+    FieldEvidence:
+      type: object
+      additionalProperties: false
+      required:
+      - field
+      - raw_text
+      - start
+      - end
+      - normalizer_version
+      properties:
+        field:
+          type: string
+        raw_text:
+          type: string
+        start:
+          type: integer
+          minimum: 0
+        end:
+          type: integer
+          minimum: 1
+        normalizer_version:
+          type: string
+    WorkingLineInput:
+      type: object
+      additionalProperties: false
+      required:
+      - match_source
+      properties:
+        line_id:
+          type:
+          - string
+          - 'null'
+        client_line_ref:
+          type:
+          - string
+          - 'null'
+        sku_id:
+          type:
+          - string
+          - 'null'
+        family_id:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          description: Optional on writes when sku_id determines family; responses use UNKNOWN, never null.
+        confirmed_qty:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+        uom:
+          type:
+          - string
+          - 'null'
+        pack_size:
+          type:
+          - string
+          - 'null'
+        grade:
+          type:
+          - string
+          - 'null'
+        unit_price_override:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+        override_reason:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+        match_source:
+          $ref: '#/components/schemas/MatchSource'
+        save_to_alias_cache:
+          type: boolean
+          default: false
+        alias_scope:
+          $ref: '#/components/schemas/AliasScope'
+          default: CUSTOMER
+      anyOf:
+      - required:
+        - line_id
+      - required:
+        - client_line_ref
+    WorkingLine:
+      type: object
+      additionalProperties: false
+      required:
+      - line_id
+      - family_id
+      - requested_qty
+      - effective_qty
+      - match_source
+      - field_evidence
+      - candidate_skus
+      - available_qty
+      properties:
+        line_id:
+          type: string
+        client_line_ref:
+          type:
+          - string
+          - 'null'
+        sku_id:
+          type:
+          - string
+          - 'null'
+        family_id:
+          type: string
+          minLength: 1
+        description:
+          type:
+          - string
+          - 'null'
+        requested_qty:
+          type: integer
+          minimum: 1
+          readOnly: true
+        confirmed_qty:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+        effective_qty:
+          type: integer
+          minimum: 1
+          readOnly: true
+        uom:
+          type:
+          - string
+          - 'null'
+        pack_size:
+          type:
+          - string
+          - 'null'
+        grade:
+          type:
+          - string
+          - 'null'
+        tier_unit_price:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+          readOnly: true
+        unit_price_override:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+        override_reason:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+        effective_unit_price:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+          readOnly: true
+        subtotal_rm:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+          readOnly: true
+        match_source:
+          $ref: '#/components/schemas/MatchSource'
+        source_span:
+          type:
+          - string
+          - 'null'
+          description: Masked source text for display and fallback when offsets are invalid.
+        span_start:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          readOnly: true
+        span_end:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          readOnly: true
+        field_evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldEvidence'
+          readOnly: true
+        candidate_skus:
+          type: array
+          readOnly: true
+          description: Stable candidate list for unresolved/low-confidence lines; empty when the line is already resolved.
+          items:
+            $ref: '#/components/schemas/SkuCandidate'
+        saved_alias:
+          oneOf:
+          - $ref: '#/components/schemas/AliasRecord'
+          - type: 'null'
+          readOnly: true
+          description: Alias created by a previous save for this line, so the checkbox can be restored after refresh.
+        available_qty:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          readOnly: true
+          description: Inventory for the currently selected sku_id; null when no sku is selected. Distinct from candidate_skus[].available_qty.
+    Issue:
+      type: object
+      additionalProperties: false
+      required:
+      - issue_id
+      - code
+      - candidate_line_ids
+      - target_line_ids
+      - ask
+      - data_used
+      - blocking
+      - resolved
+      properties:
+        issue_id:
+          type: string
+        code:
+          $ref: '#/components/schemas/IssueCode'
+        condition_id:
+          type:
+          - string
+          - 'null'
+          pattern: ^CND_[0-9A-F]{24}$
+          description: Required for CUSTOMER_CONDITION; null for non-condition issues. Deterministically derived as CND_ plus
+            the first 24 uppercase hexadecimal characters of SHA-256(UTF-8(draft_id|condition_kind|span_start|span_end)).
+        line_id:
+          type:
+          - string
+          - 'null'
+        span:
+          type:
+          - string
+          - 'null'
+          description: Canonical masked source text.
+        source_span:
+          type:
+          - string
+          - 'null'
+          deprecated: true
+          readOnly: true
+          description: Derived compatibility alias of span; remove after the v1.3 frontend migration.
+        span_start:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+        span_end:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+        condition_kind:
+          oneOf:
+          - $ref: '#/components/schemas/ConditionKind'
+          - type: 'null'
+        condition_scope:
+          oneOf:
+          - $ref: '#/components/schemas/ConditionScope'
+          - type: 'null'
+        candidate_line_ids:
+          type: array
+          items:
+            type: string
+        target_line_ids:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        requested_unit_price:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+        price_basis:
+          oneOf:
+          - $ref: '#/components/schemas/PriceBasis'
+          - type: 'null'
+        reason_code:
+          oneOf:
+          - $ref: '#/components/schemas/IssueReasonCode'
+          - type: 'null'
+        ask:
+          $ref: '#/components/schemas/AskWho'
+        data_used:
+          type: object
+          additionalProperties: true
+        blocking:
+          type: boolean
+        resolved:
+          type: boolean
+        resolution:
+          oneOf:
+          - $ref: '#/components/schemas/ResolutionChoice'
+          - type: 'null'
+        resolution_note:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+        auto_resolved_by:
+          type:
+          - string
+          - 'null'
+          enum:
+          - STOCK_CHECK
+          - null
+      allOf:
+      - if:
+          properties:
+            code:
+              const: CUSTOMER_CONDITION
+          required:
+          - code
+        then:
+          required:
+          - condition_id
+          - condition_kind
+          - span_start
+          - span_end
+    IssueResolution:
+      type: object
+      additionalProperties: false
+      required:
+      - issue_id
+      - choice
+      - target_line_ids
+      properties:
+        issue_id:
+          type: string
+        choice:
+          $ref: '#/components/schemas/ResolutionChoice'
+        target_line_ids:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        confirmed_unit_price:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+        price_basis:
+          oneOf:
+          - $ref: '#/components/schemas/PriceBasis'
+          - type: 'null'
+        note:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+    SaveLinesRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - expected_version
+      - lines
+      properties:
+        expected_version:
+          type: integer
+          minimum: 1
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkingLineInput'
+        deleted_line_ids:
+          type: array
+          uniqueItems: true
+          default: []
+          items:
+            type: string
+        resolutions:
+          type: array
+          default: []
+          items:
+            $ref: '#/components/schemas/IssueResolution'
+    ParseDraftRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - customer_id
+      - message_text
+      properties:
+        customer_id:
+          type: string
+          minLength: 1
+        message_text:
+          type: string
+          minLength: 1
+          maxLength: 4000
+          description: Raw pasted message. The backend masks PII before logging or persistence.
+        language_hint:
+          type:
+          - string
+          - 'null'
+    ClarificationDraft:
+      type: object
+      additionalProperties: false
+      required:
+      - language
+      - message
+      - unresolved_issue_ids
+      properties:
+        language:
+          type: string
+        message:
+          type: string
+        unresolved_issue_ids:
+          type: array
+          items:
+            type: string
+    CustomerSummary:
+      type: object
+      additionalProperties: false
+      required:
+      - customer_id
+      - name
+      - tier
+      - credit_flag
+      - has_credit_notice
+      properties:
+        customer_id:
+          type: string
+        name:
+          type: string
+        tier:
+          type: string
+        credit_flag:
+          $ref: '#/components/schemas/CreditFlag'
+        has_credit_notice:
+          type: boolean
+          readOnly: true
+        phone_e164:
+          type:
+          - string
+          - 'null'
+          description: Omitted or null in role-redacted responses.
+    OrderTotals:
+      type: object
+      additionalProperties: false
+      required:
+      - order_total
+      - currency
+      - is_complete
+      properties:
+        order_total:
+          oneOf:
+          - $ref: '#/components/schemas/DecimalString'
+          - type: 'null'
+        currency:
+          type: string
+          const: MYR
+        is_complete:
+          type: boolean
+    TenantSummary:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    OrderDraft:
+      type: object
+      additionalProperties: false
+      required:
+      - draft_id
+      - version
+      - status
+      - customer_id
+      - customer
+      - masked_message
+      - ai_mode
+      - lines
+      - issues
+      - conditions
+      - blocking_issues
+      - escalation_preview
+      - totals
+      - allowed_actions
+      - blocked_actions
+      - ignored_spans
+      - created_at
+      - updated_at
+      properties:
+        draft_id:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        status:
+          $ref: '#/components/schemas/DraftStatus'
+        customer_id:
+          type: string
+        customer:
+          $ref: '#/components/schemas/CustomerSummary'
+        masked_message:
+          type: string
+          description: Backend-masked message; raw message_text is never returned or persisted.
+        ai_mode:
+          $ref: '#/components/schemas/AiMode'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkingLine'
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Issue'
+        conditions:
+          type: array
+          readOnly: true
+          description: Derived CUSTOMER_CONDITION subset of issues for direct UI rendering.
+          items:
+            $ref: '#/components/schemas/Issue'
+        blocking_issues:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/IssueCode'
+        escalation_preview:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscalationReason'
+        totals:
+          $ref: '#/components/schemas/OrderTotals'
+        allowed_actions:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AllowedAction'
+        blocked_actions:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        clarification_draft:
+          oneOf:
+          - $ref: '#/components/schemas/ClarificationDraft'
+          - type: 'null'
+        clarification_lang:
+          type:
+          - string
+          - 'null'
+        ignored_spans:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpanView'
+        disambiguations:
+          type: array
+          deprecated: true
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Issue'
+        termination_reason:
+          oneOf:
+          - $ref: '#/components/schemas/TerminationReason'
+          - type: 'null'
+        terminated_by_user_id:
+          type:
+          - string
+          - 'null'
+        termination_note:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        do_number:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: DO number when status is DO_GENERATED; null otherwise.
+    DraftSummary:
+      type: object
+      additionalProperties: false
+      required:
+      - draft_id
+      - version
+      - status
+      - customer_id
+      - customer_name
+      - message_preview
+      - blocking_issues
+      - open_blocking_issue_count
+      - owner_escalation_count
+      - extraction_sources
+      - allowed_actions
+      - updated_at
+      properties:
+        draft_id:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        status:
+          $ref: '#/components/schemas/DraftStatus'
+        customer_id:
+          type: string
+        customer_name:
+          type: string
+        message_preview:
+          type: string
+          description: Masked and length-limited preview.
+        blocking_issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssueCode'
+        open_blocking_issue_count:
+          type: integer
+          minimum: 0
+        owner_escalation_count:
+          type: integer
+          minimum: 0
+        extraction_sources:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/MatchSource'
+        allowed_actions:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AllowedAction'
+        updated_at:
+          type: string
+          format: date-time
+        do_number:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: DO number when status is DO_GENERATED; null otherwise.
+    DraftListResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DraftSummary'
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    ApproveRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - expected_version
+      properties:
+        expected_version:
+          type: integer
+          minimum: 1
+        confirmed_items:
+          type: array
+          deprecated: true
+          description: Compatibility only; atomically save a new version before approving it.
+          items:
+            $ref: '#/components/schemas/WorkingLineInput'
+    EscalationReason:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - detail
+      properties:
+        code:
+          $ref: '#/components/schemas/EscalationCode'
+        line_id:
+          type:
+          - string
+          - 'null'
+        detail:
+          type: object
+          additionalProperties: true
+    ApprovalRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - approval_id
+      - draft_id
+      - draft_version
+      - status
+      - customer
+      - total_rm
+      - line_count
+      - reasons
+      - requested_by
+      - requested_at
+      - allowed_actions
+      properties:
+        approval_id:
+          type: string
+        draft_id:
+          type: string
+        draft_version:
+          type: integer
+          minimum: 1
+        status:
+          $ref: '#/components/schemas/ApprovalStatus'
+        customer:
+          $ref: '#/components/schemas/CustomerSummary'
+        total_rm:
+          $ref: '#/components/schemas/DecimalString'
+        line_count:
+          type: integer
+          minimum: 1
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscalationReason'
+        requested_by:
+          type: string
+        requested_at:
+          type: string
+          format: date-time
+        allowed_actions:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AllowedAction'
+        decided_by:
+          type:
+          - string
+          - 'null'
+        decided_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        decision_note:
+          type:
+          - string
+          - 'null'
+    ApprovalSnapshot:
+      type: object
+      additionalProperties: false
+      required:
+      - customer_id
+      - customer_name
+      - masked_customer_text
+      - lines
+      - total_rm
+      - reasons
+      properties:
+        customer_id:
+          type: string
+        customer_name:
+          type: string
+        masked_customer_text:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkingLine'
+        total_rm:
+          $ref: '#/components/schemas/DecimalString'
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscalationReason'
+    FieldDiff:
+      type: object
+      additionalProperties: false
+      required:
+      - draft_version
+      - field_path
+      - source
+      - reason_code
+      properties:
+        draft_version:
+          type: integer
+          minimum: 1
+        line_id:
+          type:
+          - string
+          - 'null'
+        field_path:
+          type: string
+          description: Field path relative to line_id when line_id is present (e.g. unit_price_override); otherwise relative
+            to the draft/DO root. Do not use array indexes.
+        before_value: {}
+        after_value: {}
+        source:
+          type: string
+        reason_code:
+          type: string
+          minLength: 1
+    StockCheckSummary:
+      type: object
+      additionalProperties: false
+      required:
+      - state
+      - checked_at
+      - lines
+      properties:
+        state:
+          type: string
+          enum:
+          - NOT_RUN
+          - PASSED
+          - FAILED
+        checked_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        lines:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - line_id
+            - sku_id
+            - requested_qty
+            - available_qty
+            - sufficient
+            - effective_qty
+            properties:
+              line_id:
+                type: string
+              sku_id:
+                type: string
+              requested_qty:
+                type: integer
+                minimum: 1
+              available_qty:
+                type: integer
+                minimum: 0
+              sufficient:
+                type: boolean
+              effective_qty:
+                type: integer
+                minimum: 1
+    ApprovalDetail:
+      type: object
+      additionalProperties: false
+      required:
+      - approval_id
+      - draft_id
+      - draft_version
+      - status
+      - customer
+      - total_rm
+      - line_count
+      - reasons
+      - requested_by
+      - requested_at
+      - allowed_actions
+      - snapshot
+      - field_diffs
+      - stock_check
+      properties:
+        approval_id:
+          type: string
+        draft_id:
+          type: string
+        draft_version:
+          type: integer
+          minimum: 1
+        status:
+          $ref: '#/components/schemas/ApprovalStatus'
+        customer:
+          $ref: '#/components/schemas/CustomerSummary'
+        total_rm:
+          $ref: '#/components/schemas/DecimalString'
+        line_count:
+          type: integer
+          minimum: 1
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscalationReason'
+        requested_by:
+          type: string
+        requested_at:
+          type: string
+          format: date-time
+        allowed_actions:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AllowedAction'
+        decided_by:
+          type:
+          - string
+          - 'null'
+        decided_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        decision_note:
+          type:
+          - string
+          - 'null'
+        snapshot:
+          $ref: '#/components/schemas/ApprovalSnapshot'
+        field_diffs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDiff'
+        stock_check:
+          $ref: '#/components/schemas/StockCheckSummary'
+    ApprovalListResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApprovalRequest'
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    DecideRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - decision
+      properties:
+        decision:
+          $ref: '#/components/schemas/ApprovalDecision'
+        note:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+    ApprovalDecisionResult:
+      type: object
+      additionalProperties: false
+      required:
+      - approval_id
+      - draft_id
+      - status
+      - termination_reason
+      - decided_by
+      - decided_at
+      properties:
+        approval_id:
+          type: string
+        draft_id:
+          type: string
+        status:
+          type: string
+          const: REJECTED
+        termination_reason:
+          type: string
+          const: OWNER_REJECTED
+        decided_by:
+          type: string
+        decided_at:
+          type: string
+          format: date-time
+        decision_note:
+          type: string
+          minLength: 1
+    ReplyDraft:
+      type: object
+      additionalProperties: false
+      required:
+      - language
+      - message
+      - do_number
+      - warnings
+      properties:
+        language:
+          type: string
+        message:
+          type: string
+        do_number:
+          type: string
+        warnings:
+          type: array
+          items:
+            type: string
+    DeliveryOrderLine:
+      type: object
+      additionalProperties: false
+      required:
+      - line_id
+      - sku_id
+      - display_name
+      - quantity
+      - unit
+      - tier_unit_price
+      - applied_unit_price
+      - subtotal_rm
+      properties:
+        line_id:
+          type: string
+        sku_id:
+          type: string
+        display_name:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        unit:
+          type: string
+        tier_unit_price:
+          $ref: '#/components/schemas/DecimalString'
+        applied_unit_price:
+          $ref: '#/components/schemas/DecimalString'
+        subtotal_rm:
+          $ref: '#/components/schemas/DecimalString'
+        override_reason:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+        picking_note:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+    WarehouseDeliveryOrderItem:
+      type: object
+      additionalProperties: false
+      required:
+      - sku_id
+      - display_name
+      - quantity
+      - unit
+      properties:
+        sku_id:
+          type: string
+        display_name:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        unit:
+          type: string
+        picking_note:
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+    WarehouseDeliveryOrder:
+      type: object
+      additionalProperties: false
+      description: Role-redacted WAREHOUSE view; price, tier, phone, raw message and AI fields are forbidden.
+      required:
+      - do_number
+      - customer_name
+      - items
+      - approved_at
+      properties:
+        do_number:
+          type: string
+        customer_name:
+          type: string
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/WarehouseDeliveryOrderItem'
+        approved_at:
+          type: string
+          format: date-time
+    DeliveryOrder:
+      type: object
+      additionalProperties: false
+      required:
+      - do_number
+      - draft_id
+      - draft_version
+      - customer_id
+      - customer_name
+      - lines
+      - final_total_rm
+      - prepared_by
+      - approved_by
+      - escalation_reasons
+      - approval_mode
+      - reply_draft
+      - approved_at
+      properties:
+        do_number:
+          type: string
+        draft_id:
+          type: string
+        draft_version:
+          type: integer
+          minimum: 1
+        customer_id:
+          type: string
+        customer_name:
+          type: string
+        lines:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/DeliveryOrderLine'
+        final_total_rm:
+          $ref: '#/components/schemas/DecimalString'
+        prepared_by:
+          type: string
+        approved_by:
+          type: string
+        escalation_reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscalationReason'
+        approval_mode:
+          type: string
+          enum:
+          - DIRECT
+          - OWNER_APPROVED
+          - OWNER_SELF_APPROVED
+        reply_draft:
+          $ref: '#/components/schemas/ReplyDraft'
+        related_do_number:
+          type:
+          - string
+          - 'null'
+        approved_at:
+          type: string
+          format: date-time
+    AuditEvent:
+      type: object
+      additionalProperties: false
+      required:
+      - event_type
+      - actor_user_id
+      - actor_role
+      - created_at
+      - payload
+      properties:
+        event_type:
+          type: string
+        actor_user_id:
+          type:
+          - string
+          - 'null'
+        actor_role:
+          oneOf:
+          - $ref: '#/components/schemas/Role'
+          - type: 'null'
+        created_at:
+          type: string
+          format: date-time
+        payload:
+          type: object
+          additionalProperties: true
+    AuditDetail:
+      type: object
+      additionalProperties: false
+      required:
+      - do_number
+      - draft_id
+      - draft_version
+      - ai_initial_snapshot
+      - final_snapshot
+      - field_diffs
+      - events
+      properties:
+        do_number:
+          type: string
+        draft_id:
+          type: string
+        draft_version:
+          type: integer
+          minimum: 1
+        ai_initial_snapshot:
+          type: object
+          additionalProperties: true
+        final_snapshot:
+          $ref: '#/components/schemas/DeliveryOrder'
+        field_diffs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDiff'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+    ActivityItem:
+      type: object
+      additionalProperties: false
+      required:
+      - activity_id
+      - event_type
+      - payload
+      - actor_role
+      - created_at
+      properties:
+        activity_id:
+          type: integer
+          minimum: 1
+        entity_id:
+          type:
+          - string
+          - 'null'
+        event_type:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+        actor_user_id:
+          type:
+          - string
+          - 'null'
+        actor_role:
+          oneOf:
+          - $ref: '#/components/schemas/Role'
+          - type: 'null'
+        created_at:
+          type: string
+          format: date-time
+    ActivityListResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityItem'
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    MeResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - user_id
+      - tenant
+      - display_name
+      - role
+      - permissions
+      - permission_summary
+      properties:
+        user_id:
+          type: string
+        tenant:
+          $ref: '#/components/schemas/TenantSummary'
+        display_name:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+        permissions:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AllowedAction'
+        permission_summary:
+          type: string
+    AiStatus:
+      type: object
+      additionalProperties: false
+      required:
+      - state
+      - available_modes
+      - fallback_available
+      - last_checked_at
+      - message
+      properties:
+        state:
+          $ref: '#/components/schemas/AiState'
+        available_modes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AiMode'
+        fallback_available:
+          type: boolean
+        last_checked_at:
+          type: string
+          format: date-time
+        message:
+          type: string
+    AiWakeResult:
+      type: object
+      additionalProperties: false
+      required:
+      - state
+      - accepted
+      - fallback_available
+      - last_checked_at
+      - message
+      properties:
+        state:
+          $ref: '#/components/schemas/AiState'
+        accepted:
+          type: boolean
+        fallback_available:
+          type: boolean
+        last_checked_at:
+          type: string
+          format: date-time
+        message:
+          type: string
+    SkuCandidate:
+      type: object
+      additionalProperties: false
+      required:
+      - sku_id
+      - family_id
+      - display_name
+      - base_unit
+      - tier_unit_price
+      - available_qty
+      properties:
+        sku_id:
+          type: string
+        family_id:
+          type: string
+        display_name:
+          type: string
+        pack_size:
+          type:
+          - string
+          - 'null'
+        grade:
+          type:
+          - string
+          - 'null'
+        base_unit:
+          type: string
+        tier_unit_price:
+          $ref: '#/components/schemas/DecimalString'
+        available_qty:
+          type: integer
+          minimum: 0
+    AliasRecord:
+      type: object
+      additionalProperties: false
+      required:
+      - alias_id
+      - phrase
+      - target_type
+      - scope
+      - active
+      - created_at
+      properties:
+        alias_id:
+          type: string
+        phrase:
+          type: string
+        target_type:
+          type: string
+          enum:
+          - FAMILY
+          - SKU
+        family_id:
+          type:
+          - string
+          - 'null'
+        product_id:
+          type:
+          - string
+          - 'null'
+        scope:
+          $ref: '#/components/schemas/AliasScope'
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    CustomerListResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerSummary'
+        next_cursor:
+          type:
+          - string
+          - 'null'

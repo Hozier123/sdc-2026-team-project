@@ -1,0 +1,12 @@
+{
+  "version": "pii-mask-tokens-v1",
+  "tokens": {
+    "PHONE": "[REDACTED_PHONE]",
+    "MYKAD": "[REDACTED_MYKAD]",
+    "EMAIL": "[REDACTED_EMAIL]"
+  },
+  "offset_unit": "UNICODE_CODE_POINT",
+  "replacement_policy": "ONE_TOKEN_PER_DETECTED_VALUE",
+  "raw_message_lifetime": "REQUEST_SCOPE_ONLY",
+  "applies_before": ["PERSISTENCE", "LOGGING", "AI_CALL"]
+}

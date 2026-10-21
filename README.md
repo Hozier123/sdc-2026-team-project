@@ -35,12 +35,16 @@ sdc-2026-team-project/
 │   ├── competition-checklist.md
 │   └── setup-windows.md
 ├── evidence/
+│   ├── gate0/                  # Gate 0 独立确认材料
+│   │   ├── README.md
+│   │   └── 确认书.md
 │   └── README.md               # 基线、测试结果与截图的归档说明
 ├── frontend/                   # 前端，计划 React + TypeScript + Vite
 │   ├── src/
 │   │   └── pages/              # 前端页面
 │   │       └── .gitkeep
 │   └── README.md               # 前端目录说明
+├── gate0/                      # Gate 0 规格与机器契约基线
 ├── scripts/                    # 评测、初始化、演示重置等辅助脚本
 │   └── .gitkeep
 ├── submission/                 # 赛事正式提交材料
@@ -60,6 +64,8 @@ sdc-2026-team-project/
 上面的目录树按 GitHub 文件列表的顺序排列：文件夹在前、文件在后，各自按名称排序，并列出当前跟踪的文件。GitHub 可能将只有一个子目录的路径折叠显示，例如 `src/pages`；这仍然表示嵌套的两个目录。
 
 空目录中的 `.gitkeep` 仅用于让 Git 保留目录；后续加入实际文件后可移除占位文件。`data/README.md` 和 `frontend/README.md` 提供目录说明，也让 GitHub 根目录分别显示 `data/` 和 `frontend/`。前端工程直接放在 `frontend/`，后端直接放在 `backend/`。
+
+`gate0/` 作为一个整体保存规格书、机器契约、迁移和验证工具，不拆分到业务目录，也不在冻结后静默修改。四方确认材料独立保存在 `evidence/gate0/`，通过受控文件清单哈希与对应 Git 标签关联。
 
 ## 环境与运行方式
 

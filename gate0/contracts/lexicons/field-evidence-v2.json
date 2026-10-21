@@ -1,0 +1,411 @@
+{
+  "version": "field-evidence-v2",
+  "offset_unit": "UNICODE_CODE_POINT",
+  "span_interval": "HALF_OPEN",
+  "normalization": [
+    "NFKC",
+    "CASEFOLD",
+    "COLLAPSE_WHITESPACE"
+  ],
+  "projection_rule": "MATCH_IN_NORMALIZED_SPACE_THEN_MAP_BACK_TO_MASKED_CODE_POINTS",
+  "fuzzy_matching_allowed": false,
+  "quantity": {
+    "arabic_pattern": "(?<![A-Za-z0-9_.-])([1-9][0-9]{0,5})(?![0-9])",
+    "decimal_guard_pattern": "(?<![\\d.,])\\d+\\.\\d+(?![\\d.,])",
+    "qty_exclude_pattern": "(?i)\\brm\\s*\\d+(?:\\.\\d{1,2})?",
+    "code_exclude_pattern": "(?i)\\b[A-Za-z]{1,6}\\d{1,8}\\b",
+    "longest_match": true,
+    "ms_units": {
+      "satu": 1,
+      "dua": 2,
+      "tiga": 3,
+      "empat": 4,
+      "lima": 5,
+      "enam": 6,
+      "tujuh": 7,
+      "lapan": 8,
+      "delapan": 8,
+      "sembilan": 9,
+      "sepuluh": 10,
+      "sebelas": 11
+    },
+    "ms_grammars": [
+      "<dua..sembilan> belas",
+      "<dua..sembilan> puluh [satu..sembilan]"
+    ],
+    "en_values": {
+      "one": 1,
+      "two": 2,
+      "three": 3,
+      "four": 4,
+      "five": 5,
+      "six": 6,
+      "seven": 7,
+      "eight": 8,
+      "nine": 9,
+      "ten": 10,
+      "eleven": 11,
+      "twelve": 12,
+      "thirteen": 13,
+      "fourteen": 14,
+      "fifteen": 15,
+      "sixteen": 16,
+      "seventeen": 17,
+      "eighteen": 18,
+      "nineteen": 19,
+      "twenty": 20
+    },
+    "en_grammar": "<twenty..ninety>[- ]<one..nine>",
+    "zh_values": {
+      "一": 1,
+      "二": 2,
+      "两": 2,
+      "三": 3,
+      "四": 4,
+      "五": 5,
+      "六": 6,
+      "七": 7,
+      "八": 8,
+      "九": 9,
+      "十": 10
+    },
+    "zh_grammars": [
+      "十<一..九>",
+      "<二..九>十[一..九]"
+    ],
+    "qty_pipeline_order": [
+      "EXCLUDE_AMOUNT",
+      "EXCLUDE_CODE",
+      "EXCLUDE_PACK_SIZE",
+      "EXCLUDE_UNIT_PRICE_MARKER",
+      "DECIMAL_GUARD",
+      "CANDIDATES"
+    ],
+    "unit_price_marker_pattern": "(?i)\\brm\\s*\\d+(?:\\.\\d{1,2})?\\s+(?:satu|each|per|untuk\\s+1)\\b",
+    "decimal_comma_unit_pattern": "(?<![\\d.,])\\d+,\\s*\\d+\\s*(?:g|kg|ml|l|liter|litre|克|公斤|毫升|升)"
+  },
+  "uom_aliases": {
+    "ctn": [
+      "ctn",
+      "carton",
+      "cartons",
+      "箱"
+    ],
+    "pack": [
+      "pack",
+      "packs",
+      "packet",
+      "packets",
+      "包"
+    ],
+    "kg": [
+      "kg",
+      "kilogram",
+      "kilograms",
+      "公斤",
+      "千克"
+    ],
+    "pc": [
+      "pc",
+      "pcs",
+      "piece",
+      "pieces",
+      "个",
+      "件"
+    ],
+    "bag": [
+      "bag",
+      "bags",
+      "袋"
+    ]
+  },
+  "tenant_uom_source": "uom_aliases",
+  "tenant_uom_extensions": {
+    "btl": "btl",
+    "btls": "btl",
+    "bottle": "btl",
+    "bottles": "btl",
+    "瓶": "btl",
+    "can": "can",
+    "cans": "can",
+    "罐": "can",
+    "papan": "papan",
+    "tray": "papan",
+    "trays": "papan",
+    "pkt": "pack",
+    "pkts": "pack",
+    "tin": "tin",
+    "tins": "tin",
+    "box": "box",
+    "boxes": "box",
+    "roll": "roll",
+    "rolls": "roll",
+    "unit": "pc",
+    "units": "pc"
+  },
+  "tenant_uom_note": "P0 loader reads uom_aliases per tenant; these are canonical examples, not a replacement for products.base_unit. No implicit conversion.",
+  "reason_codes": [
+    "INVALID_QUANTITY",
+    "FIELD_NOT_EVIDENCED",
+    "FAMILY_NOT_EVIDENCED",
+    "DUPLICATE_SPAN",
+    "OVERLAPPING_SPAN",
+    "SOURCE_EVIDENCE_INVALID",
+    "UNKNOWN_PRODUCT",
+    "NO_CANDIDATE",
+    "LOW_SCORE",
+    "SMALL_SCORE_GAP"
+  ],
+  "required_cases": [
+    {
+      "id": "H1-MS",
+      "span": "dua ctn",
+      "qty": 2,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-EN",
+      "span": "three cartons",
+      "qty": 3,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-ZH",
+      "span": "两箱",
+      "qty": 2,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-UOM",
+      "span": "5 ctn",
+      "qty": 5,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-UOM-ATTACHED",
+      "span": "10kg bawang",
+      "qty": 10,
+      "uom": "kg"
+    },
+    {
+      "id": "H1-TYPE",
+      "span": "5 ctn",
+      "model_qty": "5",
+      "qty": 5,
+      "uom": "ctn",
+      "diagnostic": "MODEL_TYPE_COERCED"
+    },
+    {
+      "id": "H1-TYPE-NEG",
+      "span": "five ctn",
+      "model_qty": "five",
+      "qty": 5,
+      "uom": "ctn",
+      "model_value_accepted": false
+    },
+    {
+      "id": "H1-TYPE-NEG2",
+      "span": "5 ctn",
+      "model_qty": "6",
+      "qty": 5,
+      "uom": "ctn",
+      "diagnostic": "MODEL_TYPE_COERCED",
+      "model_value_accepted": false,
+      "issue": "LOW_CONFIDENCE_MATCH",
+      "reason_code": "FIELD_NOT_EVIDENCED"
+    },
+    {
+      "id": "H1-MS-TEENS",
+      "span": "lima belas ctn",
+      "qty": 15,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-MS-TENS",
+      "span": "dua puluh ctn",
+      "qty": 20,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-MS-TENS-UNIT",
+      "span": "tiga puluh lima ctn",
+      "qty": 35,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-EN-TEEN",
+      "span": "twelve cartons",
+      "qty": 12,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-EN-COMPOUND",
+      "span": "twenty-five ctn",
+      "qty": 25,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-ZH-TEENS",
+      "span": "十五箱",
+      "qty": 15,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-ZH-TENS",
+      "span": "三十五箱",
+      "qty": 35,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-DEC-1",
+      "span": "1.5kg",
+      "qty": null,
+      "issue": "LOW_CONFIDENCE_MATCH",
+      "reason_code": "INVALID_QUANTITY"
+    },
+    {
+      "id": "H1-DEC-2",
+      "span": "0.5 ctn",
+      "qty": null,
+      "issue": "LOW_CONFIDENCE_MATCH",
+      "reason_code": "INVALID_QUANTITY"
+    },
+    {
+      "id": "H1-DEC-NEG",
+      "span": "5 ctn",
+      "qty": 5,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-AMT",
+      "span": "kalau RM95 boleh 3 ctn",
+      "qty": 3,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-AMT-NEG",
+      "span": "RM95 for 5 ctn",
+      "qty": 5,
+      "uom": "ctn"
+    },
+    {
+      "id": "DEV-39",
+      "span": "5 ctn",
+      "model_qty": 6,
+      "qty": 5,
+      "uom": "ctn",
+      "issue": "LOW_CONFIDENCE_MATCH",
+      "reason_code": "FIELD_NOT_EVIDENCED"
+    },
+    {
+      "id": "DEV-40",
+      "span": "5 ctn",
+      "model_family": "Cooking Oil",
+      "family": "UNKNOWN",
+      "issue": "LOW_CONFIDENCE_MATCH",
+      "reason_code": "FAMILY_NOT_EVIDENCED"
+    },
+    {
+      "id": "DEV-41",
+      "masked_text": "5 ctn oil",
+      "spans": [
+        [
+          0,
+          5
+        ],
+        [
+          2,
+          9
+        ]
+      ],
+      "issue": "LOW_CONFIDENCE_MATCH",
+      "reason_code": "OVERLAPPING_SPAN"
+    },
+    {
+      "id": "H1-UOM-UPPER",
+      "span": "5 CTN",
+      "qty": 5,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-UOM-MIXED",
+      "span": "10KG bawang",
+      "qty": 10,
+      "uom": "kg"
+    },
+    {
+      "id": "H1-AMT-DEC",
+      "span": "kalau RM12.50 boleh, ambil 4 pack",
+      "qty": 4,
+      "uom": "pack"
+    },
+    {
+      "id": "H1-PACK-1",
+      "span": "美禄 500g 装, 3 包",
+      "qty": 3,
+      "uom": "pack",
+      "pack_size": "500g"
+    },
+    {
+      "id": "H1-PACK-2",
+      "span": "Minyak 12 x 1L, 5 ctn",
+      "qty": 5,
+      "uom": "ctn",
+      "pack_size": "12 x 1L"
+    },
+    {
+      "id": "H1-PACK-3",
+      "span": "Tepung 5kg x 2",
+      "qty": 2,
+      "pack_size": "5kg"
+    },
+    {
+      "id": "H1-PACK-4",
+      "span": "Milo 2kg, 4 ctn",
+      "qty": 4,
+      "uom": "ctn",
+      "pack_size": "2kg"
+    },
+    {
+      "id": "H1-AMB-1",
+      "span": "Milo satu 10 ctn",
+      "qty": null,
+      "issue": "LOW_CONFIDENCE_MATCH",
+      "reason_code": "AMBIGUOUS_QUANTITY"
+    },
+    {
+      "id": "H1-UPM",
+      "span": "Milo RM2.50 satu, 10 ctn",
+      "qty": 10,
+      "uom": "ctn"
+    },
+    {
+      "id": "H1-UNIT-PRICE",
+      "span": "RM95 untuk 1 ctn, ambil 5",
+      "qty": 5
+    },
+    {
+      "id": "H1-DEC-COMMA-NEG",
+      "span": "Air 500 g x 12, 3 pack",
+      "qty": 3,
+      "uom": "pack"
+    },
+    {
+      "id": "H1-UOM-PLURAL",
+      "span": "3 cans",
+      "qty": 3,
+      "uom": "can"
+    }
+  ],
+  "pack_size": {
+    "note": "规格数字不是订货数量；有另一个 qty 候选或 x/装 形态时在 CANDIDATES 前保长掩码",
+    "patterns": [
+      "(?i)\\b\\d+(?:\\.\\d+)?\\s*(?:g|kg|ml|l|liter|litre)\\s*x\\s*\\d+(?=\\s*,)",
+      "(?i)\\b\\d+(?:\\.\\d+)?\\s*x\\s*\\d+(?:\\.\\d+)?\\s*(?:g|kg|ml|l|liter|litre)\\b",
+      "(?i)\\b\\d+(?:\\.\\d+)?\\s*(?:g|kg|ml|l|liter|litre)\\b(?=\\s*x\\s*\\d+)",
+      "(?i)\\b\\d+(?:\\.\\d+)?\\s*(?:g|kg|ml|l|liter|litre)\\b\\s*(?:装|pack|packs)?",
+      "\\b\\d+(?:\\.\\d+)?\\s*(?:克|公斤|毫升|升)\\b"
+    ],
+    "exclude_before_qty": true
+  }
+}

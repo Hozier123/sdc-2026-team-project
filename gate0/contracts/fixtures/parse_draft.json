@@ -1,0 +1,170 @@
+{
+  "method": "POST",
+  "path": "/api/v1/orders/parse-draft",
+  "request": {
+    "customer_id": "CUS_001",
+    "message_text": "Tepung 5 ctn, kalau RM95 boleh? Call +60 12-345 6789",
+    "language_hint": "ms"
+  },
+  "status": 200,
+  "headers": {
+    "X-Request-ID": "req_parse_001"
+  },
+  "body": {
+    "draft_id": "DRF_001",
+    "version": 1,
+    "status": "DISAMBIGUATION_REQUIRED",
+    "customer_id": "CUS_001",
+    "customer": {
+      "customer_id": "CUS_001",
+      "name": "Kedai Maju",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "masked_message": "Tepung 5 ctn, kalau RM95 boleh? Call [REDACTED_PHONE]",
+    "ai_mode": "MIXED",
+    "lines": [
+      {
+        "line_id": "LIN_001",
+        "sku_id": "SKU_FLOUR_5KG_A",
+        "family_id": "FAM_FLOUR",
+        "description": "Tepung 5kg Grade A",
+        "requested_qty": 5,
+        "confirmed_qty": null,
+        "effective_qty": 5,
+        "uom": "ctn",
+        "pack_size": "5kg",
+        "grade": "A",
+        "tier_unit_price": "98.00",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "98.00",
+        "subtotal_rm": "490.00",
+        "match_source": "LLM_EXTRACTED",
+        "source_span": "Tepung 5 ctn",
+        "span_start": 0,
+        "span_end": 12,
+        "field_evidence": [
+          {
+            "field": "qty",
+            "raw_text": "5",
+            "start": 7,
+            "end": 8,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "uom",
+            "raw_text": "ctn",
+            "start": 9,
+            "end": 12,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 20
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "ISS_PRICE_001",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_A4EEE3BE314D75567CF81BF8",
+        "line_id": null,
+        "span": "kalau RM95 boleh?",
+        "source_span": "kalau RM95 boleh?",
+        "span_start": 14,
+        "span_end": 31,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LIN_001"
+        ],
+        "target_line_ids": [],
+        "requested_unit_price": null,
+        "price_basis": "UNKNOWN",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "amount_text": "RM95",
+          "amount_allocation": "UNALLOCATED"
+        },
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [
+      {
+        "issue_id": "ISS_PRICE_001",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_A4EEE3BE314D75567CF81BF8",
+        "line_id": null,
+        "span": "kalau RM95 boleh?",
+        "source_span": "kalau RM95 boleh?",
+        "span_start": 14,
+        "span_end": 31,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LIN_001"
+        ],
+        "target_line_ids": [],
+        "requested_unit_price": null,
+        "price_basis": "UNKNOWN",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "amount_text": "RM95",
+          "amount_allocation": "UNALLOCATED"
+        },
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "blocking_issues": [
+      "CUSTOMER_CONDITION"
+    ],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "490.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "RESOLVE_ISSUE",
+      "COPY_CLARIFICATION",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {
+      "APPROVE_AND_GENERATE_DO": [
+        "CUSTOMER_CONDITION"
+      ],
+      "SUBMIT_FOR_OWNER": [
+        "CUSTOMER_CONDITION"
+      ]
+    },
+    "clarification_draft": {
+      "language": "ms",
+      "message": "RM95 itu harga seunit untuk Tepung 5kg Grade A?",
+      "unresolved_issue_ids": [
+        "ISS_PRICE_001"
+      ]
+    },
+    "clarification_lang": "ms",
+    "ignored_spans": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-21T11:00:00Z",
+    "updated_at": "2026-10-21T11:00:00Z"
+  }
+}

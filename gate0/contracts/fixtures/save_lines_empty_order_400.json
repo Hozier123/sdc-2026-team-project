@@ -1,0 +1,19 @@
+{
+  "method": "PUT",
+  "path": "/api/v1/orders/drafts/DRF_004/lines",
+  "request": {
+    "expected_version": 1,
+    "lines": [],
+    "deleted_line_ids": ["LIN_040"],
+    "resolutions": []
+  },
+  "status": 400,
+  "headers": {
+    "X-Request-ID": "req_empty_order_001"
+  },
+  "body": {
+    "error_code": "EMPTY_ORDER",
+    "message": "An order must retain at least one line.",
+    "details": {"deleted_line_ids": ["LIN_040"]}
+  }
+}

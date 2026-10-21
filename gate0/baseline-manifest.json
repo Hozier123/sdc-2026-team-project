@@ -1,0 +1,165 @@
+{
+  "gate0_version": "gate0-v4",
+  "draft_revision": 5,
+  "status": "GATE0_DRAFT_AWAITING_CROSS_FUNCTIONAL_SIGNOFF",
+  "created_at": "2026-10-21T19:21:37+08:00",
+  "updated_at": "2026-10-22T01:15:00+08:00",
+  "prepared_by": "He Minghao",
+  "approved_by": null,
+  "baseline": {
+    "name": "KiraOrder v2.1",
+    "path": "external-inputs/baseline/KiraOrder_终版执行方案_v2.1_2026-10-21.md",
+    "sha256": "5D02EBF84413B7FE617C32B64E707AFF476EBD963E6638091C875EE0D1B8A55D",
+    "lines": 1475,
+    "bytes": 124468
+  },
+  "proposal": {
+    "name": "Revision 2",
+    "path": "external-inputs/reference/revision2_proposal.md",
+    "sha256": "40DA19F4FE5CA0282B7127F66E934872B91A2BD920F8D833B79BEAB0684DF12B",
+    "lines": 738,
+    "bytes": 55453
+  },
+  "review": {
+    "name": "Revision 2 复审",
+    "path": "external-inputs/reference/revision2_review.md",
+    "sha256": "C97C47E649A9C5A9A82F5D17E29C5A6F44C2C7D46479291BC3F7D236BEED5CEE",
+    "lines": 265,
+    "bytes": 20347
+  },
+  "prior_review": {
+    "name": "Revision 1 复审",
+    "path": "external-inputs/reference/revision1_review.md",
+    "sha256": "87F5776B8554914274CB3196737603E39979FA738ACF75AE175EE1136FE4E9A4",
+    "lines": 425,
+    "bytes": 34882
+  },
+  "orbyte_reference": {
+    "path": "external-inputs/reference/orbyte_reference.md",
+    "sha256": "EE3FEB8C4C533A5104DAF3F3CC4AA144326A3CB675F48A4E73F3FF8D0F11CE00",
+    "lines": 127,
+    "bytes": 10169
+  },
+  "execution_manual": {
+    "path": "external-inputs/reference/execution_manual.md",
+    "sha256": "10AD12968B448EB869465E0356E1F45E3CD5BAD12E3FD3606100E96B7B5D9D54",
+    "lines": 842,
+    "bytes": 32664
+  },
+  "gate0_review": {
+    "name": "Gate0 审查报告与修改建议",
+    "path": "external-inputs/reference/gate0_review.md",
+    "sha256": "F477633979D0C10BDEC27611D870094E4B6FF28E2855350C16D6AC910BE75840",
+    "lines": 463,
+    "bytes": 27014,
+    "disposition": "P0-1_TO_P0-13_ADOPTED_IN_DRAFT_REVISION_2"
+  },
+  "gate0_revision2_review": {
+    "name": "Gate 0 Revision 2 复审报告",
+    "path": "external-inputs/reference/gate0_revision2_review.md",
+    "sha256": "7A503BF02A168E63A636A3C933F13D06530C894147051B4FED64E51ED5809480",
+    "lines": 190,
+    "bytes": 16234,
+    "disposition": "THREE_AMBIGUITIES_AND_THREE_SIGNOFF_P1_ITEMS_ADOPTED"
+  },
+  "protected_files_at_gate0": [
+    {
+      "path": "external-inputs/protected/01_KiraOrder_v1.2_后端完整规则框架.md",
+      "sha256": "AAA4271224ECDA58932E561D388566D71E5BC709EA75FD07A3EB09E9C1538E79",
+      "lines": 1149,
+      "bytes": 31944
+    },
+    {
+      "path": "external-inputs/protected/02_KiraOrder_v1.2_后端与前端对接规则.md",
+      "sha256": "100E1289D2546157E1B0BF7EAE4860FD0051C6596D8ED06C2C087D503B47C5D1",
+      "lines": 717,
+      "bytes": 16219
+    },
+    {
+      "path": "external-inputs/protected/03_KiraOrder_v1.2_后端与AI对接规则.md",
+      "sha256": "1356E564A6A441D77C96EDAD4840A65E4C3818044CEFC8FAB814A08687B4C07B",
+      "lines": 713,
+      "bytes": 17153
+    },
+    {
+      "path": "external-inputs/protected/04_KiraOrder_v1.2_后端与数据对接规则.md",
+      "sha256": "BEAA81B027AA834F8862C35F74FF2F5A1F0B8A04874E9B3BCAFECA9566586083",
+      "lines": 791,
+      "bytes": 17720
+    }
+  ],
+  "gate0_outputs": {
+    "db_schema": "contracts/db-schema.md",
+    "fields": "contracts/fields.md",
+    "errors": "contracts/errors.md",
+    "condition_triggers": "contracts/condition-triggers.md",
+    "field_evidence": "contracts/field-evidence.md",
+    "openapi": "contracts/openapi.yaml",
+    "fixtures": "contracts/fixtures/",
+    "lexicons": "contracts/lexicons/",
+    "migration": "migrations/0001_baseline.sql",
+    "contract_tests": "tests/contract/",
+    "python_requirements": "tests/contract/requirements.txt",
+    "node_dependencies": "package.json",
+    "verification_script": "scripts/verify_gate0.py",
+    "bootstrap_script": "scripts/bootstrap_gate0.ps1",
+    "migration_smoke_script": "scripts/verify_migration_pglite.cjs",
+    "change_record": "docs/05_KiraOrder_v1.3_契约变更记录.md",
+    "erratum": "docs/v2.1-erratum-1.md",
+    "signoff": "docs/gate0-signoff.md",
+    "review_resolution": "docs/gate0-review-resolution.md",
+    "validation_report": "docs/gate0-validation-report.md",
+    "validation_log": "docs/gate0-validation.log",
+    "bootstrap": "scripts/bootstrap_gate0.ps1",
+    "python_wheel_installer": "scripts/install_python_wheels.py",
+    "h5_lexicon": "contracts/lexicons/condition-triggers-v3.json",
+    "test_data_map": "docs/gate0-test-data-map.md",
+    "external_inputs": "external-inputs/",
+    "h1_lexicon": "contracts/lexicons/field-evidence-v2.json"
+  },
+  "gate0_outputs_hash_file": "docs/gate0-hashes.txt",
+  "signoff": {
+    "backend": {
+      "name": "He Minghao",
+      "status": "SCOPE_AUTHORIZED_FINAL_HASH_CONFIRMATION_PENDING"
+    },
+    "frontend": {
+      "name": "",
+      "status": "PENDING"
+    },
+    "ai": {
+      "name": "",
+      "status": "PENDING"
+    },
+    "data": {
+      "name": "",
+      "status": "PENDING"
+    }
+  },
+  "closeout_revision": 1,
+  "closeout": {
+    "clean_bootstrap": true,
+    "skip_install": false,
+    "pytest": "42 passed / 0 failed / 0 skipped",
+    "hash_files": 73,
+    "pglite": "18 tables / 12 trigger events / approval guard DELETE+UPDATE",
+    "offline_mirror_used": true,
+    "dependency_pins": [
+      "referencing==0.31.1",
+      "jsonschema-path==0.3.2",
+      "pathable==0.4.1",
+      "openapi-schema-validator==0.6.3"
+    ],
+    "validated_at": "2026-10-22T01:15:00+08:00",
+    "evidence": "docs/gate0-validation.log",
+    "receipts": {
+      "ai_round3": "N7-N9 + A1-A6",
+      "frontend_round3": "clarification language, candidate example, 72 hashes",
+      "data_round3": "parity ROOT, version naming, 60 hashes, referencing docs"
+    }
+  },
+  "supersedes": {
+    "version": "gate0-v3",
+    "gate0_hashes_sha256": "FF50E8278C47DD24F407D00B15BB33FB43BDDF64237BBEBBEED36B6BF23881A4"
+  }
+}

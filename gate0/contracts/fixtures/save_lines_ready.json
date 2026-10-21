@@ -1,0 +1,190 @@
+{
+  "method": "PUT",
+  "path": "/api/v1/orders/drafts/DRF_001/lines",
+  "request": {
+    "expected_version": 1,
+    "lines": [
+      {
+        "line_id": "LIN_001",
+        "sku_id": "SKU_FLOUR_5KG_A",
+        "family_id": "FAM_FLOUR",
+        "confirmed_qty": 5,
+        "uom": "ctn",
+        "pack_size": "5kg",
+        "grade": "A",
+        "unit_price_override": "95.00",
+        "override_reason": "Customer confirmed unit price in chat",
+        "match_source": "MANUAL_SELECTED",
+        "save_to_alias_cache": true,
+        "alias_scope": "CUSTOMER"
+      }
+    ],
+    "deleted_line_ids": [],
+    "resolutions": [
+      {
+        "issue_id": "ISS_PRICE_001",
+        "choice": "ACCEPT_REQUESTED_PRICE",
+        "target_line_ids": [
+          "LIN_001"
+        ],
+        "confirmed_unit_price": "95.00",
+        "price_basis": "UNIT",
+        "note": "Customer confirmed RM95 per carton"
+      }
+    ]
+  },
+  "status": 200,
+  "headers": {
+    "X-Request-ID": "req_save_001"
+  },
+  "body": {
+    "draft_id": "DRF_001",
+    "version": 2,
+    "status": "READY_FOR_APPROVAL",
+    "customer_id": "CUS_001",
+    "customer": {
+      "customer_id": "CUS_001",
+      "name": "Kedai Maju",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "masked_message": "Tepung 5 ctn, kalau RM95 boleh? Call [REDACTED_PHONE]",
+    "ai_mode": "MIXED",
+    "lines": [
+      {
+        "line_id": "LIN_001",
+        "sku_id": "SKU_FLOUR_5KG_A",
+        "family_id": "FAM_FLOUR",
+        "description": "Tepung 5kg Grade A",
+        "requested_qty": 5,
+        "confirmed_qty": 5,
+        "effective_qty": 5,
+        "uom": "ctn",
+        "pack_size": "5kg",
+        "grade": "A",
+        "tier_unit_price": "98.00",
+        "unit_price_override": "95.00",
+        "override_reason": "Customer confirmed unit price in chat",
+        "effective_unit_price": "95.00",
+        "subtotal_rm": "475.00",
+        "match_source": "MANUAL_SELECTED",
+        "source_span": "Tepung 5 ctn",
+        "span_start": 0,
+        "span_end": 12,
+        "field_evidence": [],
+        "candidate_skus": [],
+        "saved_alias": {
+          "alias_id": "ALS_001",
+          "phrase": "Tepung 5 ctn",
+          "target_type": "SKU",
+          "family_id": "FAM_FLOUR",
+          "product_id": "SKU_FLOUR_5KG_A",
+          "scope": "CUSTOMER",
+          "active": true,
+          "created_at": "2026-10-21T11:05:00Z"
+        },
+        "available_qty": 20
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "ISS_PRICE_001",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_A4EEE3BE314D75567CF81BF8",
+        "line_id": null,
+        "span": "kalau RM95 boleh?",
+        "source_span": "kalau RM95 boleh?",
+        "span_start": 14,
+        "span_end": 31,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LIN_001"
+        ],
+        "target_line_ids": [
+          "LIN_001"
+        ],
+        "requested_unit_price": "95.00",
+        "price_basis": "UNIT",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "amount_text": "RM95"
+        },
+        "blocking": false,
+        "resolved": true,
+        "resolution": "ACCEPT_REQUESTED_PRICE",
+        "resolution_note": "Customer confirmed RM95 per carton",
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [
+      {
+        "issue_id": "ISS_PRICE_001",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_A4EEE3BE314D75567CF81BF8",
+        "line_id": null,
+        "span": "kalau RM95 boleh?",
+        "source_span": "kalau RM95 boleh?",
+        "span_start": 14,
+        "span_end": 31,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LIN_001"
+        ],
+        "target_line_ids": [
+          "LIN_001"
+        ],
+        "requested_unit_price": "95.00",
+        "price_basis": "UNIT",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "amount_text": "RM95"
+        },
+        "blocking": false,
+        "resolved": true,
+        "resolution": "ACCEPT_REQUESTED_PRICE",
+        "resolution_note": "Customer confirmed RM95 per carton",
+        "auto_resolved_by": null
+      }
+    ],
+    "blocking_issues": [],
+    "escalation_preview": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "line_id": "LIN_001",
+        "detail": {
+          "tier_price": "98.00",
+          "applied_price": "95.00"
+        }
+      }
+    ],
+    "totals": {
+      "order_total": "475.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "SUBMIT_FOR_OWNER",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {
+      "APPROVE_AND_GENERATE_DO": [
+        "PRICE_OVERRIDE_BELOW_TIER"
+      ]
+    },
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-21T11:00:00Z",
+    "updated_at": "2026-10-21T11:05:00Z"
+  }
+}
