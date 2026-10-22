@@ -1,4 +1,5 @@
 import hashlib
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
@@ -79,6 +80,18 @@ def test_checksum_mismatch_is_rejected_before_database(db_settings, tmp_path):
         load_seed(db_settings, **args)
 
 
+def test_concurrent_seed_is_serialized_by_tenant(db_settings, tmp_path):
+    migrate(db_settings)
+    path = _write(tmp_path)
+
+    def load():
+        return load_seed(db_settings, **_args(path)).status
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(lambda _: load(), range(2)))
+    assert sorted(results) == ["already_loaded", "loaded"]
+
+
 def test_count_mismatch_rolls_back_seed_and_manifest(db_settings, tmp_path):
     migrate(db_settings)
     path = _write(tmp_path)
@@ -114,4 +127,32 @@ def test_seed_file_cannot_contain_transaction_control(tmp_path):
         load_seed(
             Settings(_env_file=None),
             **_args(path),
+        )
+
+
+def test_seed_file_must_contain_only_inserts(tmp_path):
+    path = _write(tmp_path, "CREATE TABLE public.evil (id integer);\n")
+    with pytest.raises(SeedError, match="only INSERT"):
+        load_seed(
+            Settings(_env_file=None),
+            **_args(path),
+        )
+
+
+def test_seed_file_must_be_utf8(tmp_path):
+    path = tmp_path / "seed_T1.sql"
+    path.write_bytes(b"\xff\xfe\x00")
+    with pytest.raises(SeedError, match="UTF-8"):
+        load_seed(
+            Settings(_env_file=None),
+            **_args(path),
+        )
+
+
+def test_seed_counts_must_be_non_negative(tmp_path):
+    path = _write(tmp_path)
+    with pytest.raises(SeedError, match="non-negative"):
+        load_seed(
+            Settings(_env_file=None),
+            **_args(path, products=-1),
         )

@@ -1,6 +1,6 @@
-# KiraOrder 后端基础（P0-A 第一个 PR）
+# KiraOrder 后端基础、身份、seed 与 parse 骨架
 
-当前实现 FastAPI 进程、数据库探针及 Gate 0 迁移执行器。业务接口、seed、鉴权、parse、审批和 DO 尚未实现。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`。
+当前实现 FastAPI 进程、数据库探针、Gate 0 迁移执行器、Bearer `/api/v1/me`、版本钉住的 seed loader，以及 PII + parse-draft 骨架。草稿编辑、审批和 DO 仍未实现。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`。
 
 ## 安装和启动（Windows）
 
@@ -11,7 +11,7 @@ py -3.13 -m venv backend/.venv
 backend/.venv/Scripts/python -m pip install -c backend/requirements.lock -e './backend[test]'
 ```
 
-在根目录 `.env` 设置 `DATABASE_URL=postgresql://用户名:密码@主机:5432/数据库名`。空值仍可启动存活探针，就绪探针返回 503。进程环境变量优先于 `.env`；读取 `.env` 的位置不依赖启动目录。其他五个预留配置项本阶段尚未使用。密码中的 URL 特殊字符应按 URI 规则编码。
+在根目录 `.env` 设置 `DATABASE_URL=postgresql://用户名:密码@主机:5432/数据库名`。空值仍可启动存活探针，就绪探针返回 503。进程环境变量优先于 `.env`；读取 `.env` 的位置不依赖启动目录。密码中的 URL 特殊字符应按 URI 规则编码。
 
 迁移是显式管理命令，不在 Web 服务启动时自动执行。迁移身份需具备创建 schema/table/function/trigger 的权限，复验时使用该对象所有者身份。部署应先运行迁移命令成功后再启动服务。
 
@@ -26,11 +26,11 @@ backend/.venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 800
 | `/readyz` | 数据库可查询且 Gate 0 迁移版本和哈希登记正确 | 200 `{"status":"ready"}` |
 | `/readyz` | 未配置、不可连接、未迁移或登记哈希不一致 | 503 `{"status":"not_ready"}` |
 
-这两个路径为运维探针，记录于后端运行说明及运行时 OpenAPI；不写回冻结业务 OpenAPI。探针不返回连接串或底层异常。连接超时 3 秒、普通查询和锁等待超时 5 秒；迁移事务中语句超时 30 秒。就绪探针检查连接和迁移登记，不声称每次都做完整 schema 漂移审计。
+这两个路径为运维探针，记录于后端运行说明及运行时 OpenAPI；不写回冻结业务 OpenAPI。探针不返回连接串或底层异常。连接超时 3 秒、普通查询和锁等待超时 5 秒；迁移事务中语句超时 30 秒；seed 导入事务中语句超时 60 秒、租户锁等待 10 秒。就绪探针检查连接和迁移登记，不声称每次都做完整 schema 漂移审计。
 
 ## Bearer 与 `/api/v1/me`
 
-本阶段只实现身份读取，不实现 seed、草稿或审批接口。
+本阶段实现身份读取；seed 使用显式命令，parse-draft 目前只是 PII + 骨架。
 
 ```http
 GET /api/v1/me
@@ -69,7 +69,7 @@ backend/.venv/Scripts/python -m app.seed `
 行为：
 
 - 先校验 SQL 文件 SHA-256，再连接数据库；
-- seed SQL 不得包含 `BEGIN/COMMIT/ROLLBACK`；
+- seed SQL 只允许 `INSERT`，不得包含 DDL 或 `BEGIN/COMMIT/ROLLBACK`；
 - 在一个事务内执行数据 SQL、计数校验和 `kiraorder_meta.seed_manifest` 登记；
 - 同一 tenant + version + hash 重复执行返回 `already_loaded`，不重复插入；
 - 同一 tenant 已有数据但没有 manifest 时拒绝自动接管；
@@ -77,6 +77,29 @@ backend/.venv/Scripts/python -m app.seed `
 - 不创建/修改 Gate 0 的 `public` 业务表结构。
 
 正式的 T1/T2 seed、40/795 计数和 SHA-256 由数据负责人定稿；本仓库测试只使用临时 fixture。
+
+## PII 与 parse-draft 骨架
+
+`POST /api/v1/orders/parse-draft` 已可调用，但当前使用确定性 `StubExtractor`：
+它会生成一个 `DISAMBIGUATION_REQUIRED` 的 v1 草稿，不生成正式商品行。
+
+流程：
+
+```text
+Bearer → customer tenant check → PII mask
+→ ExtractionProvider.extract(masked_text)
+→ 基础 RawExtraction 校验
+→ inbound_messages / orders / draft_versions
+→ OrderDraft
+```
+
+- PII 只允许 `[REDACTED_PHONE]`、`[REDACTED_MYKAD]`、`[REDACTED_EMAIL]`；
+- 仅 `CLERK` / `OWNER` 可调用；`WAREHOUSE` 返回 403 `FORBIDDEN_ACTION`；
+- 原始 `message_text` 不写日志、不落库、不传给 provider；
+- `masked_text` 超过 4000 code points 返回 422 `MESSAGE_TOO_LONG`；
+- customer 不存在或跨租户返回 404 `RESOURCE_NOT_FOUND`；
+- 真实 AI 到货后，用新的 `ExtractionProvider` 替换 `StubExtractor`，不改 API；
+- 当前骨架不是最终 H1/H5 解析能力。
 
 ## 迁移执行规则
 
@@ -116,6 +139,6 @@ GitHub Actions 使用隔离 PostgreSQL 17.10 service 执行完整验收。Gate 0
 
 ## 后续衔接
 
-后续提交依次实现 seed + Bearer + `/me`、PII + parse（含 H1/H5）、draft/PUT lines、approve/DO、approvals/decide，再补齐 OWNER、审计和回复主链路。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新，本次基础 PR 不改冻结文件。
+后续提交依次接真实 AI/H1/H5、draft/PUT lines、approve/DO、approvals/decide，再补齐 OWNER、审计和回复主链路。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新，本次不修改冻结文件。
 
 实现依据：[psycopg 事务管理](https://www.psycopg.org/psycopg3/docs/basic/transactions.html)、[pglast SQL 解析器](https://pglast.readthedocs.io/en/v7/parser.html)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/17/explicit-locking.html#ADVISORY-LOCKS)。

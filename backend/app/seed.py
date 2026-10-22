@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS kiraorder_meta.seed_manifest (
 )
 """
 
+SEED_SCHEMA_LOCK = 0x4B4952410002
+
 
 class SeedError(Exception):
     """A controlled seed failure with no connection string or raw SQL payload."""
@@ -43,21 +45,16 @@ class SeedResult:
     inventory_total: int
 
 
-def sha256_file(path: Path) -> str:
-    try:
-        return hashlib.sha256(path.read_bytes()).hexdigest().lower()
-    except OSError:
-        raise SeedError(f"seed file is missing or unreadable: {path}") from None
-
-
 def validate_data_only_sql(text: str) -> None:
-    """Seed files must not open their own transaction around our transaction."""
+    """Seed files must contain INSERT statements only; no DDL or transaction control."""
     for statement in split(text):
         for node in parse_sql(statement):
             if isinstance(node.stmt, ast.TransactionStmt):
                 raise SeedError(
                     "seed SQL must not contain transaction control (BEGIN/COMMIT/ROLLBACK)"
                 )
+            if not isinstance(node.stmt, ast.InsertStmt):
+                raise SeedError("seed SQL must contain only INSERT statements")
 
 
 def _counts(conn: psycopg.Connection, tenant: str) -> tuple[int, int]:
@@ -81,22 +78,38 @@ def load_seed(
     expect_products: int,
     expect_inventory: int,
 ) -> SeedResult:
-    actual_sha = sha256_file(seed_path)
+    if not tenant.strip() or not seed_version.strip():
+        raise SeedError("tenant and seed-version must be non-empty")
+    if expect_products < 0 or expect_inventory < 0:
+        raise SeedError("expected product/inventory counts must be non-negative")
+
+    try:
+        raw = seed_path.read_bytes()
+    except OSError:
+        raise SeedError(f"seed file is missing or unreadable: {seed_path}") from None
+    actual_sha = hashlib.sha256(raw).hexdigest().lower()
     if actual_sha != expect_sha256.lower():
         raise SeedError("seed SQL checksum does not match --expect-sha256")
 
     try:
-        text = seed_path.read_text(encoding="utf-8")
-    except OSError:
-        raise SeedError("seed file is unreadable") from None
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        raise SeedError("seed file is not valid UTF-8") from None
     validate_data_only_sql(text)
 
     with connect(settings) as conn:
         conn.execute("BEGIN")
         try:
             conn.execute("SET LOCAL search_path TO public")
+            conn.execute("SET LOCAL statement_timeout TO '60s'")
+            conn.execute("SET LOCAL lock_timeout TO '10s'")
+            conn.execute("SELECT pg_advisory_xact_lock(%s)", (SEED_SCHEMA_LOCK,))
             conn.execute("CREATE SCHEMA IF NOT EXISTS kiraorder_meta")
             conn.execute(SEED_MANIFEST_DDL)
+            conn.execute(
+                "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
+                (tenant,),
+            )
             row = conn.execute(
                 "SELECT seed_version, seed_sha256, product_count, inventory_total "
                 "FROM kiraorder_meta.seed_manifest WHERE tenant_id = %s",
@@ -117,6 +130,11 @@ def load_seed(
                 if conn.execute("SELECT 1 FROM tenants WHERE tenant_id = %s", (tenant,)).fetchone():
                     raise SeedError("tenant exists without a seed manifest; refusing adoption")
                 conn.execute(text)
+                if (
+                    conn.execute("SELECT 1 FROM tenants WHERE tenant_id = %s", (tenant,)).fetchone()
+                    is None
+                ):
+                    raise SeedError("seed SQL did not create the requested tenant")
                 products, inventory = _counts(conn, tenant)
                 if products != expect_products or inventory != expect_inventory:
                     raise SeedError(

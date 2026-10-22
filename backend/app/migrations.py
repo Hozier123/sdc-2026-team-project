@@ -81,6 +81,8 @@ def verified_statements(gate0_root: Path = GATE0_ROOT) -> tuple[str, ...]:
     if hashlib.sha256(raw_sql).hexdigest().upper() != SQL_SHA256:
         raise MigrationError("Frozen SQL checksum mismatch")
     statements = split(raw_sql.decode("utf-8"))
+    if not statements:
+        raise MigrationError("Frozen baseline contains no statements")
     if statements[0].strip().upper() != "BEGIN" or statements[-1].strip().upper() != "COMMIT":
         raise MigrationError("Unsupported baseline transaction boundaries")
     if any(

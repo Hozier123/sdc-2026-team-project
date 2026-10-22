@@ -31,6 +31,11 @@ def test_unavailable_db_only_breaks_readiness(caplog):
 def test_probe_and_identity_responses_are_documented():
     with TestClient(create_app(Settings(_env_file=None, database_url=None))) as client:
         spec = client.get("/openapi.json").json()
-        assert set(spec["paths"]) == {"/healthz", "/readyz", "/api/v1/me"}
+        assert set(spec["paths"]) == {
+            "/healthz",
+            "/readyz",
+            "/api/v1/me",
+            "/api/v1/orders/parse-draft",
+        }
         assert "503" in spec["paths"]["/readyz"]["get"]["responses"]
         assert "200" in spec["paths"]["/api/v1/me"]["get"]["responses"]
