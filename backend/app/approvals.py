@@ -212,6 +212,14 @@ def _deduct_stock(conn, tenant: str, lines: list[WorkingLine]) -> None:
             raise StockChangedError(details={"lines": [{"sku_id": sku_id, "required_qty": qty}]})
 
 
+def _prepared_by(conn, tenant: str, draft_id: str, fallback: str) -> str:
+    row = conn.execute(
+        "SELECT created_by FROM draft_versions WHERE tenant_id=%s AND draft_id=%s AND version=1",
+        (tenant, draft_id),
+    ).fetchone()
+    return row[0] if row is not None else fallback
+
+
 def _create_do(
     conn,
     *,
@@ -225,6 +233,7 @@ def _create_do(
 ) -> DeliveryOrder:
     total = sum(Decimal(line.subtotal_rm) for line in lines if line.subtotal_rm)
     do_number = _do_number()
+    prepared_by = _prepared_by(conn, tenant, order["draft_id"], user.user_id)
     do_lines = [
         DeliveryOrderLine(
             line_id=line.line_id,
@@ -254,7 +263,7 @@ def _create_do(
             customer["customer_id"],
             Jsonb([line.model_dump(mode="json") for line in do_lines]),
             total,
-            user.user_id,
+            prepared_by,
             user.user_id,
             Jsonb(reasons),
             mode,
@@ -275,7 +284,7 @@ def _create_do(
         customer_name=customer["name"],
         lines=do_lines,
         final_total_rm=_money(total),
-        prepared_by=user.user_id,
+        prepared_by=prepared_by,
         approved_by=user.user_id,
         escalation_reasons=reasons,
         approval_mode=mode,
@@ -667,13 +676,16 @@ def list_approvals(
     items = []
     for row in rows:
         snapshot = row[5] or {}
+        customer = _approval_customer(row[11:])
+        if snapshot.get("customer_name"):
+            customer["name"] = snapshot["customer_name"]
         items.append(
             ApprovalRequestResponse(
                 approval_id=row[0],
                 draft_id=row[1],
                 draft_version=row[2],
                 status=row[3],
-                customer=_approval_customer(row[11:]),
+                customer=customer,
                 total_rm=snapshot.get("total_rm", "0.00"),
                 line_count=len(snapshot.get("lines", [])),
                 reasons=row[4] or [],
@@ -719,11 +731,7 @@ def get_approval(
             sku_id = line.get("sku_id")
             if not sku_id:
                 continue
-            row = conn.execute(
-                "SELECT available_qty FROM inventory WHERE tenant_id=%s AND product_id=%s",
-                (user.tenant_id, sku_id),
-            ).fetchone()
-            available = int(row[0]) if row else 0
+            available = int(line.get("available_qty") or 0)
             effective = int(line["effective_qty"])
             stock_lines.append(
                 StockCheckLine(
@@ -748,7 +756,7 @@ def get_approval(
         status=approval["status"],
         customer={
             "customer_id": customer["customer_id"],
-            "name": customer["name"],
+            "name": approval["snapshot"].get("customer_name") or customer["name"],
             "tier": customer["tier"],
             "credit_flag": customer["credit_flag"],
             "has_credit_notice": customer["credit_flag"] == "OVERDUE_NOTICE",
@@ -782,7 +790,7 @@ def get_approval(
         ],
         stock_check=StockCheckSummary(
             state=state,
-            checked_at=_now() if stock_lines else None,
+            checked_at=approval["requested_at"] if stock_lines else None,
             lines=stock_lines,
         ),
     )
