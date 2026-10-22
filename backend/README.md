@@ -78,6 +78,28 @@ backend/.venv/Scripts/python -m app.seed `
 
 正式的 T1/T2 seed、40/795 计数和 SHA-256 由数据负责人定稿；本仓库测试只使用临时 fixture。
 
+## PII 与 parse-draft 骨架
+
+`POST /api/v1/orders/parse-draft` 已可调用，但当前使用确定性 `StubExtractor`：
+它会生成一个 `DISAMBIGUATION_REQUIRED` 的 v1 草稿，不生成正式商品行。
+
+流程：
+
+```text
+Bearer → customer tenant check → PII mask
+→ ExtractionProvider.extract(masked_text)
+→ 基础 RawExtraction 校验
+→ inbound_messages / orders / draft_versions
+→ OrderDraft
+```
+
+- PII 只允许 `[REDACTED_PHONE]`、`[REDACTED_MYKAD]`、`[REDACTED_EMAIL]`；
+- 原始 `message_text` 不写日志、不落库、不传给 provider；
+- `masked_text` 超过 4000 code points 返回 422 `MESSAGE_TOO_LONG`；
+- customer 不存在或跨租户返回 404 `RESOURCE_NOT_FOUND`；
+- 真实 AI 到货后，用新的 `ExtractionProvider` 替换 `StubExtractor`，不改 API；
+- 当前骨架不是最终 H1/H5 解析能力。
+
 ## 迁移执行规则
 
 1. 在连接数据库前校验原始 SQL 字节 SHA-256 和受控哈希清单 SHA-256，预期值绑定已冻结标签。

@@ -26,3 +26,17 @@ def test_mask_is_deterministic_and_keeps_original_message_untouched():
     second = mask_message(raw)
     assert first.masked_text == second.masked_text
     assert raw == "Hubungi 0123456789"
+
+
+def test_masked_positions_map_back_to_original_code_points():
+    raw = "Hi 0123456789, email ali@example.com!"
+    result = mask_message(raw)
+    assert result.original_index(0) == 0
+    assert result.original_index(len(result.masked_text)) == len(raw)
+
+    phone = next(token for token in result.tokens if token.kind == "PHONE")
+    mask_start = result.masked_text.index(phone.token)
+    assert result.original_index(mask_start) == phone.start
+
+    after_phone = mask_start + len(phone.token)
+    assert result.original_index(after_phone) == phone.end

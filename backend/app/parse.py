@@ -23,6 +23,7 @@ from app.errors import MessageTooLongError, ResourceNotFoundError
 from app.extraction.base import ExtractionProvider, validate_raw_extraction
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
+from app.schemas import OrderDraftResponse
 
 router = APIRouter(prefix="/api/v1", tags=["Orders"])
 
@@ -40,7 +41,7 @@ def get_extractor(request: Request) -> ExtractionProvider:
     return provider if provider is not None else StubExtractor()
 
 
-def _customer(settings, user: CurrentUser, customer_id: str) -> dict[str, Any]:
+def _customer(settings: Settings, user: CurrentUser, customer_id: str) -> dict[str, Any]:
     with connect(settings) as conn:
         row = conn.execute(
             "SELECT customer_id, name, tier, credit_flag, phone_e164 "
@@ -73,6 +74,7 @@ def _unresolved_issue() -> dict[str, Any]:
 
 @router.post(
     "/orders/parse-draft",
+    response_model=OrderDraftResponse,
     responses={
         401: {"description": "Missing or invalid Bearer token"},
         404: {"description": "Customer not found in this tenant"},
@@ -86,7 +88,7 @@ def parse_draft(
     user: Annotated[CurrentUser, Depends(get_current_user)],
     settings: Annotated[Settings, Depends(get_settings)],
     extractor: Annotated[ExtractionProvider, Depends(get_extractor)],
-) -> dict[str, Any]:
+) -> OrderDraftResponse:
     if len(body.message_text) > 4000:
         raise MessageTooLongError()
 
@@ -145,4 +147,4 @@ def parse_draft(
         language=body.language_hint,
     )
     response.headers["Cache-Control"] = "no-store"
-    return draft
+    return OrderDraftResponse(**draft)

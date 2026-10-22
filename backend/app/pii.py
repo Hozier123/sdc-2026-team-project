@@ -37,18 +37,53 @@ class MaskToken:
 class MaskedMessage:
     masked_text: str
     tokens: tuple[MaskToken, ...]
+    raw_length: int
+    # One entry per masked character, mapped to the original raw index.
+    # Every character of a replacement token maps to the token's raw start.
+    index_map: tuple[int, ...]
+
+    def original_index(self, masked_index: int) -> int:
+        if masked_index < 0 or masked_index > len(self.index_map):
+            raise IndexError("masked index out of range")
+        if masked_index == len(self.index_map):
+            return self.raw_length
+        return self.index_map[masked_index]
 
 
 def mask_message(message_text: str) -> MaskedMessage:
     tokens: list[MaskToken] = []
+    pieces: list[str] = []
+    index_map: list[int] = []
+    cursor = 0
 
-    def replace(match: re.Match[str]) -> str:
+    for match in _PII_RE.finditer(message_text):
+        for raw_index in range(cursor, match.start()):
+            pieces.append(message_text[raw_index])
+            index_map.append(raw_index)
+
         kind = match.lastgroup
         if kind not in TOKEN_BY_KIND:
             raise AssertionError("PII regex produced an unknown group")
         token = TOKEN_BY_KIND[kind]
-        tokens.append(MaskToken(kind=kind, token=token, start=match.start(), end=match.end()))
-        return token
+        pieces.append(token)
+        index_map.extend([match.start()] * len(token))
+        tokens.append(
+            MaskToken(
+                kind=kind,
+                token=token,
+                start=match.start(),
+                end=match.end(),
+            )
+        )
+        cursor = match.end()
 
-    masked = _PII_RE.sub(replace, message_text)
-    return MaskedMessage(masked_text=masked, tokens=tuple(tokens))
+    for raw_index in range(cursor, len(message_text)):
+        pieces.append(message_text[raw_index])
+        index_map.append(raw_index)
+
+    return MaskedMessage(
+        masked_text="".join(pieces),
+        tokens=tuple(tokens),
+        raw_length=len(message_text),
+        index_map=tuple(index_map),
+    )
