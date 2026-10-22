@@ -664,7 +664,6 @@ a {
   color: #aebecb;
   border: 0;
   background: transparent;
-  font-size: 9px;
   white-space: nowrap;
 }
 .text-button:hover {
@@ -867,7 +866,6 @@ a {
   gap: 5px;
   color: #b4c0cc;
   font-family: var(--font-accent);
-  font-size: 12.5px;
 }
 .stat-card > div > svg {
   color: var(--stat);
@@ -1160,9 +1158,6 @@ a {
   color: #8eaaa1;
   margin: 12px 0 20px;
 }
-.next-card .text-button {
-  font-size: 9px;
-}
 .recent-activity {
   padding: 20px 18px 17px;
 }
@@ -1225,7 +1220,6 @@ a {
   background: #607389;
 }
 .recent-activity > .text-button {
-  font-size: 8px;
   margin-left: 17px;
   color: #8ea5b7;
 }
@@ -2632,7 +2626,6 @@ a {
   margin-top: 7px;
 }
 .delivery-list > button > small {
-  font-size: 11px;
   color: #8ba6b8;
   margin-right: 14px;
   font-variant-numeric: tabular-nums;
@@ -2914,7 +2907,6 @@ a {
   flex: 1;
 }
 .activity-event strong {
-  font-size: 11px;
   font-weight: 400;
   display: flex;
   align-items: center;
@@ -2923,7 +2915,6 @@ a {
   flex-wrap: wrap;
 }
 .activity-event p {
-  font-size: 11.5px;
   color: #8ca8ba;
   margin-top: 6px;
 }
@@ -3058,7 +3049,6 @@ a {
 .error-notice .text-button {
   margin-top: 11px;
   color: #e1b7c6;
-  font-size: 9px;
 }
 .error-notice > svg {
   margin-top: 1px;
@@ -3466,7 +3456,6 @@ a {
     font-size: 20px;
   }
   .queue-panel .panel-heading .text-button {
-    font-size: 8px;
     gap: 4px;
   }
   .next-card {
@@ -3480,9 +3469,6 @@ a {
   }
   .stat-card {
     padding: 16px 14px 13px;
-  }
-  .stat-card > div {
-    font-size: 8px;
   }
   .stat-card > small {
     font-size: 7px;
@@ -3720,9 +3706,6 @@ a {
   }
   .stat-card > div > svg {
     width: 14px;
-  }
-  .stat-card > div {
-    font-size: 8px;
   }
   .stat-card > strong {
     font-size: 34px;
@@ -4024,9 +4007,6 @@ a {
   .stat-card {
     padding: 16px 16px 15px;
   }
-  .stat-card > div {
-    font-size: 9px;
-  }
   .stat-card > div > svg {
     width: 17px;
   }
@@ -4046,9 +4026,6 @@ a {
   .queue-panel h2 {
     font-size: 24px;
     max-width: 240px;
-  }
-  .queue-panel .panel-heading .text-button {
-    font-size: 8px;
   }
   .compact .order-table-head,
   .compact .order-row,
@@ -4375,7 +4352,6 @@ a {
     position: relative;
   }
   .delivery-list > button > small {
-    font-size: 8px;
     margin-left: 54px;
     width: calc(100% - 80px);
   }
@@ -4439,12 +4415,6 @@ a {
   .activity-event {
     gap: 12px;
     padding: 20px 0;
-  }
-  .activity-event strong {
-    font-size: 10px;
-  }
-  .activity-event p {
-    font-size: 9px;
   }
   .event-icon {
     width: 29px;
@@ -4544,9 +4514,6 @@ a {
   .stat-card {
     padding: 15px 14px;
   }
-  .stat-card > div {
-    font-size: 8px;
-  }
   .stat-card > div > svg {
     width: 15px;
   }
@@ -4568,7 +4535,6 @@ a {
     max-width: 200px;
   }
   .queue-panel .text-button {
-    font-size: 7px;
     gap: 4px;
   }
   .compact .order-table-head,
@@ -4620,9 +4586,6 @@ a {
   .next-card p {
     font-size: 10px;
   }
-  .next-card .text-button {
-    font-size: 10px;
-  }
   .recent-activity {
     padding: 23px;
   }
@@ -4637,9 +4600,6 @@ a {
   }
   .mini-activity small {
     font-size: 8px;
-  }
-  .recent-activity > .text-button {
-    font-size: 9px;
   }
   .main-footer {
     padding-inline: 17px;
@@ -5234,12 +5194,6 @@ a {
   .activity-event time small {
     margin-top: 0;
   }
-  .activity-event strong {
-    font-size: 10px;
-  }
-  .activity-event p {
-    font-size: 9px;
-  }
   .warehouse-lookup form {
     flex-direction: column;
     align-items: stretch;
@@ -5506,9 +5460,6 @@ a {
   .overview-heading p {
     font-size: 13.5px;
   }
-  .stat-card > div {
-    font-size: 12.5px;
-  }
   .stat-card > small {
     font-size: 11px;
   }
@@ -5523,14 +5474,8 @@ a {
   .row-state > small {
     font-size: 10px;
   }
-  .text-button {
-    font-size: 12px;
-  }
   .next-card p {
     font-size: 13px;
-  }
-  .next-card .text-button {
-    font-size: 12px;
   }
   .mini-activity strong {
     font-size: 12.5px;
@@ -5748,9 +5693,6 @@ a {
     font-size: 11px;
     line-height: 1.7;
   }
-  .stat-card > div {
-    font-size: 10px;
-  }
   .stat-card > small {
     font-size: 8px;
   }
@@ -5868,9 +5810,6 @@ a {
   }
   .role-picker select {
     max-width: 106px;
-  }
-  .stat-card > div {
-    font-size: 9px;
   }
   .stat-card > small {
     font-size: 8px;
@@ -6002,16 +5941,7 @@ a {
   .app-shell .approval-card small {
     font-size: 9.5px;
   }
-  .app-shell .activity-event p {
-    font-size: 10.5px;
-  }
-  .app-shell .delivery-list > button > small {
-    font-size: 10px;
-  }
   .app-shell .delivery-list > button > div > span {
-    font-size: 10.5px;
-  }
-  .app-shell .stat-card > div {
     font-size: 10.5px;
   }
   .app-shell .stat-card > small {

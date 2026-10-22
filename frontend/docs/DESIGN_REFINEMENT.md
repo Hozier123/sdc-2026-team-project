@@ -124,3 +124,13 @@
 
 字体来源：https://github.com/google/fonts/tree/main/ofl/marcellus
 许可证：public/assets/fonts/Marcellus-OFL.txt
+
+## Impeccable方案实施（2026-10-23）
+
+完成可读性、手机任务顺序、共享样式和首页资源生命周期三批改动。默认Marcellus与原展示字体保留；占位文字对比度约6.57:1，流程标签统一12px，手机下一单入口移到队列之前，顶部命中区44px。共享令牌和组件样式迁入 `src/styles/`，旧的对应规则同步移除。首页仅在文档隐藏时暂停，粗指针不运行鼠标循环；原有循环强度、点击进入行为不变。55项测试、生产构建、20组布局检查通过，静态检测0项。完整结果与验证限制见同目录《Impeccable_实施结果_2026-10-23.md》。
+
+## 客户与消息语言选择器（2026-10-23）
+
+新建页的两个原生select替换为深色浮层，沿用公司/角色选择器的视觉和共享交互。客户显示缩写、等级与信用提示；语言使用简短标识与选中勾。保留原customer_id和语言代码、空客户状态及提交条件。共享定位按上下可用空间限制高度，列表通过portal防裁切；支持方向键、Home/End、字母定位、Enter、Escape、Tab和焦点恢复。旧的对应原生select专用样式已移除。
+
+验证：55项测试、生产构建、相关文件静态检测通过；360/375/768px下两个浮层共6组布局检查通过，无溢出且不覆盖触发器。清空客户、信用提示、语言切换、方向键、Home/End、字母定位、Escape、外部关闭与原有公司/角色菜单已做浏览器检查。检查数据见 `form-select-layout-checks-2026-10-23.json`，截图见 `screenshots/customer-select-desktop.png` 和 `screenshots/language-select-desktop.png`。

@@ -1,0 +1,56 @@
+[
+  {
+    "viewportWidth": 360,
+    "kind": "Customer",
+    "menuWidth": 286,
+    "height": 356.9140625,
+    "fits": true,
+    "overflow": false,
+    "overlapsTrigger": false
+  },
+  {
+    "viewportWidth": 360,
+    "kind": "Language",
+    "menuWidth": 288,
+    "height": 277,
+    "fits": true,
+    "overflow": false,
+    "overlapsTrigger": false
+  },
+  {
+    "viewportWidth": 375,
+    "kind": "Customer",
+    "menuWidth": 301,
+    "height": 356.9140625,
+    "fits": true,
+    "overflow": false,
+    "overlapsTrigger": false
+  },
+  {
+    "viewportWidth": 375,
+    "kind": "Language",
+    "menuWidth": 288,
+    "height": 277,
+    "fits": true,
+    "overflow": false,
+    "overlapsTrigger": false
+  },
+  {
+    "viewportWidth": 768,
+    "kind": "Customer",
+    "menuWidth": 480,
+    "height": 357.2109375,
+    "fits": true,
+    "overflow": false,
+    "overlapsTrigger": false
+  },
+  {
+    "viewportWidth": 768,
+    "kind": "Language",
+    "menuWidth": 288,
+    "height": 277,
+    "fits": true,
+    "overflow": false,
+    "overlapsTrigger": false
+  }
+]

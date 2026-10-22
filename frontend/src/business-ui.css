@@ -880,24 +880,11 @@
   margin-top: 24px;
   padding-top: 24px;
 }
-.app-shell .new-order-page .field-label {
-  margin-bottom: 0;
-  gap: 0;
-}
-.app-shell .new-order-page .field-label select {
-  min-height: 44px;
-  margin-top: 0;
-  font-size: 14px;
-}
 .app-shell .new-order-page .message-input-top {
   font-size: 13px;
   margin-bottom: 12px;
   flex-wrap: wrap;
   gap: 8px;
-}
-.app-shell .new-order-page .inline-select select {
-  font-size: 12px;
-  min-height: 34px;
 }
 .app-shell .new-order-page .message-composer textarea {
   height: 220px;
@@ -979,12 +966,6 @@
   .app-shell .new-order-page .message-composer textarea {
     height: 200px;
     font-size: 16px;
-  }
-  .app-shell .new-order-page .field-label select {
-    font-size: 16px;
-  }
-  .app-shell .new-order-page .inline-select select {
-    min-height: 40px;
   }
 }
 @media (max-width: 540px) {

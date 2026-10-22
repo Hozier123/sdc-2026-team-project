@@ -38,6 +38,7 @@
     line-height: 1.6;
   }
   .app-shell .pill { font-size: var(--type-caption); }
+  .app-shell .stat-card > div { font-size: var(--type-caption); line-height: 1.5; }
   .app-shell .tabs button > span,
   .app-shell .approval-total > span,
   .app-shell .customer-avatar,
@@ -63,5 +64,29 @@
   .app-shell .message-caption svg { flex-shrink: 0; margin-top: 3px; }
   .app-shell .order-total small { color: var(--muted); }
   .app-shell .message-composer textarea { caret-color: var(--mint); }
+  .app-shell .document-brand small,
+  .app-shell .document-header > div:last-child > span,
+  .app-shell .document-header > div:last-child > small,
+  .app-shell .document-parties small,
+  .app-shell .document-signatures small,
+  .app-shell .document-footer,
+  .app-shell .do-line small,
+  .app-shell .document-total > span,
+  .app-shell .document-total small,
+  .app-shell .do-table-head {
+    font-size: var(--type-meta);
+    line-height: 1.6;
+  }
+  .app-shell .document-parties h4 { font-size: var(--type-body); }
+  .app-shell .document-parties span,
+  .app-shell .document-signatures span,
+  .app-shell .do-line,
+  .app-shell .do-line > span,
+  .app-shell .do-line strong { font-size: var(--type-meta); line-height: 1.6; }
+  .app-shell .activity-event strong,
+  .app-shell .activity-event p,
+  .app-shell .delivery-list p { font-size: var(--type-body); line-height: 1.6; }
+  .app-shell .delivery-list small { font-size: var(--type-meta); }
+  .app-shell .recent-activity > .text-button { font-size: var(--type-caption); }
   .app-shell :is(.check-item p, .reason p, .modal-copy) { text-wrap: pretty; }
 }

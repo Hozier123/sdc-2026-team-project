@@ -1,0 +1,88 @@
+.form-select { display: block; min-width: 0; }
+.form-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 10px 14px;
+  border: 1px solid #3b4d5b;
+  border-radius: 10px;
+  background: #0c151f;
+  color: var(--text);
+  font-size: var(--type-body);
+  line-height: 1.5;
+  text-align: left;
+  transition: background var(--motion-fast), border-color var(--motion-fast);
+}
+.form-select-trigger:hover:not(:disabled) { background: #15222d; border-color: #5c7a72; }
+.form-select-trigger[aria-expanded="true"] { border-color: #7bb89d; background: #14231f; }
+.form-select-trigger.is-placeholder { color: var(--muted); }
+.form-select-value { min-width: 0; overflow-wrap: anywhere; }
+.form-select-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #3c574c;
+  border-radius: 9px;
+  color: #bce1cf;
+  background: #21382f;
+  font-size: var(--type-meta);
+}
+.form-select-chevron { flex-shrink: 0; margin-left: auto; color: var(--muted); transition: transform var(--motion-fast); }
+.form-select-trigger[aria-expanded="true"] .form-select-chevron { transform: rotate(180deg); }
+.form-select-tier {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: #21372e;
+  color: #b6d8c7;
+  font-size: var(--type-meta);
+}
+.form-select-tier + .form-select-chevron { margin-left: 0; }
+.form-select-menu { max-height: min(420px, calc(100dvh - 24px)); }
+.form-select-menu-heading { padding: 8px 10px 12px; color: var(--muted); font-size: var(--type-meta); }
+.form-select-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 62px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  text-align: left;
+}
+.form-select-option:hover { background: #20313e; }
+.form-select-option[aria-selected="true"] { background: #1c3029; border-color: #395848; }
+.form-select-option:focus-visible { outline: 2px solid var(--mint); outline-offset: -2px; background: #20362d; }
+.form-select-option-copy { display: grid; gap: 4px; min-width: 0; }
+.form-select-option-label { color: var(--text); font-size: var(--type-body); line-height: 1.45; overflow-wrap: anywhere; }
+.form-select-option-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; color: var(--muted); font-size: var(--type-meta); line-height: 1.5; }
+.form-select-notice { color: #b9cfea; background: #26364a; padding: 1px 6px; border-radius: 4px; }
+.form-select-check { flex-shrink: 0; margin-left: auto; color: var(--mint); }
+.form-select-clear { min-height: 48px; margin-bottom: 4px; }
+.form-select-clear .form-select-avatar { background: #1c2933; color: var(--muted); border-color: var(--border); }
+.form-select-customer + .customer-context { margin-top: 10px; }
+.form-select-compact { flex-shrink: 0; max-width: 100%; margin-left: auto; }
+.form-select-compact .form-select-trigger { min-height: var(--target-touch); padding: 9px 12px; gap: 8px; font-size: var(--type-caption); }
+.form-select-compact .form-select-trigger > svg:first-child { color: #a9c8ba; flex-shrink: 0; }
+.language-menu .form-select-option { min-height: 54px; }
+.language-avatar { background: #20313f; border-color: #395062; color: #b8cfdf; }
+.language-menu .form-select-option[aria-selected="true"] .language-avatar { color: var(--mint); background: #213c30; border-color: #42644f; }
+.form-select-unit .form-select-trigger { min-height: var(--target-touch); padding: 8px; gap: 4px; font-size: var(--type-caption); }
+.form-select-unit .form-select-chevron { width: 12px; }
+.unit-menu .form-select-option { min-height: var(--target-touch); }
+.line-fields:has(.form-select-unit) { grid-template-columns: 68px minmax(112px, max-content) repeat(3, minmax(0, 1fr)); }
+@media screen and (max-width: 760px) {
+  .form-select-trigger { font-size: var(--type-input); }
+  .form-select-menu { max-height: min(400px, calc(100dvh - 24px)); }
+  .line-fields:has(.form-select-unit) { grid-template-columns: minmax(0, 1fr) minmax(112px, 1fr) minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .form-select-trigger, .form-select-chevron { transition: none; }
+}

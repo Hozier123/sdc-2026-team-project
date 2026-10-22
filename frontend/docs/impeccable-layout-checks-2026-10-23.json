@@ -1,0 +1,130 @@
+[
+  {
+    "width": 360,
+    "route": "workspace",
+    "nextBottom": 713.859375,
+    "nextTop": 557.171875,
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 360,
+    "route": "new",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 360,
+    "route": "approvals",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 360,
+    "route": "activity",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 360,
+    "route": "delivery/DO-T1-0002",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 375,
+    "route": "workspace",
+    "nextBottom": 690.765625,
+    "nextTop": 534.078125,
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 375,
+    "route": "new",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 375,
+    "route": "approvals",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 375,
+    "route": "activity",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 375,
+    "route": "delivery/DO-T1-0002",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 768,
+    "route": "workspace",
+    "nextBottom": 778.4609375,
+    "nextTop": 533.96875,
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 768,
+    "route": "new",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 768,
+    "route": "approvals",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 768,
+    "route": "activity",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 768,
+    "route": "delivery/DO-T1-0002",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 1280,
+    "route": "workspace",
+    "nextBottom": 681.5703125,
+    "nextTop": 433.078125,
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 1280,
+    "route": "new",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 1280,
+    "route": "approvals",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 1280,
+    "route": "activity",
+    "overflow": false,
+    "smallText": []
+  },
+  {
+    "width": 1280,
+    "route": "delivery/DO-T1-0002",
+    "overflow": false,
+    "smallText": []
+  }
+]

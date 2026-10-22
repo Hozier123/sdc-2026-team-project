@@ -896,9 +896,9 @@ function Overview({
                 <h3>{next.customer_name}</h3>
                 <Status status={next.status} />
                 <p className="next-context">
-                {next.status === "DISAMBIGUATION_REQUIRED"
-                  ? `${next.open_blocking_issue_count} ${next.open_blocking_issue_count === 1 ? "check" : "checks"} to resolve.`
-                  : "All checks complete."}
+                  {next.status === "DISAMBIGUATION_REQUIRED"
+                    ? `${next.open_blocking_issue_count} ${next.open_blocking_issue_count === 1 ? "check" : "checks"} to resolve.`
+                    : "All checks complete."}
                 </p>
               </div>
               <button

@@ -8,6 +8,7 @@ import "./styles/typography.css";
 import "./styles/workflow.css";
 import "./styles/header.css";
 import "./styles/overview.css";
+import "./styles/form-select.css";
 import "./tailwind.css";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -5,7 +5,7 @@
     "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
     "severity": "warning",
     "category": "slop",
-    "file": "/Users/apple/Desktop/SDC Hackathon/前端/kiraorder/src/styles.css",
+    "file": "frontend/src/styles.css",
     "line": 3304,
     "snippet": "border-left: 3px solid var(--mint)",
     "importedBy": [
@@ -18,7 +18,7 @@
     "description": "Bounce and elastic easing feel dated and tacky. Real objects decelerate smoothly — use exponential easing (ease-out-quart/quint/expo) instead.",
     "severity": "advisory",
     "category": "slop",
-    "file": "/Users/apple/Desktop/SDC Hackathon/前端/kiraorder/src/styles.css",
+    "file": "frontend/src/styles.css",
     "line": 3311,
     "snippet": "cubic-bezier(0.2, 0.9, 0.3, 1.2)",
     "advisory": true,

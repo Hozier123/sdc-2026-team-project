@@ -56,6 +56,7 @@ import {
 } from "./ui";
 import type { Navigate, Notify } from "../lib/types";
 import { PageHeading } from "./ui";
+import { CustomerSelect, LanguageSelect, UnitSelect } from "./FormSelect";
 interface PageProps {
   service: Service;
   navigate: Navigate;
@@ -127,7 +128,7 @@ export function NewOrder({
           className="panel new-order-form"
           onSubmit={async (e) => {
             e.preventDefault();
-            if (busy) return;
+            if (busy || !customer || !text.trim()) return;
             const current = beginRequest();
             setBusy(true);
             setError(undefined);
@@ -162,24 +163,12 @@ export function NewOrder({
               retry={customerResource.refresh}
             />
           ) : (
-            <label className="field-label">
-              <span className="sr-only">Customer</span>
-              <select
-                required
-                disabled={busy}
-                value={customer}
-                onChange={(e) => setCustomer(e.target.value)}
-                aria-label="Customer"
-              >
-                <option value="">Select a customer</option>
-                {customerResource.value?.map((c) => (
-                  <option key={c.customer_id} value={c.customer_id}>
-                    {c.name} · Tier {c.tier}
-                    {c.has_credit_notice ? " · Credit notice" : ""}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <CustomerSelect
+              customers={customerResource.value ?? []}
+              disabled={busy}
+              value={customer}
+              onChange={setCustomer}
+            />
           )}
           {selected && (
             <div className="customer-context">
@@ -202,20 +191,7 @@ export function NewOrder({
           </div>
           <div className="message-input-top">
             <label htmlFor="order-message">Customer’s message</label>
-            <label className="inline-select">
-              <span className="sr-only">Message language</span>
-              <select
-                aria-label="Message language"
-                disabled={busy}
-                value={lang}
-                onChange={(e) => setLang(e.target.value)}
-              >
-                <option value="auto">Auto-detect language</option>
-                <option value="en">English</option>
-                <option value="ms">Bahasa Melayu</option>
-                <option value="zh">中文</option>
-              </select>
-            </label>
+            <LanguageSelect disabled={busy} value={lang} onChange={setLang} />
           </div>
           <div className="message-composer">
             <textarea
@@ -772,17 +748,16 @@ export function OrderDetail({
                           <label>
                             Unit
                             {editable && !line.uom ? (
-                              <select
-                                aria-label={`Unit for ${line.description}`}
+                              <UnitSelect
+                                label={`Unit for ${line.description}`}
                                 value={input.uom ?? ""}
-                                onChange={(e) =>
+                                disabled={busy}
+                                onChange={(value) =>
                                   update(line.line_id, {
-                                    uom: e.target.value || null,
+                                    uom: value || null,
                                   })
                                 }
-                              >
-                                <option value="">Confirm unit</option>
-                                {[
+                                units={[
                                   ...new Set(
                                     line.candidate_skus
                                       .map((c) => c.base_unit)
@@ -802,12 +777,8 @@ export function OrderDetail({
                                         input.uom ? [input.uom] : [],
                                       ),
                                   ),
-                                ].map((u) => (
-                                  <option key={u} value={u}>
-                                    {u}
-                                  </option>
-                                ))}
-                              </select>
+                                ]}
+                              />
                             ) : (
                               <span className="readonly-field">
                                 {input.uom ?? "—"}
