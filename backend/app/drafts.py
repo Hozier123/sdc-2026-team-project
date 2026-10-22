@@ -23,11 +23,13 @@ from app.errors import (
     InvalidLineOperationError,
     InvalidQuantityError,
     MissingTierPriceError,
+    NoteRequiredError,
     OverrideRequiredError,
     PendingOwnerApprovalError,
     RequestValidationFailedError,
     ResourceNotFoundError,
     StaleVersionError,
+    TargetLineRequiredError,
 )
 from app.schemas import (
     Issue,
@@ -230,9 +232,79 @@ def _coverage(old: list[WorkingLine], body: SaveLinesRequest) -> dict[str, Any]:
     }
 
 
+def _save_alias(
+    conn,
+    *,
+    user: CurrentUser,
+    tenant: str,
+    customer: dict[str, Any],
+    item,
+    old: WorkingLine | None,
+) -> dict[str, Any] | None:
+    if not item.save_to_alias_cache:
+        return None
+    if item.alias_scope == "TENANT" and user.role != "OWNER":
+        raise ForbiddenActionError("TENANT alias scope requires OWNER")
+    if not item.sku_id or old is None or not old.source_span:
+        raise RequestValidationFailedError(
+            details={
+                "fields": [
+                    {
+                        "path": "lines.save_to_alias_cache",
+                        "reason": "requires selected SKU and an existing masked span",
+                    }
+                ]
+            }
+        )
+    phrase = old.source_span
+    phrase_norm = phrase.strip().casefold()
+    customer_id = customer["customer_id"] if item.alias_scope == "CUSTOMER" else None
+    existing = conn.execute(
+        "SELECT alias_id, phrase, target_type, family_id, product_id, active, created_at "
+        "FROM alias_cache WHERE tenant_id=%s AND COALESCE(customer_id, '')=%s "
+        "AND phrase_norm=%s AND active=true",
+        (tenant, customer_id or "", phrase_norm),
+    ).fetchone()
+    if existing is None:
+        alias_id = f"ALI_{uuid4().hex.upper()}"
+        conn.execute(
+            "INSERT INTO alias_cache "
+            "(alias_id, tenant_id, customer_id, phrase, phrase_norm, target_type, "
+            " product_id, confirmed_by, active) "
+            "VALUES (%s, %s, %s, %s, %s, 'SKU', %s, %s, true)",
+            (
+                alias_id,
+                tenant,
+                customer_id,
+                phrase,
+                phrase_norm,
+                item.sku_id,
+                user.user_id,
+            ),
+        )
+        row = conn.execute(
+            "SELECT alias_id, phrase, target_type, family_id, product_id, active, created_at "
+            "FROM alias_cache WHERE alias_id=%s",
+            (alias_id,),
+        ).fetchone()
+    else:
+        row = existing
+    return {
+        "alias_id": row[0],
+        "phrase": row[1],
+        "target_type": row[2],
+        "family_id": row[3],
+        "product_id": row[4],
+        "scope": item.alias_scope,
+        "active": row[5],
+        "created_at": row[6],
+    }
+
+
 def _line(
     *,
     conn,
+    user: CurrentUser,
     tenant: str,
     customer: dict[str, Any],
     item,
@@ -371,6 +443,14 @@ def _line(
         field_evidence=old.field_evidence if old is not None else [],
         candidate_skus=candidates,
         available_qty=available,
+    )
+    line.saved_alias = _save_alias(
+        conn,
+        user=user,
+        tenant=tenant,
+        customer=customer,
+        item=item,
+        old=old,
     )
     for issue in issues:
         if issue.line_id is None:
@@ -521,6 +601,71 @@ def _audit(
                 )
 
 
+def _validate_resolutions(
+    body: SaveLinesRequest,
+    old_issues: list[dict[str, Any]],
+    lines: list[WorkingLine],
+    issues: list[Issue],
+) -> None:
+    if not body.resolutions:
+        return
+    old_ids = {issue["issue_id"] for issue in old_issues}
+    line_ids = {line.line_id for line in lines}
+    issue_by_id = {issue.issue_id: issue for issue in issues}
+    for resolution in body.resolutions:
+        if resolution.issue_id not in old_ids:
+            raise RequestValidationFailedError(
+                details={
+                    "fields": [
+                        {
+                            "path": "resolutions.issue_id",
+                            "reason": "issue is not in the current draft",
+                        }
+                    ]
+                }
+            )
+        if any(target not in line_ids for target in resolution.target_line_ids):
+            raise TargetLineRequiredError(details={"issue_id": resolution.issue_id})
+        if resolution.choice == "NOT_A_CONDITION" and not (resolution.note or "").strip():
+            raise NoteRequiredError()
+        if resolution.choice == "ACCEPT_REQUESTED_PRICE":
+            if not resolution.target_line_ids:
+                raise TargetLineRequiredError(details={"issue_id": resolution.issue_id})
+            if resolution.price_basis != "UNIT":
+                raise RequestValidationFailedError(
+                    details={
+                        "fields": [
+                            {
+                                "path": "resolutions.price_basis",
+                                "reason": "accepted price must use UNIT",
+                            }
+                        ]
+                    }
+                )
+            if resolution.confirmed_unit_price is not None:
+                for line in lines:
+                    if (
+                        line.line_id in resolution.target_line_ids
+                        and line.unit_price_override is not None
+                        and line.unit_price_override != resolution.confirmed_unit_price
+                    ):
+                        raise RequestValidationFailedError(
+                            details={
+                                "fields": [
+                                    {
+                                        "path": "resolutions.confirmed_unit_price",
+                                        "reason": "must equal target line unit_price_override",
+                                    }
+                                ]
+                            }
+                        )
+        target_issue = issue_by_id.get(resolution.issue_id)
+        if target_issue is not None:
+            target_issue.resolution = resolution.choice
+            target_issue.resolution_note = resolution.note
+            target_issue.resolved = True
+
+
 @router.put(
     "/orders/drafts/{draft_id}/lines",
     response_model=OrderDraftResponse,
@@ -574,6 +719,7 @@ def save_lines(
                 old_line = old_by_id.get(item.line_id) if item.line_id else None
                 line, line_issues = _line(
                     conn=conn,
+                    user=user,
                     tenant=user.tenant_id,
                     customer=customer,
                     item=item,
@@ -581,6 +727,8 @@ def save_lines(
                 )
                 lines.append(line)
                 issues.extend(line_issues)
+
+            _validate_resolutions(body, order["issues"], lines, issues)
 
             total: Decimal | None = None
             if all(line.subtotal_rm is not None for line in lines):
