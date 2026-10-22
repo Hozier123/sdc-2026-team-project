@@ -134,6 +134,22 @@ def test_parse_put_approve_and_get_do_end_to_end(seeded_db):
         ).fetchone() == (9,)
 
 
+def test_approve_rejects_confirmed_items_explicitly(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={
+                "expected_version": 1,
+                "confirmed_items": [_line(1)],
+            },
+        )
+    assert response.status_code == 422
+    body = response.json()
+    assert body["error_code"] == "REQUEST_VALIDATION_FAILED"
+    assert body["details"]["fields"][0]["path"] == "confirmed_items"
+
+
 def test_put_then_direct_approve_and_do(seeded_db):
     with _client(seeded_db) as client:
         saved = _put(client, lines=[_line(1)])
