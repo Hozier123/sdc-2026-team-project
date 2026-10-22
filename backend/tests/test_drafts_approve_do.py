@@ -150,6 +150,40 @@ def test_approve_rejects_confirmed_items_explicitly(seeded_db):
     assert body["details"]["fields"][0]["path"] == "confirmed_items"
 
 
+def test_parse_uses_ai_rows_instead_of_runtime_error(seeded_db):
+    class FakeAi:
+        def extract(self, masked_text, language_hint, request_id):
+            from app.extraction.base import RawExtraction, RawRow
+
+            return RawExtraction(
+                rows=(
+                    RawRow(
+                        span="Milo 5 ctn",
+                        qty=5,
+                        uom="ctn",
+                        fam="FAM_MILO",
+                    ),
+                ),
+                ignored_spans=(),
+            )
+
+    app = create_app(seeded_db)
+    app.state.extraction_provider = FakeAi()
+    with TestClient(app) as client:
+        parsed = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 5 ctn"},
+        )
+    assert parsed.status_code == 200, parsed.text
+    body = parsed.json()
+    assert body["ai_mode"] == "LLM"
+    assert body["status"] == "DISAMBIGUATION_REQUIRED"
+    assert len(body["lines"]) == 1
+    assert body["lines"][0]["source_span"] == "Milo 5 ctn"
+    assert any(issue["reason_code"] == "NO_CANDIDATE" for issue in body["issues"])
+
+
 def test_put_then_direct_approve_and_do(seeded_db):
     with _client(seeded_db) as client:
         saved = _put(client, lines=[_line(1)])

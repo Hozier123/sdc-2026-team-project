@@ -7,16 +7,29 @@ from app.config import Settings
 from app.delivery import router as delivery_router
 from app.drafts import router as drafts_router
 from app.errors import register_error_handlers
+from app.extraction.ai import HttpAiExtractor
 from app.extraction.stub import StubExtractor
 from app.health import router as health_router
 from app.me import router as me_router
 from app.parse import router as parse_router
 
 
+def _extractor(settings: Settings):
+    if settings.ai_service_url:
+        return HttpAiExtractor(
+            service_url=settings.ai_service_url,
+            api_key=(
+                settings.ai_api_key.get_secret_value() if settings.ai_api_key is not None else None
+            ),
+            timeout_s=settings.ai_timeout_s,
+        )
+    return StubExtractor()
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title="KiraOrder backend foundation", version="0.1.0")
     app.state.settings = settings if settings is not None else Settings()
-    app.state.extraction_provider = StubExtractor()
+    app.state.extraction_provider = _extractor(app.state.settings)
     register_error_handlers(app)
     app.include_router(health_router)
     app.include_router(me_router)

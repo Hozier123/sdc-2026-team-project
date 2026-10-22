@@ -1,0 +1,30 @@
+{
+  "description": "Conversational chitchat and non-conditional delivery message yielding empty rows and populated ignored_spans",
+  "input": {
+    "masked_text": "hantar esok terima kasih",
+    "language_hint": "ms",
+    "request_id": "req-sample-empty-006"
+  },
+  "expected_response": {
+    "rows": [],
+    "ignored_spans": [
+      "hantar esok",
+      "terima kasih"
+    ]
+  },
+  "span_coordinates": [
+    {
+      "target": "ignored_spans[0]",
+      "verbatim_span": "hantar esok",
+      "start": 0,
+      "end": 11
+    },
+    {
+      "target": "ignored_spans[1]",
+      "verbatim_span": "terima kasih",
+      "start": 12,
+      "end": 24
+    }
+  ],
+  "rationale": "Conforms to H5 Truth Table Row 8 / Negative Contexts. 'hantar esok' is a standard delivery instruction without condition markers ('kalau', 'jika'), and 'terima kasih' is courteous Malaysian closing conversational text. Neither maps to closed-set products nor triggers conditions. The AI returns empty rows: [] and correctly routes both phrases to ignored_spans, completely preventing false draft order generation."
+}

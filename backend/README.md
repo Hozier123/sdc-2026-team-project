@@ -80,26 +80,42 @@ backend/.venv/Scripts/python -m app.seed `
 
 ## PII 与 parse-draft 骨架
 
-`POST /api/v1/orders/parse-draft` 已可调用，但当前使用确定性 `StubExtractor`：
-它会生成一个 `DISAMBIGUATION_REQUIRED` 的 v1 草稿，不生成正式商品行。
+`POST /api/v1/orders/parse-draft` 已可调用。未配置 `AI_SERVICE_URL` 时使用确定性
+`StubExtractor`，会生成一个 `DISAMBIGUATION_REQUIRED` 的 v1 草稿，不生成正式商品行。
+
+配置 `AI_SERVICE_URL` 后使用 `HttpAiExtractor`：
+
+```text
+AI_SERVICE_URL=https://.../api/v1/extract
+AI_API_KEY=...
+AI_TIMEOUT_S=8.0
+```
 
 流程：
 
 ```text
 Bearer → customer tenant check → PII mask
 → ExtractionProvider.extract(masked_text)
+→ AI-Contract-v1.3 schema 校验
+→ generic FAM_* 到 canonical seed 的显式映射
+→ conds / ignored_spans 转换
 → 基础 RawExtraction 校验
+→ AI 行进入草稿（未选 SKU 时标记 NO_CANDIDATE）
 → inbound_messages / orders / draft_versions
 → OrderDraft
 ```
 
+- AI 契约、样例和 H1/H5 映射在 `docs/ai_contract/`；
+- AI 只返回 `rows` + `ignored_spans`，不得返回 `sku_id`、价格、库存、审批或 DO；
+- `FAM_FLOUR`/`FAM_RICE`/`FAM_OIL`/`FAM_SUGAR` 目前显式映射到 canonical T1 的
+  `FAM_TEPUNG`/`FAM_BERAS`/`FAM_MINYAK`/`FAM_GULA`；租户差异后续用 catalog 注入；
+- 真实 endpoint/key 不在仓库；未配置时不会伪造 AI 调用；
 - PII 只允许 `[REDACTED_PHONE]`、`[REDACTED_MYKAD]`、`[REDACTED_EMAIL]`；
 - 仅 `CLERK` / `OWNER` 可调用；`WAREHOUSE` 返回 403 `FORBIDDEN_ACTION`；
 - 原始 `message_text` 不写日志、不落库、不传给 provider；
 - `masked_text` 超过 4000 code points 返回 422 `MESSAGE_TOO_LONG`；
 - customer 不存在或跨租户返回 404 `RESOURCE_NOT_FOUND`；
-- 真实 AI 到货后，用新的 `ExtractionProvider` 替换 `StubExtractor`，不改 API；
-- 当前骨架不是最终 H1/H5 解析能力。
+- 真实 H1/H5 准确率和 `clarification` 仍需 AI 端补齐；当前 adapter 不伪造这些。
 
 ## 草稿行、批准与 DO
 
