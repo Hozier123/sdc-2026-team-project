@@ -372,6 +372,9 @@ def _line(
         candidate_skus=candidates,
         available_qty=available,
     )
+    for issue in issues:
+        if issue.line_id is None:
+            issue.line_id = line.line_id
     return line, issues
 
 
