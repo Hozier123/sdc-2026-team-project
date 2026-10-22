@@ -33,7 +33,11 @@ class ParseDraftRequest(BaseModel):
 
     customer_id: str = Field(min_length=1)
     message_text: str = Field(min_length=1)
-    language_hint: str | None = None
+    language_hint: str | None = Field(
+        default=None,
+        max_length=35,
+        pattern=r"^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{2,8})?$",
+    )
 
 
 def get_extractor(request: Request) -> ExtractionProvider:

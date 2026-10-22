@@ -169,3 +169,18 @@ def test_parse_rejects_unknown_fields(seeded_db):
         )
     assert response.status_code == 422
     assert response.json()["error_code"] == "REQUEST_VALIDATION_FAILED"
+
+
+def test_parse_rejects_pii_in_language_hint(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(),
+            json={
+                "customer_id": "CUS_T1",
+                "message_text": RAW,
+                "language_hint": "0123456789",
+            },
+        )
+    assert response.status_code == 422
+    assert response.json()["error_code"] == "REQUEST_VALIDATION_FAILED"
