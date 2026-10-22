@@ -25,32 +25,33 @@ def seeded_db(db_settings):
             "INSERT INTO tenants (tenant_id, name, amount_threshold_rm) VALUES "
             "('T1', 'Tenant One', 1500), ('T2', 'Tenant Two', 1500)"
         )
-        conn.executemany(
-            "INSERT INTO users "
-            "(user_id, tenant_id, display_name, demo_token_hash, role, active) "
-            "VALUES (%s, %s, %s, %s, %s, %s)",
-            [
-                ("USR_T1_CLERK", "T1", "T1 Clerk", hash_token(TOKENS["clerk"]), "CLERK", True),
-                ("USR_T1_OWNER", "T1", "T1 Owner", hash_token(TOKENS["owner"]), "OWNER", True),
-                (
-                    "USR_T1_WAREHOUSE",
-                    "T1",
-                    "T1 Warehouse",
-                    hash_token(TOKENS["warehouse"]),
-                    "WAREHOUSE",
-                    True,
-                ),
-                (
-                    "USR_T1_INACTIVE",
-                    "T1",
-                    "T1 Inactive",
-                    hash_token(TOKENS["inactive"]),
-                    "CLERK",
-                    False,
-                ),
-                ("USR_T2_CLERK", "T2", "T2 Clerk", hash_token(TOKENS["t2"]), "CLERK", True),
-            ],
-        )
+        with conn.cursor() as cursor:
+            cursor.executemany(
+                "INSERT INTO users "
+                "(user_id, tenant_id, display_name, demo_token_hash, role, active) "
+                "VALUES (%s, %s, %s, %s, %s, %s)",
+                [
+                    ("USR_T1_CLERK", "T1", "T1 Clerk", hash_token(TOKENS["clerk"]), "CLERK", True),
+                    ("USR_T1_OWNER", "T1", "T1 Owner", hash_token(TOKENS["owner"]), "OWNER", True),
+                    (
+                        "USR_T1_WAREHOUSE",
+                        "T1",
+                        "T1 Warehouse",
+                        hash_token(TOKENS["warehouse"]),
+                        "WAREHOUSE",
+                        True,
+                    ),
+                    (
+                        "USR_T1_INACTIVE",
+                        "T1",
+                        "T1 Inactive",
+                        hash_token(TOKENS["inactive"]),
+                        "CLERK",
+                        False,
+                    ),
+                    ("USR_T2_CLERK", "T2", "T2 Clerk", hash_token(TOKENS["t2"]), "CLERK", True),
+                ],
+            )
     return db_settings
 
 
