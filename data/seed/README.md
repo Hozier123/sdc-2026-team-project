@@ -1,7 +1,7 @@
 # Canonical seed（T1 / T2）
 
 来源：`seed_he_2026-10-22.zip`  
-包 SHA-256：`AC8FFEC030476CD1CB02020FC95577EAB9783E5A3A393EF3246EF95323AAE8D4`
+包 SHA-256：`865049BFA7BA0170CB02316C42679EC7A3EB1D224E5C00DBE934A0591AFF47ED`
 
 ## 文件
 
@@ -23,7 +23,7 @@ SEED_MANIFEST.json
 | T1 | `KB-T1-20261022-r1` | 40 | 795 | 3 | 8 | 50 family / 26 uom |
 | T2 | `KB-T2-20261022-r1` | 16 | 450 | 3 | 5 | 30 family / 30 uom |
 
-T2 `alias_cache` 2 条；T1 `alias_cache` 0 条。
+T2 `alias_cache` 2 条；T1 `alias_cache` 2 条（`CUS_RASA` 的两条别名）。
 
 ## 导入
 
