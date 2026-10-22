@@ -55,7 +55,9 @@ def validate_data_only_sql(text: str) -> None:
     for statement in split(text):
         for node in parse_sql(statement):
             if isinstance(node.stmt, ast.TransactionStmt):
-                raise SeedError("seed SQL must not contain BEGIN/COMMIT/ROLLBACK")
+                raise SeedError(
+                    "seed SQL must not contain transaction control (BEGIN/COMMIT/ROLLBACK)"
+                )
 
 
 def _counts(conn: psycopg.Connection, tenant: str) -> tuple[int, int]:
