@@ -34,10 +34,12 @@ def get_delivery_order(
         raise ForbiddenActionError()
     with connect(settings) as conn:
         row = conn.execute(
-            "SELECT do_number, draft_id, draft_version, customer_id, customer_name, "
-            "lines, final_total_rm, prepared_by, approved_by, escalation_reasons, "
-            "approval_mode, reply_draft, related_do_number, approved_at "
-            "FROM delivery_orders WHERE tenant_id=%s AND do_number=%s",
+            "SELECT d.do_number, d.draft_id, d.draft_version, d.customer_id, c.name, "
+            "d.lines, d.final_total_rm, d.prepared_by, d.approved_by, d.escalation_reasons, "
+            "d.approval_mode, d.reply_draft, d.related_do_number, d.approved_at "
+            "FROM delivery_orders d "
+            "JOIN customers c ON c.tenant_id=d.tenant_id AND c.customer_id=d.customer_id "
+            "WHERE d.tenant_id=%s AND d.do_number=%s",
             (user.tenant_id, do_number),
         ).fetchone()
     if row is None:
