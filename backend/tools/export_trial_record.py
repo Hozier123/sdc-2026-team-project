@@ -2,18 +2,24 @@
 
 The manual baseline records each order line by line (L1, L2, ...). An order-level
 total cannot tell "wrong pack size" from "wrong quantity" from "wrong price", so
-the tool group must hand in rows with the same four values per line:
+the tool group must hand in rows with the same values per line:
 
-    sku_id, quantity, applied_unit_price, subtotal_rm
+    sku_id, pack_size, grade, quantity, unit, applied_unit_price, subtotal_rm
 
-Rules confirmed by the test side (A1/B1/C1):
+Rules confirmed by the test side (A1/B1/C1) plus Zhou's supplements:
 
-* line order is the ``lines[]`` array order, labelled ``L1..Ln``; no sorting
-* every row carries ``do_number`` so a trial with several DOs stays separable
-* ``unit`` and ``display_name`` are included read-only for human reconciliation
-* money is a decimal string; ``subtotal_rm == quantity * applied_unit_price``
-  and ``sum(subtotal_rm) == final_total_rm`` must both hold, otherwise the file
-  is written and the process exits with code 2 so the defect is not missed
+* line order is the ``lines[]`` array order, labelled ``L1..Ln``; no sorting.
+  The export also compares that order with the draft's ``working_lines``; a
+  mismatch means L1/L2 no longer match the message lines and the record is not
+  usable (exit code 2).
+* every row carries ``do_number``, ``customer_id`` and ``ai_mode``
+* ``final_total_rm`` is exported next to the line subtotals so a wrong order
+  total is visible instead of being hidden by line-level sums
+* ``pack_size``/``grade`` come from the products table; ``--products-version``
+  and ``--products-sha256`` record which snapshot they were read from
+* ``ai_mode == MIXED`` (automatic degradation during a trial) is flagged per row
+  and listed separately; such orders must not enter the median
+* only ``delivery_orders`` rows are read: drafts are never exported
 
 Usage (from ``backend/``)::
 
@@ -21,10 +27,8 @@ Usage (from ``backend/``)::
         --case-id TEST-01 --out-dir ../evidence/records
 
     python -m tools.export_trial_record --database-url "$DATABASE_URL" \\
-        --tenant T1 --case-id TEST-01 --out-dir ../evidence/records
-
-``--fixture`` validates the format before P0-A can produce real orders; the
-database mode is the one used during the trial.
+        --tenant T1 --case-id TEST-01 --out-dir ../evidence/records \\
+        --products-version T1-0.1 --products-sha256 <sha>
 """
 
 from __future__ import annotations
@@ -46,12 +50,18 @@ REQUIRED_LINE_FIELDS = ("sku_id", "quantity", "applied_unit_price", "subtotal_rm
 COLUMNS = (
     "case_id",
     "do_number",
+    "customer_id",
+    "ai_mode",
+    "ai_mode_mixed",
     "line_no",
     "sku_id",
+    "pack_size",
+    "grade",
     "quantity",
     "unit",
     "applied_unit_price",
     "subtotal_rm",
+    "final_total_rm",
     "display_name",
 )
 SAFE_CASE_ID = re.compile(r"^[A-Za-z0-9_.-]+$")
@@ -67,19 +77,28 @@ class DoExport:
     tenant_id: str
     do_number: str
     customer_id: str
+    ai_mode: str
     final_total_rm: str
     rows: list[dict[str, Any]]
     sum_subtotal_rm: str
     totals_match: bool
+    order_mismatch: bool
     errors: list[str]
+
+    @property
+    def ai_mode_mixed(self) -> bool:
+        return self.ai_mode.upper() == "MIXED"
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "do_number": self.do_number,
             "customer_id": self.customer_id,
+            "ai_mode": self.ai_mode,
+            "ai_mode_mixed": self.ai_mode_mixed,
             "final_total_rm": self.final_total_rm,
             "sum_subtotal_rm": self.sum_subtotal_rm,
             "totals_match": self.totals_match,
+            "order_mismatch": self.order_mismatch,
             "lines": self.rows,
             "errors": self.errors,
         }
@@ -92,33 +111,51 @@ def money(value: Any) -> Decimal:
         raise ExportError(f"not a decimal value: {value!r}") from None
 
 
-def rows_from_do(case_id: str, do: dict[str, Any]) -> list[dict[str, Any]]:
+def rows_from_do(
+    case_id: str,
+    do: dict[str, Any],
+    products: dict[str, dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
     lines = do.get("lines")
     if not isinstance(lines, list):
         raise ExportError("DO has no lines array")
+    products = products or {}
     rows: list[dict[str, Any]] = []
     for index, line in enumerate(lines, start=1):
         missing = [field for field in REQUIRED_LINE_FIELDS if field not in line]
         if missing:
             raise ExportError(f"line {index} is missing {', '.join(missing)}")
+        product = products.get(line["sku_id"], {})
         rows.append(
             {
                 "case_id": case_id,
                 "do_number": do.get("do_number", ""),
+                "customer_id": do.get("customer_id", ""),
+                "ai_mode": do.get("ai_mode", ""),
+                "ai_mode_mixed": str(do.get("ai_mode", "")).upper() == "MIXED",
                 "line_no": f"L{index}",
                 "sku_id": line["sku_id"],
+                "pack_size": product.get("pack_size") or "",
+                "grade": product.get("grade") or "",
                 "quantity": line["quantity"],
                 "unit": line.get("unit", ""),
                 "applied_unit_price": str(line["applied_unit_price"]),
                 "subtotal_rm": str(line["subtotal_rm"]),
+                "final_total_rm": str(do.get("final_total_rm", "")),
                 "display_name": line.get("display_name", ""),
             }
         )
     return rows
 
 
-def build_export(case_id: str, tenant_id: str, do: dict[str, Any]) -> DoExport:
-    rows = rows_from_do(case_id, do)
+def build_export(
+    case_id: str,
+    tenant_id: str,
+    do: dict[str, Any],
+    products: dict[str, dict[str, Any]] | None = None,
+    working_lines: list[dict[str, Any]] | None = None,
+) -> DoExport:
+    rows = rows_from_do(case_id, do, products)
     errors: list[str] = []
     for row in rows:
         expected = money(row["quantity"]) * money(row["applied_unit_price"])
@@ -132,15 +169,27 @@ def build_export(case_id: str, tenant_id: str, do: dict[str, Any]) -> DoExport:
     if line_sum != final_total:
         errors.append(f"sum(subtotal_rm) {line_sum} != final_total_rm {final_total}")
 
+    order_mismatch = False
+    if working_lines is not None:
+        draft_ids = [line.get("line_id") for line in working_lines]
+        do_ids = [line.get("line_id") for line in do.get("lines", [])]
+        if draft_ids != do_ids:
+            order_mismatch = True
+            errors.append(
+                f"line order differs from the draft working_lines order: {draft_ids} != {do_ids}"
+            )
+
     return DoExport(
         case_id=case_id,
         tenant_id=tenant_id,
         do_number=str(do.get("do_number", "")),
         customer_id=str(do.get("customer_id", "")),
+        ai_mode=str(do.get("ai_mode", "")),
         final_total_rm=str(final_total),
         rows=rows,
         sum_subtotal_rm=str(line_sum),
-        totals_match=not errors,
+        totals_match=line_sum == final_total and not any("subtotal" in e for e in errors),
+        order_mismatch=order_mismatch,
         errors=errors,
     )
 
@@ -153,22 +202,49 @@ def load_fixture(path: Path) -> dict[str, Any]:
     return body
 
 
-def fetch_orders(database_url: str, tenant_id: str, do_number: str | None) -> list[dict[str, Any]]:
-    query = (
-        "SELECT to_jsonb(d) FROM delivery_orders d WHERE tenant_id = %s"
-        + (" AND do_number = %s" if do_number else "")
-        + " ORDER BY approved_at"
-    )
+def fetch_orders(
+    database_url: str, tenant_id: str, do_number: str | None
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    """Return DOs plus the product snapshot used for pack_size/grade."""
+    where = "d.tenant_id = %s" + (" AND d.do_number = %s" if do_number else "")
     params: tuple[Any, ...] = (tenant_id, do_number) if do_number else (tenant_id,)
+    query = (
+        "SELECT to_jsonb(d) || jsonb_build_object("
+        "  'ai_mode', o.ai_mode,"
+        "  'working_lines', o.working_lines"
+        ") "
+        "FROM delivery_orders d "
+        "LEFT JOIN orders o ON o.tenant_id = d.tenant_id AND o.draft_id = d.draft_id "
+        f"WHERE {where} ORDER BY d.approved_at"
+    )
     try:
         with psycopg.connect(database_url, autocommit=True, connect_timeout=5) as conn:
-            return [row[0] for row in conn.execute(query, params).fetchall()]
+            orders = [row[0] for row in conn.execute(query, params).fetchall()]
+            products = {
+                row[0]: {"pack_size": row[1], "grade": row[2]}
+                for row in conn.execute(
+                    "SELECT product_id, pack_size, grade FROM products WHERE tenant_id = %s",
+                    (tenant_id,),
+                )
+            }
+            return orders, products
     except psycopg.Error as exc:
         raise ExportError(f"cannot read delivery orders (SQLSTATE {exc.sqlstate})") from None
 
 
+def _extract_working_lines(do: dict[str, Any]) -> list[dict[str, Any]] | None:
+    value = do.get("working_lines")
+    if value is None:
+        return None
+    return value if isinstance(value, list) else None
+
+
 def write_outputs(
-    out_dir: Path, case_id: str, exports: Iterable[DoExport], total_row: bool
+    out_dir: Path,
+    case_id: str,
+    exports: Iterable[DoExport],
+    total_row: bool,
+    products_meta: dict[str, Any] | None = None,
 ) -> tuple[Path, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     csv_path = out_dir / f"{case_id}_do_lines.csv"
@@ -185,20 +261,31 @@ def write_outputs(
                     {
                         "case_id": export.case_id,
                         "do_number": export.do_number,
+                        "customer_id": export.customer_id,
+                        "ai_mode": export.ai_mode,
+                        "ai_mode_mixed": export.ai_mode_mixed,
                         "line_no": "合计",
                         "sku_id": "",
+                        "pack_size": "",
+                        "grade": "",
                         "quantity": "",
                         "unit": "",
                         "applied_unit_price": "",
                         "subtotal_rm": export.final_total_rm,
+                        "final_total_rm": export.final_total_rm,
                         "display_name": "" if export.totals_match else "总额或行金额不一致",
                     }
                 )
 
+    mixed = [export.do_number for export in exports if export.ai_mode_mixed]
+    order_mismatch = [export.do_number for export in exports if export.order_mismatch]
     payload = {
         "case_id": case_id,
         "exported_at": datetime.now().astimezone().isoformat(),
+        "products": products_meta or {},
         "totals_match": all(export.totals_match for export in exports),
+        "mixed_orders": mixed,
+        "order_mismatch_orders": order_mismatch,
         "orders": [export.as_dict() for export in exports],
     }
     json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -216,6 +303,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--do-number")
     parser.add_argument("--case-id", required=True, help="trial case id, e.g. TEST-01")
     parser.add_argument("--out-dir", default="evidence/records")
+    parser.add_argument("--products-version", help="products snapshot version, e.g. T1-0.1")
+    parser.add_argument("--products-sha256", help="products.csv SHA-256 used for pack_size/grade")
     parser.add_argument(
         "--no-total-row",
         action="store_true",
@@ -231,6 +320,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     try:
+        products: dict[str, dict[str, Any]] = {}
         if args.fixture:
             path = Path(args.fixture).expanduser().resolve()
             if not path.is_file():
@@ -239,22 +329,41 @@ def main(argv: list[str] | None = None) -> int:
         else:
             if not args.database_url:
                 raise ExportError("DATABASE_URL (or --database-url) is required")
-            orders = fetch_orders(args.database_url, args.tenant, args.do_number)
+            orders, products = fetch_orders(args.database_url, args.tenant, args.do_number)
             if not orders:
                 raise ExportError(
                     f"no delivery orders for tenant {args.tenant}"
                     + (f" and do_number {args.do_number}" if args.do_number else "")
                 )
 
-        exports = [build_export(args.case_id, args.tenant, do) for do in orders]
+        exports = [
+            build_export(
+                args.case_id,
+                args.tenant,
+                do,
+                products=products,
+                working_lines=_extract_working_lines(do) if args.fixture is None else None,
+            )
+            for do in orders
+        ]
+        products_meta = {
+            key: value
+            for key, value in (
+                ("version", args.products_version),
+                ("sha256", args.products_sha256),
+            )
+            if value
+        }
         csv_path, json_path = write_outputs(
-            Path(args.out_dir), args.case_id, exports, not args.no_total_row
+            Path(args.out_dir), args.case_id, exports, not args.no_total_row, products_meta
         )
     except ExportError as exc:
         print(f"export failed: {exc}")
         return 1
 
     mismatched = [export.do_number for export in exports if not export.totals_match]
+    order_mismatch = [export.do_number for export in exports if export.order_mismatch]
+    mixed = [export.do_number for export in exports if export.ai_mode_mixed]
     print(
         json.dumps(
             {
@@ -263,17 +372,20 @@ def main(argv: list[str] | None = None) -> int:
                 "lines": sum(len(export.rows) for export in exports),
                 "totals_match": not mismatched,
                 "mismatched_orders": mismatched,
+                "order_mismatch_orders": order_mismatch,
+                "mixed_orders": mixed,
                 "csv": str(csv_path),
                 "json": str(json_path),
             },
             ensure_ascii=False,
         )
     )
-    if mismatched:
-        print("export warning: totals do not match; files written but the record is not clean")
+    if mismatched or order_mismatch:
+        print(
+            "export warning: totals or line order do not match; files written "
+            "but the record is not clean"
+        )
         return 2
+    if mixed:
+        print("export warning: MIXED ai_mode detected; report these orders separately")
     return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

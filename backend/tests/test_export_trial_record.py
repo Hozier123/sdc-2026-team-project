@@ -195,8 +195,10 @@ def test_exports_real_do_from_database(admin, tmp_path):
                 "VALUES ('CUS_ALI', 'T1', 'Restoran Ali', 'A')"
             )
             conn.execute(
-                "INSERT INTO orders (tenant_id, draft_id, customer_id, status, ai_mode) "
-                "VALUES ('T1', 'DRF_001', 'CUS_ALI', 'DO_GENERATED', 'ALIAS_ONLY')"
+                "INSERT INTO orders (tenant_id, draft_id, customer_id, status, ai_mode, "
+                "working_lines) "
+                "VALUES ('T1', 'DRF_001', 'CUS_ALI', 'DO_GENERATED', 'ALIAS_ONLY', %s::jsonb)",
+                (json.dumps([{"line_id": "LIN_001"}]),),
             )
             conn.execute(
                 "INSERT INTO draft_versions (tenant_id, draft_id, version, snapshot, created_by) "
@@ -211,13 +213,22 @@ def test_exports_real_do_from_database(admin, tmp_path):
                 (json.dumps(DO["lines"]),),
             )
 
-        orders = fetch_orders(url, "T1", "DO-20261021-0003")
+        orders, products = fetch_orders(url, "T1", "DO-20261021-0003")
         assert len(orders) == 1
 
-        export = build_export("TEST-01", "T1", orders[0])
+        export = build_export(
+            "TEST-01",
+            "T1",
+            orders[0],
+            products=products,
+            working_lines=orders[0]["working_lines"],
+        )
+        assert export.order_mismatch is False
         assert export.totals_match is True
         assert export.rows[0]["sku_id"] == "SKU_OIL_5KG"
         assert export.rows[0]["line_no"] == "L1"
+        assert export.rows[0]["customer_id"] == "CUS_ALI"
+        assert export.ai_mode == "ALIAS_ONLY"
 
         csv_path, json_path = write_outputs(tmp_path, "TEST-01", [export], total_row=False)
         assert csv_path.is_file() and json_path.is_file()
@@ -225,3 +236,19 @@ def test_exports_real_do_from_database(admin, tmp_path):
         admin.execute(
             sql.SQL("DROP DATABASE IF EXISTS {} WITH (FORCE)").format(sql.Identifier(name))
         )
+
+
+def test_mixed_ai_mode_is_flagged():
+    do = {**DO, "ai_mode": "MIXED"}
+
+    export = build_export("TEST-01", "T1", do)
+
+    assert export.ai_mode_mixed is True
+    assert export.as_dict()["ai_mode_mixed"] is True
+
+
+def test_line_order_mismatch_is_flagged():
+    export = build_export("TEST-01", "T1", DO, working_lines=[{"line_id": "LIN_OTHER"}])
+
+    assert export.order_mismatch is True
+    assert any("working_lines" in error for error in export.errors)
