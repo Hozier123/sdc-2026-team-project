@@ -16,11 +16,18 @@ from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.auth import CurrentUser
+from app.clarification import build_clarification
 from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
 from app.draft_store import persist_parse_draft
-from app.errors import ForbiddenActionError, MessageTooLongError, ResourceNotFoundError
+from app.errors import (
+    AiAndFallbackUnavailableError,
+    ForbiddenActionError,
+    MessageTooLongError,
+    ResourceNotFoundError,
+)
+from app.extraction.ai import AiServiceError
 from app.extraction.base import ExtractionProvider, validate_raw_extraction
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
@@ -84,6 +91,7 @@ def _ai_draft(
     raw,
     draft_id: str,
     now: str,
+    language_hint: str | None,
 ) -> dict[str, Any]:
     lines: list[WorkingLine] = []
     issues: list[Issue] = []
@@ -211,6 +219,10 @@ def _ai_draft(
                     blocking.add("CUSTOMER_CONDITION")
 
     status = "READY_FOR_APPROVAL" if lines and not blocking else "DISAMBIGUATION_REQUIRED"
+    clarification, clarification_lang = build_clarification(issues, conditions, language_hint)
+    allowed_actions = ["EDIT_DRAFT", "RESOLVE_ISSUE"]
+    if clarification is not None:
+        allowed_actions.append("COPY_CLARIFICATION")
     return {
         "draft_id": draft_id,
         "version": 1,
@@ -232,10 +244,10 @@ def _ai_draft(
         "blocking_issues": sorted(blocking),
         "escalation_preview": [],
         "totals": {"order_total": None, "currency": "MYR", "is_complete": False},
-        "allowed_actions": ["EDIT_DRAFT", "RESOLVE_ISSUE"],
+        "allowed_actions": allowed_actions,
         "blocked_actions": {"APPROVE_AND_GENERATE_DO": sorted(blocking)},
-        "clarification_draft": None,
-        "clarification_lang": None,
+        "clarification_draft": clarification.model_dump(mode="json") if clarification else None,
+        "clarification_lang": clarification_lang,
         "ignored_spans": [dict(span) for span in raw.ignored_spans],
         "created_at": now,
         "updated_at": now,
@@ -271,11 +283,14 @@ def parse_draft(
         raise MessageTooLongError()
 
     customer = _customer(settings, user, body.customer_id)
-    raw = extractor.extract(
-        masked.masked_text,
-        body.language_hint,
-        request.state.request_id,
-    )
+    try:
+        raw = extractor.extract(
+            masked.masked_text,
+            body.language_hint,
+            request.state.request_id,
+        )
+    except AiServiceError as exc:
+        raise AiAndFallbackUnavailableError() from exc
     validate_raw_extraction(raw, masked.masked_text)
     now = datetime.now(timezone.utc).isoformat()
     draft_id = f"DRF_{uuid4().hex.upper()}"
@@ -286,9 +301,14 @@ def parse_draft(
             raw=raw,
             draft_id=draft_id,
             now=now,
+            language_hint=body.language_hint,
         )
     else:
-        issue = _unresolved_issue()
+        issue = Issue(**_unresolved_issue())
+        clarification, clarification_lang = build_clarification([issue], (), body.language_hint)
+        allowed_actions = ["EDIT_DRAFT", "RESOLVE_ISSUE"]
+        if clarification is not None:
+            allowed_actions.append("COPY_CLARIFICATION")
         draft = {
             "draft_id": draft_id,
             "version": 1,
@@ -305,15 +325,17 @@ def parse_draft(
             "masked_message": masked.masked_text,
             "ai_mode": "FALLBACK",
             "lines": [],
-            "issues": [issue],
+            "issues": [issue.model_dump(mode="json")],
             "conditions": [],
             "blocking_issues": ["LOW_CONFIDENCE_MATCH"],
             "escalation_preview": [],
             "totals": {"order_total": None, "currency": "MYR", "is_complete": False},
-            "allowed_actions": ["EDIT_DRAFT", "RESOLVE_ISSUE"],
+            "allowed_actions": allowed_actions,
             "blocked_actions": {"APPROVE_AND_GENERATE_DO": ["LOW_CONFIDENCE_MATCH"]},
-            "clarification_draft": None,
-            "clarification_lang": None,
+            "clarification_draft": (
+                clarification.model_dump(mode="json") if clarification else None
+            ),
+            "clarification_lang": clarification_lang,
             "ignored_spans": [],
             "created_at": now,
             "updated_at": now,

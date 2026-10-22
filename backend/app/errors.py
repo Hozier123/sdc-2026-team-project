@@ -32,6 +32,12 @@ class MessageTooLongError(ApiError):
     default_message = "message_text must not exceed 4000 Unicode code points."
 
 
+class AiAndFallbackUnavailableError(ApiError):
+    status_code = 503
+    error_code = "AI_AND_FALLBACK_UNAVAILABLE"
+    default_message = "AI extraction and local fallback are unavailable."
+
+
 class ResourceNotFoundError(ApiError):
     status_code = 404
     error_code = "RESOURCE_NOT_FOUND"

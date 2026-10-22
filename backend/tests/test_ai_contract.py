@@ -167,6 +167,7 @@ def test_ai_draft_conversion_builds_lines_and_conditions():
         raw=raw,
         draft_id="DRF_TEST_AI",
         now="2026-10-22T00:00:00+00:00",
+        language_hint="ms",
     )
     model = OrderDraftResponse(**draft)
     assert model.ai_mode == "LLM"
@@ -177,4 +178,8 @@ def test_ai_draft_conversion_builds_lines_and_conditions():
     assert model.conditions[0].code == "CUSTOMER_CONDITION"
     assert model.conditions[0].condition_kind == "PRICE"
     assert model.conditions[0].requested_unit_price == "95.00"
+    assert model.clarification_draft is not None
+    assert model.clarification_draft.language == "ms"
+    assert "harga" in model.clarification_draft.message
+    assert "COPY_CLARIFICATION" in model.allowed_actions
     assert model.ignored_spans == []

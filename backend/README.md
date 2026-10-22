@@ -115,7 +115,37 @@ Bearer → customer tenant check → PII mask
 - 原始 `message_text` 不写日志、不落库、不传给 provider；
 - `masked_text` 超过 4000 code points 返回 422 `MESSAGE_TOO_LONG`；
 - customer 不存在或跨租户返回 404 `RESOURCE_NOT_FOUND`；
-- 真实 H1/H5 准确率和 `clarification` 仍需 AI 端补齐；当前 adapter 不伪造这些。
+- 真实 H1/H5 准确率仍需 AI endpoint/评测集；当前 adapter 不伪造这些。
+
+## Clarification、CORS 与 AI 失败
+
+`clarification_draft` 由后端根据未解决 issues/conditions 生成：
+
+```text
+language
+message
+unresolved_issue_ids
+```
+
+只在 `clarification_draft` 非空时返回 `COPY_CLARIFICATION`。支持 `ms` / `en` / `zh`，
+不包含原始 PII，不声称价格、SKU 或数量已确认。
+
+CORS 默认允许本地前端：
+
+```text
+http://127.0.0.1:5173
+http://localhost:5173
+http://127.0.0.1:4173
+http://localhost:4173
+```
+
+可用 `CORS_ALLOW_ORIGINS` 覆盖；不使用 `*`。
+
+AI 服务超时、5xx、非法 JSON 或非法 payload 返回：
+
+```text
+503 AI_AND_FALLBACK_UNAVAILABLE
+```
 
 ## 草稿行、批准与 DO
 
