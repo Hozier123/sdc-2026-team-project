@@ -115,3 +115,31 @@ def test_seed_file_cannot_contain_transaction_control(tmp_path):
             Settings(_env_file=None),
             **_args(path),
         )
+
+
+def test_seed_file_must_contain_only_inserts(tmp_path):
+    path = _write(tmp_path, "CREATE TABLE public.evil (id integer);\n")
+    with pytest.raises(SeedError, match="only INSERT"):
+        load_seed(
+            Settings(_env_file=None),
+            **_args(path),
+        )
+
+
+def test_seed_file_must_be_utf8(tmp_path):
+    path = tmp_path / "seed_T1.sql"
+    path.write_bytes(b"\xff\xfe\x00")
+    with pytest.raises(SeedError, match="UTF-8"):
+        load_seed(
+            Settings(_env_file=None),
+            **_args(path),
+        )
+
+
+def test_seed_counts_must_be_non_negative(tmp_path):
+    path = _write(tmp_path)
+    with pytest.raises(SeedError, match="non-negative"):
+        load_seed(
+            Settings(_env_file=None),
+            **_args(path, products=-1),
+        )
