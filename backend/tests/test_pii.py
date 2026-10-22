@@ -27,6 +27,13 @@ def test_email_with_numeric_local_part_is_masked_as_email_first():
     assert [token.kind for token in result.tokens] == ["EMAIL"]
 
 
+def test_international_phone_with_spaces_is_masked():
+    raw = "Call +60 12-345 6789 now"
+    result = mask_message(raw)
+    assert "12-345 6789" not in result.masked_text
+    assert "[REDACTED_PHONE]" in result.masked_text
+
+
 def test_mask_is_deterministic_and_keeps_original_message_untouched():
     raw = "Hubungi 0123456789"
     first = mask_message(raw)

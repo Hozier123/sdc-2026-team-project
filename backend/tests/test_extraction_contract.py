@@ -14,10 +14,16 @@ def test_row_span_must_exist_in_masked_text():
         validate_raw_extraction(raw, "Tepung 5 ctn")
 
 
-@pytest.mark.parametrize("qty", [0, -1, "5", 1.5])
+@pytest.mark.parametrize("qty", [0, -1, "5", 1.5, True])
 def test_qty_must_be_positive_integer_or_null(qty):
     raw = RawExtraction(rows=(RawRow(span="5 ctn", qty=qty),))
     with pytest.raises(ValueError, match="qty"):
+        validate_raw_extraction(raw, "Tepung 5 ctn")
+
+
+def test_span_must_be_a_string():
+    raw = RawExtraction(rows=(RawRow(span=5, qty=5),))
+    with pytest.raises(ValueError, match="span"):
         validate_raw_extraction(raw, "Tepung 5 ctn")
 
 

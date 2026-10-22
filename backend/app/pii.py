@@ -20,7 +20,7 @@ TOKEN_BY_KIND: dict[MaskKind, str] = {
 
 _PII_RE = re.compile(
     r"(?P<EMAIL>[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,})"
-    r"|(?P<PHONE>(?<!\d)(?:\+?60|0)1[0-9](?:[-\s]?\d){7,8}(?!\d))"
+    r"|(?P<PHONE>(?<!\d)(?:\+?60[-\s]?|0)1[0-9](?:[-\s]?\d){7,8}(?!\d))"
     r"|(?P<MYKAD>(?<!\d)\d{6}[-\s]?\d{2}[-\s]?\d{4}(?!\d))"
 )
 

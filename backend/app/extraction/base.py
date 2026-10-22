@@ -38,8 +38,10 @@ def validate_raw_extraction(raw: RawExtraction, masked_text: str) -> RawExtracti
     for row in raw.rows:
         if not isinstance(row, RawRow):
             raise TypeError("rows must contain RawRow")
-        if not row.span or row.span not in masked_text:
+        if not isinstance(row.span, str) or not row.span or row.span not in masked_text:
             raise ValueError("row span is not in masked_text")
-        if row.qty is not None and (not isinstance(row.qty, int) or row.qty < 1):
+        if isinstance(row.qty, bool) or (
+            row.qty is not None and (not isinstance(row.qty, int) or row.qty < 1)
+        ):
             raise ValueError("row qty must be a positive integer or null")
     return raw
