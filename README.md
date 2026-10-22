@@ -2,7 +2,7 @@
 
 SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
-**当前状态：项目目录模板。尚未实现前端、后端、AI 服务或业务功能。** 本次提交只调整仓库结构，不代表功能开发完成。
+**当前状态：已冻结 Gate 0，并实现 P0-A 第一个后端基础版本。** 可启动 FastAPI、检查存活/数据库就绪、在空库执行冻结迁移。前端、AI、seed、鉴权及订单业务链路尚未实现，不代表可用业务原型已完成。
 
 ## 项目信息
 
@@ -16,7 +16,7 @@ SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 | 成员及分工 | TODO：按团队最终分工填写 |
 | 仓库 | https://github.com/Hozier123/sdc-2026-team-project |
 
-计划解决的问题：将马来西亚批发商收到的 WhatsApp 混语订单，转为经核对、经人工批准、可追溯的送货单。不确定的信息交给适当的人处理。上述是项目目标，当前模板尚未实现。
+计划解决的问题：将马来西亚批发商收到的 WhatsApp 混语订单，转为经核对、经人工批准、可追溯的送货单。不确定的信息交给适当的人处理。上述业务目标尚未实现。
 
 ## 仓库根目录
 
@@ -24,8 +24,13 @@ SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
 ```text
 sdc-2026-team-project/
-├── backend/                    # 后端，计划使用 FastAPI
-│   └── .gitkeep
+├── .github/workflows/          # 后端基础 CI：隔离 PostgreSQL 验收
+├── backend/                    # FastAPI 后端基础
+│   ├── app/                    # 存活/就绪探针、配置、连接、迁移执行器
+│   ├── tests/                  # 单元与 PostgreSQL 集成测试
+│   ├── pyproject.toml
+│   ├── requirements.lock       # 精确版本安装约束
+│   └── README.md               # 安装、启动、迁移与测试说明
 ├── data/
 │   ├── seed/                   # 团队自建合成种子数据
 │   │   └── .gitkeep
@@ -35,6 +40,7 @@ sdc-2026-team-project/
 │   ├── competition-checklist.md
 │   └── setup-windows.md
 ├── evidence/
+│   ├── backend-foundation/     # 后端基础实测记录（非业务 KPI）
 │   ├── gate0/                  # Gate 0 独立确认材料
 │   │   ├── README.md
 │   │   └── 确认书.md
@@ -61,7 +67,7 @@ sdc-2026-team-project/
 └── README.md
 ```
 
-上面的目录树按 GitHub 文件列表的顺序排列：文件夹在前、文件在后，各自按名称排序，并列出当前跟踪的文件。GitHub 可能将只有一个子目录的路径折叠显示，例如 `src/pages`；这仍然表示嵌套的两个目录。
+上面的目录树列出主要目录及入口文件。GitHub 可能将只有一个子目录的路径折叠显示，例如 `src/pages`；这仍然表示嵌套的两个目录。
 
 空目录中的 `.gitkeep` 仅用于让 Git 保留目录；后续加入实际文件后可移除占位文件。`data/README.md` 和 `frontend/README.md` 提供目录说明，也让 GitHub 根目录分别显示 `data/` 和 `frontend/`。前端工程直接放在 `frontend/`，后端直接放在 `backend/`。
 
@@ -73,18 +79,20 @@ Gate 0 已冻结于 [`gate0-baseline-v1`](https://github.com/Hozier123/sdc-2026-
 
 ## 环境与运行方式
 
-当前没有可启动的业务程序，不需要运行旧的 `python src/main.py`。旧的根目录 `src/`、`runpod/`、示例测试、仅供演示的 `requirements.txt` 和 `.replit` 已从当前版本移除，历史提交保留。
+已有可启动的后端基础服务，但尚无订单业务接口。不要运行旧的 `python src/main.py`。旧的根目录 `src/`、`runpod/`、示例测试、仅供演示的 `requirements.txt` 和 `.replit` 已从当前版本移除，历史提交保留。
 
 先克隆仓库：
 ```powershell
 git clone https://github.com/Hozier123/sdc-2026-team-project.git
 cd sdc-2026-team-project
-Copy-Item -LiteralPath .env.example -Destination .env
+if (-not (Test-Path -LiteralPath .env)) {
+    Copy-Item -LiteralPath .env.example -Destination .env
+}
 ```
 
 仓库已有本地副本的组员，先妥善保存现有修改，再运行 `git pull --ff-only` 更新。真实 `.env` 已被 Git 忽略。
 
-待各模块初始化后，由负责人添加实际依赖清单、启动命令和部署配置，并从干净环境验证后更新此处。安装与协作说明见 [docs/setup-windows.md](docs/setup-windows.md)。
+后端使用 Python 3.13 + PostgreSQL 17，依赖、显式迁移命令、`/healthz` 与 `/readyz` 及完整测试步骤见 [backend/README.md](backend/README.md)。安装与协作说明见 [docs/setup-windows.md](docs/setup-windows.md)，实测范围与限制见 [后端基础验证记录](evidence/backend-foundation/README.md)。
 
 计划采用的开发与部署方式：
 - 开发：Vite 将 API 请求代理到 FastAPI。
@@ -96,7 +104,11 @@ Copy-Item -LiteralPath .env.example -Destination .env
 `.env.example` 保留方案中的六个变量名，值均为空：
 `DATABASE_URL`、`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`、`LLM_TIMEOUT_S`、`DEMO_MODE`、`SIM_INBOUND_KEY`。
 
-由模块负责人在实际接入时定义并记录其类型与用途。真实密钥只放本地环境或 Replit Secrets，不写入代码、文档或截图。业务演示只使用团队自建合成数据。
+本阶段仅使用 `DATABASE_URL`（PostgreSQL URI）；其余五项尚未接入。真实密钥只放本地环境或 Replit Secrets，不写入代码、文档或截图。业务演示只使用团队自建合成数据。
+
+## 后续实现顺序
+
+后端基础 PR 验收后，依次推进 seed + Bearer 鉴权 + `/me`、PII + parse（包含 H1/H5）、GET draft + PUT lines、approve/DO、approvals/decide。H1/H5 和批准主链路不能长期后置。01—04 的 v1.3 工作文档放在 `docs/rules/`，以独立提交随对应实现更新；不回写冻结原件。
 
 ## 必要链接与正式材料
 

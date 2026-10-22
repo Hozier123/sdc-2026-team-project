@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kiraorder-backend"
+version = "0.1.0"
+description = "KiraOrder P0-A backend foundation"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "fastapi==0.158.1",
+    "pydantic-settings==2.16.1",
+    "psycopg[binary]==3.3.6",
+    "uvicorn==0.54.0",
+    "pglast==7.21",
+]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1", "httpx==0.28.1", "ruff==0.17.1"]
+
+[project.scripts]
+kiraorder-migrate = "app.migrations:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["integration: requires TEST_DATABASE_ADMIN_URL with CREATEDB permission"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
