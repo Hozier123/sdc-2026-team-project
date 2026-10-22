@@ -280,4 +280,6 @@ INSERT INTO inventory (tenant_id, product_id, available_qty, updated_at) VALUES 
 INSERT INTO inventory (tenant_id, product_id, available_qty, updated_at) VALUES ('T1', 'SKU_DAL_1KG', 20, '2026-10-22T00:00:00Z') ON CONFLICT DO NOTHING;
 INSERT INTO inventory (tenant_id, product_id, available_qty, updated_at) VALUES ('T1', 'SKU_SANTAN_1L', 20, '2026-10-22T00:00:00Z') ON CONFLICT DO NOTHING;
 INSERT INTO inventory (tenant_id, product_id, available_qty, updated_at) VALUES ('T1', 'SKU_OAT_1KG', 20, '2026-10-22T00:00:00Z') ON CONFLICT DO NOTHING;
--- alias_cache: 0 rows
+-- alias_cache: 2 rows
+INSERT INTO alias_cache (alias_id, tenant_id, customer_id, phrase, phrase_norm, target_type, family_id, product_id, active, revoked_at, confirmed_by, created_at) VALUES ('ALS_CACHE_RASA_001', 'T1', 'CUS_RASA', '老规矩辣椒酱', '老规矩辣椒酱', 'SKU', NULL, 'SKU_CILI_1KG', TRUE, NULL, 'USR_T1_CLERK', '2026-10-22T00:00:00Z') ON CONFLICT DO NOTHING;
+INSERT INTO alias_cache (alias_id, tenant_id, customer_id, phrase, phrase_norm, target_type, family_id, product_id, active, revoked_at, confirmed_by, created_at) VALUES ('ALS_CACHE_RASA_002', 'T1', 'CUS_RASA', '生抽王', '生抽王', 'SKU', NULL, 'SKU_KICAP_CTN', TRUE, NULL, 'USR_T1_CLERK', '2026-10-22T00:00:00Z') ON CONFLICT DO NOTHING;

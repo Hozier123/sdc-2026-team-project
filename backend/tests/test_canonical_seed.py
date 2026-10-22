@@ -48,7 +48,7 @@ def test_canonical_t1_t2_seed_loads_counts_and_is_idempotent(db_settings):
                     "uom_aliases": 26,
                     "customer_tier_prices": 80,
                     "inventory": 40,
-                    "alias_cache": 0,
+                    "alias_cache": 2,
                 },
             ),
             (
@@ -81,6 +81,13 @@ def test_canonical_t1_t2_seed_loads_counts_and_is_idempotent(db_settings):
         assert conn.execute(
             "SELECT sum(available_qty) FROM inventory WHERE tenant_id='T2'"
         ).fetchone() == (450,)
+        assert conn.execute(
+            "SELECT alias_id, phrase, product_id FROM alias_cache "
+            "WHERE tenant_id='T1' ORDER BY alias_id"
+        ).fetchall() == [
+            ("ALS_CACHE_RASA_001", "老规矩辣椒酱", "SKU_CILI_1KG"),
+            ("ALS_CACHE_RASA_002", "生抽王", "SKU_KICAP_CTN"),
+        ]
 
     assert _load(db_settings, "T1").status == "already_loaded"
     assert _load(db_settings, "T2").status == "already_loaded"

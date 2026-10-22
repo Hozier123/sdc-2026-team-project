@@ -1,14 +1,17 @@
 {
   "package_version": "kiraorder-canonical-seed-2026-10-22",
+  "source_zip_sha256": "865049BFA7BA0170CB02316C42679EC7A3EB1D224E5C00DBE934A0591AFF47ED",
   "derived_from": "kiraorder-canonical-seed-2026-10-22",
+  "derived_note": "Derived loader-compatible copies: removed only the outer BEGIN/COMMIT from the source SQL; did not alter data rows.",
+  "token_note": "Plaintext demo tokens are not in this repository; seed SQL contains only SHA-256 hashes.",
   "tenants": {
     "T1": {
       "seed_version": "KB-T1-20261022-r1",
       "data_version": "MB-T1-20261022-r1",
       "products": 40,
       "inventory_sum": 795,
-      "sql_sha256": "dacf88a7fd81a5c6623cd4762d5a03cdb604635dd21a7c38ac4c302cfa52ed00",
-      "source_sql_sha256": "4a7ff03fcb4f3156d2a6b71febdeda4eb7915b9f2002a3fd63e97619103afdad",
+      "sql_sha256": "a7be80bd8658c376f78065fa370ed9eb4875143b1b501548bb875925cc7ed773",
+      "source_sql_sha256": "2570d216a4616caa6e639ca5ae9a28e4d1458d35a2577efb844844179342358c",
       "counts": {
         "tenants": 1,
         "users": 3,
@@ -19,7 +22,7 @@
         "uom_aliases": 26,
         "customer_tier_prices": 80,
         "inventory": 40,
-        "alias_cache": 0
+        "alias_cache": 2
       },
       "price_sums": {
         "A": "1060.40",
@@ -50,8 +53,5 @@
         "B": "250.20"
       }
     }
-  },
-  "source_zip_sha256": "AC8FFEC030476CD1CB02020FC95577EAB9783E5A3A393EF3246EF95323AAE8D4",
-  "derived_note": "Derived loader-compatible copies: removed only the outer BEGIN/COMMIT from the source SQL; did not alter data rows.",
-  "token_note": "Plaintext demo tokens are not in this repository; seed SQL contains only SHA-256 hashes."
+  }
 }
