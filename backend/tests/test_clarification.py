@@ -1,5 +1,10 @@
 from app.clarification import build_clarification
-from app.schemas import Issue
+from app.schemas import (
+    Issue,
+    IssueResolution,
+    SaveLinesRequest,
+    WorkingLine,
+)
 
 
 def _issue(code: str, *, kind: str | None = None, resolved: bool = False) -> Issue:
@@ -79,3 +84,41 @@ def test_multiple_issues_are_deduplicated_and_ids_are_stable():
     assert clarification is not None
     assert len(clarification.unresolved_issue_ids) == 2
     assert clarification.message.count("Please confirm the unit") == 1
+
+
+def test_condition_resolution_marks_condition_resolved_and_clears_clarification():
+    from app.drafts import _validate_resolutions
+
+    condition = _issue("CUSTOMER_CONDITION", kind="PRICE")
+    line = WorkingLine(
+        line_id="LNE_1",
+        family_id="FAM_MILO",
+        requested_qty=1,
+        confirmed_qty=1,
+        effective_qty=1,
+        match_source="MANUAL_SELECTED",
+    )
+    body = SaveLinesRequest(
+        expected_version=1,
+        lines=[],
+        resolutions=[
+            IssueResolution(
+                issue_id=condition.issue_id,
+                choice="CONFIRMED_WITH_CUSTOMER",
+                target_line_ids=["LNE_1"],
+            )
+        ],
+    )
+    conditions = [condition]
+    _validate_resolutions(
+        body,
+        [{"issue_id": condition.issue_id}],
+        [line],
+        [],
+        conditions,
+    )
+    assert conditions[0].resolved is True
+    assert conditions[0].resolution == "CONFIRMED_WITH_CUSTOMER"
+    clarification, language = build_clarification([], conditions, language_hint="en")
+    assert clarification is None
+    assert language is None

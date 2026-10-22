@@ -618,12 +618,13 @@ def _validate_resolutions(
     old_issues: list[dict[str, Any]],
     lines: list[WorkingLine],
     issues: list[Issue],
+    conditions: list[Issue] | None = None,
 ) -> None:
     if not body.resolutions:
         return
     old_ids = {issue["issue_id"] for issue in old_issues}
     line_ids = {line.line_id for line in lines}
-    issue_by_id = {issue.issue_id: issue for issue in issues}
+    issue_by_id = {issue.issue_id: issue for issue in [*issues, *(conditions or [])]}
     for resolution in body.resolutions:
         if resolution.issue_id not in old_ids:
             raise RequestValidationFailedError(
@@ -753,8 +754,6 @@ def save_lines(
                 lines.append(line)
                 issues.extend(line_issues)
 
-            _validate_resolutions(body, order["issues"], lines, issues)
-
             old_issues = [Issue.model_validate(issue) for issue in (order["issues"] or [])]
             line_ids = {line.line_id for line in lines}
             conditions = [
@@ -764,12 +763,19 @@ def save_lines(
                 and not issue.resolved
                 and (issue.line_id is None or issue.line_id in line_ids)
             ]
+            _validate_resolutions(body, order["issues"], lines, issues, conditions)
 
             total: Decimal | None = None
             if all(line.subtotal_rm is not None for line in lines):
                 total = sum(Decimal(line.subtotal_rm) for line in lines)
 
-            blocking = sorted({issue.code for issue in [*issues, *conditions] if issue.blocking})
+            blocking = sorted(
+                {
+                    issue.code
+                    for issue in [*issues, *conditions]
+                    if issue.blocking and not issue.resolved
+                }
+            )
             status = "READY_FOR_APPROVAL" if not blocking and lines else "DISAMBIGUATION_REQUIRED"
             old_clarification = order.get("clarification") or {}
             clarification, clarification_lang = build_clarification(
