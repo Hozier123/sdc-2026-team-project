@@ -28,8 +28,9 @@ def test_unavailable_db_only_breaks_readiness(caplog):
             assert "never_log_this" not in response.text + caplog.text
 
 
-def test_probe_responses_documented_and_no_business_stubs():
+def test_probe_and_identity_responses_are_documented():
     with TestClient(create_app(Settings(_env_file=None, database_url=None))) as client:
         spec = client.get("/openapi.json").json()
-        assert set(spec["paths"]) == {"/healthz", "/readyz"}
+        assert set(spec["paths"]) == {"/healthz", "/readyz", "/api/v1/me"}
         assert "503" in spec["paths"]["/readyz"]["get"]["responses"]
+        assert "200" in spec["paths"]["/api/v1/me"]["get"]["responses"]
