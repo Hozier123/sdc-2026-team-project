@@ -387,6 +387,10 @@ def test_contract_read_endpoints_after_do(seeded_db):
         assert audit.json()["final_snapshot"]["do_number"] == do_number
         assert audit.json()["events"]
 
+        activity = client.get("/api/v1/activity", headers=_headers(CLERK))
+        assert activity.status_code == 200, activity.text
+        assert activity.json()["items"]
+
         warehouse = client.get(
             f"/api/v1/warehouse/delivery-orders/{do_number}",
             headers=_headers(WAREHOUSE),
