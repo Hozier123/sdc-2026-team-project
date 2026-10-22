@@ -52,6 +52,32 @@ SHA-256(token UTF-8) 的小写 hex
 在正式 seed 导入前，真实环境没有用户，`/me` 返回 401 是预期行为；
 测试使用临时数据库和 fixture 用户，不提交 canonical seed。
 
+## Seed loader
+
+数据负责人提供 **data-only SQL** 文件后，用显式命令导入；Web 服务启动时不会自动 seed：
+
+```powershell
+backend/.venv/Scripts/python -m app.seed `
+  --tenant T1 `
+  --seed-sql ..\data\seed\seed_T1.sql `
+  --seed-version T1-0.1 `
+  --expect-sha256 <sql-sha256> `
+  --expect-products 40 `
+  --expect-inventory 795
+```
+
+行为：
+
+- 先校验 SQL 文件 SHA-256，再连接数据库；
+- seed SQL 不得包含 `BEGIN/COMMIT/ROLLBACK`；
+- 在一个事务内执行数据 SQL、计数校验和 `kiraorder_meta.seed_manifest` 登记；
+- 同一 tenant + version + hash 重复执行返回 `already_loaded`，不重复插入；
+- 同一 tenant 已有数据但没有 manifest 时拒绝自动接管；
+- 计数不符或 SQL 失败时回滚，不留下半成品；
+- 不创建/修改 Gate 0 的 `public` 业务表结构。
+
+正式的 T1/T2 seed、40/795 计数和 SHA-256 由数据负责人定稿；本仓库测试只使用临时 fixture。
+
 ## 迁移执行规则
 
 1. 在连接数据库前校验原始 SQL 字节 SHA-256 和受控哈希清单 SHA-256，预期值绑定已冻结标签。
