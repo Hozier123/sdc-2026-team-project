@@ -1,5 +1,22 @@
 # 数据目录
 
-`seed/` 用于存放团队自建的合成种子数据，供初始化、测试和演示使用。当前只有目录占位文件，尚无业务数据。
+`seed/` 存放团队自建的合成 canonical seed，供初始化、测试和演示使用。
 
-后续加入数据时，请记录字段含义、生成方式和初始化方法。不要上传真实客户资料、WhatsApp 聊天记录或凭据。
+当前已包含：
+
+```text
+T1 / T2 data-only SQL
+SEED_MANIFEST.json
+canonical seed 说明
+```
+
+不包含：
+
+```text
+真实客户资料
+真实 WhatsApp 聊天记录
+明文 demo token
+数据库凭据
+```
+
+初始化方法见 `seed/README.md`。所有数据均为合成数据。
