@@ -28,6 +28,29 @@ backend/.venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 800
 
 这两个路径为运维探针，记录于后端运行说明及运行时 OpenAPI；不写回冻结业务 OpenAPI。探针不返回连接串或底层异常。连接超时 3 秒、普通查询和锁等待超时 5 秒；迁移事务中语句超时 30 秒。就绪探针检查连接和迁移登记，不声称每次都做完整 schema 漂移审计。
 
+## Bearer 与 `/api/v1/me`
+
+本阶段只实现身份读取，不实现 seed、草稿或审批接口。
+
+```http
+GET /api/v1/me
+Authorization: Bearer <demo-token>
+```
+
+`demo-token` 的数据库存储值为：
+
+```text
+SHA-256(token UTF-8) 的小写 hex
+```
+
+`/me` 从 `users.demo_token_hash` 查找活跃用户，并返回 OpenAPI `MeResponse`：
+`user_id`、`tenant:{id,name}`、`display_name`、`role`、`permissions`、`permission_summary`。
+角色和租户只来自 token 对应的用户记录，不接受请求体或 query 覆盖。
+
+失败统一返回 401 `INVALID_TOKEN`，带 `WWW-Authenticate: Bearer`；成功和失败响应都带
+`X-Request-ID`。在正式 seed 导入前，真实环境没有用户，`/me` 返回 401 是预期行为；
+测试使用临时数据库和 fixture 用户，不提交 canonical seed。
+
 ## 迁移执行规则
 
 1. 在连接数据库前校验原始 SQL 字节 SHA-256 和受控哈希清单 SHA-256，预期值绑定已冻结标签。
