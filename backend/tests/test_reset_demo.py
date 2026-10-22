@@ -34,7 +34,7 @@ VALUES ('FAM_MILO', 'T1', 'Milo 美禄');
 INSERT INTO products (product_id, tenant_id, family_id, sku_code, name, base_unit)
 VALUES ('SKU_MILO_1KG', 'T1', 'FAM_MILO', 'SKU_MILO_1KG', 'Milo 美禄', 'bag');
 INSERT INTO customer_tier_prices (tenant_id, product_id, tier, unit_price_rm)
-VALUES ('T1', 'SKU_MILO_1KG', 'A', 18.00);
+VALUES ('T1', 'SKU_MILO_1KG', 'A', 18.00), ('T1', 'SKU_MILO_1KG', 'B', 19.00);
 INSERT INTO inventory (tenant_id, product_id, available_qty)
 VALUES ('T1', 'SKU_MILO_1KG', 5);
 """
@@ -80,6 +80,16 @@ def _args(admin_url: str, template: str, target: str) -> object:
             "a" * 64,
             "--expect-products",
             "1",
+            "--expect-families",
+            "1",
+            "--expect-customers",
+            "0",
+            "--expect-prices",
+            "2",
+            "--expect-price-a",
+            "18.00",
+            "--expect-price-b",
+            "19.00",
             "--expect-inventory",
             "5",
         ]
@@ -145,12 +155,16 @@ def _make_template(admin: psycopg.Connection, admin_url: str, name: str) -> None
             "CREATE TABLE kiraorder_meta.seed_manifest ("
             "tenant_id text PRIMARY KEY, seed_version text NOT NULL, seed_sha256 text NOT NULL,"
             "product_count integer NOT NULL, inventory_total integer NOT NULL,"
+            "family_count integer NOT NULL, customer_count integer NOT NULL,"
+            "price_count integer NOT NULL, price_total_a numeric(12,2) NOT NULL,"
+            "price_total_b numeric(12,2) NOT NULL,"
             "applied_at timestamptz NOT NULL DEFAULT now())"
         )
         conn.execute(
             "INSERT INTO kiraorder_meta.seed_manifest "
-            "(tenant_id, seed_version, seed_sha256, product_count, inventory_total) "
-            "VALUES ('T1', 'T1-test', %s, 1, 5)",
+            "(tenant_id, seed_version, seed_sha256, product_count, inventory_total,"
+            " family_count, customer_count, price_count, price_total_a, price_total_b) "
+            "VALUES ('T1', 'T1-test', %s, 1, 5, 1, 0, 2, 18.00, 19.00)",
             ("a" * 64,),
         )
 
@@ -165,17 +179,17 @@ def test_rebuilds_target_from_pinned_template(admin):
         args = _args(admin_url, template, target)
 
         info = check_template(args, admin)
-        assert info["inventory"] == {"rows": 1, "total": 5}
+        assert info["snapshot"]["inventory_total"] == 5
 
         rebuild(admin, template, target)
         verified = verify_target(args)
-        assert verified["inventory"] == {"rows": 1, "total": 5}
+        assert verified["snapshot"]["inventory_total"] == 5
         assert verified["alias_cache"] == 0
         assert all(value == 0 for value in verified["flow_rows"].values())
 
         # Idempotent: rebuilding again yields the same clean state.
         rebuild(admin, template, target)
-        assert verify_target(args)["inventory"] == {"rows": 1, "total": 5}
+        assert verify_target(args)["snapshot"]["inventory_total"] == 5
     finally:
         _drop(admin, target)
         _drop(admin, template)

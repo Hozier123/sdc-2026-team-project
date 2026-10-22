@@ -33,9 +33,13 @@ kiraorder_trial     目标库：每次试次前从模板整库重建
 | `seed_version` | 与 canonical T1 同版本，例如 `T1-0.1` |
 | `seed_sha256` | seed 文件哈希 |
 | `product_count` / `inventory_total` | 40 / 795 |
+| `family_count` / `customer_count` | 25 / 8 |
+| `price_count` / `price_total_a` / `price_total_b` | 80 / 1060.40 / 1150.50 |
 | `applied_at` | 模板生成时间 |
 
 Zhou 一旦重定稿（库存或价格变化），必须重建模板并升版本；否则不同受试者跑的不是同一套数据。
+
+**manifest 只证明“文件没被改”，不能证明“数值对”**：回读的期望值来自 `products.csv` 快照（80 条价、A 1060.40 / B 1150.50、795 件），manifest 与快照比对是两道独立检查，不能互相替代。
 
 ## 3. 一次 reset 的顺序（计时边界）
 
@@ -88,14 +92,16 @@ evidence/reset/reset_<target>_<时间戳>.md     人读摘要：行数、DO 列�
 
 | 验收项 | 本工具的回读校验 |
 |---|---|
-| inventory 40 行 / 合计 795 | `inventory_snapshot()`，不符即失败 |
+| inventory 40 行 / 合计 795 | `seed_snapshot()`，不符即失败 |
+| 等级价 80 条、A 合计 1060.40、B 合计 1150.50 | 同上；每个 SKU 必须恰好 A/B 两档 |
+| 商品 40 / 族 25 / 客户 8 | 同上 |
 | `alias_cache` 0 行 | 计数必须为 0 |
 | 6 张流水表 0 行 | `inbound_messages/orders/draft_versions/delivery_orders/activity_log/audit_logs` 全 0 |
 | `approval_requests` 恒 0 | 计数必须为 0 |
 | 18 表 / 6 trigger / 12 事件 | 复用 `app.migrations.verify_schema()` |
 | 迁移账本 | `version + sql_sha256 + baseline_hash_sha256` 与冻结常量一致 |
 
-`field_diffs` 没有 `tenant_id`，通过 `audit_logs.audit_id` 关联统计，同样要求为 0。
+期望值从 `products.csv` 传入（默认 40/25/8/80/1060.40/1150.50/795），不从 manifest 取——否则等于自己验自己。`field_diffs` 没有 `tenant_id`，通过 `audit_logs.audit_id` 关联统计，同样要求为 0。
 
 ## 7. 失败语义
 

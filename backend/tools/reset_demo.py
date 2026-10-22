@@ -78,6 +78,11 @@ CREATE TABLE IF NOT EXISTS kiraorder_meta.seed_manifest (
     seed_sha256     text NOT NULL,
     product_count   integer NOT NULL,
     inventory_total integer NOT NULL,
+    family_count    integer NOT NULL,
+    customer_count  integer NOT NULL,
+    price_count     integer NOT NULL,
+    price_total_a   numeric(12,2) NOT NULL,
+    price_total_b   numeric(12,2) NOT NULL,
     applied_at      timestamptz NOT NULL DEFAULT now()
 )
 """
@@ -152,7 +157,8 @@ def read_seed_manifest(conn: psycopg.Connection, tenant: str) -> dict[str, Any] 
     if exists is None:
         return None
     row = conn.execute(
-        "SELECT seed_version, seed_sha256, product_count, inventory_total, applied_at "
+        "SELECT seed_version, seed_sha256, product_count, inventory_total, family_count, "
+        "customer_count, price_count, price_total_a::text, price_total_b::text, applied_at "
         "FROM kiraorder_meta.seed_manifest WHERE tenant_id = %s",
         (tenant,),
     ).fetchone()
@@ -163,16 +169,72 @@ def read_seed_manifest(conn: psycopg.Connection, tenant: str) -> dict[str, Any] 
         "seed_sha256": row[1],
         "product_count": row[2],
         "inventory_total": row[3],
-        "applied_at": row[4].isoformat(),
+        "family_count": row[4],
+        "customer_count": row[5],
+        "price_count": row[6],
+        "price_total_a": row[7],
+        "price_total_b": row[8],
+        "applied_at": row[9].isoformat(),
     }
 
 
-def inventory_snapshot(conn: psycopg.Connection, tenant: str) -> dict[str, int]:
+def seed_snapshot(conn: psycopg.Connection, tenant: str) -> dict[str, Any]:
+    """Read every value the trial depends on, not just inventory.
+
+    The manifest proves "the file did not change"; this snapshot proves "the
+    values in this database are the frozen ones". A price typo passes an
+    inventory-only check, so prices, families and customers are read here too.
+    """
     row = conn.execute(
-        "SELECT count(*), coalesce(sum(available_qty), 0) FROM inventory WHERE tenant_id = %s",
-        (tenant,),
+        "SELECT "
+        " (SELECT count(*) FROM products WHERE tenant_id = %s),"
+        " (SELECT count(*) FROM product_families WHERE tenant_id = %s),"
+        " (SELECT count(*) FROM customers WHERE tenant_id = %s),"
+        " (SELECT count(*) FROM customer_tier_prices WHERE tenant_id = %s),"
+        " (SELECT coalesce(sum(unit_price_rm) FILTER (WHERE tier = 'A'), 0)"
+        "  FROM customer_tier_prices WHERE tenant_id = %s)::numeric(12,2)::text,"
+        " (SELECT coalesce(sum(unit_price_rm) FILTER (WHERE tier = 'B'), 0)"
+        "  FROM customer_tier_prices WHERE tenant_id = %s)::numeric(12,2)::text,"
+        " (SELECT count(*) FROM inventory WHERE tenant_id = %s),"
+        " (SELECT coalesce(sum(available_qty), 0)::int FROM inventory WHERE tenant_id = %s),"
+        " (SELECT count(*) FROM ("
+        "   SELECT product_id FROM customer_tier_prices WHERE tenant_id = %s"
+        "   GROUP BY product_id HAVING count(*) <> 2) tier_check)",
+        (tenant,) * 9,
     ).fetchone()
-    return {"rows": int(row[0]), "total": int(row[1])}
+    return {
+        "product_count": int(row[0]),
+        "family_count": int(row[1]),
+        "customer_count": int(row[2]),
+        "price_count": int(row[3]),
+        "price_total_a": row[4],
+        "price_total_b": row[5],
+        "inventory_rows": int(row[6]),
+        "inventory_total": int(row[7]),
+        "products_without_two_tiers": int(row[8]),
+    }
+
+
+def expected_snapshot(args: argparse.Namespace) -> dict[str, Any]:
+    return {
+        "product_count": args.expect_products,
+        "family_count": args.expect_families,
+        "customer_count": args.expect_customers,
+        "price_count": args.expect_prices,
+        "price_total_a": args.expect_price_a,
+        "price_total_b": args.expect_price_b,
+        "inventory_rows": args.expect_products,
+        "inventory_total": args.expect_inventory,
+        "products_without_two_tiers": 0,
+    }
+
+
+def snapshot_differences(actual: dict[str, Any], expected: dict[str, Any]) -> list[str]:
+    return [
+        f"{key}: actual {actual.get(key)!r} != expected {value!r}"
+        for key, value in expected.items()
+        if actual.get(key) != value
+    ]
 
 
 def check_template(args: argparse.Namespace, admin: psycopg.Connection) -> dict[str, Any]:
@@ -194,14 +256,20 @@ def check_template(args: argparse.Namespace, admin: psycopg.Connection) -> dict[
             )
         if manifest["seed_sha256"].lower() != args.expect_seed_sha256.lower():
             raise ResetError("template seed sha256 does not match --expect-seed-sha256")
-        snapshot = inventory_snapshot(conn, args.tenant)
+        snapshot = seed_snapshot(conn, args.tenant)
 
-    if snapshot["rows"] != manifest["product_count"]:
-        raise ResetError("template inventory rows drifted from its manifest")
-    if snapshot["total"] != manifest["inventory_total"]:
-        raise ResetError("template inventory total drifted from its manifest")
+    # The manifest is only a "file unchanged" witness; the expectations come
+    # from products.csv, so a drifted value cannot certify itself.
+    manifest_expected = {key: manifest[key] for key in snapshot if key in manifest}
+    manifest_drift = snapshot_differences(snapshot, manifest_expected)
+    if manifest_drift:
+        raise ResetError(f"template drifted from its manifest: {manifest_drift}")
 
-    return {"manifest": manifest, "inventory": snapshot}
+    differences = snapshot_differences(snapshot, expected_snapshot(args))
+    if differences:
+        raise ResetError(f"template values do not match products.csv: {differences}")
+
+    return {"manifest": manifest, "snapshot": snapshot}
 
 
 def collect_evidence(url: str, tenant: str) -> dict[str, Any]:
@@ -330,22 +398,22 @@ def verify_target(args: argparse.Namespace) -> dict[str, Any]:
             for table in FLOW_TABLES + ("approval_requests",)
         }
         alias_rows = int(conn.execute("SELECT count(*) FROM alias_cache").fetchone()[0])
-        snapshot = inventory_snapshot(conn, args.tenant)
+        snapshot = seed_snapshot(conn, args.tenant)
 
     leftovers = {name: value for name, value in flow.items() if value != 0}
     if leftovers:
         raise ResetError(f"rebuilt database still contains runtime rows: {leftovers}")
     if alias_rows != 0:
         raise ResetError("rebuilt database still contains learned aliases")
-    if snapshot["rows"] != args.expect_products:
-        raise ResetError(f"inventory rows {snapshot['rows']} != expected {args.expect_products}")
-    if snapshot["total"] != args.expect_inventory:
-        raise ResetError(f"inventory total {snapshot['total']} != expected {args.expect_inventory}")
+
+    differences = snapshot_differences(snapshot, expected_snapshot(args))
+    if differences:
+        raise ResetError(f"rebuilt database does not match products.csv: {differences}")
 
     return {
         "flow_rows": flow,
         "alias_cache": alias_rows,
-        "inventory": snapshot,
+        "snapshot": snapshot,
         "ledger": ledger[0][0],
     }
 
@@ -398,20 +466,32 @@ def init_template(args: argparse.Namespace, admin: psycopg.Connection) -> Report
     with psycopg.connect(url, autocommit=True, cursor_factory=psycopg.ClientCursor) as conn:
         conn.execute(seed_text)
         conn.execute(SEED_MANIFEST_DDL)
-        snapshot = inventory_snapshot(conn, args.tenant)
+        snapshot = seed_snapshot(conn, args.tenant)
+        differences = snapshot_differences(snapshot, expected_snapshot(args))
+        if differences:
+            raise ResetError(f"seed does not match products.csv: {differences}")
         conn.execute(
             "INSERT INTO kiraorder_meta.seed_manifest "
-            "(tenant_id, seed_version, seed_sha256, product_count, inventory_total) "
-            "VALUES (%s, %s, %s, %s, %s) "
+            "(tenant_id, seed_version, seed_sha256, product_count, inventory_total, "
+            "family_count, customer_count, price_count, price_total_a, price_total_b) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
             "ON CONFLICT (tenant_id) DO UPDATE SET seed_version = EXCLUDED.seed_version, "
             "seed_sha256 = EXCLUDED.seed_sha256, product_count = EXCLUDED.product_count, "
-            "inventory_total = EXCLUDED.inventory_total, applied_at = now()",
+            "inventory_total = EXCLUDED.inventory_total, family_count = EXCLUDED.family_count, "
+            "customer_count = EXCLUDED.customer_count, price_count = EXCLUDED.price_count, "
+            "price_total_a = EXCLUDED.price_total_a, price_total_b = EXCLUDED.price_total_b, "
+            "applied_at = now()",
             (
                 args.tenant,
                 args.seed_version,
                 args.seed_sha256.lower(),
-                snapshot["rows"],
-                snapshot["total"],
+                snapshot["product_count"],
+                snapshot["inventory_total"],
+                snapshot["family_count"],
+                snapshot["customer_count"],
+                snapshot["price_count"],
+                snapshot["price_total_a"],
+                snapshot["price_total_b"],
             ),
         )
         verify_schema(conn)
@@ -432,6 +512,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--expect-seed-version")
     parser.add_argument("--expect-seed-sha256")
     parser.add_argument("--expect-products", type=int, default=40)
+    parser.add_argument("--expect-families", type=int, default=25)
+    parser.add_argument("--expect-customers", type=int, default=8)
+    parser.add_argument("--expect-prices", type=int, default=80)
+    parser.add_argument("--expect-price-a", default="1060.40")
+    parser.add_argument("--expect-price-b", default="1150.50")
     parser.add_argument("--expect-inventory", type=int, default=795)
     parser.add_argument("--evidence-dir", default=str(REPO_ROOT / "evidence" / "reset"))
     parser.add_argument("--log-dir", default=str(REPO_ROOT / "logs"))
