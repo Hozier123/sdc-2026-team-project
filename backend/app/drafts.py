@@ -519,6 +519,8 @@ def _actions(
             "APPROVE_AND_GENERATE_DO": ["BLOCKING_ISSUES"]
         }
     if escalation:
+        if role == "OWNER":
+            return ["APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
         return ["SUBMIT_FOR_OWNER", "VIEW_ACTIVITY"], {}
     return ["APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
 
@@ -631,6 +633,17 @@ def _validate_resolutions(
         if resolution.choice == "ACCEPT_REQUESTED_PRICE":
             if not resolution.target_line_ids:
                 raise TargetLineRequiredError(details={"issue_id": resolution.issue_id})
+            if resolution.confirmed_unit_price is None:
+                raise RequestValidationFailedError(
+                    details={
+                        "fields": [
+                            {
+                                "path": "resolutions.confirmed_unit_price",
+                                "reason": "required when accepting a requested price",
+                            }
+                        ]
+                    }
+                )
             if resolution.price_basis != "UNIT":
                 raise RequestValidationFailedError(
                     details={

@@ -239,7 +239,9 @@ def test_clerk_escalation_creates_approval_and_owner_approves(seeded_db):
 
 def test_owner_can_self_approve_escalation(seeded_db):
     with _client(seeded_db) as client:
-        assert _put(client, lines=[_line(3)]).status_code == 200
+        saved = _put(client, lines=[_line(3)], headers=_headers(OWNER))
+        assert saved.status_code == 200
+        assert "APPROVE_AND_GENERATE_DO" in saved.json()["allowed_actions"]
         approved = client.post(
             "/api/v1/orders/DRF_T1/approve",
             headers=_headers(OWNER),

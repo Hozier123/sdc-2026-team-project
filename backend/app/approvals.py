@@ -632,7 +632,6 @@ def list_approvals(
     limit: int = Query(default=50, ge=1, le=100),
     cursor: str | None = None,
 ) -> ApprovalListResponse:
-    del cursor
     if user.role == "WAREHOUSE":
         raise ForbiddenActionError()
     sql = (
@@ -654,6 +653,13 @@ def list_approvals(
     elif mine:
         sql += " AND a.requested_by=%s"
         params.append(user.user_id)
+    if cursor:
+        sql += (
+            " AND (a.requested_at, a.approval_id) < "
+            "(SELECT requested_at, approval_id FROM approval_requests "
+            " WHERE tenant_id=%s AND approval_id=%s)"
+        )
+        params.extend([user.tenant_id, cursor])
     sql += " ORDER BY a.requested_at DESC, a.approval_id DESC LIMIT %s"
     params.append(limit)
     with connect(settings) as conn:
@@ -683,7 +689,8 @@ def list_approvals(
                 decision_note=row[10],
             )
         )
-    return ApprovalListResponse(items=items, next_cursor=None)
+    next_cursor = rows[-1][0] if len(rows) == limit else None
+    return ApprovalListResponse(items=items, next_cursor=next_cursor)
 
 
 @router.get("/approvals/{approval_id}", response_model=ApprovalDetail)
