@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import traceback
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
@@ -178,6 +179,7 @@ async def request_id_middleware(request: Request, call_next):
     except Exception:
         # Unknown server failures are 500, not invented business error codes.
         # Keep the response generic so no DSN/token/exception detail leaks.
+        traceback.print_exc()
         response = JSONResponse(
             status_code=500,
             content={"detail": "Internal Server Error"},
