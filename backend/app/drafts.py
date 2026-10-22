@@ -83,6 +83,7 @@ def _order(conn, tenant: str, draft_id: str, *, lock: bool = False) -> dict[str,
     if row is None:
         raise ResourceNotFoundError()
     return {
+        "draft_id": draft_id,
         "status": row[0],
         "version": row[1],
         "customer_id": row[2],
