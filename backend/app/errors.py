@@ -15,16 +15,123 @@ REQUEST_ID_HEADER = "X-Request-ID"
 _REQUEST_ID_RE = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
 
 
-class MessageTooLongError(Exception):
-    """The raw or masked message exceeds 4000 Unicode code points."""
+class ApiError(Exception):
+    status_code = 500
+    error_code = "INTERNAL_ERROR"
+    default_message = "Request failed."
+
+    def __init__(self, message: str | None = None, details: dict | None = None):
+        self.message = message or self.default_message
+        self.details = details or {}
+        super().__init__(self.message)
 
 
-class ResourceNotFoundError(Exception):
-    """A tenant-scoped resource is missing or not visible."""
+class MessageTooLongError(ApiError):
+    status_code = 422
+    error_code = "MESSAGE_TOO_LONG"
+    default_message = "message_text must not exceed 4000 Unicode code points."
 
 
-class ForbiddenActionError(Exception):
-    """The authenticated role cannot perform this action."""
+class ResourceNotFoundError(ApiError):
+    status_code = 404
+    error_code = "RESOURCE_NOT_FOUND"
+    default_message = "Resource not found."
+
+
+class ForbiddenActionError(ApiError):
+    status_code = 403
+    error_code = "FORBIDDEN_ACTION"
+    default_message = "Action is forbidden for this role."
+
+
+class StaleVersionError(ApiError):
+    status_code = 409
+    error_code = "STALE_VERSION"
+    default_message = "Draft version is stale."
+
+
+class PendingOwnerApprovalError(ApiError):
+    status_code = 409
+    error_code = "PENDING_OWNER_APPROVAL"
+    default_message = "Draft is waiting for owner approval."
+
+
+class AlreadyApprovedError(ApiError):
+    status_code = 409
+    error_code = "ALREADY_APPROVED"
+    default_message = "Draft already generated a delivery order."
+
+
+class DraftRejectedError(ApiError):
+    status_code = 409
+    error_code = "DRAFT_REJECTED"
+    default_message = "Draft is rejected and read-only."
+
+
+class StockChangedError(ApiError):
+    status_code = 409
+    error_code = "STOCK_CHANGED"
+    default_message = "Stock changed and no longer satisfies the draft."
+
+
+class InvalidLineOperationError(ApiError):
+    status_code = 400
+    error_code = "INVALID_LINE_OPERATION"
+    default_message = "Line set does not cover the current draft."
+
+
+class EmptyOrderError(ApiError):
+    status_code = 400
+    error_code = "EMPTY_ORDER"
+    default_message = "Order must retain at least one line."
+
+
+class OverrideRequiredError(ApiError):
+    status_code = 400
+    error_code = "OVERRIDE_REQUIRED"
+    default_message = "Price override requires a reason."
+
+
+class TargetLineRequiredError(ApiError):
+    status_code = 400
+    error_code = "TARGET_LINE_REQUIRED"
+    default_message = "Price resolution requires a target line."
+
+
+class NoteRequiredError(ApiError):
+    status_code = 400
+    error_code = "NOTE_REQUIRED"
+    default_message = "This resolution requires a note."
+
+
+class InsufficientStockError(ApiError):
+    status_code = 400
+    error_code = "INSUFFICIENT_STOCK"
+    default_message = "Stock is insufficient for approval."
+
+
+class RejectionReasonRequiredError(ApiError):
+    status_code = 422
+    error_code = "REJECTION_REASON_REQUIRED"
+    default_message = "Rejection requires a non-empty note."
+
+
+class InvalidQuantityError(ApiError):
+    status_code = 422
+    error_code = "INVALID_QUANTITY"
+    default_message = "Quantity must be a positive integer."
+
+
+class MissingTierPriceError(ApiError):
+    status_code = 422
+    error_code = "MISSING_TIER_PRICE"
+    default_message = "No tier price exists for this customer and SKU."
+
+
+class RequestValidationFailedError(ApiError):
+    status_code = 422
+    error_code = "REQUEST_VALIDATION_FAILED"
+    default_message = "Request validation failed."
 
 
 def _request_id(value: str | None) -> str:
@@ -86,23 +193,14 @@ def register_error_handlers(app: FastAPI) -> None:
     async def invalid_token_handler(request: Request, exc: InvalidTokenError) -> JSONResponse:
         return _invalid_token_response(request)
 
-    @app.exception_handler(MessageTooLongError)
-    async def message_too_long_handler(request: Request, exc: MessageTooLongError) -> JSONResponse:
+    @app.exception_handler(ApiError)
+    async def api_error_handler(request: Request, exc: ApiError) -> JSONResponse:
         return _error_response(
-            422,
-            "MESSAGE_TOO_LONG",
-            "message_text must not exceed 4000 Unicode code points.",
+            exc.status_code,
+            exc.error_code,
+            exc.message,
+            exc.details,
         )
-
-    @app.exception_handler(ResourceNotFoundError)
-    async def resource_not_found_handler(
-        request: Request, exc: ResourceNotFoundError
-    ) -> JSONResponse:
-        return _error_response(404, "RESOURCE_NOT_FOUND", "Resource not found.")
-
-    @app.exception_handler(ForbiddenActionError)
-    async def forbidden_action_handler(request: Request, exc: ForbiddenActionError) -> JSONResponse:
-        return _error_response(403, "FORBIDDEN_ACTION", "Action is forbidden for this role.")
 
     @app.exception_handler(RequestValidationError)
     async def validation_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
