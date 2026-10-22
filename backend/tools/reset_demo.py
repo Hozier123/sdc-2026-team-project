@@ -11,7 +11,7 @@ What one ``--apply`` does:
     2. evidence   - export the finished order's DO text plus audit/field-diff
                     summaries, because the rebuild also discards the audit trail
     3. rebuild    - DROP/CREATE the target database from the template
-    4. verify     - 18 tables, ledger hash, inventory 40/795, alias_cache 0,
+    4. verify     - 18 tables, ledger hash, inventory 40/795, alias_cache 2,
                     no runtime rows left
     5. hook       - optional command to restart API/AI and refresh clients
 
@@ -403,8 +403,10 @@ def verify_target(args: argparse.Namespace) -> dict[str, Any]:
     leftovers = {name: value for name, value in flow.items() if value != 0}
     if leftovers:
         raise ResetError(f"rebuilt database still contains runtime rows: {leftovers}")
-    if alias_rows != 0:
-        raise ResetError("rebuilt database still contains learned aliases")
+    if alias_rows != args.expect_alias_cache:
+        raise ResetError(
+            f"rebuilt database alias_cache {alias_rows} != expected {args.expect_alias_cache}"
+        )
 
     differences = snapshot_differences(snapshot, expected_snapshot(args))
     if differences:
@@ -518,6 +520,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--expect-price-a", default="1060.40")
     parser.add_argument("--expect-price-b", default="1150.50")
     parser.add_argument("--expect-inventory", type=int, default=795)
+    parser.add_argument("--expect-alias-cache", type=int, default=2)
     parser.add_argument("--evidence-dir", default=str(REPO_ROOT / "evidence" / "reset"))
     parser.add_argument("--log-dir", default=str(REPO_ROOT / "logs"))
     parser.add_argument("--hook")

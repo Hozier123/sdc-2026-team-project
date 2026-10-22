@@ -92,6 +92,8 @@ def _args(admin_url: str, template: str, target: str) -> object:
             "19.00",
             "--expect-inventory",
             "5",
+            "--expect-alias-cache",
+            "0",
         ]
     )
 

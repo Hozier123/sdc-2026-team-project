@@ -50,7 +50,7 @@ Zhou 一旦重定稿（库存或价格变化），必须重建模板并升版本
    ① preflight   模板存在、版本/哈希匹配、18 表校验
    ② 证据导出    DO 原文 + audit_logs/field_diffs 摘要落盘
    ③ 重建        DROP/CREATE kiraorder_trial FROM kiraorder_t1_seed
-   ④ 回读校验    18 表、账本哈希、库存 40/795、alias_cache 0、流水表 0
+   ④ 回读校验    18 表、账本哈希、库存 40/795、alias_cache 2、流水表 0
    ⑤ hook        重启 API + 清 AI 进程态 + 前端刷新
    ↓
    起表 → 展示下一题消息
@@ -95,7 +95,7 @@ evidence/reset/reset_<target>_<时间戳>.md     人读摘要：行数、DO 列�
 | inventory 40 行 / 合计 795 | `seed_snapshot()`，不符即失败 |
 | 等级价 80 条、A 合计 1060.40、B 合计 1150.50 | 同上；每个 SKU 必须恰好 A/B 两档 |
 | 商品 40 / 族 25 / 客户 8 | 同上 |
-| `alias_cache` 0 行 | 计数必须为 0 |
+| `alias_cache` 2 行 | 计数必须为 2 |
 | 6 张流水表 0 行 | `inbound_messages/orders/draft_versions/delivery_orders/activity_log/audit_logs` 全 0 |
 | `approval_requests` 恒 0 | 计数必须为 0 |
 | 18 表 / 6 trigger / 12 事件 | 复用 `app.migrations.verify_schema()` |
@@ -122,4 +122,4 @@ evidence/reset/reset_<target>_<时间戳>.md     人读摘要：行数、DO 列�
 
 `ai_mode` 的契约值是 `LLM / FALLBACK / ALIAS_ONLY / MIXED`，但 `KIRAORDER_AI_FORCE_MODE` 是 P0-A 的测试专用开关，当前代码尚未实现。
 
-若全程固定 `ALIAS_ONLY`，命中率取决于别名覆盖：当前 seed 只有 25 条族级别名、0 条 SKU 别名、`alias_cache` 为空，多数消息会落到 `LOW_CONFIDENCE_MATCH`，测到的是“别名表覆盖度”而不是产品能力。更稳的固定模式是 `FALLBACK`（RapidFuzz，本地、确定性、无预热）。这一点需要在工具组开始前由测试侧确认。
+若全程固定 `ALIAS_ONLY`，命中率取决于别名覆盖：当前 seed 只有 25 条族级别名、0 条 SKU 别名、`alias_cache` 为 2 条基线别名，多数消息会落到 `LOW_CONFIDENCE_MATCH`，测到的是“别名表覆盖度”而不是产品能力。更稳的固定模式是 `FALLBACK`（RapidFuzz，本地、确定性、无预热）。这一点需要在工具组开始前由测试侧确认。
