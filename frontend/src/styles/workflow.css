@@ -1,0 +1,82 @@
+/* One workflow scale for message intake, review, approval and delivery. */
+.stepper {
+  display: flex;
+  align-items: center;
+  border-block: 1px solid var(--border);
+  padding-block: 16px;
+  margin-bottom: 24px;
+}
+.stepper > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  flex: 1;
+  min-width: 0;
+}
+.stepper > div:last-child {
+  flex: 0 0 auto;
+}
+.stepper > div > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: var(--type-meta);
+}
+.stepper small {
+  font-size: var(--type-meta);
+  line-height: 1.5;
+}
+.stepper > div > i {
+  height: 1px;
+  flex: 1;
+  min-width: 12px;
+  margin-inline: 12px;
+  background: var(--border);
+}
+.stepper .current {
+  color: var(--mint);
+}
+.stepper .current > span {
+  color: var(--mint);
+  background: var(--status-mint-bg);
+  border-color: #659a7f;
+}
+.stepper .complete {
+  color: var(--mint);
+}
+.stepper .complete > span {
+  background: var(--status-mint-bg);
+  border-color: var(--status-mint-border);
+}
+@media screen and (max-width: 760px) {
+  .stepper {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+  }
+  .stepper > div {
+    position: relative;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  .stepper small {
+    margin: 0;
+    max-width: 90px;
+    min-height: 36px;
+    white-space: normal;
+  }
+  .stepper > div > i {
+    position: absolute;
+    top: 14px;
+    left: calc(50% + 18px);
+    right: calc(-50% + 18px);
+    margin: 0;
+    min-width: 0;
+  }
+}

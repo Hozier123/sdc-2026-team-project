@@ -1,0 +1,43 @@
+{
+  "method": "POST",
+  "path": "/api/v1/orders/DRF_001/approve",
+  "request": {
+    "expected_version": 2
+  },
+  "status": 202,
+  "headers": {
+    "X-Request-ID": "req_approve_escalated_001"
+  },
+  "body": {
+    "approval_id": "APR_001",
+    "draft_id": "DRF_001",
+    "draft_version": 2,
+    "status": "PENDING",
+    "customer": {
+      "customer_id": "CUS_001",
+      "name": "Kedai Maju",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "total_rm": "475.00",
+    "line_count": 1,
+    "reasons": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "line_id": "LIN_001",
+        "detail": {
+          "tier_price": "98.00",
+          "applied_price": "95.00"
+        }
+      }
+    ],
+    "requested_by": "USR_CLERK_01",
+    "requested_at": "2026-10-21T11:10:00Z",
+    "allowed_actions": [],
+    "decided_by": null,
+    "decided_at": null,
+    "decision_note": null
+  }
+}

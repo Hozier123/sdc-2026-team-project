@@ -1,0 +1,67 @@
+/* Shared metadata roles. Input, body and display roles keep their own scale. */
+@media screen {
+  .app-shell :is(.page-heading, .detail-heading, .success-heading, .desk-heading) h1 {
+    font-family: var(--serif);
+    font-size: clamp(38px, 3.4vw, 52px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.9px;
+    margin: 0;
+  }
+  .app-shell :is(.page-heading, .desk-heading) p {
+    margin-top: 8px;
+    font-size: var(--type-body);
+    line-height: 1.65;
+  }
+  .app-shell :is(
+    .line-fields label, .sample-card small, .candidate small, .micro-copy,
+    .record-hint, .form-bottom > span, .review-actions small, .panel-footnote,
+    .check-item small, .checkbox-label, .row-state > small,
+    .approval-card-main small, .price-details summary
+  ) {
+    font-size: var(--type-caption);
+    line-height: 1.6;
+  }
+  .app-shell :is(
+    .demo-strip, .eyebrow, .version-label, .check-owner, .language-label,
+    .count-bubble, .line-number, .numbered-icon, .section-kicker,
+    .message-caption, .saved-label, .check-label, .rail-title,
+    .order-table-head, .customer-context, .privacy-line, .record-hint,
+    .panel-footnote, .memory-note, .deleted-note, .app-version,
+    .company-demo-tag
+  ),
+  .app-shell .demo-strip > span,
+  .app-shell .demo-strip button,
+  .app-shell .order-total small,
+  .app-shell .message-composer > div {
+    font-size: var(--type-meta);
+    line-height: 1.6;
+  }
+  .app-shell .pill { font-size: var(--type-caption); }
+  .app-shell .tabs button > span,
+  .app-shell .approval-total > span,
+  .app-shell .customer-avatar,
+  .app-shell .customer-cell strong small,
+  .app-shell .activity-customer,
+  .app-shell .activity-event small,
+  .app-shell .activity-event time,
+  .app-shell .timeline small { font-size: var(--type-meta); }
+  .app-shell .tabs button > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    min-height: 20px;
+  }
+  .app-shell .demo-strip {
+    flex-wrap: wrap;
+    gap: 6px;
+    letter-spacing: 0.02em;
+  }
+  .app-shell .eyebrow { letter-spacing: 0.06em; }
+  .app-shell .message-caption { align-items: flex-start; }
+  .app-shell .message-caption svg { flex-shrink: 0; margin-top: 3px; }
+  .app-shell .order-total small { color: var(--muted); }
+  .app-shell .message-composer textarea { caret-color: var(--mint); }
+  .app-shell :is(.check-item p, .reason p, .modal-copy) { text-wrap: pretty; }
+}

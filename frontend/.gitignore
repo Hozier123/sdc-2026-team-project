@@ -1,0 +1,10 @@
+node_modules/
+dist/
+
+# Never commit real credentials. .env.example holds names only.
+.env
+.env.*
+!.env.example
+
+*.tsbuildinfo
+.DS_Store

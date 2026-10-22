@@ -4,3 +4,9 @@
 # Preserve the signed Gate 0 baseline byte-for-byte across platforms.
 gate0/** -text
 evidence/gate0/确认书.md -text
+
+# tests/contract.test.ts pins SHA-256 of these exact bytes in contracts/provenance.json.
+# Without -text, `* text=auto` rewrites CRLF to LF in the index and the check fails on a
+# fresh clone. Keep frontend fixtures and the frozen contract snapshot byte-identical.
+frontend/tests/fixtures/** -text
+frontend/contracts/** -text

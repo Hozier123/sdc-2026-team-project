@@ -1,0 +1,112 @@
+{
+  "method": "GET",
+  "path": "/api/v1/approvals/APR_001",
+  "request": null,
+  "status": 200,
+  "headers": {
+    "X-Request-ID": "req_approval_detail_001"
+  },
+  "body": {
+    "approval_id": "APR_001",
+    "draft_id": "DRF_001",
+    "draft_version": 2,
+    "status": "PENDING",
+    "customer": {
+      "customer_id": "CUS_001",
+      "name": "Kedai Maju",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "total_rm": "475.00",
+    "line_count": 1,
+    "reasons": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "line_id": "LIN_001",
+        "detail": {
+          "tier_price": "98.00",
+          "applied_price": "95.00"
+        }
+      }
+    ],
+    "requested_by": "USR_CLERK_01",
+    "requested_at": "2026-10-21T11:10:00Z",
+    "allowed_actions": [
+      "OWNER_APPROVE",
+      "OWNER_REJECT"
+    ],
+    "decided_by": null,
+    "decided_at": null,
+    "decision_note": null,
+    "snapshot": {
+      "customer_id": "CUS_001",
+      "customer_name": "Kedai Maju",
+      "masked_customer_text": "Tepung 5 ctn, kalau RM95 boleh?",
+      "lines": [
+        {
+          "line_id": "LIN_001",
+          "sku_id": "SKU_FLOUR_5KG_A",
+          "family_id": "FAM_FLOUR",
+          "description": "Tepung 5kg Grade A",
+          "requested_qty": 5,
+          "confirmed_qty": 5,
+          "effective_qty": 5,
+          "uom": "ctn",
+          "pack_size": "5kg",
+          "grade": "A",
+          "tier_unit_price": "98.00",
+          "unit_price_override": "95.00",
+          "override_reason": "Customer confirmed unit price in chat",
+          "effective_unit_price": "95.00",
+          "subtotal_rm": "475.00",
+          "match_source": "MANUAL_SELECTED",
+          "source_span": "Tepung 5 ctn",
+          "span_start": 0,
+          "span_end": 12,
+          "field_evidence": [],
+          "candidate_skus": [],
+          "saved_alias": null,
+          "available_qty": 20
+        }
+      ],
+      "total_rm": "475.00",
+      "reasons": [
+        {
+          "code": "PRICE_OVERRIDE_BELOW_TIER",
+          "line_id": "LIN_001",
+          "detail": {
+            "tier_price": "98.00",
+            "applied_price": "95.00"
+          }
+        }
+      ]
+    },
+    "field_diffs": [
+      {
+        "draft_version": 2,
+        "line_id": "LIN_001",
+        "field_path": "unit_price_override",
+        "before_value": "98.00",
+        "after_value": "95.00",
+        "source": "CLERK_CONFIRMED",
+        "reason_code": "CUSTOMER_PRICE_CONFIRMED"
+      }
+    ],
+    "stock_check": {
+      "state": "PASSED",
+      "checked_at": "2026-10-21T11:10:02Z",
+      "lines": [
+        {
+          "line_id": "LIN_001",
+          "sku_id": "SKU_FLOUR_5KG_A",
+          "requested_qty": 5,
+          "available_qty": 20,
+          "sufficient": true,
+          "effective_qty": 5
+        }
+      ]
+    }
+  }
+}

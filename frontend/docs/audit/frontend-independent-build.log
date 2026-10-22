@@ -1,0 +1,24 @@
+
+> kiraorder-frontend@1.0.0 build
+> npm run types:check && tsc -b && vite build
+
+
+> kiraorder-frontend@1.0.0 types:check
+> node scripts/generate_contract.mjs --check
+
+Generated contract types match the frozen schema.
+vite v6.4.5 building for production...
+transforming...
+✓ 2157 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                           0.68 kB │ gzip:   0.40 kB
+dist/assets/index-BXkvpfAl.css          124.74 kB │ gzip:  25.17 kB
+dist/assets/index-BQgfesw0.js           318.49 kB │ gzip:  95.82 kB
+dist/assets/PlanetGreeting-82CZQOqD.js  950.88 kB │ gzip: 256.82 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.20s

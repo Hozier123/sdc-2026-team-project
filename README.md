@@ -2,7 +2,7 @@
 
 SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
-**当前状态：已冻结 Gate 0，并实现 P0-A 第一个后端基础版本。** 可启动 FastAPI、检查存活/数据库就绪、在空库执行冻结迁移。前端、AI、seed、鉴权及订单业务链路尚未实现，不代表可用业务原型已完成。
+**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端实现身份读取、parse、草稿行保存、审批与 DO 读取；前端工作台已交付并可连接真实后端运行。** 后端尚未实现草稿/客户列表与详情、活动、仓库检索和 AI 状态等端点，AI 仍为 stub 抽取（`ai_mode=FALLBACK`）。完整业务链路尚未全部打通，不代表可用业务原型已完成。
 
 ## 项目信息
 
@@ -45,11 +45,13 @@ sdc-2026-team-project/
 │   │   ├── README.md
 │   │   └── 确认书.md
 │   └── README.md               # 基线、测试结果与截图的归档说明
-├── frontend/                   # 前端，计划 React + TypeScript + Vite
-│   ├── src/
-│   │   └── pages/              # 前端页面
-│   │       └── .gitkeep
-│   └── README.md               # 前端目录说明
+├── frontend/                   # 前端：React + TypeScript + Vite
+│   ├── src/                    # 应用壳、页面组件、API 客户端与契约生成类型
+│   ├── tests/                  # 自动回归与冻结 Gate 0 合成样例
+│   ├── contracts/              # 冻结 OpenAPI 快照及溯源哈希
+│   ├── scripts/                # 契约类型生成、fixture 服务与交付打包
+│   ├── docs/                   # 前端说明、审核与验收记录
+│   └── README.md               # 启动、连接后端与验证说明
 ├── gate0/                      # Gate 0 规格与机器契约基线
 ├── scripts/                    # 评测、初始化、演示重置等辅助脚本
 │   └── .gitkeep
@@ -79,7 +81,7 @@ Gate 0 已冻结于 [`gate0-baseline-v1`](https://github.com/Hozier123/sdc-2026-
 
 ## 环境与运行方式
 
-已有可启动的后端基础服务，但尚无订单业务接口。不要运行旧的 `python src/main.py`。旧的根目录 `src/`、`runpod/`、示例测试、仅供演示的 `requirements.txt` 和 `.replit` 已从当前版本移除，历史提交保留。
+已有可启动的后端服务与前端工作台。不要运行旧的 `python src/main.py`。旧的根目录 `src/`、`runpod/`、示例测试、仅供演示的 `requirements.txt` 和 `.replit` 已从当前版本移除，历史提交保留。
 
 先克隆仓库：
 ```powershell
@@ -93,6 +95,8 @@ if (-not (Test-Path -LiteralPath .env)) {
 仓库已有本地副本的组员，先妥善保存现有修改，再运行 `git pull --ff-only` 更新。真实 `.env` 已被 Git 忽略。
 
 后端使用 Python 3.13 + PostgreSQL 17，依赖、显式迁移命令、`/healthz` 与 `/readyz` 及完整测试步骤见 [backend/README.md](backend/README.md)。安装与协作说明见 [docs/setup-windows.md](docs/setup-windows.md)，实测范围与限制见 [后端基础验证记录](evidence/backend-foundation/README.md)。
+
+前端使用 Node.js 22 + npm，在 `frontend/` 内执行 `npm ci`、`npm run dev`（默认 http://127.0.0.1:5173/）。连接真实后端时在界面填入 API base `http://127.0.0.1:8000/api/v1` 与会话 Bearer token，或用 `.env.local` 的 `VITE_API_BASE_URL` 设置默认地址。前端测试与构建为 `npm test`、`npm run build`，CI 见 `.github/workflows/frontend.yml`；详细说明见 [frontend/README.md](frontend/README.md)。
 
 计划采用的开发与部署方式：
 - 开发：Vite 将 API 请求代理到 FastAPI。

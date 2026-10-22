@@ -1,0 +1,20 @@
+{
+  "contract_version": "1.3.0-gate0-v4",
+  "source": "Gate 0 canonical machine contract (read-only import)",
+  "source_yaml_sha256": "d1b6c36dee471c3ee173dd096c42ea67a9526572b9bc07385423a22d610a9989",
+  "snapshot_sha256": "a7ed9238d5b41b05e5e832342e290e1d17a03964259a69b745e0421d1ac40656",
+  "fixtures_sha256": {
+    "save_lines_ready.json": "95e7d2e8f5579f4b1b4d6fee40c05c4ab6d9e575d3e08b4353bd52c55a03adfe",
+    "save_lines_insufficient_stock_200.json": "46221ce90c92cf144007d9e24f71f0a003b8ab2f8e64d8b25111dcd37b974b1a",
+    "approve_200.json": "829a6c3826c5cb4cc8c520ab914cf29030c0e9545eab5d984b417c012ef7b715",
+    "approval_detail.json": "bcbb5c707e85604e55456e24cecfd5ab14a93bf601a700c0e837b2fccb33c70a",
+    "decide_rejected.json": "b795218579668002789232135aa439ce2fe24b8ceaa7c63db4451256b7b7a980",
+    "warehouse_delivery_order.json": "400894e9bd6c2bb1e3d81e5ca3b462415e43da47fa2e7fe9e671ced61be0474a",
+    "customers_list.json": "22035a4a3f576ca05dbbfef3536f56214855b1ede14fa2367a7aa3f268af5681",
+    "already_approved_409.json": "abc0dd792f83af67c23ed14fdf29f3c60553f97977b5cee58cabc5e520bb52e8",
+    "save_lines_target_required.json": "abdb423b3f6fc54337548ddd7e8223a238d8800b02ac1fb8ffa9f252965934fc",
+    "save_lines_price_mismatch_422.json": "064b2dee8b68847b192e5e700ff72a8e789d4cc1ff76990365d1dada41591bcd",
+    "error_catalog.json": "3791293a5175298cdd295edd8a30a93650da72631512bc79fd1dc19ffd5a691b"
+  },
+  "note": "Only machine schemas and synthetic responses are imported; no source documents or credentials."
+}

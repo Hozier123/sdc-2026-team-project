@@ -1,0 +1,52 @@
+{
+  "method": "PUT",
+  "path": "/api/v1/orders/drafts/DRF_001/lines",
+  "request": {
+    "expected_version": 1,
+    "lines": [
+      {
+        "line_id": "LIN_001",
+        "sku_id": "SKU_FLOUR_5KG_A",
+        "family_id": "FAM_FLOUR",
+        "confirmed_qty": 5,
+        "uom": "ctn",
+        "pack_size": "5kg",
+        "grade": "A",
+        "unit_price_override": "95.00",
+        "override_reason": "Customer confirmed unit price in chat",
+        "match_source": "MANUAL_SELECTED",
+        "save_to_alias_cache": true,
+        "alias_scope": "CUSTOMER"
+      }
+    ],
+    "deleted_line_ids": [],
+    "resolutions": [
+      {
+        "issue_id": "ISS_PRICE_001",
+        "choice": "ACCEPT_REQUESTED_PRICE",
+        "target_line_ids": [
+          "LIN_001"
+        ],
+        "confirmed_unit_price": "96.00",
+        "price_basis": "UNIT",
+        "note": "Customer confirmed RM95 per carton"
+      }
+    ]
+  },
+  "status": 422,
+  "headers": {
+    "X-Request-ID": "req_save_price_conflict_001"
+  },
+  "body": {
+    "error_code": "REQUEST_VALIDATION_FAILED",
+    "message": "Request validation failed.",
+    "details": {
+      "fields": [
+        {
+          "path": "resolutions[0].confirmed_unit_price",
+          "reason": "must equal target line unit_price_override"
+        }
+      ]
+    }
+  }
+}
