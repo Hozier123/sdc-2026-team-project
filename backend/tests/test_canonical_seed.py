@@ -1,9 +1,12 @@
 import json
 
 import pytest
+from fastapi.testclient import TestClient
 
+from app.auth import hash_token
 from app.config import REPO_ROOT
 from app.db import connect
+from app.main import create_app
 from app.migrations import migrate
 from app.seed import load_seed
 
@@ -85,3 +88,79 @@ def test_canonical_t1_t2_seed_loads_counts_and_is_idempotent(db_settings):
     with connect(db_settings) as conn:
         assert conn.execute("SELECT count(*) FROM products").fetchone() == (56,)
         assert conn.execute("SELECT count(*) FROM kiraorder_meta.seed_manifest").fetchone() == (2,)
+
+
+def test_canonical_seed_identity_and_order_flow(db_settings):
+    migrate(db_settings)
+    _load(db_settings, "T1")
+    _load(db_settings, "T2")
+
+    # The canonical plaintext tokens are delivered privately. This test replaces
+    # only the test database hash so the seed data path can be exercised in CI.
+    token = "canonical-test-clerk"
+    with connect(db_settings) as conn:
+        conn.execute(
+            "UPDATE users SET demo_token_hash=%s WHERE user_id='USR_T1_CLERK'",
+            (hash_token(token),),
+        )
+        sku_id, unit, price, available = conn.execute(
+            "SELECT p.product_id, p.base_unit, ctp.unit_price_rm, i.available_qty "
+            "FROM products p "
+            "JOIN customer_tier_prices ctp "
+            "  ON ctp.tenant_id=p.tenant_id AND ctp.product_id=p.product_id "
+            "JOIN inventory i "
+            "  ON i.tenant_id=p.tenant_id AND i.product_id=p.product_id "
+            "WHERE p.tenant_id='T1' AND ctp.tier='A' AND i.available_qty > 0 "
+            "ORDER BY ctp.unit_price_rm ASC LIMIT 1"
+        ).fetchone()
+
+    headers = {"Authorization": f"Bearer {token}"}
+    with TestClient(create_app(db_settings)) as client:
+        me = client.get("/api/v1/me", headers=headers)
+        assert me.status_code == 200, me.text
+        assert me.json()["tenant"]["id"] == "T1"
+        assert me.json()["role"] == "CLERK"
+
+        parsed = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=headers,
+            json={"customer_id": "CUS_ALI", "message_text": "Milo 5 ctn"},
+        )
+        assert parsed.status_code == 200, parsed.text
+        draft_id = parsed.json()["draft_id"]
+
+        saved = client.put(
+            f"/api/v1/orders/drafts/{draft_id}/lines",
+            headers=headers,
+            json={
+                "expected_version": 1,
+                "lines": [
+                    {
+                        "client_line_ref": "canonical-1",
+                        "sku_id": sku_id,
+                        "confirmed_qty": 1,
+                        "uom": unit,
+                        "match_source": "MANUAL_SELECTED",
+                    }
+                ],
+            },
+        )
+        assert saved.status_code == 200, saved.text
+        assert saved.json()["lines"][0]["tier_unit_price"] == str(price)
+
+        approved = client.post(
+            f"/api/v1/orders/{draft_id}/approve",
+            headers=headers,
+            json={"expected_version": 2},
+        )
+        assert approved.status_code == 200, approved.text
+        do = approved.json()
+        fetched = client.get(f"/api/v1/delivery-orders/{do['do_number']}", headers=headers)
+        assert fetched.status_code == 200
+        assert fetched.json()["lines"][0]["sku_id"] == sku_id
+
+    with connect(db_settings) as conn:
+        assert conn.execute(
+            "SELECT available_qty FROM inventory WHERE tenant_id='T1' AND product_id=%s",
+            (sku_id,),
+        ).fetchone() == (available - 1,)
