@@ -36,7 +36,7 @@ class ParseDraftRequest(BaseModel):
     language_hint: str | None = Field(
         default=None,
         max_length=35,
-        pattern=r"^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{2,8})?$",
+        pattern=r"^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{2,8})*$",
     )
 
 

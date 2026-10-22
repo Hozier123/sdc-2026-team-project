@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS kiraorder_meta.seed_manifest (
 )
 """
 
+SEED_SCHEMA_LOCK = 0x4B4952410002
+
 
 class SeedError(Exception):
     """A controlled seed failure with no connection string or raw SQL payload."""
@@ -101,12 +103,13 @@ def load_seed(
             conn.execute("SET LOCAL search_path TO public")
             conn.execute("SET LOCAL statement_timeout TO '60s'")
             conn.execute("SET LOCAL lock_timeout TO '10s'")
+            conn.execute("SELECT pg_advisory_xact_lock(%s)", (SEED_SCHEMA_LOCK,))
+            conn.execute("CREATE SCHEMA IF NOT EXISTS kiraorder_meta")
+            conn.execute(SEED_MANIFEST_DDL)
             conn.execute(
                 "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
                 (tenant,),
             )
-            conn.execute("CREATE SCHEMA IF NOT EXISTS kiraorder_meta")
-            conn.execute(SEED_MANIFEST_DDL)
             row = conn.execute(
                 "SELECT seed_version, seed_sha256, product_count, inventory_total "
                 "FROM kiraorder_meta.seed_manifest WHERE tenant_id = %s",
