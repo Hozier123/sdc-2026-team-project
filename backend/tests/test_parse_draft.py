@@ -58,6 +58,26 @@ def test_parse_requires_auth(seeded_db):
     assert response.json()["error_code"] == "INVALID_TOKEN"
 
 
+def test_parse_maps_ai_service_failure_to_503(seeded_db):
+    from app.extraction.ai import AiServiceError
+
+    class FailingProvider:
+        def extract(self, masked_text, language_hint, request_id):
+            raise AiServiceError("upstream down")
+
+    app = create_app(seeded_db)
+    app.state.extraction_provider = FailingProvider()
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(),
+            json={"customer_id": "CUS_T1", "message_text": RAW},
+        )
+    assert response.status_code == 503
+    assert response.json()["error_code"] == "AI_AND_FALLBACK_UNAVAILABLE"
+    assert "upstream down" not in response.text
+
+
 def test_parse_rejects_warehouse_role(seeded_db):
     with _client(seeded_db) as client:
         response = client.post(
@@ -100,6 +120,17 @@ def test_parse_adapts_provider_rows(seeded_db):
     assert len(body["lines"]) == 1
     assert body["lines"][0]["source_span"] == "5 ctn"
     assert any(issue["reason_code"] == "FAMILY_NOT_EVIDENCED" for issue in body["issues"])
+    assert body["clarification_draft"] is not None
+    assert body["clarification_lang"] == "en"
+    assert "COPY_CLARIFICATION" in body["allowed_actions"]
+    with connect(seeded_db) as conn:
+        assert (
+            conn.execute(
+                "SELECT clarification FROM orders WHERE draft_id=%s",
+                (body["draft_id"],),
+            ).fetchone()[0]
+            is not None
+        )
 
 
 def test_parse_rejects_overlong_message(seeded_db):

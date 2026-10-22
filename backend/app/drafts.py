@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends
 from psycopg.types.json import Jsonb
 
 from app.auth import CurrentUser
+from app.clarification import build_clarification
 from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
@@ -182,6 +183,15 @@ def _masked_message(conn, tenant: str, message_id: str | None) -> str:
         (tenant, message_id),
     ).fetchone()
     return row[0] if row is not None else ""
+
+
+def _latest_snapshot(conn, tenant: str, draft_id: str) -> dict[str, Any]:
+    row = conn.execute(
+        "SELECT snapshot FROM draft_versions "
+        "WHERE tenant_id=%s AND draft_id=%s ORDER BY version DESC LIMIT 1",
+        (tenant, draft_id),
+    ).fetchone()
+    return row[0] if row is not None and isinstance(row[0], dict) else {}
 
 
 def _old_lines(order: dict[str, Any]) -> list[WorkingLine]:
@@ -608,12 +618,13 @@ def _validate_resolutions(
     old_issues: list[dict[str, Any]],
     lines: list[WorkingLine],
     issues: list[Issue],
+    conditions: list[Issue] | None = None,
 ) -> None:
     if not body.resolutions:
         return
     old_ids = {issue["issue_id"] for issue in old_issues}
     line_ids = {line.line_id for line in lines}
-    issue_by_id = {issue.issue_id: issue for issue in issues}
+    issue_by_id = {issue.issue_id: issue for issue in [*issues, *(conditions or [])]}
     for resolution in body.resolutions:
         if resolution.issue_id not in old_ids:
             raise RequestValidationFailedError(
@@ -725,6 +736,8 @@ def save_lines(
             customer = _customer(conn, user.tenant_id, order["customer_id"])
             tenant = _tenant(conn, user.tenant_id)
             old_by_id = {line.line_id: line for line in old}
+            snapshot = _latest_snapshot(conn, user.tenant_id, draft_id)
+            ignored_spans = snapshot.get("ignored_spans", [])
 
             lines: list[WorkingLine] = []
             issues: list[Issue] = []
@@ -741,14 +754,35 @@ def save_lines(
                 lines.append(line)
                 issues.extend(line_issues)
 
-            _validate_resolutions(body, order["issues"], lines, issues)
+            old_issues = [Issue.model_validate(issue) for issue in (order["issues"] or [])]
+            line_ids = {line.line_id for line in lines}
+            conditions = [
+                issue
+                for issue in old_issues
+                if issue.code == "CUSTOMER_CONDITION"
+                and not issue.resolved
+                and (issue.line_id is None or issue.line_id in line_ids)
+            ]
+            _validate_resolutions(body, order["issues"], lines, issues, conditions)
 
             total: Decimal | None = None
             if all(line.subtotal_rm is not None for line in lines):
                 total = sum(Decimal(line.subtotal_rm) for line in lines)
 
-            blocking = sorted({issue.code for issue in issues if issue.blocking})
+            blocking = sorted(
+                {
+                    issue.code
+                    for issue in [*issues, *conditions]
+                    if issue.blocking and not issue.resolved
+                }
+            )
             status = "READY_FOR_APPROVAL" if not blocking and lines else "DISAMBIGUATION_REQUIRED"
+            old_clarification = order.get("clarification") or {}
+            clarification, clarification_lang = build_clarification(
+                issues,
+                conditions,
+                old_clarification.get("language") if isinstance(old_clarification, dict) else None,
+            )
             escalation = _escalation(
                 tenant=tenant,
                 customer=customer,
@@ -760,6 +794,8 @@ def save_lines(
                 status=status,
                 escalation=escalation,
             )
+            if clarification is not None:
+                allowed.append("COPY_CLARIFICATION")
             now = _now()
             draft = OrderDraftResponse(
                 draft_id=draft_id,
@@ -778,7 +814,7 @@ def save_lines(
                 ai_mode=order["ai_mode"],
                 lines=lines,
                 issues=issues,
-                conditions=[],
+                conditions=conditions,
                 blocking_issues=blocking,
                 escalation_preview=escalation,
                 totals=OrderTotals(
@@ -788,9 +824,9 @@ def save_lines(
                 ),
                 allowed_actions=allowed,
                 blocked_actions=blocked,
-                clarification_draft=None,
-                clarification_lang=None,
-                ignored_spans=[],
+                clarification_draft=clarification,
+                clarification_lang=clarification_lang,
+                ignored_spans=ignored_spans,
                 created_at=order["created_at"],
                 updated_at=now,
             )
@@ -804,7 +840,11 @@ def save_lines(
                     draft.version,
                     Jsonb([line.model_dump(mode="json") for line in lines]),
                     Jsonb([issue.model_dump(mode="json") for issue in issues]),
-                    Jsonb(draft.clarification_draft) if draft.clarification_draft else None,
+                    (
+                        Jsonb(draft.clarification_draft.model_dump(mode="json"))
+                        if draft.clarification_draft
+                        else None
+                    ),
                     Jsonb(escalation),
                     user.tenant_id,
                     draft_id,

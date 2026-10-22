@@ -20,3 +20,6 @@ class Settings(BaseSettings):
     ai_service_url: str | None = None
     ai_api_key: SecretStr | None = None
     ai_timeout_s: float = 8.0
+    cors_allow_origins: str = (
+        "http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:4173,http://localhost:4173"
+    )
