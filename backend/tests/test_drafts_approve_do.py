@@ -233,6 +233,34 @@ def test_owner_can_self_approve_escalation(seeded_db):
         assert approved.json()["approval_mode"] == "OWNER_SELF_APPROVED"
 
 
+def test_approvals_list_and_detail(seeded_db):
+    with _client(seeded_db) as client:
+        assert _put(client, lines=[_line(3)]).status_code == 200
+        pending = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert pending.status_code == 202, pending.text
+        approval_id = pending.json()["approval_id"]
+
+        owner_list = client.get("/api/v1/approvals", headers=_headers(OWNER))
+        assert owner_list.status_code == 200
+        assert any(item["approval_id"] == approval_id for item in owner_list.json()["items"])
+
+        clerk_list = client.get("/api/v1/approvals", headers=_headers(CLERK))
+        assert clerk_list.status_code == 200
+        assert all(item["requested_by"] == "USR_T1_CLERK" for item in clerk_list.json()["items"])
+
+        warehouse = client.get("/api/v1/approvals", headers=_headers(WAREHOUSE))
+        assert warehouse.status_code == 403
+
+        detail = client.get(f"/api/v1/approvals/{approval_id}", headers=_headers(OWNER))
+        assert detail.status_code == 200, detail.text
+        assert detail.json()["approval_id"] == approval_id
+        assert detail.json()["status"] == "PENDING"
+
+
 def test_owner_rejects_with_note(seeded_db):
     with _client(seeded_db) as client:
         assert _put(client, lines=[_line(3)]).status_code == 200

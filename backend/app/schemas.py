@@ -271,6 +271,77 @@ class ApprovalRequestResponse(BaseModel):
     decision_note: str | None = None
 
 
+class ApprovalSnapshot(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    customer_id: str
+    customer_name: str
+    masked_customer_text: str
+    lines: list[WorkingLine]
+    total_rm: DecimalString
+    reasons: list[dict[str, Any]]
+
+
+class FieldDiff(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    draft_version: int = Field(ge=1)
+    line_id: str | None = None
+    field_path: str
+    before_value: Any = None
+    after_value: Any = None
+    source: str
+    reason_code: str
+
+
+class StockCheckLine(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    line_id: str
+    sku_id: str
+    requested_qty: int = Field(ge=1)
+    available_qty: int = Field(ge=0)
+    sufficient: bool
+    effective_qty: int = Field(ge=1)
+
+
+class StockCheckSummary(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    state: Literal["NOT_RUN", "PASSED", "FAILED"]
+    checked_at: datetime | None = None
+    lines: list[StockCheckLine] = Field(default_factory=list)
+
+
+class ApprovalDetail(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    approval_id: str
+    draft_id: str
+    draft_version: int = Field(ge=1)
+    status: ApprovalStatus
+    customer: CustomerSummary
+    total_rm: DecimalString
+    line_count: int = Field(ge=1)
+    reasons: list[dict[str, Any]]
+    requested_by: str
+    requested_at: datetime
+    allowed_actions: list[AllowedAction] = Field(default_factory=list)
+    decided_by: str | None = None
+    decided_at: datetime | None = None
+    decision_note: str | None = None
+    snapshot: ApprovalSnapshot
+    field_diffs: list[FieldDiff] = Field(default_factory=list)
+    stock_check: StockCheckSummary
+
+
+class ApprovalListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[ApprovalRequestResponse] = Field(default_factory=list)
+    next_cursor: str | None = None
+
+
 class DecideRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

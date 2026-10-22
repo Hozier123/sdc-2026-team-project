@@ -9,7 +9,7 @@ from typing import Annotated, Any
 from uuid import uuid4
 
 import psycopg
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Query, Response
 from psycopg.types.json import Jsonb
 
 from app.auth import CurrentUser
@@ -39,12 +39,19 @@ from app.errors import (
 )
 from app.schemas import (
     ApprovalDecisionResult,
+    ApprovalDetail,
+    ApprovalListResponse,
     ApprovalRequestResponse,
+    ApprovalSnapshot,
+    ApprovalStatus,
     ApproveRequest,
     DecideRequest,
     DeliveryOrder,
     DeliveryOrderLine,
+    FieldDiff,
     ReplyDraft,
+    StockCheckLine,
+    StockCheckSummary,
     WorkingLine,
 )
 
@@ -603,3 +610,172 @@ def decide(
             with suppress(psycopg.Error):
                 conn.execute("ROLLBACK")
             raise
+
+
+def _approval_customer(row) -> dict:
+    return {
+        "customer_id": row[0],
+        "name": row[1],
+        "tier": row[2],
+        "credit_flag": row[3],
+        "has_credit_notice": row[3] == "OVERDUE_NOTICE",
+        "phone_e164": row[4],
+    }
+
+
+@router.get("/approvals", response_model=ApprovalListResponse)
+def list_approvals(
+    user: Annotated[CurrentUser, Depends(get_current_user)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    status: ApprovalStatus | None = None,
+    mine: bool = False,
+    limit: int = Query(default=50, ge=1, le=100),
+    cursor: str | None = None,
+) -> ApprovalListResponse:
+    del cursor
+    if user.role == "WAREHOUSE":
+        raise ForbiddenActionError()
+    sql = (
+        "SELECT a.approval_id, a.draft_id, a.draft_version, a.status, a.reasons, "
+        "a.snapshot, a.requested_by, a.requested_at, a.decided_by, a.decided_at, "
+        "a.decision_note, c.customer_id, c.name, c.tier, c.credit_flag, c.phone_e164 "
+        "FROM approval_requests a "
+        "JOIN customers c ON c.tenant_id=a.tenant_id AND c.customer_id="
+        "(a.snapshot->>'customer_id') "
+        "WHERE a.tenant_id=%s"
+    )
+    params: list[Any] = [user.tenant_id]
+    if status is not None:
+        sql += " AND a.status=%s"
+        params.append(status)
+    if user.role == "CLERK":
+        sql += " AND a.requested_by=%s"
+        params.append(user.user_id)
+    elif mine:
+        sql += " AND a.requested_by=%s"
+        params.append(user.user_id)
+    sql += " ORDER BY a.requested_at DESC, a.approval_id DESC LIMIT %s"
+    params.append(limit)
+    with connect(settings) as conn:
+        rows = conn.execute(sql, params).fetchall()
+    items = []
+    for row in rows:
+        snapshot = row[5] or {}
+        items.append(
+            ApprovalRequestResponse(
+                approval_id=row[0],
+                draft_id=row[1],
+                draft_version=row[2],
+                status=row[3],
+                customer=_approval_customer(row[11:]),
+                total_rm=snapshot.get("total_rm", "0.00"),
+                line_count=len(snapshot.get("lines", [])),
+                reasons=row[4] or [],
+                requested_by=row[6],
+                requested_at=row[7],
+                allowed_actions=(
+                    ["OWNER_APPROVE", "OWNER_REJECT"]
+                    if user.role == "OWNER" and row[3] == "PENDING"
+                    else []
+                ),
+                decided_by=row[8],
+                decided_at=row[9],
+                decision_note=row[10],
+            )
+        )
+    return ApprovalListResponse(items=items, next_cursor=None)
+
+
+@router.get("/approvals/{approval_id}", response_model=ApprovalDetail)
+def get_approval(
+    approval_id: str,
+    user: Annotated[CurrentUser, Depends(get_current_user)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> ApprovalDetail:
+    if user.role == "WAREHOUSE":
+        raise ForbiddenActionError()
+    with connect(settings) as conn:
+        approval = _approval(conn, user.tenant_id, approval_id)
+        if user.role == "CLERK" and approval["requested_by"] != user.user_id:
+            raise ResourceNotFoundError()
+        customer = _customer(conn, user.tenant_id, approval["snapshot"]["customer_id"])
+        diff_rows = conn.execute(
+            "SELECT fd.draft_version, fd.line_id, fd.field_path, fd.before_value, "
+            "fd.after_value, fd.source, fd.reason_code "
+            "FROM field_diffs fd JOIN audit_logs al ON al.audit_id=fd.audit_id "
+            "WHERE al.tenant_id=%s AND al.draft_id=%s AND al.draft_version=%s "
+            "ORDER BY fd.field_diff_id",
+            (user.tenant_id, approval["draft_id"], approval["draft_version"]),
+        ).fetchall()
+        stock_lines: list[StockCheckLine] = []
+        for line in approval["snapshot"]["lines"]:
+            sku_id = line.get("sku_id")
+            if not sku_id:
+                continue
+            row = conn.execute(
+                "SELECT available_qty FROM inventory WHERE tenant_id=%s AND product_id=%s",
+                (user.tenant_id, sku_id),
+            ).fetchone()
+            available = int(row[0]) if row else 0
+            effective = int(line["effective_qty"])
+            stock_lines.append(
+                StockCheckLine(
+                    line_id=line["line_id"],
+                    sku_id=sku_id,
+                    requested_qty=int(line["requested_qty"]),
+                    available_qty=available,
+                    sufficient=available >= effective,
+                    effective_qty=effective,
+                )
+            )
+    snapshot = ApprovalSnapshot.model_validate(approval["snapshot"])
+    state = (
+        "NOT_RUN"
+        if not stock_lines
+        else ("PASSED" if all(x.sufficient for x in stock_lines) else "FAILED")
+    )
+    return ApprovalDetail(
+        approval_id=approval["approval_id"],
+        draft_id=approval["draft_id"],
+        draft_version=approval["draft_version"],
+        status=approval["status"],
+        customer={
+            "customer_id": customer["customer_id"],
+            "name": customer["name"],
+            "tier": customer["tier"],
+            "credit_flag": customer["credit_flag"],
+            "has_credit_notice": customer["credit_flag"] == "OVERDUE_NOTICE",
+            "phone_e164": customer["phone_e164"],
+        },
+        total_rm=approval["snapshot"]["total_rm"],
+        line_count=len(approval["snapshot"]["lines"]),
+        reasons=approval["reasons"],
+        requested_by=approval["requested_by"],
+        requested_at=approval["requested_at"],
+        allowed_actions=(
+            ["OWNER_APPROVE", "OWNER_REJECT"]
+            if user.role == "OWNER" and approval["status"] == "PENDING"
+            else []
+        ),
+        decided_by=approval["decided_by"],
+        decided_at=approval["decided_at"],
+        decision_note=approval["decision_note"],
+        snapshot=snapshot,
+        field_diffs=[
+            FieldDiff(
+                draft_version=row[0],
+                line_id=row[1],
+                field_path=row[2],
+                before_value=row[3],
+                after_value=row[4],
+                source=row[5],
+                reason_code=row[6],
+            )
+            for row in diff_rows
+        ],
+        stock_check=StockCheckSummary(
+            state=state,
+            checked_at=_now() if stock_lines else None,
+            lines=stock_lines,
+        ),
+    )

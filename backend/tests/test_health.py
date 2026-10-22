@@ -38,6 +38,8 @@ def test_probe_and_identity_responses_are_documented():
             "/api/v1/orders/parse-draft",
             "/api/v1/orders/drafts/{draft_id}/lines",
             "/api/v1/orders/{draft_id}/approve",
+            "/api/v1/approvals",
+            "/api/v1/approvals/{approval_id}",
             "/api/v1/approvals/{approval_id}/decide",
             "/api/v1/delivery-orders/{do_number}",
         }
