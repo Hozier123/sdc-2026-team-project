@@ -48,7 +48,8 @@ SHA-256(token UTF-8) 的小写 hex
 角色和租户只来自 token 对应的用户记录，不接受请求体或 query 覆盖。
 
 失败统一返回 401 `INVALID_TOKEN`，带 `WWW-Authenticate: Bearer`；成功和失败响应都带
-`X-Request-ID`。在正式 seed 导入前，真实环境没有用户，`/me` 返回 401 是预期行为；
+`X-Request-ID`。数据库或其它未知服务端错误走统一 500，不映射成业务错误，也不返回连接串。
+在正式 seed 导入前，真实环境没有用户，`/me` 返回 401 是预期行为；
 测试使用临时数据库和 fixture 用户，不提交 canonical seed。
 
 ## 迁移执行规则

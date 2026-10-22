@@ -38,7 +38,15 @@ def _invalid_token_response(request: Request) -> JSONResponse:
 async def request_id_middleware(request: Request, call_next):
     request_id = _request_id(request.headers.get(REQUEST_ID_HEADER))
     request.state.request_id = request_id
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception:
+        # Unknown server failures are 500, not invented business error codes.
+        # Keep the response generic so no DSN/token/exception detail leaks.
+        response = JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error"},
+        )
     response.headers[REQUEST_ID_HEADER] = request_id
     return response
 
