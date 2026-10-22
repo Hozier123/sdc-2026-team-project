@@ -13,6 +13,7 @@ from app.extraction.stub import StubExtractor
 from app.health import router as health_router
 from app.me import router as me_router
 from app.parse import router as parse_router
+from app.read_models import router as read_models_router
 
 
 def _extractor(settings: Settings):
@@ -52,6 +53,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(drafts_router)
     app.include_router(approvals_router)
     app.include_router(delivery_router)
+    app.include_router(read_models_router)
     return app
 
 

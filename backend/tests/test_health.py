@@ -36,12 +36,20 @@ def test_probe_and_identity_responses_are_documented():
             "/readyz",
             "/api/v1/me",
             "/api/v1/orders/parse-draft",
+            "/api/v1/orders/drafts",
+            "/api/v1/orders/drafts/{draft_id}",
             "/api/v1/orders/drafts/{draft_id}/lines",
             "/api/v1/orders/{draft_id}/approve",
+            "/api/v1/orders/{do_number}/audit-detail",
             "/api/v1/approvals",
             "/api/v1/approvals/{approval_id}",
             "/api/v1/approvals/{approval_id}/decide",
             "/api/v1/delivery-orders/{do_number}",
+            "/api/v1/customers",
+            "/api/v1/activity",
+            "/api/v1/warehouse/delivery-orders/{do_number}",
+            "/api/v1/ai/status",
+            "/api/v1/ai/wake",
         }
         assert "503" in spec["paths"]["/readyz"]["get"]["responses"]
         assert "200" in spec["paths"]["/api/v1/me"]["get"]["responses"]

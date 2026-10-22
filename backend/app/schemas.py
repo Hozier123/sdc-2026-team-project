@@ -69,6 +69,8 @@ MatchSource = Literal[
 AliasScope = Literal["CUSTOMER", "TENANT"]
 ApprovalStatus = Literal["PENDING", "APPROVED", "REJECTED"]
 TerminationReason = Literal["OWNER_REJECTED", "CLERK_DISCARDED", "SYSTEM_TERMINATED"]
+Role = Literal["CLERK", "OWNER", "WAREHOUSE"]
+AiState = Literal["OFFLINE", "WARMING", "READY", "DEGRADED"]
 
 DecimalString = Annotated[str, Field(pattern=r"^(0|[1-9][0-9]*)\.[0-9]{2}$")]
 
@@ -410,3 +412,115 @@ class DeliveryOrder(BaseModel):
     reply_draft: ReplyDraft
     related_do_number: str | None = None
     approved_at: datetime
+
+
+class DraftSummary(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    draft_id: str
+    version: int = Field(ge=1)
+    status: DraftStatus
+    customer_id: str
+    customer_name: str
+    message_preview: str
+    blocking_issues: list[IssueCode] = Field(default_factory=list)
+    open_blocking_issue_count: int = Field(ge=0)
+    owner_escalation_count: int = Field(ge=0)
+    extraction_sources: list[MatchSource] = Field(default_factory=list)
+    allowed_actions: list[AllowedAction] = Field(default_factory=list)
+    updated_at: datetime
+    do_number: str | None = None
+
+
+class DraftListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[DraftSummary] = Field(default_factory=list)
+    next_cursor: str | None = None
+
+
+class CustomerListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[CustomerSummary] = Field(default_factory=list)
+    next_cursor: str | None = None
+
+
+class ActivityItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    activity_id: int = Field(ge=1)
+    entity_id: str | None = None
+    event_type: str
+    payload: dict[str, Any] = Field(default_factory=dict)
+    actor_user_id: str | None = None
+    actor_role: Role | None = None
+    created_at: datetime
+
+
+class ActivityListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[ActivityItem] = Field(default_factory=list)
+    next_cursor: str | None = None
+
+
+class AuditEvent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    event_type: str
+    actor_user_id: str | None = None
+    actor_role: Role | None = None
+    created_at: datetime
+    payload: dict[str, Any] = Field(default_factory=dict)
+
+
+class AuditDetail(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    do_number: str
+    draft_id: str
+    draft_version: int = Field(ge=1)
+    ai_initial_snapshot: dict[str, Any] = Field(default_factory=dict)
+    final_snapshot: DeliveryOrder
+    field_diffs: list[FieldDiff] = Field(default_factory=list)
+    events: list[AuditEvent] = Field(default_factory=list)
+
+
+class WarehouseDeliveryOrderItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    sku_id: str
+    display_name: str
+    quantity: int = Field(ge=1)
+    unit: str
+    picking_note: str | None = Field(default=None, max_length=500)
+
+
+class WarehouseDeliveryOrder(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    do_number: str
+    customer_name: str
+    items: list[WarehouseDeliveryOrderItem] = Field(min_length=1)
+    approved_at: datetime
+
+
+class AiStatus(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    state: AiState
+    available_modes: list[AiMode] = Field(default_factory=list)
+    fallback_available: bool
+    last_checked_at: datetime
+    message: str
+
+
+class AiWakeResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    state: AiState
+    accepted: bool
+    fallback_available: bool
+    last_checked_at: datetime
+    message: str

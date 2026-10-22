@@ -356,3 +356,54 @@ def test_owner_rejects_with_note(seeded_db):
         )
         assert no_note.status_code == 422
         assert no_note.json()["error_code"] == "REJECTION_REASON_REQUIRED"
+
+
+def test_contract_read_endpoints_after_do(seeded_db):
+    with _client(seeded_db) as client:
+        customers = client.get("/api/v1/customers", headers=_headers(CLERK))
+        assert customers.status_code == 200, customers.text
+        assert customers.json()["items"][0]["customer_id"] == "CUS_T1"
+
+        drafts = client.get("/api/v1/orders/drafts", headers=_headers(CLERK))
+        assert drafts.status_code == 200, drafts.text
+        assert any(item["draft_id"] == "DRF_T1" for item in drafts.json()["items"])
+
+        detail = client.get("/api/v1/orders/drafts/DRF_T1", headers=_headers(CLERK))
+        assert detail.status_code == 200, detail.text
+        assert detail.json()["draft_id"] == "DRF_T1"
+
+        saved = _put(client, lines=[_line(1)])
+        assert saved.status_code == 200, saved.text
+        approved = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert approved.status_code == 200, approved.text
+        do_number = approved.json()["do_number"]
+
+        audit = client.get(f"/api/v1/orders/{do_number}/audit-detail", headers=_headers(CLERK))
+        assert audit.status_code == 200, audit.text
+        assert audit.json()["final_snapshot"]["do_number"] == do_number
+        assert audit.json()["events"]
+
+        activity = client.get("/api/v1/activity", headers=_headers(CLERK))
+        assert activity.status_code == 200, activity.text
+        assert activity.json()["items"]
+
+        warehouse = client.get(
+            f"/api/v1/warehouse/delivery-orders/{do_number}",
+            headers=_headers(WAREHOUSE),
+        )
+        assert warehouse.status_code == 200, warehouse.text
+        body = warehouse.json()
+        assert body["items"][0]["sku_id"] == "SKU_MILO_1KG"
+        assert "final_total_rm" not in body
+        assert "applied_unit_price" not in body
+
+        status = client.get("/api/v1/ai/status", headers=_headers(CLERK))
+        assert status.status_code == 200
+        assert status.json()["state"] == "OFFLINE"
+        wake = client.post("/api/v1/ai/wake", headers=_headers(CLERK))
+        assert wake.status_code == 200
+        assert wake.json()["accepted"] is False
