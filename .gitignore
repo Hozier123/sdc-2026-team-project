@@ -22,3 +22,7 @@ coverage/
 .DS_Store
 .vscode/
 .idea/
+
+# Trial reset artifacts
+logs/
+evidence/reset/
