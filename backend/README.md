@@ -101,6 +101,35 @@ Bearer → customer tenant check → PII mask
 - 真实 AI 到货后，用新的 `ExtractionProvider` 替换 `StubExtractor`，不改 API；
 - 当前骨架不是最终 H1/H5 解析能力。
 
+## 草稿行、批准与 DO
+
+已实现：
+
+```text
+PUT  /api/v1/orders/drafts/{draft_id}/lines
+POST /api/v1/orders/{draft_id}/approve
+POST /api/v1/approvals/{approval_id}/decide
+GET  /api/v1/delivery-orders/{do_number}
+GET  /api/v1/approvals
+GET  /api/v1/approvals/{approval_id}
+```
+
+**P0 明确不支持 deprecated `confirmed_items`。** 新前端必须先：
+
+```text
+PUT /api/v1/orders/drafts/{draft_id}/lines
+→ POST /api/v1/orders/{draft_id}/approve
+```
+
+携带 `confirmed_items` 的旧请求返回：
+
+```text
+422 REQUEST_VALIDATION_FAILED
+details.fields[0].path = confirmed_items
+```
+
+这是 P0 的明确弃用决定，不是完整兼容；后续如有旧客户端再实现同事务保存后批准。
+
 ## 迁移执行规则
 
 1. 在连接数据库前校验原始 SQL 字节 SHA-256 和受控哈希清单 SHA-256，预期值绑定已冻结标签。
