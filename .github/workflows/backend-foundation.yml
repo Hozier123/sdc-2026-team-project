@@ -1,0 +1,50 @@
+name: Backend foundation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17.10
+        env:
+          POSTGRES_PASSWORD: ci-only-disposable
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_ADMIN_URL: postgresql://postgres:ci-only-disposable@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Check frozen baseline unchanged
+        run: git diff --exit-code gate0-baseline-v1 -- gate0/
+      - name: Install backend
+        run: python -m pip install -c backend/requirements.lock -e './backend[test]'
+      - name: Check dependency compatibility
+        run: python -m pip check
+      - name: Lint
+        run: python -m ruff check backend/app backend/tests
+      - name: Format check
+        run: python -m ruff format --check backend/app backend/tests
+      - name: PostgreSQL integration and unit tests
+        working-directory: backend
+        run: python -m pytest -q

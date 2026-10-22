@@ -1,0 +1,35 @@
+import socket
+
+from fastapi.testclient import TestClient
+
+from app.config import Settings
+from app.main import create_app
+
+
+def test_liveness_without_database():
+    with TestClient(create_app(Settings(_env_file=None, database_url=None))) as client:
+        response = client.get("/healthz")
+        assert response.status_code == 200
+        assert response.json() == {"status": "ok"}
+        assert client.get("/readyz").status_code == 503
+
+
+def test_unavailable_db_only_breaks_readiness(caplog):
+    # Reserve a port without listening: no external service or credential needed.
+    with socket.socket() as reserved:
+        reserved.bind(("127.0.0.1", 0))
+        port = reserved.getsockname()[1]
+        url = f"postgresql://probe:never_log_this@127.0.0.1:{port}/missing"
+        with TestClient(create_app(Settings(_env_file=None, database_url=url))) as client:
+            response = client.get("/readyz")
+            assert response.status_code == 503
+            assert response.json() == {"status": "not_ready"}
+            assert client.get("/healthz").status_code == 200
+            assert "never_log_this" not in response.text + caplog.text
+
+
+def test_probe_responses_documented_and_no_business_stubs():
+    with TestClient(create_app(Settings(_env_file=None, database_url=None))) as client:
+        spec = client.get("/openapi.json").json()
+        assert set(spec["paths"]) == {"/healthz", "/readyz"}
+        assert "503" in spec["paths"]["/readyz"]["get"]["responses"]
