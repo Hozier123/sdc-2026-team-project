@@ -99,6 +99,8 @@ def load_seed(
         conn.execute("BEGIN")
         try:
             conn.execute("SET LOCAL search_path TO public")
+            conn.execute("SET LOCAL statement_timeout TO '60s'")
+            conn.execute("SET LOCAL lock_timeout TO '10s'")
             conn.execute(
                 "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
                 (tenant,),

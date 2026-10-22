@@ -1,4 +1,4 @@
-# KiraOrder 后端基础（P0-A 第一个 PR）
+# KiraOrder 后端基础、身份、seed 与 parse 骨架
 
 当前实现 FastAPI 进程、数据库探针、Gate 0 迁移执行器、Bearer `/api/v1/me`、版本钉住的 seed loader，以及 PII + parse-draft 骨架。草稿编辑、审批和 DO 仍未实现。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`。
 
@@ -26,7 +26,7 @@ backend/.venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 800
 | `/readyz` | 数据库可查询且 Gate 0 迁移版本和哈希登记正确 | 200 `{"status":"ready"}` |
 | `/readyz` | 未配置、不可连接、未迁移或登记哈希不一致 | 503 `{"status":"not_ready"}` |
 
-这两个路径为运维探针，记录于后端运行说明及运行时 OpenAPI；不写回冻结业务 OpenAPI。探针不返回连接串或底层异常。连接超时 3 秒、普通查询和锁等待超时 5 秒；迁移事务中语句超时 30 秒。就绪探针检查连接和迁移登记，不声称每次都做完整 schema 漂移审计。
+这两个路径为运维探针，记录于后端运行说明及运行时 OpenAPI；不写回冻结业务 OpenAPI。探针不返回连接串或底层异常。连接超时 3 秒、普通查询和锁等待超时 5 秒；迁移事务中语句超时 30 秒；seed 导入事务中语句超时 60 秒、租户锁等待 10 秒。就绪探针检查连接和迁移登记，不声称每次都做完整 schema 漂移审计。
 
 ## Bearer 与 `/api/v1/me`
 
