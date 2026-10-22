@@ -90,12 +90,48 @@ def _line(qty=1, **overrides):
     return line
 
 
-def _put(client, *, version=1, lines=None, headers=None):
+def _put(client, *, version=1, lines=None, headers=None, draft_id="DRF_T1"):
     return client.put(
-        "/api/v1/orders/drafts/DRF_T1/lines",
+        f"/api/v1/orders/drafts/{draft_id}/lines",
         headers=headers or _headers(CLERK),
         json={"expected_version": version, "lines": lines or [_line()]},
     )
+
+
+def test_parse_put_approve_and_get_do_end_to_end(seeded_db):
+    with _client(seeded_db) as client:
+        parsed = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 5 ctn"},
+        )
+        assert parsed.status_code == 200, parsed.text
+        draft_id = parsed.json()["draft_id"]
+        assert parsed.json()["version"] == 1
+        assert parsed.json()["status"] == "DISAMBIGUATION_REQUIRED"
+
+        saved = _put(client, draft_id=draft_id, version=1, lines=[_line(2)])
+        assert saved.status_code == 200, saved.text
+        assert saved.json()["version"] == 2
+        assert saved.json()["status"] == "READY_FOR_APPROVAL"
+
+        approved = client.post(
+            f"/api/v1/orders/{draft_id}/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert approved.status_code == 200, approved.text
+        do = approved.json()
+        assert do["final_total_rm"] == "10.00"
+
+        fetched = client.get(f"/api/v1/delivery-orders/{do['do_number']}", headers=_headers(CLERK))
+        assert fetched.status_code == 200
+        assert fetched.json()["draft_id"] == draft_id
+
+    with connect(seeded_db) as conn:
+        assert conn.execute(
+            "SELECT available_qty FROM inventory WHERE product_id='SKU_MILO_1KG'"
+        ).fetchone() == (8,)
 
 
 def test_put_then_direct_approve_and_do(seeded_db):
