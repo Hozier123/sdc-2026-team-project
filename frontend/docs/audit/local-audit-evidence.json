@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "scope": "local frontend review; no real backend or AI",
+  "preview_origin": "http://127.0.0.1:4185",
+  "mock": "Browser-intercepted http://127.0.0.1:8999/api/v1; synthetic data only",
+  "checks": {
+    "automated_tests": {
+      "passed": 21,
+      "failed": 0
+    },
+    "typescript_vite_build": "passed",
+    "browser_unhandled_pageerrors": []
+  },
+  "counts": {
+    "confirmed_defects": 9,
+    "optimization_items": 1,
+    "P1": 2,
+    "P2": 6,
+    "P3": 2
+  },
+  "observations": {
+    "A01": {
+      "checked_after_one_click": [
+        true,
+        true
+      ],
+      "counter": "1 / 2"
+    },
+    "A02": {
+      "only_failed_endpoint": "/activity",
+      "status": 503,
+      "route": "#/inbox",
+      "orders_rendered": false
+    },
+    "A03": {
+      "before_response": "#/workspace",
+      "after_response": "#/order/DRF_AUDIT_ASYNC"
+    },
+    "A04": {
+      "alias_enabled_during_save": true,
+      "request_saved_alias": false,
+      "alias_after_response": false,
+      "visible_state": "Saved and checked"
+    },
+    "A05": {
+      "wire_confirmed_qty": null,
+      "returned_quantity_in_synthetic_api": "4",
+      "backend_semantics": "not verified against real backend"
+    },
+    "A06": {
+      "while_ai_pending": [
+        "/me",
+        "/me",
+        "/ai/status"
+      ],
+      "after_release": [
+        "/orders/drafts",
+        "/approvals",
+        "/activity"
+      ]
+    },
+    "A07": {
+      "edited_quantity": "7",
+      "after_refresh": "4",
+      "confirmation_dialogs": 0
+    },
+    "A08": {
+      "missing_zip_file": "src/business-ui.css",
+      "different_zip_files": [
+        "src/App.tsx",
+        "src/components/ui.tsx",
+        "README.md"
+      ],
+      "archive_assets": [
+        "index-B3HnRv9D.css",
+        "index-D-m1RQL0.js"
+      ],
+      "current_assets": [
+        "index-CPyzxUVK.css",
+        "index-CLpoLS46.js"
+      ]
+    },
+    "A09": {
+      "empty_main_routes": [
+        "#/order",
+        "#/approval",
+        "#/delivery"
+      ]
+    },
+    "A10": {
+      "html_bytes": 6484368,
+      "embedded_font_faces": 11,
+      "font_base64_characters": 3801392,
+      "png_base64_characters": 2249804,
+      "network_timing_measured": false
+    }
+  },
+  "source_sha256": {
+    "src/App.tsx": "fb2ce96c4e6576034f5dddcabfd8a2ce6a3d3f9d47826a776814aceb169ef956",
+    "src/components/orders.tsx": "dfbd225778eb4acc4d690791729467b4b5184cab429f7f3bf25bda8b9f30c405",
+    "src/components/fulfillment.tsx": "b1dc41b7f7714a46dcb601d0ed98cdc27391beb2f1fe54127e5301d7d67a6f59",
+    "src/components/ui.tsx": "5f4aad17791d58b4446ad0d16d70a91d103032fed52c666dc39228502f34b745",
+    "src/lib/api.ts": "0fdec66de58c0a0e9f66cbba401f0b99afa5cd6f112722e0e8508d9f087dd8c4",
+    "src/lib/demo.ts": "7f23403d3079310f71690c6d5d09c02ec722fd35e581b193f43f403cc21a3041",
+    "src/business-ui.css": "6a8169211a991a93069dbdfebf106187583249e00f0d17f2a7ef5c39e6f0c655",
+    "public/intro-scene.html": "efd03ebbc184b16aad17a0f6026a2ef8a21fde7caae48c293493cac4bff4f83e",
+    "public/intro-refinement.css": "aa44d59211c6a0801fea9c63d427092247058195a5e7792b768686a655d7d1f6"
+  },
+  "archive_sha256": "3c6c2b40ffb374d3018a86e217dbfcdb4a83376a6c6f12fe10bcbb65f0f31da0",
+  "remaining_scope": [
+    "real backend and AI",
+    "production authentication and server transactions",
+    "physical mobile devices",
+    "real print and PDF pagination"
+  ]
+}

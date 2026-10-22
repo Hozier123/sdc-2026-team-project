@@ -1,0 +1,63 @@
+
+> kiraorder-frontend@1.0.0 test
+> tsx --test tests/*.test.ts
+
+✔ canonical authentication errors give recovery guidance without a blind write retry (11.122802ms)
+✔ HTTP adapter preserves Gate 0 parse data, allowed actions and evidence (68.062942ms)
+✔ HTTP adapter projects audit events into the UI and preserves stable line diffs (2.934242ms)
+✔ HTTP 202 is an owner request; 409 error retains request ID and details (2.649387ms)
+✔ pagination follows cursors and never invents role headers (1.350964ms)
+✔ remote HTTP and embedded URL credentials are rejected (0.344067ms)
+✔ nullable stock and incomplete totals remain unknown; candidates never fill selected stock or permissions (2.404995ms)
+✔ manual unit prices are serialized as exact two-decimal strings without changing the edit buffer (2.056916ms)
+✔ frozen contract snapshot and imported fixtures keep their recorded hashes (3.662589ms)
+✔ Gate 0 parse_draft satisfies OrderDraft (46.229587ms)
+✔ Gate 0 save_lines_ready satisfies OrderDraft (8.784578ms)
+✔ Gate 0 save_lines_insufficient_stock_200 satisfies OrderDraft (9.213157ms)
+✔ Gate 0 approve_200 satisfies DeliveryOrder (7.099914ms)
+✔ Gate 0 approve_202 satisfies ApprovalRequest (3.751704ms)
+✔ Gate 0 approval_detail satisfies ApprovalDetail (12.271866ms)
+✔ Gate 0 decide_rejected satisfies ApprovalDecisionResult (2.673685ms)
+✔ Gate 0 warehouse_delivery_order satisfies WarehouseDeliveryOrder (3.608892ms)
+✔ Gate 0 customers_list satisfies CustomerListResponse (1.797618ms)
+✔ Gate 0 audit_detail satisfies AuditDetail (9.331922ms)
+✔ Gate 0 already_approved_409 satisfies Error (2.107392ms)
+✔ Gate 0 approve_stock_changed_409 satisfies Error (1.539099ms)
+✔ Gate 0 save_lines_target_required satisfies Error (1.375332ms)
+✔ Gate 0 save_lines_price_mismatch_422 satisfies Error (1.333172ms)
+✔ the full error catalogue is valid, including canonical authentication codes (32.406219ms)
+✔ warehouse contract rejects leaked prices, contacts, original text and AI differences (3.28697ms)
+✔ the contract prevents old states, decimal quantities and caller-written prices (15.823604ms)
+✔ PII is masked before persistence and evidence uses Unicode code points (11.634197ms)
+✔ currency calculation uses exact integer cents (0.670191ms)
+✔ a routine order completes once and can be restored from storage (4.343994ms)
+✔ ambiguity blocks approval until explicit SKU selection; customer memory is scoped (3.194064ms)
+✔ stock issue closes after reduction and reopens on increase (2.824535ms)
+✔ stock check aggregates repeated SKU lines (1.096057ms)
+✔ price evidence never automatically changes tier price; target and override must agree (3.490864ms)
+✔ save is atomic on invalid condition; alias writes are not leaked (2.144213ms)
+✔ owner approvals bind a version; rejection needs a reason and becomes terminal (4.874883ms)
+✔ owner cannot bypass a stock change between submission and approval (5.146938ms)
+✔ warehouse receives a cropped object, cannot read raw deliveries or drafts (3.02679ms)
+✔ tenant data does not cross workspaces (2.657398ms)
+✔ stale versions, empty orders and read-only amount writes are rejected (3.016486ms)
+✔ missing unit remains a blocking check instead of silently inferring a unit (0.917478ms)
+✔ multiple service instances see the latest version and cannot overwrite each other (3.020483ms)
+✔ evidence spans stay aligned after a surrogate pair (1.581952ms)
+✔ real HTTP fixture flow preserves 202, immutable pending view, diffs, rejection and authentication (64.273682ms)
+✔ fixture stock snapshot keeps saving successful and approval blocked; warehouse never gets commercial fields (16.596651ms)
+✔ picking consolidates repeated SKU quantities without mixing units or handling notes (3.529831ms)
+✔ quantity validation rejects values JSON would silently coerce, retaining nullable override semantics (8.896715ms)
+✔ HTTP saving rejects invalid quantities before JSON serialization or any request (2.617835ms)
+✔ detail routes require exactly one nonempty ID and known list filters (0.28493ms)
+✔ conflict recovery retains only local changes and respects newer server fields and lines (1.776551ms)
+✔ conflict recovery never silently drops an edited product removed on the server (1.602369ms)
+✔ conflict recovery cannot reapply edits to an order that became locked (1.451501ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 51
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 701.113849

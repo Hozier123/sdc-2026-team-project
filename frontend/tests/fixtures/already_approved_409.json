@@ -1,0 +1,19 @@
+{
+  "method": "POST",
+  "path": "/api/v1/orders/DRF_003/approve",
+  "request": {
+    "expected_version": 2
+  },
+  "status": 409,
+  "headers": {
+    "X-Request-ID": "req_already_approved_001"
+  },
+  "body": {
+    "error_code": "ALREADY_APPROVED",
+    "message": "This draft has already produced a delivery order.",
+    "details": {
+      "do_number": "DO-20261021-0003",
+      "approved_at": "2026-10-21T11:15:00Z"
+    }
+  }
+}

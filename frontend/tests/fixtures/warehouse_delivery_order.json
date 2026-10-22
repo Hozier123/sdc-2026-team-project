@@ -1,0 +1,23 @@
+{
+  "method": "GET",
+  "path": "/api/v1/warehouse/delivery-orders/DO-20261021-0003",
+  "request": null,
+  "status": 200,
+  "headers": {
+    "X-Request-ID": "req_wh_do_001"
+  },
+  "body": {
+    "do_number": "DO-20261021-0003",
+    "customer_name": "Kedai Maju",
+    "items": [
+      {
+        "sku_id": "SKU_OIL_1L",
+        "display_name": "Cooking Oil 1L",
+        "quantity": 3,
+        "unit": "ctn",
+        "picking_note": "1L x 12 per carton"
+      }
+    ],
+    "approved_at": "2026-10-21T11:15:00Z"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-22",
+  "scope": "Current default 3D intro global entry",
+  "production_build": "passed",
+  "browser_checks": {
+    "blank_area_click": true,
+    "closing_text_click": true,
+    "enter_key": true,
+    "space_key": true,
+    "scroll_keeps_intro": true,
+    "pointer_drag_keeps_intro": true,
+    "narrow_viewport_390x844_hint_and_click": true,
+    "canvas_unmounted_after_entry": true,
+    "removed_both_entry_buttons": true
+  },
+  "pageerrors": [],
+  "limitations": "Narrow viewport tested with mouse input; physical touch device not tested. Prior delivery-verification.json is a historical audit baseline.",
+  "source_sha256": "3db526615e240fa73e21347c7402b47d8bc54ad4c2c86f4e838df62dbae63558"
+}

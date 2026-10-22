@@ -1,0 +1,22 @@
+{
+  "method": "GET",
+  "path": "/api/v1/customers",
+  "request": null,
+  "status": 200,
+  "headers": {
+    "X-Request-ID": "req_customers_001"
+  },
+  "body": {
+    "items": [
+      {
+        "customer_id": "CUS_001",
+        "name": "Kedai Maju",
+        "tier": "A",
+        "credit_flag": "NONE",
+        "has_credit_notice": false,
+        "phone_e164": "+60120000001"
+      }
+    ],
+    "next_cursor": null
+  }
+}

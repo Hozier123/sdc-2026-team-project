@@ -1,0 +1,7 @@
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/assets/fonts/Cinzel-Variable.ttf") format("truetype");
+}

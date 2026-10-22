@@ -1,0 +1,47 @@
+:root {
+  --font-ui: "Marcellus", "PingFang SC", "Microsoft YaHei", Georgia, serif;
+  --font-accent: var(--font-ui);
+  font-family: var(--font-ui);
+  color: #dce3e9;
+  background: #090e15;
+  font-synthesis: none;
+  font-size: 14px;
+  --bg: #090e15;
+  --panel: #101720;
+  --panel2: #121b25;
+  --border: #26313e;
+  --border-soft: #202b37;
+  --muted: #97a6b5;
+  --faint: #748598;
+  --text: #e1e8ed;
+  --mint: #94e3bd;
+  --blue: #97bfe9;
+  --amber: #dfbd85;
+  --rose: #df9ca8;
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+}
+
+:root {
+  --radius-action: 999px;
+  --action-height: 44px;
+  --action-height-small: 38px;
+  --type-body: 14px;
+  --type-caption: 12.5px;
+  --type-meta: 12px;
+  --type-input: 16px;
+  --text-placeholder: #8b9cab;
+  --target-touch: 44px;
+  --space-section: 28px;
+  --status-mint-bg: #1c3329;
+  --status-mint-border: #365644;
+  --status-amber-bg: #332e23;
+  --status-amber-border: #584b36;
+  --status-blue-bg: #213045;
+  --status-blue-border: #3d526c;
+  --status-rose-bg: #3a2833;
+  --status-rose-border: #69444f;
+  --motion-fast: 160ms;
+  --motion-standard: 220ms;
+  --ease-response: cubic-bezier(0.2, 0.8, 0.2, 1);
+  color-scheme: dark;
+}

@@ -1,0 +1,19 @@
+{
+  "method": "POST",
+  "path": "/api/v1/approvals/APR_003/decide",
+  "request": {
+    "decision": "REJECT",
+    "note": "Price exception is not approved"
+  },
+  "status": 200,
+  "headers": {"X-Request-ID": "req_decide_reject_001"},
+  "body": {
+    "approval_id": "APR_003",
+    "draft_id": "DRF_005",
+    "status": "REJECTED",
+    "termination_reason": "OWNER_REJECTED",
+    "decided_by": "USR_OWNER_01",
+    "decided_at": "2026-10-21T11:40:00Z",
+    "decision_note": "Price exception is not approved"
+  }
+}

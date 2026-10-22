@@ -1,0 +1,175 @@
+{
+  "finalPortalErrors": [],
+  "conflict": {
+    "explicitSaveExpectedVersion": 3,
+    "cancelPreservesEdits": true,
+    "discardQuantity": "6",
+    "discardVersion": 5,
+    "kept": {
+      "quantity": "7",
+      "noAutomaticSave": true
+    }
+  },
+  "staleCreation": {
+    "stillOnOverview": true,
+    "createdDraftListed": true
+  },
+  "routes": {
+    "invalidRoutesRecovered": [
+      "/order",
+      "/approval",
+      "/delivery",
+      "/order/id/extra",
+      "/inbox/garbage"
+    ]
+  },
+  "assets": {
+    "legacyAssets": {
+      "fontFamilies": [
+        "Cormorant Garamond",
+        "Cormorant Garamond",
+        "Cormorant Garamond",
+        "Cormorant Garamond",
+        "Cormorant Garamond"
+      ],
+      "resources": [
+        "/assets/intro-fonts.css",
+        "/intro-refinement.css",
+        "/assets/legacy-intro-921f6ed987.css",
+        "/assets/legacy-intro-47392d5399.js",
+        "/assets/fonts/cormorant-400-normal-2eaa35e911.woff",
+        "/assets/nebula.png",
+        "/assets/fonts/cormorant-400-italic-7df07e2269.woff",
+        "/assets/fonts/cormorant-300-italic-085cc047a9.woff",
+        "/assets/fonts/cormorant-500-normal-d126a2eb8d.woff"
+      ],
+      "localFonts": true
+    },
+    "legacyEnterWorks": true,
+    "businessZoom": "1"
+  },
+  "mobile": {
+    "errors": [],
+    "overflow": false,
+    "deliveryVisible": true,
+    "widths": [
+      {
+        "width": 360,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "overflow": false
+      },
+      {
+        "width": 1440,
+        "overflow": false
+      }
+    ]
+  },
+  "picking": {
+    "checked": [
+      true,
+      false
+    ],
+    "rows": [
+      "Tepung · Wheat flour · 5kg · ASKU_FLOUR3 ctn",
+      "Minyak · Cooking oil · 5L × 4SKU_OIL1 ctn"
+    ],
+    "counter": "1 / 2 items checked locally · These checkboxes are a temporary checklist."
+  },
+  "quantities": {
+    "rejectedInputs": [
+      "",
+      "0",
+      "-1",
+      "1.5",
+      "100001"
+    ],
+    "extraSaveRequests": 0
+  },
+  "removedLine": {
+    "explicitDiscardLoadsLatest": true,
+    "keepExplainsRemovedProduct": true,
+    "cancelRetainsEdits": true
+  },
+  "date": "2026-10-22",
+  "mode": "local synthetic API",
+  "resources": {
+    "activityOutageOrdersUsable": true,
+    "newOrderUsable": true,
+    "approvalFailureLocal": true,
+    "requestsWhileAiPending": [
+      {
+        "path": "/me",
+        "method": "GET"
+      },
+      {
+        "path": "/me",
+        "method": "GET"
+      },
+      {
+        "path": "/orders/drafts",
+        "method": "GET"
+      },
+      {
+        "path": "/approvals",
+        "method": "GET"
+      },
+      {
+        "path": "/activity",
+        "method": "GET"
+      },
+      {
+        "path": "/ai/status",
+        "method": "GET"
+      }
+    ]
+  },
+  "automatedTests": 28,
+  "saving": {
+    "aliasDisabled": true,
+    "quantityDisabled": true,
+    "unitDisabled": true
+  },
+  "locked": {
+    "cannotReapplyToLockedOrder": true,
+    "explicitDiscardStillAvailable": true
+  },
+  "warehouseAi": {
+    "content": "AUDIT-DO\nSynthetic warehouse customer\n\nApproved 22 Oct 2026 at 17:01 MYT\n\nPrint picking list\nSynthetic item\nSKU_TEST\n2 ctn\n0 / 1 items checked locally · These checkboxes are a temporary checklist.",
+    "lookupWhileAiPending": true
+  },
+  "resource_optimization": {
+    "compat_html_before_bytes": 6484368,
+    "compat_html_after_bytes": 1748,
+    "font_faces_before": 11,
+    "font_faces_after": 5,
+    "local_woff_total_bytes": 466276,
+    "business_entry_no_3d_request": true
+  },
+  "source_sha256": {
+    "src/App.tsx": "cfbcae16e8f7af4bced9dcc7f28fccab44a946916bddb53ff31e69401aa2496d",
+    "src/business-ui.css": "8ddc0a375e2ff3eb44bbec1428c1b9844c037dea04bb21c53d3c738bb9ac96b1",
+    "src/components/PlanetGreeting.tsx": "a73901c062662a7369fca94e50461237ad78804b0537609ab9607f4822256b8b",
+    "src/components/fulfillment.tsx": "6e133458d39bc29996fac81e3447f0a69c3728b5d9a1570d6050a29689dc203f",
+    "src/components/orders.tsx": "c61e521d761da95bc313028def0147263030009fcedf9d9480461ec30ed556d5",
+    "src/components/ui.tsx": "d7db80ce653bcca6dd4b6bea5c226187f53b058c6efc24dfe3690dce2c50e0bd",
+    "src/lib/api.ts": "43b3af7e4cb2d5ef1dc5172c7d486b1f5300851963b21ea05d0835fd0f8ea2f0",
+    "src/lib/demo.ts": "7f23403d3079310f71690c6d5d09c02ec722fd35e581b193f43f403cc21a3041",
+    "src/lib/hooks.ts": "6080f16514c5c440189154f95dc951598c55cff463b488b062fa1fbd3f23b284",
+    "src/lib/review.ts": "a428799b932fae824ca9a9f2aa4535c12560fd5f18550cb14f98c84db79d5cec",
+    "src/lib/types.ts": "c26ae1fe614f5bcf3bc1ae00b029b1386e59119060872be28f16be1c8600c87d",
+    "src/main.tsx": "c59b13ea63b1a072b78039b7806699b39b534e609fe90ced54ae2210ebac1f84",
+    "src/styles.css": "71d4a6994e3ec0bcd373b5bb5d7fa9f823493522d23f9c33a4905d8dfd699e6c",
+    "src/tailwind.css": "df5534754eb5fb5d87ad9d0f650cc030062e1b17774eef127df3622d4800d2e1"
+  }
+}

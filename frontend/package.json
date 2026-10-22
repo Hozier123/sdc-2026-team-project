@@ -1,0 +1,38 @@
+{
+  "name": "kiraorder-frontend",
+  "private": true,
+  "version": "1.4.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "npm run types:check && tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "tsx --test tests/*.test.ts",
+    "types:generate": "node scripts/generate_contract.mjs",
+    "types:check": "node scripts/generate_contract.mjs --check",
+    "mock:api": "node scripts/fixture_api.mjs",
+    "mock:scenario": "node scripts/fixture_scenario.mjs"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "lucide-react": "0.468.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.0",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-react": "4.5.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "openapi-typescript": "7.6.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "4.19.4",
+    "typescript": "5.8.3",
+    "vite": "6.4.5"
+  }
+}

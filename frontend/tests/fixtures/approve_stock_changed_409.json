@@ -1,0 +1,28 @@
+{
+  "method": "POST",
+  "path": "/api/v1/approvals/APR_002/decide",
+  "request": {
+    "decision": "APPROVE",
+    "note": "Reviewed"
+  },
+  "status": 409,
+  "headers": {
+    "X-Request-ID": "req_stock_changed_001"
+  },
+  "body": {
+    "error_code": "STOCK_CHANGED",
+    "message": "Stock changed while the order was awaiting approval.",
+    "details": {
+      "lines": [
+        {
+          "line_id": "LIN_030",
+          "sku_id": "SKU_RICE_10KG",
+          "requested_qty": 8,
+          "available_qty": 6,
+          "effective_qty": 6
+        }
+      ],
+      "approval_status": "PENDING"
+    }
+  }
+}
