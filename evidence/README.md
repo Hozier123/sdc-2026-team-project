@@ -1,6 +1,6 @@
 # 实测证据归档
 
-当前只建立目录，不包含测试结果，不预填任何 KPI 或效果数字。
+已归档 Gate 0 独立确认材料；后端基础验收记录见 [backend-foundation/README.md](backend-foundation/README.md)。这些记录不代表业务效果评测，不预填任何 KPI 或效果数字。
 
 按实际产生的材料归档，例如：
 - 基线定义、锁定记录与手工计时原始数据；
