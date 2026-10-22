@@ -1,0 +1,125 @@
+import json
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.auth import hash_token
+from app.db import connect
+from app.main import create_app
+from app.migrations import migrate
+
+pytestmark = pytest.mark.integration
+
+TOKEN = "tok_t1_clerk"
+RAW = "Tepung 5 ctn, call 012-3456789, email ali@example.com"
+
+
+@pytest.fixture
+def seeded_db(db_settings):
+    migrate(db_settings)
+    with connect(db_settings) as conn:
+        conn.execute(
+            "INSERT INTO tenants (tenant_id, name, amount_threshold_rm) VALUES "
+            "('T1', 'Tenant One', 1500), ('T2', 'Tenant Two', 1500)"
+        )
+        conn.execute(
+            "INSERT INTO users (user_id, tenant_id, display_name, demo_token_hash, role) "
+            "VALUES ('USR_T1_CLERK', 'T1', 'T1 Clerk', %s, 'CLERK')",
+            (hash_token(TOKEN),),
+        )
+        conn.execute(
+            "INSERT INTO customers (customer_id, tenant_id, name, tier, credit_flag) VALUES "
+            "('CUS_T1', 'T1', 'Customer One', 'A', 'NONE'), "
+            "('CUS_T2', 'T2', 'Customer Two', 'A', 'NONE')"
+        )
+    return db_settings
+
+
+def _client(settings):
+    return TestClient(create_app(settings))
+
+
+def _headers():
+    return {"Authorization": f"Bearer {TOKEN}", "X-Request-ID": "parse-test-1"}
+
+
+def test_parse_requires_auth(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            json={"customer_id": "CUS_T1", "message_text": RAW},
+        )
+    assert response.status_code == 401
+    assert response.json()["error_code"] == "INVALID_TOKEN"
+
+
+def test_parse_rejects_overlong_message(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(),
+            json={"customer_id": "CUS_T1", "message_text": "x" * 4001},
+        )
+    assert response.status_code == 422
+    assert response.json()["error_code"] == "MESSAGE_TOO_LONG"
+
+
+def test_parse_rejects_cross_tenant_customer(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(),
+            json={"customer_id": "CUS_T2", "message_text": RAW},
+        )
+    assert response.status_code == 404
+    assert response.json()["error_code"] == "RESOURCE_NOT_FOUND"
+
+
+def test_parse_creates_masked_unresolved_draft(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(),
+            json={"customer_id": "CUS_T1", "message_text": RAW, "language_hint": "ms"},
+        )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "DISAMBIGUATION_REQUIRED"
+    assert body["version"] == 1
+    assert body["customer_id"] == "CUS_T1"
+    assert body["masked_message"].startswith("Tepung 5 ctn")
+    assert "[REDACTED_PHONE]" in body["masked_message"]
+    assert "[REDACTED_EMAIL]" in body["masked_message"]
+    assert "012-3456789" not in response.text
+    assert "ali@example.com" not in response.text
+    assert body["lines"] == []
+    assert body["blocking_issues"] == ["LOW_CONFIDENCE_MATCH"]
+    assert response.headers["X-Request-ID"] == "parse-test-1"
+    assert response.headers["Cache-Control"] == "no-store"
+
+    with connect(seeded_db) as conn:
+        inbound = conn.execute(
+            "SELECT masked_text, language FROM inbound_messages WHERE tenant_id = 'T1'"
+        ).fetchone()
+        assert inbound[0] == body["masked_message"]
+        assert inbound[1] == "ms"
+        assert conn.execute("SELECT count(*) FROM orders").fetchone() == (1,)
+        assert conn.execute("SELECT count(*) FROM draft_versions").fetchone() == (1,)
+        snapshot = conn.execute("SELECT snapshot FROM draft_versions").fetchone()[0]
+        assert snapshot["masked_message"] == body["masked_message"]
+        assert "012-3456789" not in json.dumps(snapshot)
+
+
+def test_parse_rejects_unknown_fields(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(),
+            json={
+                "customer_id": "CUS_T1",
+                "message_text": RAW,
+                "tenant_id": "T2",
+            },
+        )
+    assert response.status_code == 422
+    assert response.json()["error_code"] == "REQUEST_VALIDATION_FAILED"
