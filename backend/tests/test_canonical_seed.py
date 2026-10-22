@@ -48,7 +48,7 @@ def test_canonical_t1_t2_seed_loads_counts_and_is_idempotent(db_settings):
                     "uom_aliases": 26,
                     "customer_tier_prices": 80,
                     "inventory": 40,
-                    "alias_cache": 0,
+                    "alias_cache": 2,
                 },
             ),
             (
