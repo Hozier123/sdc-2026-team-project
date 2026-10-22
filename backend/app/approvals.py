@@ -676,13 +676,16 @@ def list_approvals(
     items = []
     for row in rows:
         snapshot = row[5] or {}
+        customer = _approval_customer(row[11:])
+        if snapshot.get("customer_name"):
+            customer["name"] = snapshot["customer_name"]
         items.append(
             ApprovalRequestResponse(
                 approval_id=row[0],
                 draft_id=row[1],
                 draft_version=row[2],
                 status=row[3],
-                customer=_approval_customer(row[11:]),
+                customer=customer,
                 total_rm=snapshot.get("total_rm", "0.00"),
                 line_count=len(snapshot.get("lines", [])),
                 reasons=row[4] or [],
@@ -753,7 +756,7 @@ def get_approval(
         status=approval["status"],
         customer={
             "customer_id": customer["customer_id"],
-            "name": customer["name"],
+            "name": approval["snapshot"].get("customer_name") or customer["name"],
             "tier": customer["tier"],
             "credit_flag": customer["credit_flag"],
             "has_credit_notice": customer["credit_flag"] == "OVERDUE_NOTICE",

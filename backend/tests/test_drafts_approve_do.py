@@ -215,6 +215,13 @@ def test_put_then_direct_approve_and_do(seeded_db):
         get_do = client.get(f"/api/v1/delivery-orders/{do['do_number']}", headers=_headers(CLERK))
         assert get_do.status_code == 200
         assert get_do.json()["do_number"] == do["do_number"]
+        with connect(seeded_db) as conn:
+            conn.execute("UPDATE customers SET name='Renamed Customer' WHERE customer_id='CUS_T1'")
+        snapshotted = client.get(
+            f"/api/v1/delivery-orders/{do['do_number']}", headers=_headers(CLERK)
+        )
+        assert snapshotted.status_code == 200
+        assert snapshotted.json()["customer_name"] == "Customer One"
 
     with connect(seeded_db) as conn:
         assert conn.execute(
@@ -317,6 +324,11 @@ def test_approvals_list_and_detail(seeded_db):
         assert stock["state"] == "PASSED"
         assert stock["lines"][0]["available_qty"] == 10
         assert stock["lines"][0]["effective_qty"] == 3
+        with connect(seeded_db) as conn:
+            conn.execute("UPDATE customers SET name='Renamed Customer' WHERE customer_id='CUS_T1'")
+        snapshotted = client.get(f"/api/v1/approvals/{approval_id}", headers=_headers(OWNER))
+        assert snapshotted.status_code == 200
+        assert snapshotted.json()["customer"]["name"] == "Customer One"
 
 
 def test_owner_rejects_with_note(seeded_db):
