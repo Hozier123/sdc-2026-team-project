@@ -250,4 +250,7 @@ class HttpAiExtractor:
             payload = response.json()
         except ValueError as exc:
             raise AiServiceError("AI service returned non-JSON") from exc
-        return to_raw_extraction(payload, masked_text, self.family_aliases)
+        try:
+            return to_raw_extraction(payload, masked_text, self.family_aliases)
+        except AiPayloadError as exc:
+            raise AiServiceError(f"AI service returned an invalid payload: {exc}") from exc

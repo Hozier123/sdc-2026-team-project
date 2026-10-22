@@ -142,6 +142,14 @@ class Issue(BaseModel):
     auto_resolved_by: Literal["STOCK_CHECK"] | None = None
 
 
+class ClarificationDraft(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    language: str = Field(min_length=2, max_length=35)
+    message: str = Field(min_length=1, max_length=2000)
+    unresolved_issue_ids: list[str] = Field(min_length=1)
+
+
 class WorkingLine(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -189,7 +197,7 @@ class OrderDraftResponse(BaseModel):
     totals: OrderTotals
     allowed_actions: list[AllowedAction] = Field(default_factory=list)
     blocked_actions: dict[str, list[str]] = Field(default_factory=dict)
-    clarification_draft: dict[str, Any] | None = None
+    clarification_draft: ClarificationDraft | None = None
     clarification_lang: str | None = None
     ignored_spans: list[dict[str, Any]] = Field(default_factory=list)
     disambiguations: list[Issue] = Field(default_factory=list)
