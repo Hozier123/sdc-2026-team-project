@@ -19,7 +19,7 @@ from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
 from app.draft_store import persist_parse_draft
-from app.errors import MessageTooLongError, ResourceNotFoundError
+from app.errors import ForbiddenActionError, MessageTooLongError, ResourceNotFoundError
 from app.extraction.base import ExtractionProvider, validate_raw_extraction
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
@@ -77,6 +77,7 @@ def _unresolved_issue() -> dict[str, Any]:
     response_model=OrderDraftResponse,
     responses={
         401: {"description": "Missing or invalid Bearer token"},
+        403: {"description": "WAREHOUSE is not allowed to parse drafts"},
         404: {"description": "Customer not found in this tenant"},
         422: {"description": "Invalid request or message too long"},
     },
@@ -89,6 +90,9 @@ def parse_draft(
     settings: Annotated[Settings, Depends(get_settings)],
     extractor: Annotated[ExtractionProvider, Depends(get_extractor)],
 ) -> OrderDraftResponse:
+    if user.role not in {"CLERK", "OWNER"}:
+        raise ForbiddenActionError()
+
     if len(body.message_text) > 4000:
         raise MessageTooLongError()
 
@@ -137,14 +141,15 @@ def parse_draft(
         "updated_at": now,
     }
 
+    response_draft = OrderDraftResponse(**draft)
     persist_parse_draft(
         settings,
         user=user,
         customer=customer,
-        draft=draft,
+        draft=response_draft.model_dump(mode="json"),
         message_id=f"MSG_{uuid4().hex.upper()}",
         masked_text=masked.masked_text,
         language=body.language_hint,
     )
     response.headers["Cache-Control"] = "no-store"
-    return OrderDraftResponse(**draft)
+    return response_draft

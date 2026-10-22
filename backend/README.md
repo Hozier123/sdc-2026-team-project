@@ -94,6 +94,7 @@ Bearer → customer tenant check → PII mask
 ```
 
 - PII 只允许 `[REDACTED_PHONE]`、`[REDACTED_MYKAD]`、`[REDACTED_EMAIL]`；
+- 仅 `CLERK` / `OWNER` 可调用；`WAREHOUSE` 返回 403 `FORBIDDEN_ACTION`；
 - 原始 `message_text` 不写日志、不落库、不传给 provider；
 - `masked_text` 超过 4000 code points 返回 422 `MESSAGE_TOO_LONG`；
 - customer 不存在或跨租户返回 404 `RESOURCE_NOT_FOUND`；

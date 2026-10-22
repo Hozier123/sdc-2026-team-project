@@ -20,6 +20,13 @@ def test_ordinary_order_numbers_are_not_pii():
     assert result.tokens == ()
 
 
+def test_email_with_numeric_local_part_is_masked_as_email_first():
+    raw = "Email 900101145678@example.com, not an IC"
+    result = mask_message(raw)
+    assert result.masked_text == "Email [REDACTED_EMAIL], not an IC"
+    assert [token.kind for token in result.tokens] == ["EMAIL"]
+
+
 def test_mask_is_deterministic_and_keeps_original_message_untouched():
     raw = "Hubungi 0123456789"
     first = mask_message(raw)

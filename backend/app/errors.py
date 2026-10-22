@@ -23,6 +23,10 @@ class ResourceNotFoundError(Exception):
     """A tenant-scoped resource is missing or not visible."""
 
 
+class ForbiddenActionError(Exception):
+    """The authenticated role cannot perform this action."""
+
+
 def _request_id(value: str | None) -> str:
     if value and _REQUEST_ID_RE.fullmatch(value):
         return value
@@ -95,6 +99,10 @@ def register_error_handlers(app: FastAPI) -> None:
         request: Request, exc: ResourceNotFoundError
     ) -> JSONResponse:
         return _error_response(404, "RESOURCE_NOT_FOUND", "Resource not found.")
+
+    @app.exception_handler(ForbiddenActionError)
+    async def forbidden_action_handler(request: Request, exc: ForbiddenActionError) -> JSONResponse:
+        return _error_response(403, "FORBIDDEN_ACTION", "Action is forbidden for this role.")
 
     @app.exception_handler(RequestValidationError)
     async def validation_handler(request: Request, exc: RequestValidationError) -> JSONResponse:

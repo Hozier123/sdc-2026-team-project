@@ -11,6 +11,7 @@ from app.migrations import migrate
 pytestmark = pytest.mark.integration
 
 TOKEN = "tok_t1_clerk"
+WAREHOUSE_TOKEN = "tok_t1_warehouse"
 RAW = "Tepung 5 ctn, call 012-3456789, email ali@example.com"
 
 
@@ -24,8 +25,9 @@ def seeded_db(db_settings):
         )
         conn.execute(
             "INSERT INTO users (user_id, tenant_id, display_name, demo_token_hash, role) "
-            "VALUES ('USR_T1_CLERK', 'T1', 'T1 Clerk', %s, 'CLERK')",
-            (hash_token(TOKEN),),
+            "VALUES ('USR_T1_CLERK', 'T1', 'T1 Clerk', %s, 'CLERK'), "
+            "('USR_T1_WAREHOUSE', 'T1', 'T1 Warehouse', %s, 'WAREHOUSE')",
+            (hash_token(TOKEN), hash_token(WAREHOUSE_TOKEN)),
         )
         conn.execute(
             "INSERT INTO customers (customer_id, tenant_id, name, tier, credit_flag) VALUES "
@@ -51,6 +53,17 @@ def test_parse_requires_auth(seeded_db):
         )
     assert response.status_code == 401
     assert response.json()["error_code"] == "INVALID_TOKEN"
+
+
+def test_parse_rejects_warehouse_role(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers={"Authorization": f"Bearer {WAREHOUSE_TOKEN}"},
+            json={"customer_id": "CUS_T1", "message_text": RAW},
+        )
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "FORBIDDEN_ACTION"
 
 
 def test_parse_rejects_overlong_message(seeded_db):
