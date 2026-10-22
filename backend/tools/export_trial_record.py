@@ -389,3 +389,7 @@ def main(argv: list[str] | None = None) -> int:
     if mixed:
         print("export warning: MIXED ai_mode detected; report these orders separately")
     return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -4,6 +4,7 @@ import csv
 import json
 import os
 import uuid
+from pathlib import Path
 
 import psycopg
 import pytest
@@ -252,3 +253,18 @@ def test_line_order_mismatch_is_flagged():
 
     assert export.order_mismatch is True
     assert any("working_lines" in error for error in export.errors)
+
+
+def test_module_entry_point_is_wired():
+    import subprocess
+    import sys
+
+    backend = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, "-m", "tools.export_trial_record", "--help"],
+        cwd=backend,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert "usage" in result.stdout.lower()
