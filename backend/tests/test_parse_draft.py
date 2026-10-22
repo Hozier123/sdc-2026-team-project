@@ -5,12 +5,14 @@ from fastapi.testclient import TestClient
 
 from app.auth import hash_token
 from app.db import connect
+from app.extraction.base import RawExtraction, RawRow
 from app.main import create_app
 from app.migrations import migrate
 
 pytestmark = pytest.mark.integration
 
 TOKEN = "tok_t1_clerk"
+OWNER_TOKEN = "tok_t1_owner"
 WAREHOUSE_TOKEN = "tok_t1_warehouse"
 RAW = "Tepung 5 ctn, call 012-3456789, email ali@example.com"
 
@@ -26,8 +28,9 @@ def seeded_db(db_settings):
         conn.execute(
             "INSERT INTO users (user_id, tenant_id, display_name, demo_token_hash, role) "
             "VALUES ('USR_T1_CLERK', 'T1', 'T1 Clerk', %s, 'CLERK'), "
+            "('USR_T1_OWNER', 'T1', 'T1 Owner', %s, 'OWNER'), "
             "('USR_T1_WAREHOUSE', 'T1', 'T1 Warehouse', %s, 'WAREHOUSE')",
-            (hash_token(TOKEN), hash_token(WAREHOUSE_TOKEN)),
+            (hash_token(TOKEN), hash_token(OWNER_TOKEN), hash_token(WAREHOUSE_TOKEN)),
         )
         conn.execute(
             "INSERT INTO customers (customer_id, tenant_id, name, tier, credit_flag) VALUES "
@@ -64,6 +67,36 @@ def test_parse_rejects_warehouse_role(seeded_db):
         )
     assert response.status_code == 403
     assert response.json()["error_code"] == "FORBIDDEN_ACTION"
+
+
+def test_parse_allows_owner_role(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers={"Authorization": f"Bearer {OWNER_TOKEN}"},
+            json={"customer_id": "CUS_T1", "message_text": RAW},
+        )
+    assert response.status_code == 200
+    assert response.json()["status"] == "DISAMBIGUATION_REQUIRED"
+
+
+def test_parse_does_not_silently_drop_provider_rows(seeded_db):
+    class RowProvider:
+        def extract(self, masked_text, language_hint, request_id):
+            return RawExtraction(rows=(RawRow(span="5 ctn", qty=5),))
+
+    app = create_app(seeded_db)
+    app.state.extraction_provider = RowProvider()
+    with TestClient(app, raise_server_exceptions=False) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers={"Authorization": f"Bearer {TOKEN}"},
+            json={"customer_id": "CUS_T1", "message_text": RAW},
+        )
+    assert response.status_code == 500
+    with connect(seeded_db) as conn:
+        assert conn.execute("SELECT count(*) FROM inbound_messages").fetchone() == (0,)
+        assert conn.execute("SELECT count(*) FROM orders").fetchone() == (0,)
 
 
 def test_parse_rejects_overlong_message(seeded_db):

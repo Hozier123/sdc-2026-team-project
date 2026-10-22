@@ -34,6 +34,13 @@ def test_international_phone_with_spaces_is_masked():
     assert "[REDACTED_PHONE]" in result.masked_text
 
 
+def test_landline_phone_is_masked():
+    raw = "Office 03-12345678 or +60 3-12345678"
+    result = mask_message(raw)
+    assert "03-12345678" not in result.masked_text
+    assert result.masked_text.count("[REDACTED_PHONE]") == 2
+
+
 def test_mask_is_deterministic_and_keeps_original_message_untouched():
     raw = "Hubungi 0123456789"
     first = mask_message(raw)

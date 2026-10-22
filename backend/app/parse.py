@@ -107,6 +107,9 @@ def parse_draft(
         request.state.request_id,
     )
     validate_raw_extraction(raw, masked.masked_text)
+    if raw.rows:
+        # Do not silently discard provider rows before the H1/H5 line adapter exists.
+        raise RuntimeError("extraction row adapter is not implemented")
 
     now = datetime.now(timezone.utc).isoformat()
     draft_id = f"DRF_{uuid4().hex.upper()}"

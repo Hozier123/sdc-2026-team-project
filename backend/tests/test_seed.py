@@ -1,4 +1,5 @@
 import hashlib
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
@@ -77,6 +78,18 @@ def test_checksum_mismatch_is_rejected_before_database(db_settings, tmp_path):
 
     with pytest.raises(SeedError, match="checksum"):
         load_seed(db_settings, **args)
+
+
+def test_concurrent_seed_is_serialized_by_tenant(db_settings, tmp_path):
+    migrate(db_settings)
+    path = _write(tmp_path)
+
+    def load():
+        return load_seed(db_settings, **_args(path)).status
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(lambda _: load(), range(2)))
+    assert sorted(results) == ["already_loaded", "loaded"]
 
 
 def test_count_mismatch_rolls_back_seed_and_manifest(db_settings, tmp_path):

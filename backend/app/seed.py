@@ -99,6 +99,10 @@ def load_seed(
         conn.execute("BEGIN")
         try:
             conn.execute("SET LOCAL search_path TO public")
+            conn.execute(
+                "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
+                (tenant,),
+            )
             conn.execute("CREATE SCHEMA IF NOT EXISTS kiraorder_meta")
             conn.execute(SEED_MANIFEST_DDL)
             row = conn.execute(
