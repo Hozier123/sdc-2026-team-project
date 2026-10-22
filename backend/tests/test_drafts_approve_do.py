@@ -110,7 +110,7 @@ def test_parse_put_approve_and_get_do_end_to_end(seeded_db):
         assert parsed.json()["version"] == 1
         assert parsed.json()["status"] == "DISAMBIGUATION_REQUIRED"
 
-        saved = _put(client, draft_id=draft_id, version=1, lines=[_line(2)])
+        saved = _put(client, draft_id=draft_id, version=1, lines=[_line(1)])
         assert saved.status_code == 200, saved.text
         assert saved.json()["version"] == 2
         assert saved.json()["status"] == "READY_FOR_APPROVAL"
@@ -122,7 +122,7 @@ def test_parse_put_approve_and_get_do_end_to_end(seeded_db):
         )
         assert approved.status_code == 200, approved.text
         do = approved.json()
-        assert do["final_total_rm"] == "10.00"
+        assert do["final_total_rm"] == "5.00"
 
         fetched = client.get(f"/api/v1/delivery-orders/{do['do_number']}", headers=_headers(CLERK))
         assert fetched.status_code == 200
@@ -131,7 +131,7 @@ def test_parse_put_approve_and_get_do_end_to_end(seeded_db):
     with connect(seeded_db) as conn:
         assert conn.execute(
             "SELECT available_qty FROM inventory WHERE product_id='SKU_MILO_1KG'"
-        ).fetchone() == (8,)
+        ).fetchone() == (9,)
 
 
 def test_put_then_direct_approve_and_do(seeded_db):
