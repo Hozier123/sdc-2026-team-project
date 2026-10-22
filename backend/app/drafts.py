@@ -471,27 +471,54 @@ def _audit(
         (tenant, draft_id, event, Jsonb(payload), user.user_id, user.role),
     )
     if before is not None and after is not None:
+        tracked_fields = (
+            "sku_id",
+            "family_id",
+            "description",
+            "requested_qty",
+            "confirmed_qty",
+            "effective_qty",
+            "uom",
+            "pack_size",
+            "grade",
+            "tier_unit_price",
+            "unit_price_override",
+            "override_reason",
+            "effective_unit_price",
+            "subtotal_rm",
+            "match_source",
+            "available_qty",
+        )
         for line_id in sorted(set(before) | set(after)):
             old_line = before.get(line_id)
             new_line = after.get(line_id)
             if old_line == new_line:
                 continue
-            conn.execute(
-                "INSERT INTO field_diffs "
-                "(audit_id, draft_version, line_id, field_path, before_value, "
-                " after_value, source, reason_code) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                (
-                    audit_id,
-                    version,
-                    line_id,
-                    "line",
-                    Jsonb(old_line) if old_line is not None else None,
-                    Jsonb(new_line) if new_line is not None else None,
-                    "PUT_LINES",
-                    "USER_EDIT",
-                ),
-            )
+            if old_line is None or new_line is None:
+                changes = [("line", old_line, new_line)]
+            else:
+                changes = [
+                    (field, old_line.get(field), new_line.get(field))
+                    for field in tracked_fields
+                    if old_line.get(field) != new_line.get(field)
+                ]
+            for field_path, old_value, new_value in changes:
+                conn.execute(
+                    "INSERT INTO field_diffs "
+                    "(audit_id, draft_version, line_id, field_path, before_value, "
+                    " after_value, source, reason_code) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (
+                        audit_id,
+                        version,
+                        line_id,
+                        field_path,
+                        Jsonb(old_value) if old_value is not None else None,
+                        Jsonb(new_value) if new_value is not None else None,
+                        "PUT_LINES",
+                        "USER_EDIT",
+                    ),
+                )
 
 
 @router.put(
