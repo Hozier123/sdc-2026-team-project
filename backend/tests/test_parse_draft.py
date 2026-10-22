@@ -80,7 +80,7 @@ def test_parse_allows_owner_role(seeded_db):
     assert response.json()["status"] == "DISAMBIGUATION_REQUIRED"
 
 
-def test_parse_does_not_silently_drop_provider_rows(seeded_db):
+def test_parse_adapts_provider_rows(seeded_db):
     class RowProvider:
         def extract(self, masked_text, language_hint, request_id):
             return RawExtraction(rows=(RawRow(span="5 ctn", qty=5),))
@@ -93,10 +93,13 @@ def test_parse_does_not_silently_drop_provider_rows(seeded_db):
             headers={"Authorization": f"Bearer {TOKEN}"},
             json={"customer_id": "CUS_T1", "message_text": RAW},
         )
-    assert response.status_code == 500
-    with connect(seeded_db) as conn:
-        assert conn.execute("SELECT count(*) FROM inbound_messages").fetchone() == (0,)
-        assert conn.execute("SELECT count(*) FROM orders").fetchone() == (0,)
+    assert response.status_code == 200
+    body = response.json()
+    assert body["ai_mode"] == "LLM"
+    assert body["status"] == "DISAMBIGUATION_REQUIRED"
+    assert len(body["lines"]) == 1
+    assert body["lines"][0]["source_span"] == "5 ctn"
+    assert any(issue["reason_code"] == "FAMILY_NOT_EVIDENCED" for issue in body["issues"])
 
 
 def test_parse_rejects_overlong_message(seeded_db):

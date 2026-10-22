@@ -17,3 +17,6 @@ class Settings(BaseSettings):
     )
 
     database_url: SecretStr | None = None
+    ai_service_url: str | None = None
+    ai_api_key: SecretStr | None = None
+    ai_timeout_s: float = 8.0
