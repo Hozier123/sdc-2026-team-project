@@ -264,6 +264,8 @@ def test_clerk_escalation_creates_approval_and_owner_approves(seeded_db):
         assert decided.status_code == 200, decided.text
         do = decided.json()
         assert do["approval_mode"] == "OWNER_APPROVED"
+        assert do["prepared_by"] == "USR_T1_CLERK"
+        assert do["approved_by"] == "USR_T1_OWNER"
 
     with connect(seeded_db) as conn:
         assert conn.execute(
@@ -311,6 +313,10 @@ def test_approvals_list_and_detail(seeded_db):
         assert detail.status_code == 200, detail.text
         assert detail.json()["approval_id"] == approval_id
         assert detail.json()["status"] == "PENDING"
+        stock = detail.json()["stock_check"]
+        assert stock["state"] == "PASSED"
+        assert stock["lines"][0]["available_qty"] == 10
+        assert stock["lines"][0]["effective_qty"] == 3
 
 
 def test_owner_rejects_with_note(seeded_db):
