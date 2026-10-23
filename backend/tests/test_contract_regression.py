@@ -62,6 +62,7 @@ def _validate_body(body, schema):
 def _assert_error(response, status: int, code: str | None = None):
     assert response.status_code == status, response.text
     assert response.headers.get("X-Request-ID")
+    assert response.headers.get("Cache-Control") == "no-store"
     body = response.json()
     _validate_body(body, {"$ref": "#/components/schemas/Error", "components": COMPONENTS})
     if code is not None:
