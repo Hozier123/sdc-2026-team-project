@@ -495,14 +495,14 @@ def parse_draft(
             # A confirmed customer alias plus an evidenced quantity bypasses
             # the extraction provider entirely.
             raw = RawExtraction(rows=tuple(memory))
-            validate_raw_extraction(raw, masked.masked_text, strict=False)
+            raw = validate_raw_extraction(raw, masked.masked_text, strict=False)
         else:
             raw = extractor.extract(
                 masked.masked_text,
                 body.language_hint,
                 request.state.request_id,
             )
-            validate_raw_extraction(raw, masked.masked_text, strict=False)
+            raw = validate_raw_extraction(raw, masked.masked_text, strict=False)
             raw, memory_used = merge_memory(raw, memory)
     except (AiServiceError, ValueError, TypeError) as exc:
         raise AiAndFallbackUnavailableError() from exc
