@@ -1,8 +1,8 @@
-# KiraOrder 后端：当前实现与验收边界
+﻿# KiraOrder 后端：当前实现与验收边界
 
-当前已实现身份/租户权限、显式迁移与 seed、PII 掩码、AI HTTP 边界、字段证据防护、目录解析与客户记忆、草稿整批保存、条件与澄清、三语回复、价格升级、老板审批、DO/库存事务、查询/审计/仓库读取、AI 状态/唤醒、`checks_enabled` 软检查、并发回滚和契约回归。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`，本轮未修改。
+当前已实现身份/租户权限、显式迁移与 seed、PII 掩码、AI HTTP 边界、字段证据防护、目录解析与客户记忆、草稿整批保存、条件与澄清、三语回复、作废草稿、价格升级、老板审批、DO/库存事务、查询/审计/仓库读取、AI 状态/唤醒、`checks_enabled` 软检查、并发回滚和契约回归。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`，本轮未修改。
 
-2026-10-23 审查说明与后续状态见 `docs/audit/backend-audit-2026-10-23.md`。当前 main 完整测试为 **282 passed**。仍属外部验收边界：真实 AI endpoint/模型准确率、公开部署、前端/数据独立 UAT；未配置 AI 时仅提供人工录单占位路径，不应宣传为完成了真实模型抽取。
+2026-10-23 审查说明与后续状态见 `docs/audit/backend-audit-2026-10-23.md`。当前 main 完整测试为 **286 passed**。仍属外部验收边界：真实 AI endpoint/模型准确率、公开部署、前端/数据独立 UAT；未配置 AI 时仅提供人工录单占位路径，不应宣传为完成了真实模型抽取。
 
 ## 安装和启动（Windows）
 
@@ -165,12 +165,18 @@ AI 服务超时、5xx、非法 JSON 或非法 payload 返回：
 
 ```text
 PUT  /api/v1/orders/drafts/{draft_id}/lines
+POST /api/v1/orders/drafts/{draft_id}/discard
 POST /api/v1/orders/{draft_id}/approve
 POST /api/v1/approvals/{approval_id}/decide
 GET  /api/v1/delivery-orders/{do_number}
 GET  /api/v1/approvals
 GET  /api/v1/approvals/{approval_id}
 ```
+
+`discard` 是 P1 的 CLERK/OWNER 终止动作：要求 `expected_version` 和非空
+`note`，仅允许 `DISAMBIGUATION_REQUIRED` / `READY_FOR_APPROVAL` 使用；成功后
+`status=REJECTED`、`termination_reason=CLERK_DISCARDED`，写入 `CANCEL_DRAFT`
+审计和 `DRAFT_DISCARDED` 活动记录。pending 或已出单的草稿不能作废。
 
 **`confirmed_items` 是 deprecated 兼容路径。** 新前端仍必须先：
 
@@ -228,6 +234,6 @@ GitHub Actions 使用隔离 PostgreSQL 17.10 service 执行完整验收。Gate 0
 
 ## 当前验收边界
 
-内部后端主链路已完成并有自动测试；当前 main 为 **282 passed**。仍需外部材料或现场验收的部分：真实 AI endpoint 的模型质量与独立准确率、公开部署、前端/数据独立 UAT、真人试用记录。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新；不回写冻结文件。
+内部后端主链路已完成并有自动测试；当前 main 为 **286 passed**。仍需外部材料或现场验收的部分：真实 AI endpoint 的模型质量与独立准确率、公开部署、前端/数据独立 UAT、真人试用记录。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新；不回写冻结文件。
 
 实现依据：[psycopg 事务管理](https://www.psycopg.org/psycopg3/docs/basic/transactions.html)、[pglast SQL 解析器](https://pglast.readthedocs.io/en/v7/parser.html)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/17/explicit-locking.html#ADVISORY-LOCKS)。
