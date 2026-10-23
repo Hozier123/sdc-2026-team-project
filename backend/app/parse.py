@@ -514,6 +514,8 @@ def parse_draft(
         ai_mode = "ALIAS_ONLY"
     elif sources and all(source == "RAPIDFUZZ_FALLBACK" for source in sources):
         ai_mode = "FALLBACK"
+    elif raw.rows and all(row.invalid_reason for row in raw.rows):
+        ai_mode = "FALLBACK"
     elif memory_used or len(sources) > 1 or any(source != "LLM_EXTRACTED" for source in sources):
         ai_mode = "MIXED"
     elif isinstance(extractor, StubExtractor):

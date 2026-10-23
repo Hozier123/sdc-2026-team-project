@@ -609,3 +609,25 @@ def test_parse_marks_all_fallback_rows(seeded_db):
     body = response.json()
     assert body["ai_mode"] == "FALLBACK"
     assert body["lines"][0]["match_source"] == "RAPIDFUZZ_FALLBACK"
+
+
+def test_parse_all_invalid_rows_becomes_fallback_not_503(seeded_db):
+    from app.extraction.base import RawExtraction, RawRow
+
+    class AllBadProvider:
+        def extract(self, masked_text, language_hint, request_id):
+            return RawExtraction(rows=(RawRow(span="not-present", qty=1),))
+
+    app = create_app(seeded_db)
+    app.state.extraction_provider = AllBadProvider()
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 5 ctn"},
+        )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["ai_mode"] == "FALLBACK"
+    assert body["lines"] == []
+    assert any(issue["reason_code"] == "SOURCE_EVIDENCE_INVALID" for issue in body["issues"])
