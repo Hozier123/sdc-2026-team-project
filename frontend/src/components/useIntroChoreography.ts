@@ -2,7 +2,7 @@ import { useRef, useState, type RefObject } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { finishWhenHidden, gsap, useGSAP } from "../lib/motion";
 import { watchPageVisibility } from "../lib/page-visibility";
-import { INTRO_CLOSE_AT, INTRO_WINDOWS, introChapterAt, type IntroChapter } from "../lib/intro-depth";
+import { introChapterAt, type IntroChapter } from "../lib/intro-depth";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,7 +20,6 @@ type IntroLayers = {
 export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, layers: IntroLayers) {
   const [chapter, setChapter] = useState<IntroChapter>("welcome");
   const [reduced, setReduced] = useState(false);
-  const currentChapter = useRef<IntroChapter>("welcome");
   const welcomed = useRef(false);
   useGSAP(() => {
     const element = root.current;
@@ -44,14 +43,59 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
       gsap.set(scene.current, { z: reduce ? 0 : -100, scale: reduce ? 1 : 1.09, y: 0, x: reduce ? 0 : innerWidth * (phone ? 0.05 : 0.18), rotationY: 0, opacity: phone ? 0.6 : 1 });
       gsap.set(foreground.current, { z: reduce ? 0 : 120, scale: reduce ? 1 : 0.9 });
       gsap.set(entry.current, { y: 0 });
+      const planes: Record<IntroChapter, HTMLElement | null> = {
+        welcome: opening.current, read: notes.current[0], check: notes.current[1],
+        approve: notes.current[2], close: closing.current,
+      };
+      const allPlanes = Object.values(planes).filter((plane): plane is HTMLElement => !!plane);
+      const closeEntryY = () => {
+        const target = foreground.current!.getBoundingClientRect().top + entrySlot.offsetTop + entrySlot.offsetHeight / 2;
+        const origin = entry.current!.offsetTop + entryAnchor.offsetTop + entryAnchor.offsetHeight / 2;
+        return target - origin;
+      };
+      let active: IntroChapter | undefined;
+      let chapterMotion: gsap.core.Timeline | undefined;
+      let stopChapterMotion = () => {};
+      let disposed = false;
+      // Capture delayed ScrollTrigger callbacks in this matchMedia context too.
+      const presentChapter = context.add("presentChapter", (next: IntroChapter, animate = true) => {
+        if (disposed || (active === next && animate)) return;
+        active = next;
+        stopChapterMotion();
+        chapterMotion?.kill();
+        element.dataset.introChapter = next;
+        setChapter(next);
+        gsap.set(allPlanes, { autoAlpha: 0, x: 0, y: 0, z: 0, rotationY: 0 });
+        const target = planes[next];
+        if (!target) return;
+        const dockY = next === "close" ? closeEntryY() : 0;
+        if (!animate || document.hidden) {
+          gsap.set(target, { autoAlpha: 1 });
+          gsap.set(entry.current, { y: dockY });
+          gsap.set(select("[data-intro-scroll-hint]"), { autoAlpha: next === "close" ? 0 : 1 });
+          element.dataset.chapterMotion = "settled";
+          return;
+        }
+        element.dataset.chapterMotion = "moving";
+        // Text and the action run on time, never on the scrubbed background clock.
+        // A fast reversal kills the old arrival and fully resolves the latest one.
+        const x = next === "check" && !reduce ? (phone ? 12 : 20) : 0;
+        chapterMotion = gsap.timeline({ onComplete: () => { element.dataset.chapterMotion = "settled"; } })
+          .fromTo(target, { autoAlpha: 0.55, x, y: reduce ? 0 : next === "welcome" ? -12 : 20, z: reduce ? 0 : -32 },
+            { autoAlpha: 1, x: 0, y: 0, z: 0, duration: reduce ? 0.12 : 0.36, ease: "power3.out" }, 0)
+          // The pointer spring owns the button; this tween only moves its dock.
+          .to(entry.current, { y: dockY, duration: reduce ? 0.12 : 0.44, ease: "power3.out" }, 0)
+          .to(select("[data-intro-scroll-hint]"), { autoAlpha: next === "close" ? 0 : 1, duration: 0.16 }, 0);
+        stopChapterMotion = finishWhenHidden(chapterMotion);
+      });
       let welcome: gsap.core.Timeline | undefined;
       if (!welcomed.current) {
         element.dataset.motionPhase = "welcome";
         welcome = gsap.timeline({
-          defaults: { ease: "power3.out", clearProps: "opacity,transform" },
+          defaults: { ease: "power3.out", clearProps: "opacity" },
           onComplete: () => { welcomed.current = true; element.dataset.motionPhase = "ready"; },
         });
-        welcome.from(select("[data-intro-welcome]"), { opacity: 0.6, scale: reduce ? 1 : 1.035, duration: reduce ? 0.12 : 0.7 }, 0)
+        welcome.from(select("[data-intro-welcome]"), { opacity: 0.6, scale: reduce ? 1 : 1.035, duration: reduce ? 0.12 : 0.7, clearProps: "opacity,transform" }, 0)
           .from(select("[data-intro-brand], [data-intro-prompt]"), { opacity: 0.7, duration: reduce ? 0.12 : 0.35 }, 0);
       } else element.dataset.motionPhase = "ready";
 
@@ -60,13 +104,13 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
         onUpdate: () => {
           const progress = story.progress();
           element.dataset.storyProgress = progress.toFixed(3);
-          const next = introChapterAt(progress);
-          if (next !== currentChapter.current) { currentChapter.current = next; setChapter(next); }
         },
         scrollTrigger: {
           id: "intro-depth", trigger: element, start: "top top",
           end: () => `+=${Math.max(1, element.offsetHeight - innerHeight)}`,
           scrub: reduce ? true : 0.55, invalidateOnRefresh: true,
+          onUpdate: trigger => presentChapter(introChapterAt(trigger.progress)),
+          onRefresh: trigger => presentChapter(introChapterAt(trigger.progress), false),
         },
       });
       story.to(background.current, { z: reduce ? 0 : -240, scale: reduce ? 1 : 1.26, y: reduce ? 0 : -(phone ? 30 : 80), rotation: reduce ? 0 : 2.4, duration }, 0)
@@ -81,39 +125,21 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
         x: () => reduce ? 0 : innerWidth * pose.x * (phone ? 0.35 : 1), rotationY: reduce ? 0 : pose.rotate,
         duration: at(pose.end - pose.start), ease: "power2.inOut",
       }, at(pose.start)));
-      gsap.set(notes.current.filter(Boolean), { autoAlpha: 0 });
-      gsap.set(closing.current, { autoAlpha: 0 });
-      gsap.set(opening.current, { autoAlpha: 1, z: 0, y: 0 });
-      story.to(opening.current, { autoAlpha: 0, z: reduce ? 0 : 220, y: reduce ? 0 : -80, duration: at(0.1) }, at(0.08));
-      notes.current.forEach((note, index) => {
-        if (!note) return;
-        const window = INTRO_WINDOWS[index];
-        const pose = index === 1 ? { x: phone ? 28 : 70, y: 0, rotationY: phone ? -3 : -7 }
-          : { x: 0, y: phone ? 65 : index === 2 ? 110 : 130, rotationY: 0 };
-        story.fromTo(note, { autoAlpha: 0, z: reduce ? 0 : index === 2 ? -180 : -120, x: reduce ? 0 : pose.x, y: reduce ? 0 : pose.y, rotationY: reduce ? 0 : pose.rotationY },
-          { autoAlpha: 1, z: 0, x: 0, y: 0, rotationY: 0, ease: "power2.out", duration: at(window.full - window.enter) }, at(window.enter))
-          .to(note, { autoAlpha: 0, z: reduce ? 0 : 240, y: reduce ? 0 : -85, duration: at(window.gone - window.exit) }, at(window.exit));
-      });
-      story.fromTo(closing.current, { autoAlpha: 0, z: reduce ? 0 : -40, y: reduce ? 0 : 24 }, { autoAlpha: 1, z: 0, y: 0, duration: at(0.08), ease: "power2.out" }, at(INTRO_CLOSE_AT))
-        // Move the fixed dock; the pointer spring continues to own the inner button.
-        .fromTo(entry.current, { y: 0 }, { y: () => {
-          const target = foreground.current!.getBoundingClientRect().top + entrySlot.offsetTop + entrySlot.offsetHeight / 2;
-          const origin = entry.current!.offsetTop + entryAnchor.offsetTop + entryAnchor.offsetHeight / 2;
-          return target - origin;
-        }, duration: at(0.08), ease: "power2.inOut" }, at(INTRO_CLOSE_AT))
-        .to(select("[data-intro-scroll-hint]"), { autoAlpha: 0, duration: at(0.08) }, at(0.76))
-        .to(select("[data-intro-story-shade]"), { opacity: 0.36, duration: at(0.1) }, at(0.1))
+      story.to(select("[data-intro-story-shade]"), { opacity: 0.36, duration: at(0.1) }, at(0.1))
         .to(scene.current, { opacity: 0.28, duration: at(0.16) }, at(0.76));
       const stopWelcome = welcome ? finishWhenHidden(welcome) : () => {};
       const trigger = story.scrollTrigger!;
+      presentChapter(introChapterAt(trigger.progress), false);
       const stopVisibility = watchPageVisibility(document, visible => {
         if (visible) trigger.enable(false, true);
-        else { trigger.getTween()?.progress(1); trigger.disable(false); }
+        else { trigger.getTween()?.progress(1); chapterMotion?.progress(1); trigger.disable(false); }
       });
       return () => {
-        stopWelcome(); stopVisibility();
+        disposed = true;
+        stopWelcome(); stopVisibility(); stopChapterMotion(); chapterMotion?.kill();
         delete element.dataset.motionPhase;
         delete element.dataset.storyProgress;
+        delete element.dataset.chapterMotion;
       };
     });
     return () => media.revert();

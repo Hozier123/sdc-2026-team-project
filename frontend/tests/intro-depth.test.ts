@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { introChapterAt, INTRO_CLOSE_AT, INTRO_WINDOWS } from "../src/lib/intro-depth";
+import { introChapterAt } from "../src/lib/intro-depth";
 
 test("intro chapters switch at exact thresholds in both scroll directions", () => {
   const stops = [0, 0.1799, 0.18, 0.3999, 0.4, 0.6199, 0.62, 0.8399, 0.84, 1];
@@ -12,10 +12,9 @@ test("intro chapters switch at exact thresholds in both scroll directions", () =
   assert.equal(introChapterAt(2), "close");
 });
 
-test("each chapter has a reading hold and leaves before the next enters", () => {
-  INTRO_WINDOWS.forEach((window, index) => {
-    assert.ok(window.enter < window.full && window.full < window.exit && window.exit < window.gone);
-    assert.ok(window.exit - window.full >= 0.079);
-    assert.ok(window.gone <= (INTRO_WINDOWS[index + 1]?.enter ?? INTRO_CLOSE_AT));
-  });
+test("stopping in former transition and empty ranges retains a whole chapter", () => {
+  const stops = [0.1, 0.21, 0.36, 0.39, 0.43, 0.57, 0.61, 0.65, 0.79, 0.83, 0.87];
+  assert.deepEqual(stops.map(introChapterAt), [
+    "welcome", "read", "read", "read", "check", "check", "check", "approve", "approve", "approve", "close",
+  ]);
 });

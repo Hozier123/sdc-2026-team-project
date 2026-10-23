@@ -1,0 +1,542 @@
+{
+  "date": "2026-10-23",
+  "samples": [
+    {
+      "label": "stop-10",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "welcome",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.094",
+      "status": "{\"progress\":0.10006435006435006,\"chapter\":\"welcome\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 386.1720886230469,
+            "height": 157.390625,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 228.78146362304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 228.78146362304688
+          },
+          "heading": "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrder",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-21",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "read",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.210",
+      "status": "{\"progress\":0.20994208494208494,\"chapter\":\"read\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 351.2033386230469,
+            "height": 161.2734375,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 189.92990112304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 189.92990112304688
+          },
+          "heading": "AI reads.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-36",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "read",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.353",
+      "status": "{\"progress\":0.36003861003861004,\"chapter\":\"read\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 351.2033386230469,
+            "height": 161.2734375,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 189.92990112304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 189.92990112304688
+          },
+          "heading": "AI reads.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-43",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "check",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.430",
+      "status": "{\"progress\":0.430019305019305,\"chapter\":\"check\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 351.2033386230469,
+            "height": 161.2734375,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 189.92990112304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 189.92990112304688
+          },
+          "heading": "Rules check.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-57",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "check",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.568",
+      "status": "{\"progress\":0.569980694980695,\"chapter\":\"check\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 351.2033386230469,
+            "height": 161.2734375,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 189.92990112304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 189.92990112304688
+          },
+          "heading": "Rules check.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-65",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "approve",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.650",
+      "status": "{\"progress\":0.6499356499356499,\"chapter\":\"approve\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 351.2033386230469,
+            "height": 161.2734375,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 189.92990112304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 189.92990112304688
+          },
+          "heading": "People approve.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-79",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "approve",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.784",
+      "status": "{\"progress\":0.790057915057915,\"chapter\":\"approve\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 351.2033386230469,
+            "height": 161.2734375,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 189.92990112304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 189.92990112304688
+          },
+          "heading": "People approve.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-87",
+      "button": {
+        "bottom": 441.4533081054687,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 389.4533081054687,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 389.4533081054687
+      },
+      "buttons": 1,
+      "chapter": "close",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.870",
+      "status": "{\"progress\":0.87001287001287,\"chapter\":\"close\",\"motion\":\"moving\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":3}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 780.4532811641693,
+            "height": 776.9999389648438,
+            "left": 6.410810783563647e-06,
+            "right": 484.0000064108108,
+            "top": 3.4533421993255615,
+            "width": 484,
+            "x": 6.410810783563647e-06,
+            "y": 3.4533421993255615
+          },
+          "heading": "Every order,in the right hands.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "stop-94",
+      "button": {
+        "bottom": 441.4533081054687,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 389.4533081054687,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 389.4533081054687
+      },
+      "buttons": 1,
+      "chapter": "close",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.940",
+      "status": "{\"progress\":0.939993564993565,\"chapter\":\"close\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 780.4532811641693,
+            "height": 776.9999389648438,
+            "left": 6.410810783563647e-06,
+            "right": 484.0000064108108,
+            "top": 3.4533421993255615,
+            "width": 484,
+            "x": 6.410810783563647e-06,
+            "y": 3.4533421993255615
+          },
+          "heading": "Every order,in the right hands.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "fast-reverse",
+      "button": {
+        "bottom": 725,
+        "height": 52,
+        "left": 147.328125,
+        "right": 336.671875,
+        "top": 673,
+        "width": 189.34375,
+        "x": 147.328125,
+        "y": 673
+      },
+      "buttons": 1,
+      "chapter": "check",
+      "height": 777,
+      "motion": "settled",
+      "progress": "0.430",
+      "status": "{\"progress\":0.430019305019305,\"chapter\":\"check\",\"motion\":\"moving\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":3}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 351.2033386230469,
+            "height": 161.2734375,
+            "left": 24.0000057220459,
+            "right": 460.0000057220459,
+            "top": 189.92990112304688,
+            "width": 436,
+            "x": 24.0000057220459,
+            "y": 189.92990112304688
+          },
+          "heading": "Rules check.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 484
+    },
+    {
+      "label": "desktop-stop-21",
+      "button": {
+        "bottom": 848,
+        "height": 52,
+        "left": 625.328125,
+        "right": 814.671875,
+        "top": 796,
+        "width": 189.34375,
+        "x": 625.328125,
+        "y": 796
+      },
+      "buttons": 1,
+      "chapter": "read",
+      "height": 900,
+      "motion": "settled",
+      "progress": "0.210",
+      "status": "{\"progress\":0.21,\"chapter\":\"read\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":0}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 475.625,
+            "height": 201.625,
+            "left": 86.39845275878906,
+            "right": 566.3984527587891,
+            "top": 274,
+            "width": 480,
+            "x": 86.39845275878906,
+            "y": 274
+          },
+          "heading": "AI reads.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "desktop-stop-87",
+      "button": {
+        "bottom": 535,
+        "height": 52,
+        "left": 625.328125,
+        "right": 814.671875,
+        "top": 483,
+        "width": 189.34375,
+        "x": 625.328125,
+        "y": 483
+      },
+      "buttons": 1,
+      "chapter": "close",
+      "height": 900,
+      "motion": "settled",
+      "progress": "0.870",
+      "status": "{\"progress\":0.87,\"chapter\":\"close\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":1}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 904.000011920929,
+            "height": 900,
+            "left": 1.9073486328125e-05,
+            "right": 1440.0000190734863,
+            "top": 4.000011920928955,
+            "width": 1440,
+            "x": 1.9073486328125e-05,
+            "y": 4.000011920928955
+          },
+          "heading": "Every order,in the right hands.",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "phone-stop-10",
+      "button": {
+        "bottom": 792,
+        "height": 52,
+        "left": 100.328125,
+        "right": 289.671875,
+        "top": 740,
+        "width": 189.34375,
+        "x": 100.328125,
+        "y": 740
+      },
+      "buttons": 1,
+      "chapter": "welcome",
+      "height": 844,
+      "motion": "settled",
+      "progress": "0.000",
+      "status": "{\"progress\":0.09997037914691943,\"chapter\":\"welcome\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":0}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 395.7120361328125,
+            "height": 147.20310974121094,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 248.50892639160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 248.50892639160156
+          },
+          "heading": "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrder",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 390
+    },
+    {
+      "label": "phone-reset-before-delivery",
+      "button": {
+        "bottom": 792,
+        "height": 52,
+        "left": 100.328125,
+        "right": 289.671875,
+        "top": 740,
+        "width": 189.34375,
+        "x": 100.328125,
+        "y": 740
+      },
+      "buttons": 1,
+      "chapter": "welcome",
+      "height": 844,
+      "motion": "settled",
+      "progress": "0.000",
+      "status": "{\"progress\":0,\"chapter\":\"welcome\",\"motion\":\"settled\",\"hidden\":false,\"triggers\":1,\"enabled\":1,\"active\":0}",
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 395.7120361328125,
+            "height": 147.20310974121094,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 248.50892639160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 248.50892639160156
+          },
+          "heading": "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrder",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)",
+          "opacity": "1"
+        }
+      ],
+      "width": 390
+    }
+  ],
+  "lifecycle": {
+    "hidden": {
+      "motion": "settled",
+      "closingOpacity": 1,
+      "triggers": 1,
+      "enabled": 0,
+      "active": 0
+    },
+    "unmounted": {
+      "triggers": 0,
+      "enabled": 0,
+      "active": 0
+    }
+  },
+  "notes": [
+    "Verified using the actual App mounted in a temporary QA entry with UI controls for precise native scroll stops.",
+    "Motion completion was awaited through visible DOM state; poll-based status text can lag direct attributes by one sample.",
+    "Continuous background progress may still be catching up while foreground is already settled."
+  ]
+}
