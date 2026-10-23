@@ -16,6 +16,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.ai.catalog import load_family_catalog
 from app.auth import CurrentUser
 from app.checks import apply_checks
 from app.clarification import build_clarification
@@ -33,6 +34,7 @@ from app.errors import (
 from app.extraction.ai import AiServiceError, classify_condition
 from app.extraction.base import ExtractionProvider, RawExtraction, RawRow, validate_raw_extraction
 from app.extraction.evidence import exact_phrase, pack_size_evidence, quantity_evidence
+from app.extraction.runpod_adapter import RunPodAdapterProvider
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
 from app.resolver import (
@@ -517,6 +519,11 @@ def parse_draft(
             customer_id=body.customer_id,
             tier=customer["tier"],
         )
+        family_catalog = (
+            load_family_catalog(conn, user.tenant_id)
+            if isinstance(extractor, RunPodAdapterProvider)
+            else None
+        )
         tenant_rules = _tenant(conn, user.tenant_id)
         checks = tenant_rules["checks"]
     memory, memory_covers = memory_rows(masked.masked_text, catalog)
@@ -528,11 +535,19 @@ def parse_draft(
             raw = RawExtraction(rows=tuple(memory))
             raw = validate_raw_extraction(raw, masked.masked_text, strict=False)
         else:
-            raw = extractor.extract(
-                masked.masked_text,
-                body.language_hint,
-                request.state.request_id,
-            )
+            if isinstance(extractor, RunPodAdapterProvider):
+                raw = extractor.extract(
+                    masked.masked_text,
+                    body.language_hint,
+                    request.state.request_id,
+                    catalog=family_catalog,
+                )
+            else:
+                raw = extractor.extract(
+                    masked.masked_text,
+                    body.language_hint,
+                    request.state.request_id,
+                )
             raw = validate_raw_extraction(raw, masked.masked_text, strict=False)
             raw, memory_used = merge_memory(raw, memory)
     except (AiServiceError, ValueError, TypeError) as exc:
@@ -547,7 +562,9 @@ def parse_draft(
         condition_checks=checks["customer_condition"],
     )
     sources = {row.source for row in raw.rows if not row.invalid_reason}
-    if memory_covers:
+    if raw.ai_mode in {"LLM", "FALLBACK", "ALIAS_ONLY", "MIXED"}:
+        ai_mode = raw.ai_mode
+    elif memory_covers:
         ai_mode = "ALIAS_ONLY"
     elif sources and all(source == "RAPIDFUZZ_FALLBACK" for source in sources):
         ai_mode = "FALLBACK"

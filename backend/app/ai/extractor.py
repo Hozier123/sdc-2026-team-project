@@ -87,10 +87,12 @@ class RunPodExtractor:
         endpoint_id: Optional[str] = None,
         timeout_s: Optional[float] = None,
         base_url: Optional[str] = None,
+        model_name: Optional[str] = None,
     ):
         self.api_key = api_key or os.getenv("RUNPOD_API_KEY", "")
         self.endpoint_id = endpoint_id or os.getenv("RUNPOD_ENDPOINT_ID", "")
         self.timeout_s = timeout_s or float(os.getenv("LLM_TIMEOUT_S", str(DEFAULT_TIMEOUT_S)))
+        self.model_name = model_name or os.getenv("MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct-AWQ")
 
         if base_url:
             self.api_url = base_url
@@ -166,7 +168,7 @@ class RunPodExtractor:
 
         system_prompt = build_system_prompt(family_ids)
         payload = {
-            "model": os.getenv("MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct-AWQ"),
+            "model": self.model_name,
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": masked_text},
