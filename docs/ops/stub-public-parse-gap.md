@@ -113,6 +113,43 @@ Stub 固定返回空 `RawExtraction`，所以：
 不能点 Approve & generate DO 来假装成功。
 ```
 
+## 3.1 空草稿在 UI 中没有可操作入口
+
+在公网前端打开这条草稿后，实际交互状态是：
+
+```text
+Products & quantities = 0 条
+没有 Quantity / Unit / SKU / 价格 / 库存可编辑字段
+右侧 "1 check needs you / YOUR DECISION" 只是状态卡片，不是按钮
+点该卡片没有展开编辑器
+底部 Approve & generate DO 不可用
+```
+
+原因：
+
+- `draft.lines` 为空，前端只为“已存在的商品行”渲染编辑控件。
+- 当前前端没有 “Add product line manually” / “Add item” 入口。
+- 这条泛化 issue 不是 `SAME_DAY_ORDER` 等带专门编辑器的条件，因此没有内联处理控件。
+- 所以不是用户没点到，而是 **空草稿形成了 UI 死路**。
+
+这不是：
+
+```text
+CORS 失败
+部署失败
+登录失败
+前端渲染崩溃
+```
+
+而是两个限制叠加：
+
+```text
+后端：Stub 返回 0 行
+前端：没有从 0 行手动补行的入口
+```
+
+因此不要把这条草稿继续当成可完成流程；也不要为了让它“能点”而伪造商品行。
+
 ## 4. 与前端责任边界
 
 Ye / 前端不需要：
