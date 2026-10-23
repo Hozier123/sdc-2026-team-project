@@ -95,6 +95,7 @@ export interface Resolution {
   target_line_ids: string[];
   confirmed_unit_price?: string;
   price_basis?: "UNIT";
+  related_do_number?: string;
   note?: string;
 }
 export interface Issue {

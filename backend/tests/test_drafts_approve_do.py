@@ -918,3 +918,108 @@ def test_clarification_copy_requires_available_clarification(seeded_db):
         )
         assert response.status_code == 422
         assert response.json()["error_code"] == "REQUEST_VALIDATION_FAILED"
+
+
+def test_same_day_add_on_requires_explicit_do_and_persists(seeded_db):
+    with _client(seeded_db) as client:
+        assert _put(client).status_code == 200
+        first = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert first.status_code == 200, first.text
+        original = first.json()["do_number"]
+
+        parsed = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 1 ctn"},
+        )
+        assert parsed.status_code == 200, parsed.text
+        draft_id = parsed.json()["draft_id"]
+        saved = client.put(
+            f"/api/v1/orders/drafts/{draft_id}/lines",
+            headers=_headers(CLERK),
+            json={"expected_version": 1, "lines": [_line(1)]},
+        )
+        assert saved.status_code == 200, saved.text
+        issue = next(i for i in saved.json()["issues"] if i["code"] == "SAME_DAY_ORDER")
+        assert original in issue["data_used"]["existing_do_numbers"]
+
+        missing = client.put(
+            f"/api/v1/orders/drafts/{draft_id}/lines",
+            headers=_headers(CLERK),
+            json={
+                "expected_version": 2,
+                "lines": [_line(1)],
+                "resolutions": [
+                    {
+                        "issue_id": issue["issue_id"],
+                        "choice": "SEPARATE_ADD_ON",
+                        "target_line_ids": [],
+                    }
+                ],
+            },
+        )
+        assert missing.status_code == 422
+
+        resolved = client.put(
+            f"/api/v1/orders/drafts/{draft_id}/lines",
+            headers=_headers(CLERK),
+            json={
+                "expected_version": 2,
+                "lines": [_line(1)],
+                "resolutions": [
+                    {
+                        "issue_id": issue["issue_id"],
+                        "choice": "SEPARATE_ADD_ON",
+                        "target_line_ids": [],
+                        "related_do_number": original,
+                        "note": "Separate add-on",
+                    }
+                ],
+            },
+        )
+        assert resolved.status_code == 200, resolved.text
+        assert resolved.json()["status"] == "READY_FOR_APPROVAL"
+        resolved_issue = next(i for i in resolved.json()["issues"] if i["code"] == "SAME_DAY_ORDER")
+        assert resolved_issue["resolved"] is True
+        assert resolved_issue["resolution"] == "SEPARATE_ADD_ON"
+        assert resolved_issue["data_used"]["related_do_number"] == original
+
+        carried = client.put(
+            f"/api/v1/orders/drafts/{draft_id}/lines",
+            headers=_headers(CLERK),
+            json={"expected_version": 3, "lines": [_line(1)]},
+        )
+        assert carried.status_code == 200, carried.text
+        carried_issue = next(i for i in carried.json()["issues"] if i["code"] == "SAME_DAY_ORDER")
+        assert carried_issue["resolved"] is True
+        assert carried_issue["data_used"]["related_do_number"] == original
+
+        approved = client.post(
+            f"/api/v1/orders/{draft_id}/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 4},
+        )
+        assert approved.status_code == 200, approved.text
+        assert approved.json()["related_do_number"] == original
+
+
+def test_same_day_check_ignores_unapproved_draft(seeded_db):
+    with _client(seeded_db) as client:
+        assert _put(client).status_code == 200
+        parsed = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 1 ctn"},
+        )
+        draft_id = parsed.json()["draft_id"]
+        saved = client.put(
+            f"/api/v1/orders/drafts/{draft_id}/lines",
+            headers=_headers(CLERK),
+            json={"expected_version": 1, "lines": [_line(1)]},
+        )
+        assert saved.status_code == 200, saved.text
+        assert not any(issue["code"] == "SAME_DAY_ORDER" for issue in saved.json()["issues"])
