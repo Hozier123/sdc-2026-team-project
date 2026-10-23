@@ -321,7 +321,13 @@ def _ai_draft(
     if lines and all(line.subtotal_rm is not None for line in lines):
         total = sum(Decimal(line.subtotal_rm) for line in lines)
     status = "READY_FOR_APPROVAL" if lines and not blocking else "DISAMBIGUATION_REQUIRED"
-    clarification, clarification_lang = build_clarification(issues, conditions, language_hint)
+    clarification, clarification_lang = build_clarification(
+        issues,
+        conditions,
+        language_hint,
+        lines=lines,
+        masked_text=masked_text,
+    )
     allowed_actions = ["EDIT_DRAFT", "RESOLVE_ISSUE"]
     if status == "READY_FOR_APPROVAL":
         allowed_actions.append("APPROVE_AND_GENERATE_DO")
@@ -509,7 +515,12 @@ def parse_draft(
         )
     else:
         issue = Issue(**_unresolved_issue())
-        clarification, clarification_lang = build_clarification([issue], (), body.language_hint)
+        clarification, clarification_lang = build_clarification(
+            [issue],
+            (),
+            body.language_hint,
+            masked_text=masked.masked_text,
+        )
         allowed_actions = ["EDIT_DRAFT", "RESOLVE_ISSUE"]
         if clarification is not None:
             allowed_actions.append("COPY_CLARIFICATION")

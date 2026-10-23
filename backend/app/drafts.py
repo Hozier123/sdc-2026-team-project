@@ -935,10 +935,13 @@ def save_lines(
             )
             status = "READY_FOR_APPROVAL" if not blocking and lines else "DISAMBIGUATION_REQUIRED"
             old_clarification = order.get("clarification") or {}
+            masked_message = _masked_message(conn, user.tenant_id, order["message_id"])
             clarification, clarification_lang = build_clarification(
                 issues,
                 conditions,
                 old_clarification.get("language") if isinstance(old_clarification, dict) else None,
+                lines=lines,
+                masked_text=masked_message,
             )
             escalation = _escalation(
                 tenant=tenant,
@@ -967,7 +970,7 @@ def save_lines(
                     "has_credit_notice": customer["credit_flag"] == "OVERDUE_NOTICE",
                     "phone_e164": customer["phone_e164"],
                 },
-                masked_message=_masked_message(conn, user.tenant_id, order["message_id"]),
+                masked_message=masked_message,
                 ai_mode=order["ai_mode"],
                 lines=lines,
                 issues=[*issues, *conditions],
