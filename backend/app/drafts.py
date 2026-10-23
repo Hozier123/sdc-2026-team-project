@@ -722,7 +722,34 @@ def _validate_resolutions(
         if len(set(resolution.target_line_ids)) != len(resolution.target_line_ids):
             raise TargetLineRequiredError(details={"issue_id": resolution.issue_id})
         target_issue = issue_by_id.get(resolution.issue_id)
-        if target_issue is None or target_issue.code != "CUSTOMER_CONDITION":
+        if target_issue is None:
+            raise RequestValidationFailedError("issue is not in the current draft")
+        if target_issue.code == "SAME_DAY_ORDER":
+            if resolution.target_line_ids:
+                raise RequestValidationFailedError("same-day order resolution is order-level")
+            if resolution.choice != "SEPARATE_ADD_ON":
+                raise RequestValidationFailedError(
+                    "duplicate/change-existing same-day decisions use discard"
+                )
+            existing = target_issue.data_used.get("existing_do_numbers") or []
+            related = resolution.related_do_number
+            if not related or related not in existing:
+                raise RequestValidationFailedError(
+                    details={
+                        "fields": [
+                            {
+                                "path": "resolutions.related_do_number",
+                                "reason": "must select an existing DO from this issue",
+                            }
+                        ]
+                    }
+                )
+            target_issue.resolved = True
+            target_issue.resolution = "SEPARATE_ADD_ON"
+            target_issue.resolution_note = resolution.note
+            target_issue.data_used["related_do_number"] = related
+            continue
+        if target_issue.code != "CUSTOMER_CONDITION":
             raise RequestValidationFailedError("resolve line checks by correcting the line")
         if target_issue.condition_kind == "STOCK":
             raise RequestValidationFailedError("stock conditions are resolved by stock checks")
@@ -1075,6 +1102,33 @@ def clarification_copied(
     return ClarificationCopiedResult(recorded=True)
 
 
+def _carry_same_day_resolution(order, issues: list[Issue]) -> None:
+    """Keep an explicit add-on decision across unchanged same-day checks."""
+    previous = {}
+    for raw in order.get("issues") or []:
+        if raw.get("code") != "SAME_DAY_ORDER" or not raw.get("resolved"):
+            continue
+        if raw.get("resolution") != "SEPARATE_ADD_ON":
+            continue
+        previous[raw["issue_id"]] = raw
+    for issue in issues:
+        if issue.code != "SAME_DAY_ORDER" or issue.resolved:
+            continue
+        old = previous.get(issue.issue_id)
+        if old is None:
+            continue
+        old_existing = old.get("data_used", {}).get("existing_do_numbers")
+        new_existing = issue.data_used.get("existing_do_numbers")
+        if old_existing != new_existing:
+            continue
+        issue.resolved = True
+        issue.resolution = "SEPARATE_ADD_ON"
+        issue.resolution_note = old.get("resolution_note")
+        related = old.get("data_used", {}).get("related_do_number")
+        if related:
+            issue.data_used["related_do_number"] = related
+
+
 def _apply_save_lines(conn, user, order, body):
     """Apply a lines save on an already locked connection, without committing."""
     draft_id = order["draft_id"]
@@ -1132,6 +1186,7 @@ def _apply_save_lines(conn, user, order, body):
             draft_id=draft_id,
         )
     )
+    _carry_same_day_resolution(order, issues)
 
     # Older application versions stored conditions only in immutable snapshots.
     # Recover them without altering the signed schema or historical snapshots.

@@ -1045,6 +1045,28 @@ export function OrderDetail({
                         Available {String(issue.data_used.available_qty)}
                       </small>
                     )}
+                    {issue.code === "SAME_DAY_ORDER" && !issue.resolved && editable && (
+                      <SameDayOrderEditor
+                        issue={issue}
+                        resolution={resolutions.find(
+                          (item) => item.issue_id === issue.issue_id,
+                        )}
+                        busy={busy}
+                        onResolve={saveResolution}
+                        onDiscard={(reason) => {
+                          setNote(reason);
+                          setDiscard(true);
+                        }}
+                      />
+                    )}
+                    {issue.code === "SAME_DAY_ORDER" &&
+                      issue.resolved &&
+                      issue.resolution === "SEPARATE_ADD_ON" && (
+                        <small className="mint-text">
+                          Separate add-on linked to{" "}
+                          {String(issue.data_used.related_do_number ?? "the original DO")}
+                        </small>
+                      )}
                   </div>
                 </div>
               ))}
@@ -1324,6 +1346,104 @@ function MessageEvidence({ draft }: { draft: Draft }) {
     </pre>
   );
 }
+function SameDayOrderEditor({
+  issue,
+  resolution,
+  busy,
+  onResolve,
+  onDiscard,
+}: {
+  issue: Issue;
+  resolution?: Resolution;
+  busy: boolean;
+  onResolve: (r: Resolution) => void;
+  onDiscard: (reason: string) => void;
+}) {
+  const existing = Array.isArray(issue.data_used.existing_do_numbers)
+    ? issue.data_used.existing_do_numbers.filter(
+        (value): value is string => typeof value === "string",
+      )
+    : [];
+  const [related, setRelated] = useState(
+    resolution?.related_do_number ?? "",
+  );
+
+  return (
+    <div className="condition-editor">
+      <div className="condition-title">
+        <Pill tone="amber">Same-day order</Pill>
+        {resolution && (
+          <span className="mint-text">
+            <Check size={13} /> Decision ready to save
+          </span>
+        )}
+      </div>
+      <p className="micro-copy">
+        This customer already has a delivery order today. Choose how this draft
+        should be handled before saving.
+      </p>
+      <label className="field-label">
+        Original DO
+        <select
+          value={related}
+          disabled={busy}
+          onChange={(event) => setRelated(event.target.value)}
+        >
+          <option value="">Select the original DO</option>
+          {existing.map((number) => (
+            <option key={number} value={number}>
+              {number}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div className="action-buttons">
+        <button
+          className="button secondary small"
+          disabled={busy || !related}
+          onClick={() =>
+            onResolve({
+              issue_id: issue.issue_id,
+              choice: "SEPARATE_ADD_ON",
+              target_line_ids: [],
+              related_do_number: related,
+              note: "Separate add-on order",
+            })
+          }
+        >
+          Separate add-on
+        </button>
+        <button
+          className="button danger small"
+          disabled={busy}
+          onClick={() =>
+            onDiscard(
+              `Duplicate of existing same-day order: ${existing.join(", ") || "same-day order"}`,
+            )
+          }
+        >
+          Mark duplicate
+        </button>
+        <button
+          className="button ghost small"
+          disabled={busy}
+          onClick={() =>
+            onDiscard(
+              `Change existing order manually: ${existing.join(", ") || "same-day order"}`,
+            )
+          }
+        >
+          Change original manually
+        </button>
+      </div>
+      <p className="micro-copy">
+        Duplicate and change-original close this draft with a reason; the
+        original DO is never edited automatically.
+      </p>
+    </div>
+  );
+}
+
 function ConditionEditor({
   issue,
   draft,

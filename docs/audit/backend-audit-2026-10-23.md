@@ -88,7 +88,7 @@
 
 ## 六、B34 后续状态更新（当前 main）
 
-> 本节优先于第三节的历史快照。B34 基线为 main `480486ea6af7e4ae95c133b3ce466681807222f8` / **282 passed**；P1-02 已合并为 286 passed；P1-03 当前 PR 为 **288 passed**，合并后生效。`gate0/` 未修改。
+> 本节优先于第三节的历史快照。B34 基线为 main `480486ea6af7e4ae95c133b3ce466681807222f8` / **282 passed**；P1-02/P1-03 已合并为 288 passed；P1-01 当前 PR 为 **290 passed**，合并后生效。`gate0/` 未修改。
 
 | 编号 | 当前状态 | 依据 |
 |---|---|---|
@@ -106,8 +106,9 @@
 | B33 | 已完成 | 20 个 fixture/error body schema 校验 + 12 类实际错误分支；修复 approve 的 `DISAMBIGUATION_UNRESOLVED` 契约偏差。 |
 | B34 | 已完成 | README、backend README、审计状态、链接和测试数字对齐当前实现。 |
 | P1-02 | 已完成 | 作废端点、`expected_version`、非空 note、`CLERK_DISCARDED`、审计/活动记录、前端 discard 已启用。 |
-| P1-03 | 已完成（本 PR；合并后生效） | 澄清复制事件只追加，绑定 draft/version/issue/line、语言和 message SHA-256；前端复制成功后记录。P1 PR 288 passed。 |
+| P1-03 | 已完成 | 澄清复制事件只追加，绑定 draft/version/issue/line、语言和 message SHA-256；前端复制成功后记录。 |
+| P1-01 | 已完成（本 PR；合并后生效） | 同日只查当天 DO；补单必须显式选择原 DO；重复/改原单复用 P1-02；resolution 跨保存保留；新 DO 写 related_do_number。当前 PR 290 passed。 |
 
-仍未完成：P1-01 的“另开补单／重复作废／改原单”完整三选一处置（当前只有同日 DO 检查）；以及外部边界中的真实 AI 质量、公开部署、独立 UAT 和真人试用。
+仍未完成：外部边界中的真实 AI 质量、公开部署、独立 UAT 和真人试用。
 
-**最终判断：当前 main 已具备可本地验证的人工确认后端主链路、B22–B33 自动回归、P1-02 作废草稿和 P1-03 澄清复制事件；真实 AI 质量、公开部署、独立 UAT 与真人试用仍是外部验收边界。**
+**最终判断：当前 main 已具备可本地验证的人工确认后端主链路、B22–B33 自动回归和 P1-01/P1-02/P1-03；真实 AI 质量、公开部署、独立 UAT 与真人试用仍是外部验收边界。**

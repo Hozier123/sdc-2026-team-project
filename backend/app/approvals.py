@@ -250,6 +250,16 @@ def _create_do(
         for line in lines
     ]
     approved_at = _now()
+    related_do_number = next(
+        (
+            issue.get("data_used", {}).get("related_do_number")
+            for issue in (order.get("issues") or [])
+            if issue.get("code") == "SAME_DAY_ORDER"
+            and issue.get("resolved")
+            and issue.get("resolution") == "SEPARATE_ADD_ON"
+        ),
+        None,
+    )
     reply = build_reply(
         do_number,
         do_lines,
@@ -260,8 +270,8 @@ def _create_do(
         "INSERT INTO delivery_orders "
         "(do_number, tenant_id, draft_id, draft_version, customer_id, lines, "
         " final_total_rm, prepared_by, approved_by, escalation_reasons, "
-        " approval_mode, reply_draft, approved_at) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        " approval_mode, reply_draft, related_do_number, approved_at) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (
             do_number,
             tenant,
@@ -275,6 +285,7 @@ def _create_do(
             Jsonb(reasons),
             mode,
             Jsonb(reply.model_dump(mode="json")),
+            related_do_number,
             approved_at,
         ),
     )
@@ -296,6 +307,7 @@ def _create_do(
         escalation_reasons=reasons,
         approval_mode=mode,
         reply_draft=reply,
+        related_do_number=related_do_number,
         approved_at=approved_at,
     )
 

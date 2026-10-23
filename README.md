@@ -2,7 +2,7 @@
 
 SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
-**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端已实现身份、parse、草稿/客户/审批/DO 读取、活动与审计、仓库裁剪、AI 状态/唤醒、自动目录解析与客户记忆、条件/澄清/回复、作废草稿、澄清复制事件、`confirmed_items` 兼容路径、`checks_enabled` 软检查和导出证据绑定；前端工作台已交付。当前 main 的完整测试为 288 passed。** 真实 AI endpoint、公开部署、前端/数据独立 UAT 和正式赛事材料仍是外部验收边界；本地测试通过不等于生产验收完成，也不代表赛事提交已完成。
+**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端已实现身份、parse、草稿/客户/审批/DO 读取、活动与审计、仓库裁剪、AI 状态/唤醒、自动目录解析与客户记忆、条件/澄清/回复、作废草稿、澄清复制事件、同日三选一、`confirmed_items` 兼容路径、`checks_enabled` 软检查和导出证据绑定；前端工作台已交付。当前 main 的完整测试为 290 passed。** 真实 AI endpoint、公开部署、前端/数据独立 UAT 和正式赛事材料仍是外部验收边界；本地测试通过不等于生产验收完成，也不代表赛事提交已完成。
 
 ## 项目信息
 
@@ -131,7 +131,7 @@ CORS_ALLOW_ORIGINS
 checks_enabled 三个软检查、并发/回滚、导出证据绑定、契约 fixture 回归。
 ```
 
-当前 main 完整测试：**288 passed**。外部边界仍未完成：
+当前 main 完整测试：**290 passed**。外部边界仍未完成：
 
 - 真实 AI endpoint、模型质量与独立准确率评测；
 - 公开部署、Replit/RunPod 实际使用证明；

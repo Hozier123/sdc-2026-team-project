@@ -243,6 +243,7 @@ class IssueResolution(BaseModel):
     target_line_ids: list[str]
     confirmed_unit_price: DecimalString | None = None
     price_basis: Literal["UNIT", "TOTAL", "UNKNOWN"] | None = None
+    related_do_number: str | None = None
     note: str | None = Field(default=None, max_length=500)
 
 
