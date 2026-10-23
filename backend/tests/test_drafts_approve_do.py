@@ -207,6 +207,12 @@ def test_put_then_direct_approve_and_do(seeded_db):
         assert do["final_total_rm"] == "5.00"
         assert do["approval_mode"] == "DIRECT"
         assert do["lines"][0]["applied_unit_price"] == "5.00"
+        reply = do["reply_draft"]
+        assert reply["language"] == "en"
+        assert reply["do_number"] == do["do_number"]
+        assert "Milo 1kg" in reply["message"]
+        assert "1 ctn" in reply["message"]
+        assert "Total RM 5.00" in reply["message"]
 
         again = client.post(
             "/api/v1/orders/DRF_T1/approve",

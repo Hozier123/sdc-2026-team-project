@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, Query, Response
 from psycopg.types.json import Jsonb
 
 from app.auth import CurrentUser
+from app.clarification import detect_language
 from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
@@ -21,6 +22,7 @@ from app.drafts import (
     _canonical_uom,
     _customer,
     _escalation,
+    _masked_message,
     _money,
     _old_lines,
     _order,
@@ -40,6 +42,7 @@ from app.errors import (
     StaleVersionError,
     StockChangedError,
 )
+from app.replies import build_reply
 from app.schemas import (
     ApprovalDecisionResult,
     ApprovalDetail,
@@ -52,7 +55,6 @@ from app.schemas import (
     DeliveryOrder,
     DeliveryOrderLine,
     FieldDiff,
-    ReplyDraft,
     StockCheckLine,
     StockCheckSummary,
     WorkingLine,
@@ -150,15 +152,6 @@ def _do_number() -> str:
     return f"DO_{_now():%Y%m%d}_{uuid4().hex[:8].upper()}"
 
 
-def _reply(do_number: str) -> ReplyDraft:
-    return ReplyDraft(
-        language="en",
-        message=f"Order {do_number} has been approved.",
-        do_number=do_number,
-        warnings=[],
-    )
-
-
 def _stock_lines(lines: list[WorkingLine]) -> dict[str, int]:
     quantities: dict[str, int] = {}
     for line in lines:
@@ -254,6 +247,12 @@ def _create_do(
         for line in lines
     ]
     approved_at = _now()
+    reply = build_reply(
+        do_number,
+        do_lines,
+        total,
+        detect_language(_masked_message(conn, tenant, order["message_id"])),
+    )
     conn.execute(
         "INSERT INTO delivery_orders "
         "(do_number, tenant_id, draft_id, draft_version, customer_id, lines, "
@@ -272,7 +271,7 @@ def _create_do(
             user.user_id,
             Jsonb(reasons),
             mode,
-            Jsonb(_reply(do_number).model_dump(mode="json")),
+            Jsonb(reply.model_dump(mode="json")),
             approved_at,
         ),
     )
@@ -293,7 +292,7 @@ def _create_do(
         approved_by=user.user_id,
         escalation_reasons=reasons,
         approval_mode=mode,
-        reply_draft=_reply(do_number),
+        reply_draft=reply,
         approved_at=approved_at,
     )
 
