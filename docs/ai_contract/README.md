@@ -234,11 +234,16 @@ masked_text → H1/H5 抽取服务 → rows[] / ignored_spans[]
 | **[x] 后端用 masked 样例请求成功** | **已通过** | 6 组标准样例验证通过，支持直接请求 |
 | **[x] rows / ignored_spans 结构合法** | **已通过** | 严格通过 `request.schema.json` 与 `response.schema.json` 模式校验 |
 | **[x] 所有 span 都能在 masked_text 中定位** | **已通过** | `span_coordinates` 精确回投验证通过，`[start:end]` 无重叠 |
-| **[x] 6 组样例全部通过** | **已通过** | `samples/` 下 6 个样例在自动化测试中 100% 断言通过 |
+| **[x] 6 组样例全部通过** | **已通过（family 不计分）** | 6 个 generic 样例在 `family_scored=false` 下通过 span / qty / uom / pack_size / conditions 断言；family 真值不在本组样例中 |
 | **[x] 超时 / 错误语义可复现** | **已通过** | `test_ai_extractor.py` 与 `test_ai_contract_delivery.py` 完整覆盖 |
 | **[x] 没有 sku_id / price / stock / approval** | **已通过** | 模式层 `additionalProperties: false` 物理杜绝领域字段越权 |
 | **[x] 没有原始 PII** | **已通过** | 仅允许并识别公共 `MASK_TOKENS` |
 | **[x] 文档、样例、版本齐全** | **已通过** | `README.md`、`H1_H5_mapping.md`、`endpoint.env.example` 齐全交付 |
+
+> 口径说明（2026-10-24）：本组 6 条是 generic contract fixtures，顶层标记
+> `family_scored=false` / `reason=GENERIC_CONTRACT_SAMPLE`；family 只在 T1
+> `dev_41` / `frozen_eval_32` 计分，真值用 T1 ID（`FAM_TEPUNG` 等）。详见
+> [family-scoring-caliber.md](family-scoring-caliber.md)。
 
 ---
 
@@ -255,11 +260,12 @@ from backend.ai.extractor import RunPodExtractor
 extractor = RunPodExtractor()  # 自动读取 RUNPOD_API_KEY 与 RUNPOD_ENDPOINT_ID
 adapter = OrderAiAdapter(extractor=extractor)
 
-# 显式注入租户商品族目录
+# 显式注入租户商品族目录（示例为 T1；生产由 parse-draft 按 tenant 从 DB 加载）
+# 通用合同样例里的 FAM_FLOUR 仅用于 legacy HTTP 翻译，不是 T1 目录。
 catalog = {
-    "FAM_FLOUR": ["Tepung", "Flour", "Tepung Gandum"],
-    "FAM_RICE": ["Beras", "Rice", "Beras Wangi"],
-    "FAM_OIL": ["Minyak", "Cooking Oil", "Minyak Masak"],
+    "FAM_TEPUNG": ["Tepung", "Flour", "Tepung Gandum"],
+    "FAM_BERAS": ["Beras", "Rice", "Beras Wangi"],
+    "FAM_MINYAK": ["Minyak", "Cooking Oil", "Minyak Masak"],
 }
 
 # 执行解析

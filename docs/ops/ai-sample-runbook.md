@@ -132,10 +132,12 @@ sample / ai_mode / lines / conditions / ignored_spans / elapsed_ms
 [ ] evidence JSON 已归档
 ```
 
-注意：T1 DB catalog 使用 `FAM_TEPUNG` 等 canonical ID；合同样例的
-`expected_response` 使用 `FAM_FLOUR` 等合同示例 ID。Runner 保存
-`expected` 与 `actual` 供人工对照，不把 family 差异自动判为 LLM 失败；
-严格验收是结果存在、`ai_mode=LLM`、无错误。
+注意（Zhou 2026-10-24 决策 B）：6 条合同样例的 `family_scored=false`
+（`reason=GENERIC_CONTRACT_SAMPLE`），family 不计分，只评
+span / qty / uom / pack_size / conditions。T1 `dev_41` 与
+`frozen_eval_32` 才要求 family 真值用 T1 ID（如 `FAM_TEPUNG`）。
+Runner 保存 `expected` 与 `actual` 供人工对照，family 差异不作为失败。
+口径全文见 [family-scoring-caliber.md](../ai_contract/family-scoring-caliber.md)。
 
 ## 6. 真实 parse 冒烟
 

@@ -1,6 +1,6 @@
 """Unit tests for the in-process RunPod adapter boundary."""
 
-from dataclasses import asdict
+from dataclasses import asdict, replace
 
 import pytest
 
@@ -133,3 +133,26 @@ async def test_provider_async_requires_catalog_too():
 
     with pytest.raises(ValueError, match="tenant catalog"):
         await provider.extract_async("Milo 5 ctn", None)
+
+
+def test_provider_does_not_translate_generic_contract_family():
+    """The legacy FAM_FLOUR->FAM_TEPUNG shim must not leak into this path."""
+    line = replace(
+        _output().lines[0],
+        family_id="FAM_FLOUR",
+        span="Tepung 5 ctn",
+        span_end=12,
+    )
+    output = AdapterOutput(lines=[line], conditions=[], ai_mode="LLM", ignored_spans=[])
+    provider = RunPodAdapterProvider(adapter=FakeAdapter(output))
+
+    raw = provider.extract(
+        "Tepung 5 ctn",
+        language_hint=None,
+        request_id="req-generic",
+        catalog={"FAM_TEPUNG": ["Tepung"]},
+    )
+
+    # No translation at the provider boundary. OrderAiAdapter is responsible for
+    # rejecting catalog-invalid IDs before they reach this conversion.
+    assert raw.rows[0].fam == "FAM_FLOUR"

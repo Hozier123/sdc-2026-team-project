@@ -1,5 +1,7 @@
 {
   "description": "Multiple packaging sizes / candidates (250ml vs 1L) for the same product family (Cooking Oil)",
+  "family_scored": false,
+  "reason": "GENERIC_CONTRACT_SAMPLE",
   "input": {
     "masked_text": "Minyak Masak 5 ctn 1L\nMinyak Masak 10 ctn 250ml",
     "language_hint": "ms",

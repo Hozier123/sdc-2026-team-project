@@ -73,6 +73,16 @@ frozen_eval_32_draft.json：32 条，未冻结，无 FROZEN_SHA256
 `expected_status / expected_issue / expected_escalation` 必须来自真实
 parse/approve 结果，而不是当前 Stub 或草案推断。
 
+### 4.1 family 计分（Zhou 2026-10-24 决策 B）
+
+| 数据 | `family_scored` | family 真值 |
+|---|---|---|
+| `docs/ai_contract/samples` 6 条 generic 合同样例 | `false`（`GENERIC_CONTRACT_SAMPLE`） | 不评 family；只评 span / qty / uom / pack_size / conditions |
+| T1 `dev_41`（23 条 AI-only） / `frozen_eval_32` | `true` | 必须用 T1 ID（`FAM_TEPUNG` 等），不得出现 `FAM_FLOUR` |
+
+DEV-02 / DEV-08 / DEV-23 是 resolver-only，不计 AI-only family。
+口径全文见 [family-scoring-caliber.md](../ai_contract/family-scoring-caliber.md)。
+
 ## 5. 评测输出
 
 ```text

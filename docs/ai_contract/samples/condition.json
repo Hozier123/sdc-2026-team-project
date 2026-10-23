@@ -1,5 +1,7 @@
 {
   "description": "Customer pricing negotiation condition ('kalau RM95 untuk 1 ctn boleh?') yielding price_basis=UNIT and requested_amount=95",
+  "family_scored": false,
+  "reason": "GENERIC_CONTRACT_SAMPLE",
   "input": {
     "masked_text": "Tepung Gandum 5 ctn, kalau RM95 untuk 1 ctn boleh?",
     "language_hint": "ms",

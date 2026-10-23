@@ -51,7 +51,7 @@
 | `span` | `string` | masked_text 的精确子串（非空） | 对应 masked_text 的 Unicode 半开区间 `[start, end)`；必须是原文子串，严禁拼接。 |
 | `qty` | `integer \| null` | 正整数 `1..999999` 或 `null` | 经过 `UnitPriceMarkerMask → AmountMask → CodeMask → DecimalGuard` 处理；小数/模糊数量/缺省数量必须置为 `null`。拒绝 `bool`、负数、0 与浮点数。 |
 | `uom` | `string \| null` | 规范化计量单位或 `null` | 匹配 `field-evidence-v2.json` 的 exact aliases（如 `ctn`, `pack`, `kg`, `pc`, `bag`, `btl`, `can`, `papan`）。严禁跨单位自动折算。 |
-| `fam` | `string` | 租户闭集家族 ID 或 `"UNKNOWN"` | 严格属于租户目录注入白名单（如 `FAM_FLOUR`, `FAM_RICE`, `FAM_OIL`, `FAM_SUGAR`, `FAM_SALT`, `FAM_EGG`）或 `"UNKNOWN"`。严禁输出 `null` 或未定义名称。 |
+| `fam` | `string` | 租户闭集家族 ID 或 `"UNKNOWN"` | 严格属于**本次请求注入的**租户目录白名单（T1 如 `FAM_TEPUNG`；generic 合同样例的 `FAM_FLOUR`/`FAM_RICE` 只用于 legacy HTTP 翻译，不是 T1 目录）或 `"UNKNOWN"`。严禁输出 `null` 或未定义名称。 |
 | `pack_size` | `string \| null` | 包装规格字符串或 `null` | 正则匹配包装规格（如 `1kg`, `500g`, `12 x 1L`, `5kg`）。在解析数量前保长掩码剔除，防止规格数字误入订购数量。 |
 | `conds` | `array[string]` | 条件原话切片数组 | 命中客户谈判、库存假设或时间交期等条件的文本原话片段。无条件时必须为 `[]`。 |
 

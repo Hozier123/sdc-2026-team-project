@@ -81,6 +81,8 @@ async def run_samples(
                 "sample": sample.get("_sample_name"),
                 "request_id": input_data.get("request_id"),
                 "masked_text": input_data["masked_text"],
+                "family_scored": sample.get("family_scored"),
+                "reason": sample.get("reason"),
                 "expected": sample.get("expected_response"),
                 "actual": actual,
                 "elapsed_ms": elapsed_ms,
@@ -103,6 +105,9 @@ def summarize(results: Sequence[dict[str, Any]]) -> dict[str, int]:
         "mixed": modes.count("MIXED"),
         "alias_only": modes.count("ALIAS_ONLY"),
         "errors": sum(1 for result in results if result["error"] is not None),
+        "family_scored_samples": sum(
+            1 for result in results if result.get("family_scored") is True
+        ),
     }
 
 
