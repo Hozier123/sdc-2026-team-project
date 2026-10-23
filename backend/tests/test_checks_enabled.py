@@ -156,12 +156,13 @@ def test_customer_condition_switch_controls_h5(b31_db):
 
 def test_same_day_order_switch_controls_existing_do_check(b31_db):
     _set_checks(b31_db, {"same_day_order": False})
+    with TestClient(create_app(b31_db)) as setup_client:
+        first = _ready_draft(setup_client)
+        _approve_ready(setup_client, first)
+
     disabled_app = create_app(b31_db)
     disabled_app.state.extraction_provider = OneProvider()
     with TestClient(disabled_app) as client:
-        first = _ready_draft(client)
-        _approve_ready(client, first)
-
         disabled = client.post(
             "/api/v1/orders/parse-draft",
             headers=HEADERS,

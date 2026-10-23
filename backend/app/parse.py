@@ -458,7 +458,10 @@ def _guard_families_and_units(
                 pack = evidence[0]
         guarded.append(replace(row, fam=family, uom=unit, pack_size=pack))
     if not condition_checks:
-        return replace(raw, rows=tuple(guarded))
+        return replace(
+            raw,
+            rows=tuple(replace(row, conds=()) for row in guarded),
+        )
     # H5 belongs to the backend. An omitted AI conds[] must not remove a price gate.
     for chunk in masked_text.splitlines():
         if not chunk.strip():
