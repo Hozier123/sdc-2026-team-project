@@ -1,6 +1,6 @@
 # DO 行级导出（A1/B1/C1 + Zhou 补充）
 
-> 2026-10-23 审查修订：数据库导出优先使用批准版本的 `draft_versions.snapshot.lines` 中的 pack_size/grade，避免商品主档后改影响旧 DO；旧数据缺少这些字段时仍会回退主档，须单独核验。命令行传入的 products version/hash 只标注为 `OPERATOR_ASSERTED_NOT_VERIFIED`，不冒充已读取对应 CSV 并核验。空订单、非法数量、负数/非有限金额拒绝；CSV 公式型文本转义，JSON 保留原值。
+> 2026-10-23 审查修订：数据库导出优先使用批准版本的 `draft_versions.snapshot.lines` 中的 pack_size/grade，避免商品主档后改影响旧 DO；旧数据缺少这些字段时仍会回退主档，须单独核验。数据库导出必须提供 `--products-file`；工具会计算文件 SHA-256，并逐 SKU 与数据库实际使用的 pack_size/grade 对账，JSON 标为 `FILE_HASH_AND_SKU_MATCH`。仅 fixture 格式验证可不提供 products 文件，此时仍标 `OPERATOR_ASSERTED_NOT_VERIFIED`。空订单、非法数量、负数/非有限金额拒绝；CSV 公式型文本转义，JSON 保留原值。
 
 > 依据：Zhou r2 复核要求，测试侧确认 `A1 / B1 / C1`，并追加三项。
 > 工具：`backend/tools/export_trial_record.py`。
@@ -28,7 +28,7 @@ subtotal_rm, final_total_rm, display_name
 - `sku_id` 是**系统 ID**（`SKU_MILO_1KG`），不是源编码 `MILO1`；
 - 金额是十进制字符串，两位小数；
 - DO 行只用 `applied_unit_price`，不混用草稿的 `effective_unit_price`；
-- `pack_size` / `grade` 来自 `products` 表，导出时用 `--products-version`、`--products-sha256` 记录读的是哪一版。
+- `pack_size` / `grade` 优先来自批准版本快照；数据库导出必须用 `--products-file` 提供 products CSV，工具计算 SHA-256 并逐 SKU 与 DB 对账；`--products-version` 只作为版本标签记录。
 
 ## 3. 三条校验
 
@@ -61,8 +61,20 @@ python -m tools.export_trial_record `
 python -m tools.export_trial_record `
   --database-url $env:DATABASE_URL --tenant T1 `
   --case-id TEST-01 --do-number DO-20261022-0001 --out-dir ../evidence/records `
+  --products-file ..\evidence\products\T1_products.csv `
   --products-version T1-0.1 --products-sha256 <sha>
 ```
+
+`--products-file` 是数据库导出的必填证据；它必须包含 `sku_id`（或 `product_id`）、`pack_size`、`grade` 列。工具会：
+
+```text
+SHA-256 文件 bytes
+→ 与 --products-sha256 比对（若提供）
+→ 检查 DO 用到的每个 SKU 都在文件里
+→ 与数据库实际 pack_size/grade 逐项对账
+```
+
+任一不符：退出码 1，不生成“已验证”证据。
 
 输出：
 
