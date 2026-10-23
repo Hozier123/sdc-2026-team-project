@@ -202,6 +202,7 @@ def test_insufficient_stock_approval_error(seeded_db):
                 json={"expected_version": 2},
             ),
             400,
+            "DISAMBIGUATION_UNRESOLVED",
         )
 
 

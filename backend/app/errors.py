@@ -68,6 +68,12 @@ class PendingOwnerApprovalError(ApiError):
     default_message = "Draft is waiting for owner approval."
 
 
+class DisambiguationUnresolvedError(ApiError):
+    status_code = 400
+    error_code = "DISAMBIGUATION_UNRESOLVED"
+    default_message = "Resolve blocking issues before approval."
+
+
 class AlreadyApprovedError(ApiError):
     status_code = 409
     error_code = "ALREADY_APPROVED"
