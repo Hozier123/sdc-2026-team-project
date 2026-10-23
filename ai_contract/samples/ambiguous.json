@@ -1,0 +1,44 @@
+{
+  "description": "Decimal / fractional quantity interception ('2.5 ctn' and '1,5kg') defensively downgraded to qty: null",
+  "input": {
+    "masked_text": "Beras Wangi 2.5 ctn\nMinyak Masak 1,5kg",
+    "language_hint": "ms",
+    "request_id": "req-sample-ambiguous-004"
+  },
+  "expected_response": {
+    "rows": [
+      {
+        "span": "Beras Wangi 2.5 ctn",
+        "qty": null,
+        "uom": "ctn",
+        "fam": "FAM_RICE",
+        "pack_size": null,
+        "conds": []
+      },
+      {
+        "span": "Minyak Masak 1,5kg",
+        "qty": null,
+        "uom": "kg",
+        "fam": "FAM_OIL",
+        "pack_size": null,
+        "conds": []
+      }
+    ],
+    "ignored_spans": []
+  },
+  "span_coordinates": [
+    {
+      "target": "rows[0].span",
+      "verbatim_span": "Beras Wangi 2.5 ctn",
+      "start": 0,
+      "end": 19
+    },
+    {
+      "target": "rows[1].span",
+      "verbatim_span": "Minyak Masak 1,5kg",
+      "start": 20,
+      "end": 38
+    }
+  ],
+  "rationale": "Enforces H1 Rule 4 decimal guard. '2.5' hits the dot decimal guard '(?<![\\d.,])\\d+\\.\\d+(?![\\d.,])', and '1,5kg' hits the comma decimal unit guard '(?<![\\d.,])\\d+,\\s*\\d+\\s*(?:g|kg|ml|l|liter|litre|克|公斤|毫升|升)'. Both quantities are strictly set to null. Downstream OrderAiAdapter flags both lines as LOW_CONFIDENCE_MATCH with reason_code='INVALID_QUANTITY', preventing erroneous fractional wholesale orders."
+}

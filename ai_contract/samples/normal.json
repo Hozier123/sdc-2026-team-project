@@ -1,0 +1,62 @@
+{
+  "description": "Normal single-line order with quantity, unit of measure, product family, pack size, and masked PII token",
+  "input": {
+    "masked_text": "Tepung Gandum 5 ctn 1kg [REDACTED_PHONE]",
+    "language_hint": "ms",
+    "request_id": "req-sample-normal-001"
+  },
+  "expected_response": {
+    "rows": [
+      {
+        "span": "Tepung Gandum 5 ctn 1kg",
+        "qty": 5,
+        "uom": "ctn",
+        "fam": "FAM_FLOUR",
+        "pack_size": "1kg",
+        "conds": []
+      }
+    ],
+    "ignored_spans": [
+      "[REDACTED_PHONE]"
+    ]
+  },
+  "span_coordinates": [
+    {
+      "target": "rows[0].span",
+      "verbatim_span": "Tepung Gandum 5 ctn 1kg",
+      "start": 0,
+      "end": 23
+    },
+    {
+      "target": "rows[0].fam",
+      "verbatim_span": "Tepung Gandum",
+      "start": 0,
+      "end": 13
+    },
+    {
+      "target": "rows[0].qty",
+      "verbatim_span": "5",
+      "start": 14,
+      "end": 15
+    },
+    {
+      "target": "rows[0].uom",
+      "verbatim_span": "ctn",
+      "start": 16,
+      "end": 19
+    },
+    {
+      "target": "rows[0].pack_size",
+      "verbatim_span": "1kg",
+      "start": 20,
+      "end": 23
+    },
+    {
+      "target": "ignored_spans[0]",
+      "verbatim_span": "[REDACTED_PHONE]",
+      "start": 24,
+      "end": 40
+    }
+  ],
+  "rationale": "Product family 'Tepung Gandum' maps directly to tenant whitelist 'FAM_FLOUR'. Quantity '5' is a positive integer followed by canonical unit 'ctn'. Pack size '1kg' is extracted via packaging regex without contaminating 'qty'. Masked phone token '[REDACTED_PHONE]' is isolated into 'ignored_spans' to preserve PII boundaries."
+}

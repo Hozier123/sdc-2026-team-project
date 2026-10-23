@@ -1,0 +1,58 @@
+{
+  "description": "Multi-line order with multiple distinct products across lines (Rice, Cooking Oil, Sugar)",
+  "input": {
+    "masked_text": "Beras Wangi 10 bag\nMinyak Masak 4 ctn 1L\nGula Pasir 20 pack",
+    "language_hint": "ms",
+    "request_id": "req-sample-multiline-002"
+  },
+  "expected_response": {
+    "rows": [
+      {
+        "span": "Beras Wangi 10 bag",
+        "qty": 10,
+        "uom": "bag",
+        "fam": "FAM_RICE",
+        "pack_size": null,
+        "conds": []
+      },
+      {
+        "span": "Minyak Masak 4 ctn 1L",
+        "qty": 4,
+        "uom": "ctn",
+        "fam": "FAM_OIL",
+        "pack_size": "1L",
+        "conds": []
+      },
+      {
+        "span": "Gula Pasir 20 pack",
+        "qty": 20,
+        "uom": "pack",
+        "fam": "FAM_SUGAR",
+        "pack_size": null,
+        "conds": []
+      }
+    ],
+    "ignored_spans": []
+  },
+  "span_coordinates": [
+    {
+      "target": "rows[0].span",
+      "verbatim_span": "Beras Wangi 10 bag",
+      "start": 0,
+      "end": 18
+    },
+    {
+      "target": "rows[1].span",
+      "verbatim_span": "Minyak Masak 4 ctn 1L",
+      "start": 19,
+      "end": 40
+    },
+    {
+      "target": "rows[2].span",
+      "verbatim_span": "Gula Pasir 20 pack",
+      "start": 41,
+      "end": 59
+    }
+  ],
+  "rationale": "Demonstrates multi-line pre-segmentation without cross-line span leakage. Line 1 extracts 10 bags of FAM_RICE. Line 2 extracts 4 cartons of 1L FAM_OIL with pack_size='1L'. Line 3 extracts 20 packets of FAM_SUGAR. All spans are strictly non-overlapping and maintain exact line coordinates."
+}
