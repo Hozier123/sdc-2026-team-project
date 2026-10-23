@@ -42,9 +42,9 @@ jobs:
       - name: Check dependency compatibility
         run: python -m pip check
       - name: Lint
-        run: python -m ruff check backend/app backend/tests
+        run: python -m ruff check backend/app backend/tools backend/tests
       - name: Format check
-        run: python -m ruff format --check backend/app backend/tests
+        run: python -m ruff format --check backend/app backend/tools backend/tests
       - name: PostgreSQL integration and unit tests
         working-directory: backend
         run: python -m pytest -q

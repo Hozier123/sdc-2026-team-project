@@ -42,8 +42,9 @@ def persist_parse_draft(
             conn.execute(
                 "INSERT INTO orders "
                 "(tenant_id, draft_id, customer_id, message_id, status, version, "
-                " ai_mode, working_lines, issues, clarification, escalation_preview) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                " ai_mode, working_lines, issues, clarification, escalation_preview, "
+                "ai_initial_snapshot) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 (
                     user.tenant_id,
                     draft["draft_id"],
@@ -60,6 +61,7 @@ def persist_parse_draft(
                         else None
                     ),
                     Jsonb(draft["escalation_preview"]),
+                    Jsonb(draft),
                 ),
             )
             conn.execute(

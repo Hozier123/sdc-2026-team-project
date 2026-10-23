@@ -1,5 +1,9 @@
 # 试次重置：库级重建（方案 A）
 
+> 2026-10-23 安全修订：以下旧版 DROP/CREATE 描述仅说明历史设计。当前实现先创建 candidate，再把旧 target 改名保留为 `*_backup_<id>`，最后切换新库；不会强制删除旧库或杀掉业务连接。运行前先停 API/AI 写入；备份清理需单独人工核实，不由工具自动删除。
+>
+> `--init-template` 先校验真实 SQL SHA-256、字面量 INSERT 与租户范围；已有同名模板拒绝覆盖。新模板还记录 `seed_content_sha256`，重置前后按行级内容校验，防止“汇总不变但商品/价格被改”。旧模板没有该指纹必须用新的版本化名称重建，不得给旧库补一个自证哈希后继续用。全程保留 `sslmode` 等连接安全参数。
+
 > 适用：Gate 0 v4 / `gate0-baseline-v1`，T1 隔离试次。
 > 工具：`backend/tools/reset_demo.py`。
 > 结论先行：**行级 DELETE 不可行**（6 张表有 immutable/append-only 触发器），所以每次试次前用模板库重建目标库。

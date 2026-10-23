@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, model_validator
 
 DraftStatus = Literal[
     "DISAMBIGUATION_REQUIRED",
@@ -72,7 +72,7 @@ TerminationReason = Literal["OWNER_REJECTED", "CLERK_DISCARDED", "SYSTEM_TERMINA
 Role = Literal["CLERK", "OWNER", "WAREHOUSE"]
 AiState = Literal["OFFLINE", "WARMING", "READY", "DEGRADED"]
 
-DecimalString = Annotated[str, Field(pattern=r"^(0|[1-9][0-9]*)\.[0-9]{2}$")]
+DecimalString = Annotated[str, Field(pattern=r"^(0|[1-9][0-9]{0,9})\.[0-9]{2}$")]
 
 
 class CustomerSummary(BaseModel):
@@ -161,7 +161,7 @@ class WorkingLine(BaseModel):
     family_id: str
     description: str | None = None
     requested_qty: int = Field(ge=1)
-    confirmed_qty: int | None = Field(default=None, ge=1)
+    confirmed_qty: StrictInt | None = Field(default=None, ge=1, le=999999)
     effective_qty: int = Field(ge=1)
     uom: str | None = None
     pack_size: str | None = None
@@ -218,7 +218,7 @@ class WorkingLineInput(BaseModel):
     client_line_ref: str | None = None
     sku_id: str | None = None
     family_id: str | None = Field(default=None, min_length=1)
-    confirmed_qty: int | None = Field(default=None, ge=1)
+    confirmed_qty: StrictInt | None = Field(default=None, ge=1, le=999999)
     uom: str | None = None
     pack_size: str | None = None
     grade: str | None = None
@@ -249,7 +249,7 @@ class IssueResolution(BaseModel):
 class SaveLinesRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    expected_version: int = Field(ge=1)
+    expected_version: StrictInt = Field(ge=1)
     lines: list[WorkingLineInput]
     deleted_line_ids: list[str] = Field(default_factory=list)
     resolutions: list[IssueResolution] = Field(default_factory=list)
@@ -258,7 +258,7 @@ class SaveLinesRequest(BaseModel):
 class ApproveRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    expected_version: int = Field(ge=1)
+    expected_version: StrictInt = Field(ge=1)
     confirmed_items: list[WorkingLineInput] | None = None
 
 

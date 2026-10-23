@@ -106,9 +106,12 @@ class DoExport:
 
 def money(value: Any) -> Decimal:
     try:
-        return Decimal(str(value))
+        result = Decimal(str(value))
     except (InvalidOperation, ValueError):
         raise ExportError(f"not a decimal value: {value!r}") from None
+    if not result.is_finite() or result < 0:
+        raise ExportError("amount must be finite and non-negative")
+    return result
 
 
 def rows_from_do(
@@ -117,15 +120,27 @@ def rows_from_do(
     products: dict[str, dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     lines = do.get("lines")
-    if not isinstance(lines, list):
-        raise ExportError("DO has no lines array")
+    if not isinstance(lines, list) or not lines:
+        raise ExportError("DO has no non-empty lines array")
     products = products or {}
     rows: list[dict[str, Any]] = []
     for index, line in enumerate(lines, start=1):
         missing = [field for field in REQUIRED_LINE_FIELDS if field not in line]
         if missing:
             raise ExportError(f"line {index} is missing {', '.join(missing)}")
+        if type(line["quantity"]) is not int or line["quantity"] <= 0:
+            raise ExportError(f"line {index} quantity must be a positive integer")
+        if not line.get("unit"):
+            raise ExportError(f"line {index} is missing unit")
         product = products.get(line["sku_id"], {})
+        frozen_line = next(
+            (
+                saved
+                for saved in do.get("working_lines", [])
+                if saved.get("line_id") == line.get("line_id")
+            ),
+            {},
+        )
         rows.append(
             {
                 "case_id": case_id,
@@ -135,8 +150,8 @@ def rows_from_do(
                 "ai_mode_mixed": str(do.get("ai_mode", "")).upper() == "MIXED",
                 "line_no": f"L{index}",
                 "sku_id": line["sku_id"],
-                "pack_size": product.get("pack_size") or "",
-                "grade": product.get("grade") or "",
+                "pack_size": frozen_line.get("pack_size", product.get("pack_size")) or "",
+                "grade": frozen_line.get("grade", product.get("grade")) or "",
                 "quantity": line["quantity"],
                 "unit": line.get("unit", ""),
                 "applied_unit_price": str(line["applied_unit_price"]),
@@ -211,10 +226,12 @@ def fetch_orders(
     query = (
         "SELECT to_jsonb(d) || jsonb_build_object("
         "  'ai_mode', o.ai_mode,"
-        "  'working_lines', o.working_lines"
+        "  'working_lines', COALESCE(dv.snapshot->'lines', o.working_lines)"
         ") "
         "FROM delivery_orders d "
         "LEFT JOIN orders o ON o.tenant_id = d.tenant_id AND o.draft_id = d.draft_id "
+        "LEFT JOIN draft_versions dv ON dv.tenant_id=d.tenant_id AND dv.draft_id=d.draft_id "
+        "AND dv.version=d.draft_version "
         f"WHERE {where} ORDER BY d.approved_at"
     )
     try:
@@ -250,31 +267,46 @@ def write_outputs(
     csv_path = out_dir / f"{case_id}_do_lines.csv"
     json_path = out_dir / f"{case_id}_do_lines.json"
     exports = list(exports)
+    if not exports:
+        raise ExportError("cannot certify an empty export")
+
+    def csv_safe(row):
+        return {
+            key: (
+                "'" + value
+                if isinstance(value, str)
+                and value.lstrip().startswith(("=", "+", "-", "@", "\t", "\r"))
+                else value
+            )
+            for key, value in row.items()
+        }
 
     with csv_path.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=COLUMNS)
         writer.writeheader()
         for export in exports:
-            writer.writerows(export.rows)
+            writer.writerows(csv_safe(row) for row in export.rows)
             if total_row:
                 writer.writerow(
-                    {
-                        "case_id": export.case_id,
-                        "do_number": export.do_number,
-                        "customer_id": export.customer_id,
-                        "ai_mode": export.ai_mode,
-                        "ai_mode_mixed": export.ai_mode_mixed,
-                        "line_no": "合计",
-                        "sku_id": "",
-                        "pack_size": "",
-                        "grade": "",
-                        "quantity": "",
-                        "unit": "",
-                        "applied_unit_price": "",
-                        "subtotal_rm": export.final_total_rm,
-                        "final_total_rm": export.final_total_rm,
-                        "display_name": "" if export.totals_match else "总额或行金额不一致",
-                    }
+                    csv_safe(
+                        {
+                            "case_id": export.case_id,
+                            "do_number": export.do_number,
+                            "customer_id": export.customer_id,
+                            "ai_mode": export.ai_mode,
+                            "ai_mode_mixed": export.ai_mode_mixed,
+                            "line_no": "合计",
+                            "sku_id": "",
+                            "pack_size": "",
+                            "grade": "",
+                            "quantity": "",
+                            "unit": "",
+                            "applied_unit_price": "",
+                            "subtotal_rm": export.final_total_rm,
+                            "final_total_rm": export.final_total_rm,
+                            "display_name": "" if export.totals_match else "总额或行金额不一致",
+                        }
+                    )
                 )
 
     mixed = [export.do_number for export in exports if export.ai_mode_mixed]
@@ -282,7 +314,7 @@ def write_outputs(
     payload = {
         "case_id": case_id,
         "exported_at": datetime.now().astimezone().isoformat(),
-        "products": products_meta or {},
+        "products": {**(products_meta or {}), "verification": "OPERATOR_ASSERTED_NOT_VERIFIED"},
         "totals_match": all(export.totals_match for export in exports),
         "mixed_orders": mixed,
         "order_mismatch_orders": order_mismatch,

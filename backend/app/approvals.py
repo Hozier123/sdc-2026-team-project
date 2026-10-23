@@ -18,12 +18,15 @@ from app.db import connect
 from app.deps import get_current_user, get_settings
 from app.drafts import (
     _audit,
+    _canonical_uom,
     _customer,
     _escalation,
     _money,
     _old_lines,
     _order,
+    _product,
     _tenant,
+    _tier_price,
 )
 from app.errors import (
     AlreadyApprovedError,
@@ -198,6 +201,8 @@ def _lock_and_verify_stock(
             )
     if failed:
         raise error_cls(details={"lines": failed})
+    for line in lines:
+        line.available_qty = available[line.sku_id]
 
 
 def _deduct_stock(conn, tenant: str, lines: list[WorkingLine]) -> None:
@@ -359,13 +364,63 @@ def _validate_for_approval(
             details={"fields": [{"path": "lines", "reason": "all lines need a price"}]}
         )
     if order["issues"]:
-        blocking = [issue for issue in order["issues"] if issue.get("blocking")]
+        blocking = [
+            issue
+            for issue in order["issues"]
+            if issue.get("blocking") and not issue.get("resolved")
+        ]
         if blocking:
-            raise InsufficientStockError(
+            raise RequestValidationFailedError(
                 details={"issues": [issue.get("code") for issue in blocking]}
             )
     customer = _customer(conn, tenant, order["customer_id"])
     tenant_rules = _tenant(conn, tenant)
+    by_id = {line.line_id: line for line in lines}
+    for issue in order["issues"]:
+        if issue.get("condition_kind") != "PRICE":
+            continue
+        dismissed = (
+            issue.get("resolution") == "NOT_A_CONDITION"
+            and (issue.get("resolution_note") or "").strip()
+        )
+        if dismissed:
+            continue
+        confirmed_price = issue.get("data_used", {}).get("confirmed_unit_price")
+        targets = issue.get("target_line_ids", [])
+        if (
+            issue.get("resolution") != "ACCEPT_REQUESTED_PRICE"
+            or issue.get("price_basis") != "UNIT"
+            or not targets
+            or not confirmed_price
+            or not (issue.get("resolution_note") or "").strip()
+            or any(
+                target not in by_id or by_id[target].unit_price_override != confirmed_price
+                for target in targets
+            )
+        ):
+            raise RequestValidationFailedError(
+                "price condition must be reconfirmed for saved targets"
+            )
+    for line in lines:
+        if not line.sku_id or not line.uom:
+            raise RequestValidationFailedError("selected SKU and UOM required")
+        product = _product(conn, tenant, line.sku_id)
+        _canonical_uom(conn, tenant, line.uom, product["base_unit"])
+        price = _tier_price(conn, tenant, customer["tier"], line.sku_id)
+        if (
+            product["family_id"] != line.family_id
+            or price is None
+            or _money(price) != line.tier_unit_price
+        ):
+            raise RequestValidationFailedError("product or tier price changed; save draft again")
+        effective = line.unit_price_override or line.tier_unit_price
+        if (
+            line.effective_qty != (line.confirmed_qty or line.requested_qty)
+            or line.effective_unit_price != effective
+            or line.subtotal_rm != _money(Decimal(effective) * line.effective_qty)
+            or (line.unit_price_override is not None and not (line.override_reason or "").strip())
+        ):
+            raise RequestValidationFailedError("saved price or quantity is inconsistent")
     total = sum(Decimal(line.subtotal_rm) for line in lines)
     reasons = _escalation(
         tenant=tenant_rules,
@@ -430,6 +485,7 @@ def approve(
                 (user.tenant_id, order["message_id"]),
             ).fetchone()
             masked_message = masked[0] if masked else ""
+            _lock_and_verify_stock(conn, user.tenant_id, lines, error_cls=InsufficientStockError)
 
             if reasons and user.role == "CLERK":
                 approval = _create_approval(
@@ -477,7 +533,11 @@ def approve(
                 action="APPROVE",
                 event="DO_CREATED",
                 user=user,
-                payload={"do_number": do.do_number, "mode": mode},
+                payload={
+                    "do_number": do.do_number,
+                    "mode": mode,
+                    "customer_name": do.customer_name,
+                },
             )
             _audit(
                 conn,
@@ -539,10 +599,6 @@ def decide(
                 )
             if order["status"] != "PENDING_OWNER_APPROVAL":
                 raise PendingOwnerApprovalError()
-            customer, _tenant_rules, lines, _total, reasons = _validate_for_approval(
-                conn, order, user.tenant_id, allow_pending=True
-            )
-
             if body.decision == "REJECT":
                 conn.execute(
                     "UPDATE approval_requests SET status='REJECTED', decided_by=%s, "
@@ -576,6 +632,18 @@ def decide(
                     decision_note=body.note or "",
                 )
 
+            customer, _tenant_rules, lines, _total, reasons = _validate_for_approval(
+                conn, order, user.tenant_id, allow_pending=True
+            )
+            if order["working_lines"] != approval["snapshot"]["lines"]:
+                # Stock availability is a live observation, not editable order content.
+                def comparable(row):
+                    return {k: v for k, v in row.items() if k != "available_qty"}
+
+                if [comparable(row) for row in order["working_lines"]] != [
+                    comparable(row) for row in approval["snapshot"]["lines"]
+                ]:
+                    raise RequestValidationFailedError("pending approval snapshot changed")
             _lock_and_verify_stock(conn, user.tenant_id, lines)
             do = _create_do(
                 conn,
@@ -590,8 +658,8 @@ def decide(
             _deduct_stock(conn, user.tenant_id, lines)
             conn.execute(
                 "UPDATE approval_requests SET status='APPROVED', decided_by=%s, "
-                "decided_at=now() WHERE approval_id=%s",
-                (user.user_id, approval_id),
+                "decided_at=now(), decision_note=%s WHERE approval_id=%s",
+                (user.user_id, body.note, approval_id),
             )
             _audit(
                 conn,
@@ -601,7 +669,12 @@ def decide(
                 action="DECIDE_APPROVE",
                 event="OWNER_APPROVED",
                 user=user,
-                payload={"approval_id": approval_id, "do_number": do.do_number},
+                payload={
+                    "approval_id": approval_id,
+                    "do_number": do.do_number,
+                    "customer_name": do.customer_name,
+                    "note": body.note,
+                },
             )
             _audit(
                 conn,
@@ -717,7 +790,9 @@ def get_approval(
         approval = _approval(conn, user.tenant_id, approval_id)
         if user.role == "CLERK" and approval["requested_by"] != user.user_id:
             raise ResourceNotFoundError()
-        customer = _customer(conn, user.tenant_id, approval["snapshot"]["customer_id"])
+        customer = _customer(
+            conn, user.tenant_id, approval["snapshot"]["customer_id"], active_only=False
+        )
         diff_rows = conn.execute(
             "SELECT fd.draft_version, fd.line_id, fd.field_path, fd.before_value, "
             "fd.after_value, fd.source, fd.reason_code "

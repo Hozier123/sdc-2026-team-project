@@ -45,7 +45,16 @@ class SeedResult:
     inventory_total: int
 
 
-def validate_data_only_sql(text: str) -> None:
+def validate_data_only_sql(text: str, tenant: str | None = None) -> None:
+    try:
+        _validate_seed_ast(text, tenant)
+    except SeedError:
+        raise
+    except Exception:
+        raise SeedError("seed SQL cannot be parsed as safe literal INSERTs") from None
+
+
+def _validate_seed_ast(text: str, tenant: str | None = None) -> None:
     """Seed files must contain INSERT statements only; no DDL or transaction control."""
     for statement in split(text):
         for node in parse_sql(statement):
@@ -55,6 +64,59 @@ def validate_data_only_sql(text: str) -> None:
                 )
             if not isinstance(node.stmt, ast.InsertStmt):
                 raise SeedError("seed SQL must contain only INSERT statements")
+            insert = node.stmt
+            tables = {
+                "tenants",
+                "users",
+                "customers",
+                "product_families",
+                "family_aliases",
+                "products",
+                "uom_aliases",
+                "customer_tier_prices",
+                "inventory",
+                "alias_cache",
+            }
+            if (
+                insert.withClause
+                or insert.returningList
+                or insert.relation.relname not in tables
+                or insert.relation.schemaname not in {None, "public"}
+            ):
+                raise SeedError("seed INSERT must target seed tables without CTE or RETURNING")
+            if (
+                insert.onConflictClause
+                and insert.onConflictClause.action.name != "ONCONFLICT_NOTHING"
+            ):
+                raise SeedError("seed must not update existing rows")
+            select = insert.selectStmt
+            if not isinstance(select, ast.SelectStmt) or not select.valuesLists:
+                raise SeedError("seed supports literal VALUES only")
+            if select.withClause or select.sortClause or select.limitCount or select.limitOffset:
+                raise SeedError("seed VALUES must not contain queries or expressions")
+            if insert.onConflictClause and insert.onConflictClause.infer:
+                raise SeedError("seed conflict clauses must not contain expressions")
+            columns = [col.name for col in (insert.cols or ())]
+            if "tenant_id" not in columns:
+                raise SeedError("seed rows must declare tenant_id")
+            for row in select.valuesLists:
+                for value in row:
+                    if isinstance(value, ast.TypeCast):
+                        if [name.sval for name in value.typeName.names] not in [
+                            ["jsonb"],
+                            ["text"],
+                        ]:
+                            raise SeedError("seed supports only jsonb/text literal casts")
+                        value = value.arg
+                    if not isinstance(value, ast.A_Const):
+                        raise SeedError("seed values must be literals; expressions are forbidden")
+                if tenant is not None:
+                    value = row[columns.index("tenant_id")]
+                    if (
+                        not isinstance(value, ast.A_Const)
+                        or getattr(value.val, "sval", None) != tenant
+                    ):
+                        raise SeedError("seed row belongs to a different tenant")
 
 
 def _counts(conn: psycopg.Connection, tenant: str) -> tuple[int, int]:
@@ -95,7 +157,7 @@ def load_seed(
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
         raise SeedError("seed file is not valid UTF-8") from None
-    validate_data_only_sql(text)
+    validate_data_only_sql(text, tenant)
 
     with connect(settings) as conn:
         conn.execute("BEGIN")

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
@@ -32,19 +33,9 @@ DEFAULT_FAMILY_ALIASES: dict[str, str] = {
     "FAM_EGG": "FAM_TELUR",
 }
 
-NEGATIVE_CONTEXTS = (
-    "last order was",
-    "total last time",
-    "stock code",
-    "hantar esok",
-    "price is",
-    "not asking for discount",
-    "harga lama rm",
-    "价格不便宜也没关系",
-)
 _AMOUNT = re.compile(r"rm\s*(\d+(?:\.\d{1,2})?)", re.IGNORECASE)
 _UNIT_PRICE = re.compile(
-    r"rm\s*\d+(?:\.\d{1,2})?\s+(?:untuk|per|for|each)\s+1\s+"
+    r"rm\s*\d+(?:\.\d{1,2})?\s+(?:(?:untuk|for)\s+1\s+|(?:per|each)\s+(?:1\s+)?)"
     r"(?:ctn|carton|pack|kg|pc|bag|btl|tin|papan|box|pail)",
     re.IGNORECASE,
 )
@@ -75,7 +66,7 @@ class AiExtraction(BaseModel):
 def _offset(masked_text: str, value: str, start_at: int = 0) -> tuple[int, int]:
     start = masked_text.find(value, start_at)
     if start < 0:
-        raise AiPayloadError(f"AI span is not in masked_text: {value!r}")
+        raise AiPayloadError("AI span is not in masked_text")
     return start, start + len(value)
 
 
@@ -86,10 +77,10 @@ def _ignored_spans(masked_text: str, values: Iterable[str]) -> tuple[dict[str, A
         start, end = _offset(masked_text, value, cursor)
         result.append(
             {
-                "span": value,
+                "text": value,
                 "start": start,
                 "end": end,
-                "reason": "NON_ORDER_TEXT",
+                "normalizer_version": "field-evidence-v2",
             }
         )
         cursor = end
@@ -103,16 +94,27 @@ def _condition_lexicon() -> dict[str, Any]:
 
 
 def _is_negative(text: str) -> bool:
-    normalized = " ".join(text.casefold().split())
-    return any(pattern in normalized for pattern in NEGATIVE_CONTEXTS)
+    normalized = " ".join(unicodedata.normalize("NFKC", text).casefold().split())
+    for phrase in _condition_lexicon()["negative_contexts"]:
+        pattern = (
+            re.escape(phrase.casefold())
+            .replace("<amount>", r"rm\s*\d+(?:\.\d{1,2})?")
+            .replace("<code>", r"[a-z0-9]+")
+        )
+        if re.search(pattern, normalized):
+            return True
+    return False
 
 
 def classify_condition(text: str, masked_text: str) -> list[dict[str, Any]]:
     """Classify one verbatim condition phrase with the frozen H5 v3 triggers."""
-    if not text or text not in masked_text or _is_negative(text):
+    if not text or text not in masked_text:
         return []
-    normalized = " ".join(text.casefold().split())
+    normalized = " ".join(unicodedata.normalize("NFKC", text).casefold().split())
     lexicon = _condition_lexicon()
+    negative = _is_negative(normalized)
+    context = any(marker.casefold() in normalized for marker in lexicon["context_markers"])
+    explicit_question = "?" in normalized
     kinds: list[str] = []
     trigger_ids: list[str] = []
     requested_amount: str | None = None
@@ -120,28 +122,38 @@ def classify_condition(text: str, masked_text: str) -> list[dict[str, Any]]:
         pattern = trigger.get("pattern")
         if not pattern:
             continue
+        if trigger.get("language") in {"en", "ms"}:
+            pattern = r"(?<![a-z0-9])(?:" + pattern + r")(?![a-z])"
         if re.search(pattern, normalized, re.IGNORECASE) is None:
             continue
         kind = trigger.get("kind", "")
         if kind == "PRICE_HELPER":
             continue
+        if trigger.get("requires_context") and (not context or negative):
+            continue
         if kind == "TIME_OR_OTHER":
-            kinds.append("TIME")
+            kinds.append("OTHER")
         elif kind in {"PRICE", "STOCK"}:
             kinds.append(kind)
         trigger_ids.append(trigger["id"])
     if "PRICE" in kinds:
-        amount = _AMOUNT.search(text)
+        amount = _AMOUNT.search(normalized)
         if amount:
             requested_amount = amount.group(1)
-        price_basis = "UNIT" if _UNIT_PRICE.search(text) else "UNKNOWN"
+        price_basis = "UNIT" if _UNIT_PRICE.search(normalized) else "UNKNOWN"
     else:
         price_basis = None
     # A bare question mark plus amount is a price query, not a standalone kind.
-    if "PRICE" not in kinds and _AMOUNT.search(text) and ("?" in text or "？" in text):
+    allocation = re.search(r"rm\s*\d+(?:\.\d{1,2})?\s+(?:for|untuk|per|each)\s+", normalized)
+    if "PRICE" not in kinds and _AMOUNT.search(normalized) and (explicit_question or allocation):
         kinds.append("PRICE")
+        price_basis = "UNIT" if _UNIT_PRICE.search(normalized) else "UNKNOWN"
+        requested_amount = _AMOUNT.search(normalized).group(1)
+    if negative and not explicit_question and not trigger_ids:
+        return []
+    if len(_AMOUNT.findall(normalized)) > 1:
         price_basis = "UNKNOWN"
-        requested_amount = _AMOUNT.search(text).group(1)
+        requested_amount = None
     start, end = _offset(masked_text, text)
     result: list[dict[str, Any]] = []
     for kind in dict.fromkeys(kinds):
@@ -219,6 +231,11 @@ class HttpAiExtractor:
         self.timeout_s = timeout_s
         self.client = client or httpx.Client(timeout=timeout_s)
         self.family_aliases = family_aliases
+        self._owns_client = client is None
+
+    def close(self):
+        if self._owns_client:
+            self.client.close()
 
     def extract(
         self,
@@ -240,17 +257,15 @@ class HttpAiExtractor:
                 },
                 timeout=self.timeout_s,
             )
-        except httpx.HTTPError as exc:
-            raise AiServiceError(f"AI service request failed: {exc}") from exc
+        except httpx.HTTPError:
+            raise AiServiceError("AI service request failed") from None
         if response.status_code != 200:
-            raise AiServiceError(
-                f"AI service returned HTTP {response.status_code}: {response.text[:300]}"
-            )
+            raise AiServiceError(f"AI service returned HTTP {response.status_code}")
         try:
             payload = response.json()
         except ValueError as exc:
             raise AiServiceError("AI service returned non-JSON") from exc
         try:
             return to_raw_extraction(payload, masked_text, self.family_aliases)
-        except AiPayloadError as exc:
-            raise AiServiceError(f"AI service returned an invalid payload: {exc}") from exc
+        except AiPayloadError:
+            raise AiServiceError("AI service returned an invalid payload") from None

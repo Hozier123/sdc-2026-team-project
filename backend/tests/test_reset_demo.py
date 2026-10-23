@@ -1,5 +1,6 @@
 """Tests for the database-level trial reset (Gate 0 plan A)."""
 
+import hashlib
 import json
 import os
 import uuid
@@ -17,8 +18,11 @@ from tools.reset_demo import (
     check_template,
     collect_evidence,
     ensure_safe_names,
+    init_template,
     main,
     rebuild,
+    retained_backups,
+    seed_content_hash,
     verify_target,
     with_dbname,
     write_evidence,
@@ -160,6 +164,7 @@ def _make_template(admin: psycopg.Connection, admin_url: str, name: str) -> None
             "family_count integer NOT NULL, customer_count integer NOT NULL,"
             "price_count integer NOT NULL, price_total_a numeric(12,2) NOT NULL,"
             "price_total_b numeric(12,2) NOT NULL,"
+            "seed_content_sha256 text,"
             "applied_at timestamptz NOT NULL DEFAULT now())"
         )
         conn.execute(
@@ -168,6 +173,10 @@ def _make_template(admin: psycopg.Connection, admin_url: str, name: str) -> None
             " family_count, customer_count, price_count, price_total_a, price_total_b) "
             "VALUES ('T1', 'T1-test', %s, 1, 5, 1, 0, 2, 18.00, 19.00)",
             ("a" * 64,),
+        )
+        conn.execute(
+            "UPDATE kiraorder_meta.seed_manifest SET seed_content_sha256=%s",
+            (seed_content_hash(conn, "T1"),),
         )
 
 
@@ -190,10 +199,38 @@ def test_rebuilds_target_from_pinned_template(admin):
         assert all(value == 0 for value in verified["flow_rows"].values())
 
         # Idempotent: rebuilding again yields the same clean state.
+        with psycopg.connect(with_dbname(admin_url, target), autocommit=True) as conn:
+            conn.execute("UPDATE inventory SET available_qty=4")
         rebuild(admin, template, target)
         assert verify_target(args)["snapshot"]["inventory_total"] == 5
+        backups = retained_backups(admin, target)
+        assert len(backups) == 1
+        with psycopg.connect(with_dbname(admin_url, backups[0]), autocommit=True) as conn:
+            assert conn.execute("SELECT available_qty FROM inventory").fetchone()[0] == 4
     finally:
+        for backup in retained_backups(admin, target):
+            _drop(admin, backup)
         _drop(admin, target)
+        _drop(admin, template)
+
+
+@pytest.mark.integration
+def test_init_template_verifies_real_hash_and_content(admin, tmp_path):
+    suffix = uuid.uuid4().hex[:10]
+    template = f"kiraorder_{suffix}_seed"
+    args = _args(os.environ["TEST_DATABASE_ADMIN_URL"], template, f"kiraorder_trial_{suffix}")
+    seed = tmp_path / "seed.sql"
+    seed.write_text(SEED_SQL, encoding="utf-8")
+    args.seed_sql = str(seed)
+    args.seed_version = args.expect_seed_version
+    args.seed_sha256 = hashlib.sha256(seed.read_bytes()).hexdigest()
+    args.expect_seed_sha256 = args.seed_sha256
+    try:
+        assert init_template(args, admin).status == "ok"
+        assert check_template(args, admin)["manifest"]["seed_sha256"] == args.seed_sha256
+        with pytest.raises(ResetError, match="already exists"):
+            init_template(args, admin)
+    finally:
         _drop(admin, template)
 
 
@@ -207,6 +244,22 @@ def test_template_version_mismatch_is_rejected(admin):
         args = _args(admin_url, template, f"kiraorder_trial_{suffix}")
         args.expect_seed_version = "T1-other"
         with pytest.raises(ResetError, match="seed version"):
+            check_template(args, admin)
+    finally:
+        _drop(admin, template)
+
+
+@pytest.mark.integration
+def test_template_name_drift_is_caught_without_count_changes(admin):
+    suffix = uuid.uuid4().hex[:10]
+    template = f"kiraorder_{suffix}_seed"
+    admin_url = os.environ["TEST_DATABASE_ADMIN_URL"]
+    try:
+        _make_template(admin, admin_url, template)
+        args = _args(admin_url, template, f"kiraorder_trial_{suffix}")
+        with psycopg.connect(with_dbname(admin_url, template), autocommit=True) as conn:
+            conn.execute("UPDATE products SET name='drifted'")
+        with pytest.raises(ResetError, match="content digest"):
             check_template(args, admin)
     finally:
         _drop(admin, template)
