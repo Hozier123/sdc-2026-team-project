@@ -350,6 +350,17 @@ def parse_quantity_h1(
     return qty, None, start, end
 
 
+def _pack_match_starts_inside_decimal(value: str, start: int) -> bool:
+    """Reject a pack match that begins inside a comma/dot decimal.
+
+    The frozen H1 pack patterns use ``\\b`` before the digits. In
+    ``1,5kg`` the comma is a non-word character, so ``\\b`` matches between
+    the comma and ``5`` and the pattern returns a false ``5kg``.  A pack
+    size may never start immediately after a decimal separator or digit.
+    """
+    return start > 0 and (value[start - 1] in ".," or value[start - 1].isdigit())
+
+
 def parse_pack_size_h1_with_offsets(
     span: str,
     lexicon: Optional[Dict[str, Any]] = None,
@@ -365,6 +376,8 @@ def parse_pack_size_h1_with_offsets(
     for pattern in lexicon["pack_size"]["patterns"]:
         m = re.search(pattern, value, re.IGNORECASE)
         if m:
+            if _pack_match_starts_inside_decimal(value, m.start()):
+                continue
             s, e = m.start(), m.end()
             matched_slice = value[s:e]
             suffix_m = re.search(r"\s*(?:装|pack|packs)$", matched_slice, flags=re.IGNORECASE)
@@ -387,6 +400,8 @@ def parse_pack_size_h1(span: str, lexicon: Optional[Dict[str, Any]] = None) -> O
     for pattern in lexicon["pack_size"]["patterns"]:
         m = re.search(pattern, value, re.IGNORECASE)
         if m:
+            if _pack_match_starts_inside_decimal(value, m.start()):
+                continue
             text = m.group(0).strip()
             return re.sub(r"\s*(?:装|pack|packs)$", "", text, flags=re.IGNORECASE)
     return None

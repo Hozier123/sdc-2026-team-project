@@ -33,6 +33,23 @@ from app.ai.fallback import (
 
 logger = logging.getLogger(__name__)
 
+_MASKED_TOKEN = re.compile(r"\[REDACTED_[A-Z0-9_]+\]")
+
+
+def _merge_masked_ignored_spans(masked_text: str, ignored_spans: Sequence[str]) -> List[str]:
+    """Preserve explicit masked PII tokens even when the model omits them.
+
+    The model may omit a masked token from ``ignored_spans``; the backend must
+    not lose that evidence. Deduplicate while keeping the model's order first.
+    """
+    merged = list(ignored_spans)
+    for match in _MASKED_TOKEN.finditer(masked_text):
+        token = match.group(0)
+        if token not in merged:
+            merged.append(token)
+    return merged
+
+
 # ---------------------------------------------------------------------------
 # H5 Reference Patterns from contract_oracles.py:240-248
 # (Gate 0 v4 oracle implementation details; not in condition-triggers-v3.json)
@@ -623,5 +640,5 @@ class OrderAiAdapter:
             lines=adapter_lines,
             conditions=conditions,
             ai_mode=final_mode,
-            ignored_spans=resp.result.ignored_spans,
+            ignored_spans=_merge_masked_ignored_spans(masked_text, resp.result.ignored_spans),
         )
