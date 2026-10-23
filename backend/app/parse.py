@@ -148,11 +148,58 @@ def _ai_draft(
 
     cursor = 0
     consumed_rows = set()
-    condition_records = {}
+    condition_records: dict[str, Issue] = {}
+    row_conditions: list[tuple[dict[str, Any], str]] = []
+    line_ids_by_span: dict[str, list[str]] = {}
+
+    def add_condition(cond: dict[str, Any], target_line_id: str | None) -> None:
+        kind = cond.get("kind", "OTHER")
+        amount = cond.get("requested_amount")
+        price = f"{Decimal(amount):.2f}" if cond.get("price_basis") == "UNIT" and amount else None
+        condition_id = _stable_id(
+            "CND", draft_id, kind, str(cond.get("start")), str(cond.get("end"))
+        )
+        if condition_id in condition_records:
+            return
+        adapter_scope = cond.get("condition_scope")
+        condition_scope = (
+            adapter_scope
+            if adapter_scope in {"SINGLE_LINE", "MULTI_LINE", "UNKNOWN"}
+            else ("SINGLE_LINE" if target_line_id else "UNKNOWN")
+        )
+        condition_records[condition_id] = Issue(
+            issue_id=_stable_id(
+                "ISS", draft_id, target_line_id, "CUSTOMER_CONDITION", condition_id
+            ),
+            code="CUSTOMER_CONDITION",
+            condition_id=condition_id,
+            line_id=target_line_id,
+            condition_kind=kind if kind in {"STOCK", "PRICE", "OTHER"} else "OTHER",
+            condition_scope=condition_scope,
+            candidate_line_ids=[target_line_id] if target_line_id else [],
+            span=cond.get("span"),
+            source_span=cond.get("span"),
+            span_start=cond.get("start"),
+            span_end=cond.get("end"),
+            requested_unit_price=price,
+            price_basis=cond.get("price_basis"),
+            ask="CLERK",
+            data_used={
+                "trigger_ids": cond.get("trigger_ids", []),
+                "lexicon_version": cond.get("lexicon_version"),
+                "amount_text": amount,
+            },
+            blocking=kind == "PRICE",
+            resolved=False,
+        )
+        if kind == "PRICE":
+            blocking.add("CUSTOMER_CONDITION")
+
     for index, row in enumerate(raw.rows):
         start = masked_text.find(row.span, cursor)
         end = start + len(row.span) if start >= 0 else None
         line_id = None
+        row_conditions.extend((cond, row.span) for cond in row.conds)
         if row.invalid_reason:
             add_issue(
                 code="LOW_CONFIDENCE_MATCH",
@@ -239,6 +286,7 @@ def _ai_draft(
                 available_qty=available,
             )
             lines.append(line)
+            line_ids_by_span.setdefault(row.span, []).append(line_id)
             if family_id == "UNKNOWN":
                 add_issue(
                     code="LOW_CONFIDENCE_MATCH",
@@ -288,49 +336,34 @@ def _ai_draft(
                     end=end,
                     data_used={"available_qty": available, "effective_qty": qty},
                 )
-        # Conditions survive even when their item's quantity is unusable.
-        for cond in row.conds:
-            kind = cond.get("kind", "OTHER")
-            amount = cond.get("requested_amount")
-            price = (
-                f"{Decimal(amount):.2f}" if cond.get("price_basis") == "UNIT" and amount else None
-            )
-            condition_id = _stable_id(
-                "CND", draft_id, kind, str(cond.get("start")), str(cond.get("end"))
-            )
-            unique_target = (
-                line_id if len(raw.rows) == 1 or cond.get("span", "") in row.span else None
-            )
-            condition_records.setdefault(
-                condition_id,
-                Issue(
-                    issue_id=_stable_id(
-                        "ISS", draft_id, unique_target, "CUSTOMER_CONDITION", condition_id
-                    ),
-                    code="CUSTOMER_CONDITION",
-                    condition_id=condition_id,
-                    line_id=unique_target,
-                    condition_kind=kind if kind in {"STOCK", "PRICE", "OTHER"} else "OTHER",
-                    condition_scope="SINGLE_LINE" if unique_target else "UNKNOWN",
-                    candidate_line_ids=[unique_target] if unique_target else [],
-                    span=cond.get("span"),
-                    source_span=cond.get("span"),
-                    span_start=cond.get("start"),
-                    span_end=cond.get("end"),
-                    requested_unit_price=price,
-                    price_basis=cond.get("price_basis"),
-                    ask="CLERK",
-                    data_used={
-                        "trigger_ids": cond.get("trigger_ids", []),
-                        "lexicon_version": cond.get("lexicon_version"),
-                        "amount_text": amount,
-                    },
-                    blocking=kind == "PRICE",
-                    resolved=False,
-                ),
-            )
-            if kind == "PRICE":
-                blocking.add("CUSTOMER_CONDITION")
+    # Conditions survive even when their item's quantity is unusable.
+    for cond, row_span in row_conditions:
+        line_ids = line_ids_by_span.get(row_span, [])
+        target = (
+            line_ids[0]
+            if line_ids and (len(raw.rows) == 1 or cond.get("span", "") in row_span)
+            else None
+        )
+        add_condition(cond, target)
+
+    # AdapterOutput keeps order-level conditions outside row spans.
+    all_line_ids = [line_id for ids in line_ids_by_span.values() for line_id in ids]
+    for cond in getattr(raw, "conditions", ()):
+        span = cond.get("span", "")
+        matching_lines = [
+            line_id
+            for row_span, ids in line_ids_by_span.items()
+            if span in row_span
+            for line_id in ids
+        ]
+        if len(set(matching_lines)) == 1:
+            target = matching_lines[0]
+        elif len(all_line_ids) == 1:
+            target = all_line_ids[0]
+        else:
+            target = None
+        add_condition(cond, target)
+
     conditions = list(condition_records.values())
     if conn is not None and checks:
         for check_issue in apply_checks(
