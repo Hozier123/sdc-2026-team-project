@@ -148,6 +148,7 @@ def test_approve_confirmed_items_saves_new_version_and_approves(seeded_db):
         do = response.json()
         assert do["lines"][0]["sku_id"] == "SKU_MILO_1KG"
         assert do["lines"][0]["quantity"] == 1
+        assert do["draft_version"] == 2
     with connect(seeded_db) as conn:
         order = conn.execute(
             "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
@@ -194,6 +195,29 @@ def test_approve_confirmed_items_failure_after_save_rolls_back(seeded_db):
             json={"expected_version": 1, "confirmed_items": [_line(11)]},
         )
         assert response.status_code == 422
+    with connect(seeded_db) as conn:
+        order = conn.execute(
+            "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()
+        versions = conn.execute(
+            "SELECT count(*) FROM draft_versions WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+        dos = conn.execute(
+            "SELECT count(*) FROM delivery_orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+    assert order == ("DISAMBIGUATION_REQUIRED", 1)
+    assert versions == 1
+    assert dos == 0
+
+
+def test_approve_confirmed_items_stale_version_does_not_save(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 99, "confirmed_items": [_line(1)]},
+        )
+        assert response.status_code == 409
     with connect(seeded_db) as conn:
         order = conn.execute(
             "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
