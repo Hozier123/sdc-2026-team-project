@@ -1,0 +1,86 @@
+========================================================================
+KiraOrder OrderAiAdapter Production Smoke Verification Record
+Timestamp   : 2026-10-23T16:19:43.308351+00:00
+Endpoint ID : lx22t9308hc10c
+Extractor   : RunPodExtractor(timeout_s=180.0, live over-the-wire)
+========================================================================
+
+
+Case 1: Single-line single product
+Input:
+Tepung 5 ctn
+AI Mode: LLM
+Lines (1):
+  - [LINE_0] family_id=FAM_FLOUR, qty=5, uom=ctn, pack_size=None, reason_code=None
+Conditions (0):
+  (none)
+Status: PASS
+Notes: Latency: 2261.7ms
+------------------------------------------------------------------------
+
+Case 2: Multi-line multi-product
+Input:
+Beras 10 bag
+Minyak 2 ctn
+AI Mode: LLM
+Lines (2):
+  - [LINE_0] family_id=FAM_RICE, qty=10, uom=bag, pack_size=None, reason_code=None
+  - [LINE_1] family_id=FAM_OIL, qty=2, uom=ctn, pack_size=None, reason_code=None
+Conditions (0):
+  (none)
+Status: PASS
+Notes: Latency: 2413.7ms
+------------------------------------------------------------------------
+
+Case 3: Decimal quantity blocking (asserts qty=None, pack_size=None, reason_code='INVALID_QUANTITY')
+Input:
+Gula 1,5kg
+AI Mode: LLM
+Lines (1):
+  - [LINE_0] family_id=FAM_SUGAR, qty=None, uom=kg, pack_size=None, reason_code=INVALID_QUANTITY
+Conditions (0):
+  (none)
+Status: PASS
+Notes: Latency: 2154.5ms
+------------------------------------------------------------------------
+
+Case 4: H5 condition (asserts kind='PRICE', allocation disambiguation)
+Input:
+RM95 for 5 ctn
+AI Mode: LLM
+Lines (1):
+  - [LINE_0] family_id=UNKNOWN, qty=5, uom=ctn, pack_size=None, reason_code=FAMILY_NOT_EVIDENCED
+Conditions (1):
+  - [PRICE] span='RM95 for 5 ctn', price_basis=UNKNOWN, requested_amount=95
+Status: PASS
+Notes: Latency: 1794.0ms
+------------------------------------------------------------------------
+
+Case 5: Fuzzy alias ('minyak masak 3 ctn' -> FAM_OIL)
+Input:
+minyak masak 3 ctn
+AI Mode: LLM
+Lines (1):
+  - [LINE_0] family_id=FAM_OIL, qty=3, uom=ctn, pack_size=None, reason_code=None
+Conditions (0):
+  (none)
+Status: PASS
+Notes: Latency: 1666.4ms
+------------------------------------------------------------------------
+
+Case 6: Compound pack size ('Flour 10 ctn 1kg' -> FAM_FLOUR, qty=10, pack_size='1kg')
+Input:
+Flour 10 ctn 1kg
+AI Mode: LLM
+Lines (1):
+  - [LINE_0] family_id=FAM_FLOUR, qty=10, uom=ctn, pack_size=1kg, reason_code=None
+Conditions (0):
+  (none)
+Status: PASS
+Notes: Latency: 1732.8ms
+------------------------------------------------------------------------
+
+========================================================================
+Verification Summary: ALL 6 CASES PASSED (SUCCESS)
+Degradations / Fallbacks: NONE
+========================================================================
