@@ -38,6 +38,12 @@ class AiAndFallbackUnavailableError(ApiError):
     default_message = "AI extraction and local fallback are unavailable."
 
 
+class RateLimitedError(ApiError):
+    status_code = 429
+    error_code = "RATE_LIMITED"
+    default_message = "Too many requests."
+
+
 class ResourceNotFoundError(ApiError):
     status_code = 404
     error_code = "RESOURCE_NOT_FOUND"
@@ -204,11 +210,17 @@ def register_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(ApiError)
     async def api_error_handler(request: Request, exc: ApiError) -> JSONResponse:
+        headers = {}
+        if isinstance(exc, RateLimitedError):
+            retry_after = exc.details.get("retry_after_seconds")
+            if isinstance(retry_after, int):
+                headers["Retry-After"] = str(retry_after)
         return _error_response(
             exc.status_code,
             exc.error_code,
             exc.message,
             exc.details,
+            headers=headers,
         )
 
     @app.exception_handler(RequestValidationError)

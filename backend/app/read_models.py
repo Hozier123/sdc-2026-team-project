@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 
 from app.auth import CurrentUser
 from app.config import Settings
@@ -447,39 +446,19 @@ def get_warehouse_delivery_order(
 
 @router.get("/ai/status", response_model=AiStatus)
 def get_ai_status(
+    request: Request,
     user: Annotated[CurrentUser, Depends(get_current_user)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> AiStatus:
-    configured = bool(settings.ai_service_url)
-    return AiStatus(
-        state="DEGRADED" if configured else "OFFLINE",
-        available_modes=[],
-        fallback_available=False,
-        last_checked_at=datetime.now(timezone.utc),
-        message=(
-            "AI endpoint configured; readiness has not been verified."
-            if configured
-            else "AI endpoint not configured; manual-entry stub only, no extraction fallback."
-        ),
-    )
+    return request.app.state.ai_orchestrator.status()
 
 
 @router.post("/ai/wake", response_model=AiWakeResult)
 def wake_ai(
+    request: Request,
     user: Annotated[CurrentUser, Depends(get_current_user)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> AiWakeResult:
     if user.role not in {"CLERK", "OWNER"}:
         raise ForbiddenActionError()
-    configured = bool(settings.ai_service_url)
-    return AiWakeResult(
-        state="DEGRADED" if configured else "OFFLINE",
-        accepted=False,
-        fallback_available=False,
-        last_checked_at=datetime.now(timezone.utc),
-        message=(
-            "Wake transport not integrated; no wake request was sent."
-            if configured
-            else "AI endpoint not configured; no wake request was sent."
-        ),
-    )
+    return request.app.state.ai_orchestrator.wake(user.user_id)

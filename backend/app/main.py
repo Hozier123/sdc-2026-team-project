@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.ai_status import AiOrchestrator
 from app.approvals import router as approvals_router
 from app.config import Settings
 from app.delivery import router as delivery_router
@@ -36,9 +37,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         try:
             yield
         finally:
-            close = getattr(owned_provider, "close", None)
-            if close:
-                close()
+            for owned in (owned_provider, owned_orchestrator):
+                close = getattr(owned, "close", None)
+                if close:
+                    close()
 
     app = FastAPI(title="KiraOrder backend foundation", version="0.1.0", lifespan=lifespan)
     app.state.settings = settings if settings is not None else Settings()
@@ -58,6 +60,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
     owned_provider = _extractor(app.state.settings)
     app.state.extraction_provider = owned_provider
+    owned_orchestrator = AiOrchestrator(app.state.settings)
+    app.state.ai_orchestrator = owned_orchestrator
     register_error_handlers(app)
     app.include_router(health_router)
     app.include_router(me_router)
