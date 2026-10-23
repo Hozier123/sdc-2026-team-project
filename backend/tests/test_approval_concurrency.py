@@ -175,6 +175,6 @@ def test_failure_after_do_insert_rolls_back_whole_approval(b30_db, monkeypatch):
             "SELECT count(*) FROM delivery_orders WHERE draft_id=%s", (draft_id,)
         ).fetchone() == (0,)
         assert conn.execute(
-            "SELECT count(*) FROM audit_logs WHERE draft_id=%s AND event_type='DO_CREATED'",
+            "SELECT count(*) FROM audit_logs WHERE draft_id=%s AND action='APPROVE'",
             (draft_id,),
         ).fetchone() == (0,)
