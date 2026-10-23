@@ -1020,7 +1020,7 @@ def clarification_copied(
     with connect(settings) as conn:
         conn.execute("BEGIN")
         try:
-            order = _order(conn, user.tenant_id, draft_id)
+            order = _order(conn, user.tenant_id, draft_id, lock=True)
             if order["status"] == "PENDING_OWNER_APPROVAL":
                 raise PendingOwnerApprovalError()
             if order["status"] == "DO_GENERATED":
