@@ -89,9 +89,19 @@ backend/.venv/Scripts/python -m app.seed `
 
 ```text
 AI_SERVICE_URL=https://.../api/v1/extract
+AI_HEALTH_URL=https://.../health
+AI_WAKE_URL=https://.../wake
 AI_API_KEY=...
 AI_TIMEOUT_S=8.0
+AI_WAKE_RATE_LIMIT_S=60
+AI_WARMUP_GRACE_S=15
 ```
+
+`GET /api/v1/ai/status` 会探测 health URL，返回 `OFFLINE/WARMING/READY/DEGRADED` 和固定
+`available_modes`；`POST /api/v1/ai/wake` 会向 wake URL 发送 `{"wake": true}`，同一用户
+默认 60 秒限流，超限返回 429 `RATE_LIMITED` 与 `Retry-After`。未配置 endpoint 时返回
+`OFFLINE`，fallback 仅表示人工/别名路径，不伪造 LLM readiness。API key 只发往 AI
+endpoint，不出现在任何响应。
 
 流程：
 
