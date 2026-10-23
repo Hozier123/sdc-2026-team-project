@@ -202,6 +202,7 @@ def to_raw_extraction(
                 fam=fam,
                 pack_size=row.pack_size,
                 conds=tuple(conds),
+                source="LLM_EXTRACTED",
             )
         )
     return RawExtraction(

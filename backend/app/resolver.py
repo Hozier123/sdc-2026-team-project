@@ -236,6 +236,7 @@ def memory_rows(masked_text: str, catalog: Catalog) -> tuple[list[RawRow], bool]
                 uom=uom,
                 fam=family_id,
                 pack_size=pack_size,
+                source="SUGGESTED_DEFAULT",
                 memory=True,
                 alias=hit.record(),
             )
