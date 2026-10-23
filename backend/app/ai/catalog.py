@@ -30,13 +30,13 @@ def load_family_catalog(conn, tenant: str) -> dict[str, list[str]]:
     for family_id, family_name in families:
         key = str(family_name).strip()
         catalog[family_id] = [key] if key else []
-        seen[family_id] = {key.casefold()} if key else set()
+        seen[family_id] = {key} if key else set()
     for family_id, phrase in aliases:
         if family_id not in catalog:
             continue
         key = str(phrase).strip()
-        if not key or key.casefold() in seen[family_id]:
+        if not key or key in seen[family_id]:
             continue
         catalog[family_id].append(key)
-        seen[family_id].add(key.casefold())
+        seen[family_id].add(key)
     return catalog
