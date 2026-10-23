@@ -1,8 +1,8 @@
-﻿# KiraOrder for Orbyte
+# KiraOrder for Orbyte
 
 SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
-**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端已实现身份、parse、草稿/客户/审批/DO 读取、活动与审计、仓库裁剪、AI 状态/唤醒、自动目录解析与客户记忆、条件/澄清/回复、作废草稿、澄清复制事件、同日三选一、`confirmed_items` 兼容路径、`checks_enabled` 软检查和导出证据绑定；前端工作台已交付。当前 main 的完整测试为 290 passed。** 真实 AI endpoint、公开部署、前端/数据独立 UAT 和正式赛事材料仍是外部验收边界；本地测试通过不等于生产验收完成，也不代表赛事提交已完成。
+**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端已实现身份、parse、草稿/客户/审批/DO 读取、活动与审计、仓库裁剪、AI 状态/唤醒、自动目录解析与客户记忆、条件/澄清/回复、作废草稿、澄清复制事件、同日三选一、`confirmed_items` 兼容路径、`checks_enabled` 软检查和导出证据绑定；前端工作台已交付。AI handoff 的 Pre-Resolver 已作为进程内 provider 接入，默认 `AI_PROVIDER=auto` 仍走 Stub，真实 RunPod 端点尚未完成验收。当前 main 的完整测试为 407 passed。真实 AI 模型质量、公开部署、前端/数据独立 UAT 和正式赛事材料仍是外部验收边界；本地测试通过不等于生产验收完成，也不代表赛事提交已完成。**
 
 ## 项目信息
 
@@ -26,9 +26,9 @@ SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 sdc-2026-team-project/
 ├── .github/workflows/          # 后端/前端 CI：隔离 PostgreSQL 与前端构建
 ├── backend/                    # FastAPI 后端
-│   ├── app/                    # 业务路由、解析、审批、DO、AI 状态编排
+│   ├── app/                    # 业务路由、解析、审批、DO、AI 状态编排、进程内 AI adapter
 │   ├── tests/                  # 单元、PostgreSQL 集成、契约回归
-│   ├── tools/                  # 试次记录导出等运维工具
+│   ├── tools/                  # 试次记录导出、六样例 AI 证据运行器
 │   ├── pyproject.toml
 │   ├── requirements.lock       # 精确版本安装约束
 │   └── README.md               # 安装、启动、迁移与测试说明
@@ -104,6 +104,7 @@ if (-not (Test-Path -LiteralPath .env)) {
 - 开发：前端通过 `VITE_API_BASE_URL` 直接连接 FastAPI；当前 Vite 配置未启用 API 代理。
 - 部署：计划由 FastAPI 托管前端构建产物并合并到一个 Replit 部署。
 - 当前尚未完成代理、静态托管或 Replit 部署；不要把本地 `npm run dev` 当作已部署。
+- 部署前检查与责任人清单见 [docs/ops/public-deployment-checklist.md](docs/ops/public-deployment-checklist.md)。
 
 ## 配置项
 
@@ -111,15 +112,21 @@ if (-not (Test-Path -LiteralPath .env)) {
 
 ```text
 DATABASE_URL
+AI_PROVIDER（auto | stub | http | runpod_adapter；默认 auto）
 AI_SERVICE_URL / AI_HEALTH_URL / AI_WAKE_URL
 AI_API_KEY / AI_TIMEOUT_S
+RUNPOD_API_KEY / RUNPOD_ENDPOINT_ID / RUNPOD_MODEL_NAME / LLM_TIMEOUT_S
 AI_WAKE_RATE_LIMIT_S / AI_WARMUP_GRACE_S
 CORS_ALLOW_ORIGINS
 ```
 
-`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`、`LLM_TIMEOUT_S`、`DEMO_MODE`、`SIM_INBOUND_KEY`
-仍作为部署/联调预留名，当前后端代码不读取。真实密钥只放本地环境或 Replit Secrets，
-不写入代码、文档或截图。业务演示只使用团队自建合成数据。
+`AI_PROVIDER=runpod_adapter` 才会启用进程内 `OrderAiAdapter`；需要
+`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`。默认 `auto` 不启用 RunPod key，
+仍走 Stub（有 `AI_SERVICE_URL` 时走现有 HTTP 路径）。不存在
+`/api/v1/extract`，AI 由 `parse-draft` 进程内调用。
+
+真实密钥只放本地环境或 Replit Secrets，不写入代码、文档或截图。业务演示只使用团队自建合成数据。
+六样例证据运行器见 [docs/ops/ai-sample-runbook.md](docs/ops/ai-sample-runbook.md)。
 
 ## 当前实现与验收边界
 
@@ -128,12 +135,13 @@ CORS_ALLOW_ORIGINS
 身份/租户权限、seed、PII、parse、目录解析、客户记忆、字段证据、
 草稿保存/状态、条件与澄清、三语回复、审批/DO/库存事务、
 客户/草稿/审批/活动/审计/仓库读取、AI 状态与唤醒、
+进程内 RunPod adapter（默认关闭）、六样例证据运行器、
 checks_enabled 三个软检查、并发/回滚、导出证据绑定、契约 fixture 回归。
 ```
 
-当前 main 完整测试：**290 passed**。外部边界仍未完成：
+当前 main 完整测试：**407 passed**。外部边界仍未完成：
 
-- 真实 AI endpoint、模型质量与独立准确率评测；
+- 真实 RunPod endpoint 的预检、模型质量与独立准确率评测；当前公开端点带 Bearer 请求超时，已记录证据；
 - 公开部署、Replit/RunPod 实际使用证明；
 - 前端与数据负责人的独立 UAT、真人试用记录；
 - 正式提案、工具声明、幻灯片与路演视频。

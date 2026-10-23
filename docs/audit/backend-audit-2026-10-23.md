@@ -112,3 +112,29 @@
 仍未完成：外部边界中的真实 AI 质量、公开部署、独立 UAT 和真人试用。
 
 **最终判断：当前 main 已具备可本地验证的人工确认后端主链路、B22–B33 自动回归和 P1-01/P1-02/P1-03；真实 AI 质量、公开部署、独立 UAT 与真人试用仍是外部验收边界。**
+
+## 七、AI adapter 集成更新（PR #32/#33/#34 后）
+
+当前 main：`1e814de4688d59bd1e9cae85367364e14743e9c5`（本文件追加时）。完整测试 **407 passed**。
+
+```text
+[✓] PR #32：AI handoff core modules 进程内接入，AI_PROVIDER feature flag
+[✓] PR #33：行外 conditions 保留，guard 粗条件与 adapter 精确条件去重
+[✓] PR #34：六样例证据运行器（默认 T1 DB catalog）
+[✓] 默认 AI_PROVIDER=auto → Stub，未把真实 AI 写成已验证
+[✓] gate0/ 未修改
+[✗] 真实 RunPod 公开端点预检：带 Bearer /health、/v1/models 超时
+```
+
+真实 AI 未验收的原因不是代码或数据库，而是 RunPod 公开代理在 worker
+`ready=1/idle=1` 时仍不响应带 Bearer 的请求。本地预检证据未入仓；恢复步骤见
+`docs/ops/ai-sample-runbook.md`。
+
+六样例运行器：
+
+```powershell
+cd backend
+.venv\Scripts\python.exe -m tools.run_ai_samples --tenant T1
+```
+
+当前不应声明：真实 AI 已验收、AI 准确率已完成、公开部署已完成。
