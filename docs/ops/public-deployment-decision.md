@@ -29,7 +29,7 @@ AI：AI_PROVIDER=auto → Stub，直到 RunPod 验收完成
 
 | 职责 | 负责人 | 说明 |
 |---|---|---|
-| 总体部署、后端、Secrets | He Minghao | 后端部署、CORS、DB、/healthz、/readyz |
+| 总体部署、后端、Secrets | He Minghao | 后端部署、CORS、DB、/readyz 公开健康检查 |
 | 前端 build、静态部署、UI smoke | Ye Lianghui | `npm run build`、VITE_API_BASE_URL、登录/草稿/审批 |
 | 平台账号所有者 | He Minghao | Replit 账号、部署权限、公开 URL |
 | 数据与签字 | Zhou Jingxi | seed 计数已签；业务/UAT 另立 |
@@ -102,20 +102,28 @@ npm run build
 ```text
 1. Replit 后端部署（Stub）
 2. 跑迁移
-3. 验证 /healthz、/readyz、/me
+3. 验证 /readyz、/me（/healthz 仅本地）
 4. 前端 build + 静态部署
 5. 前端接公开 API，跑 smoke
 6. 记录公开 URL 和截图
 7. 等 Xiong 恢复后再切真实 AI
 ```
 
+公开健康检查约定：
+
+```text
+/readyz = 公开 200，用于 UAT/演示/监控
+/healthz = 仅本地/容器内；Replit/Google 边缘保留该精确路径
+公开 /healthz 404 不是 FastAPI 故障，不改 Gate 0
+```
+
 ## 5. 验收标准
 
 ```text
 [ ] 后端公开地址可访问
-[ ] /healthz = 200
-[ ] /readyz = 200
+[ ] /readyz = 200（公开健康检查）
 [ ] /me（T1 token）= 200
+[ ] /healthz 仅本地/容器内验证，不要求公开 200
 [ ] 前端公开地址可访问
 [ ] 前端登录成功
 [ ] 客户列表

@@ -19,8 +19,8 @@
 
 ```text
 [ ] 运行 python -m app.migrations
-[ ] /healthz = 200
-[ ] /readyz = 200
+[ ] /healthz = 200（仅本地/容器内）
+[ ] /readyz = 200（公开健康检查）
 [✓] 数据侧 seed 计数签字（2026-10-23，范围仅 seed）
 [ ] 数据库使用专用非生产/演示库
 [ ] DATABASE_URL 只放平台 Secrets
@@ -61,8 +61,8 @@ npm run build
 ## 5. 部署后冒烟
 
 ```text
-[ ] GET /healthz = 200
-[ ] GET /readyz = 200
+[ ] GET /readyz = 200（公开健康检查）
+[ ] GET /healthz = 200（仅本地/容器内，不要求公开）
 [ ] GET /api/v1/me（demo token）= 200
 [ ] 前端登录
 [ ] 客户列表
