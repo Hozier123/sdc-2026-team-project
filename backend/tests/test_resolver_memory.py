@@ -181,3 +181,61 @@ def test_customer_alias_memory_bypasses_provider(t1_db):
     assert line["saved_alias"]["alias_id"] == "ALS_CACHE_RASA_001"
     assert line["candidate_skus"] == []
     assert "COPY_CLARIFICATION" not in draft["allowed_actions"]
+
+
+def test_save_then_second_parse_reuses_customer_alias(t1_db):
+    first = _parse(
+        t1_db,
+        _provider(
+            {
+                "span": "辣椒酱 2 btl",
+                "qty": 2,
+                "uom": "btl",
+                "fam": "FAM_CILI",
+            }
+        ),
+        "CUS_RASA",
+        "辣椒酱 2 btl",
+    )
+    assert first["status"] == "READY_FOR_APPROVAL"
+    line = first["lines"][0]
+    with TestClient(create_app(t1_db)) as client:
+        saved = client.put(
+            f"/api/v1/orders/drafts/{first['draft_id']}/lines",
+            headers=_headers(),
+            json={
+                "expected_version": 1,
+                "lines": [
+                    {
+                        "line_id": line["line_id"],
+                        "sku_id": line["sku_id"],
+                        "confirmed_qty": 2,
+                        "uom": "btl",
+                        "match_source": "MANUAL_SELECTED",
+                        "save_to_alias_cache": True,
+                        "alias_scope": "CUSTOMER",
+                    }
+                ],
+            },
+        )
+    assert saved.status_code == 200, saved.text
+    saved_alias = saved.json()["lines"][0]["saved_alias"]
+    assert saved_alias["product_id"] == "SKU_CILI_1KG"
+
+    class MustNotBeCalled:
+        def extract(self, masked_text, language_hint, request_id):
+            raise AssertionError("saved alias should bypass the provider on the second parse")
+
+    app = create_app(t1_db)
+    app.state.extraction_provider = MustNotBeCalled()
+    with TestClient(app) as client:
+        second = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(),
+            json={"customer_id": "CUS_RASA", "message_text": "辣椒酱 2 btl"},
+        )
+    assert second.status_code == 200, second.text
+    body = second.json()
+    assert body["ai_mode"] == "ALIAS_ONLY"
+    assert body["lines"][0]["sku_id"] == "SKU_CILI_1KG"
+    assert body["lines"][0]["saved_alias"]["alias_id"] == saved_alias["alias_id"]

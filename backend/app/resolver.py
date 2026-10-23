@@ -11,6 +11,7 @@ Ambiguous matches stay ambiguous; they are never silently resolved.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, replace
 from decimal import Decimal
 from typing import Any
@@ -181,16 +182,31 @@ def candidate_payload(product: CatalogProduct) -> dict[str, Any]:
     }
 
 
+def _exclusive_memory_line(line: str, catalog: Catalog) -> CatalogAlias | None:
+    """Only a line that is just one confirmed alias + qty may bypass the provider."""
+    hits = [alias for alias in catalog.aliases if exact_phrase(alias.phrase, line)]
+    if len(hits) != 1:
+        return None
+    normalized = normalize(line)
+    if re.search(r"[,;+&]", normalized):
+        return None
+    if re.search(r"(?<![a-z])(?:dan|and)(?![a-z])", normalized):
+        return None
+    if re.search(r"(?<![a-z])(?:kalau|if|rm|price|harga|stock)(?![a-z])", normalized):
+        return None
+    alias = hits[0]
+    if len(normalized.split()) > len(normalize(alias.phrase).split()) + 4:
+        return None
+    return alias
+
+
 def memory_rows(masked_text: str, catalog: Catalog) -> tuple[list[RawRow], bool]:
     """Return alias-backed rows and whether they cover every non-empty line."""
     rows: list[RawRow] = []
     lines = [line for line in masked_text.splitlines() if line.strip()]
     for line in lines:
         stripped = line.strip()
-        hit = next(
-            (alias for alias in catalog.aliases if exact_phrase(alias.phrase, stripped)),
-            None,
-        )
+        hit = _exclusive_memory_line(stripped, catalog)
         if hit is None:
             continue
         if hit.target_type == "SKU" and hit.product_id:
