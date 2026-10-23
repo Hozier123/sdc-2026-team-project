@@ -34,7 +34,10 @@ from app.errors import (
     StaleVersionError,
     TargetLineRequiredError,
 )
+from app.pii import mask_message
 from app.schemas import (
+    ClarificationDraft,
+    DiscardRequest,
     Issue,
     OrderDraftResponse,
     OrderTotals,
@@ -575,14 +578,19 @@ def _actions(
             return ["OWNER_APPROVE", "OWNER_REJECT", "VIEW_ACTIVITY"], {}
         return ["VIEW_ACTIVITY"], {"EDIT_DRAFT": ["PENDING_OWNER_APPROVAL"]}
     if status == "DISAMBIGUATION_REQUIRED":
-        return ["EDIT_DRAFT", "RESOLVE_ISSUE", "VIEW_ACTIVITY"], {
+        return ["EDIT_DRAFT", "RESOLVE_ISSUE", "CANCEL_DRAFT", "VIEW_ACTIVITY"], {
             "APPROVE_AND_GENERATE_DO": ["BLOCKING_ISSUES"]
         }
     if escalation:
         if role == "OWNER":
-            return ["EDIT_DRAFT", "APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
-        return ["EDIT_DRAFT", "SUBMIT_FOR_OWNER", "VIEW_ACTIVITY"], {}
-    return ["EDIT_DRAFT", "APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
+            return [
+                "EDIT_DRAFT",
+                "APPROVE_AND_GENERATE_DO",
+                "CANCEL_DRAFT",
+                "VIEW_ACTIVITY",
+            ], {}
+        return ["EDIT_DRAFT", "SUBMIT_FOR_OWNER", "CANCEL_DRAFT", "VIEW_ACTIVITY"], {}
+    return ["EDIT_DRAFT", "APPROVE_AND_GENERATE_DO", "CANCEL_DRAFT", "VIEW_ACTIVITY"], {}
 
 
 def _audit(
@@ -837,6 +845,146 @@ def save_lines(
                     }
                 )
             draft = _apply_save_lines(conn, user, order, body)
+            conn.execute("COMMIT")
+        except BaseException:
+            conn.execute("ROLLBACK")
+            raise
+    return draft
+
+
+def _draft_payload(conn, user, order) -> OrderDraftResponse:
+    """Project a stored order into the draft response used by P1 actions."""
+    customer = _customer(conn, user.tenant_id, order["customer_id"], active_only=False)
+    lines = _old_lines(order)
+    issues = [Issue.model_validate(issue) for issue in (order["issues"] or [])]
+    conditions = [issue for issue in issues if issue.code == "CUSTOMER_CONDITION"]
+    blocking = sorted(
+        {issue.code for issue in [*issues, *conditions] if issue.blocking and not issue.resolved}
+    )
+    clarification_data = order.get("clarification")
+    clarification = (
+        ClarificationDraft.model_validate(clarification_data)
+        if isinstance(clarification_data, dict)
+        else None
+    )
+    allowed, blocked = _actions(
+        role=user.role,
+        status=order["status"],
+        escalation=order["escalation_preview"],
+    )
+    if clarification is not None:
+        allowed.append("COPY_CLARIFICATION")
+    snapshot = _latest_snapshot(conn, user.tenant_id, order["draft_id"])
+    do_row = conn.execute(
+        "SELECT do_number FROM delivery_orders WHERE tenant_id=%s AND draft_id=%s",
+        (user.tenant_id, order["draft_id"]),
+    ).fetchone()
+    total: Decimal | None = None
+    if lines and all(line.subtotal_rm is not None for line in lines):
+        total = sum(Decimal(line.subtotal_rm) for line in lines)
+    return OrderDraftResponse(
+        draft_id=order["draft_id"],
+        version=order["version"],
+        status=order["status"],
+        customer_id=customer["customer_id"],
+        customer={
+            "customer_id": customer["customer_id"],
+            "name": customer["name"],
+            "tier": customer["tier"],
+            "credit_flag": customer["credit_flag"],
+            "has_credit_notice": customer["credit_flag"] == "OVERDUE_NOTICE",
+            "phone_e164": customer["phone_e164"],
+        },
+        masked_message=_masked_message(conn, user.tenant_id, order["message_id"]),
+        ai_mode=order["ai_mode"],
+        lines=lines,
+        issues=issues,
+        conditions=conditions,
+        blocking_issues=blocking,
+        escalation_preview=order["escalation_preview"],
+        totals=OrderTotals(
+            order_total=_money(total) if total is not None else None,
+            currency="MYR",
+            is_complete=total is not None,
+        ),
+        allowed_actions=allowed,
+        blocked_actions=blocked,
+        clarification_draft=clarification,
+        clarification_lang=clarification.language if clarification else None,
+        ignored_spans=snapshot.get("ignored_spans", []),
+        created_at=order["created_at"],
+        updated_at=order["updated_at"],
+        do_number=do_row[0] if do_row else None,
+        termination_reason=order["termination_reason"],
+        terminated_by_user_id=order["terminated_by_user_id"],
+        termination_note=order["termination_note"],
+    )
+
+
+@router.post(
+    "/orders/drafts/{draft_id}/discard",
+    response_model=OrderDraftResponse,
+    responses={
+        400: {"description": "A non-empty note is required"},
+        401: {"description": "Missing or invalid Bearer token"},
+        403: {"description": "Role not allowed"},
+        404: {"description": "Draft not found in tenant"},
+        409: {"description": "Stale version or draft not editable"},
+        422: {"description": "Validation failed"},
+    },
+)
+def discard_draft(
+    draft_id: str,
+    body: DiscardRequest,
+    user: Annotated[CurrentUser, Depends(get_current_user)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> OrderDraftResponse:
+    if user.role not in {"CLERK", "OWNER"}:
+        raise ForbiddenActionError()
+    note = mask_message(body.note.strip()).masked_text
+    if not note:
+        raise NoteRequiredError()
+
+    with connect(settings) as conn:
+        conn.execute("BEGIN")
+        try:
+            order = _order(conn, user.tenant_id, draft_id, lock=True)
+            if order["status"] == "PENDING_OWNER_APPROVAL":
+                raise PendingOwnerApprovalError()
+            if order["status"] == "DO_GENERATED":
+                raise AlreadyApprovedError()
+            if order["status"] == "REJECTED":
+                raise DraftRejectedError()
+            if order["status"] not in {"DISAMBIGUATION_REQUIRED", "READY_FOR_APPROVAL"}:
+                raise DraftRejectedError()
+            if body.expected_version != order["version"]:
+                raise StaleVersionError(
+                    details={
+                        "expected_version": body.expected_version,
+                        "current_version": order["version"],
+                    }
+                )
+            before_status = order["status"]
+            conn.execute(
+                "UPDATE orders SET status='REJECTED', termination_reason='CLERK_DISCARDED', "
+                "terminated_by_user_id=%s, termination_note=%s, updated_at=now() "
+                "WHERE tenant_id=%s AND draft_id=%s",
+                (user.user_id, note, user.tenant_id, draft_id),
+            )
+            order = _order(conn, user.tenant_id, draft_id)
+            _audit(
+                conn,
+                tenant=user.tenant_id,
+                draft_id=draft_id,
+                version=order["version"],
+                action="CANCEL_DRAFT",
+                event="DRAFT_DISCARDED",
+                user=user,
+                payload={"note": note},
+                before={"status": before_status},
+                after={"status": "REJECTED", "termination_reason": "CLERK_DISCARDED"},
+            )
+            draft = _draft_payload(conn, user, order)
             conn.execute("COMMIT")
         except BaseException:
             conn.execute("ROLLBACK")

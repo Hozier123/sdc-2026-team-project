@@ -208,3 +208,38 @@ test("manual unit prices are serialized as exact two-decimal strings without cha
     globalThis.fetch = original;
   }
 });
+
+test("HTTP discard sends P1 version/note and projects the terminal draft", async () => {
+  const f = await fixture("save_lines_ready");
+  const body = {
+    ...f.body,
+    status: "REJECTED",
+    termination_reason: "CLERK_DISCARDED",
+    terminated_by_user_id: "USR_T1_CLERK",
+    termination_note: "Customer cancelled",
+  };
+  const original = globalThis.fetch;
+  let url = "";
+  let payload: unknown;
+  globalThis.fetch = async (input, init) => {
+    url = String(input);
+    payload = JSON.parse(init?.body as string);
+    return new Response(JSON.stringify(body), { status: 200 });
+  };
+  try {
+    const draft = await new HttpService(
+      "http://localhost:8000/api/v1",
+      "session",
+    ).discard("DRF_001", 2, "Customer cancelled");
+    assert.equal(url, "http://localhost:8000/api/v1/orders/drafts/DRF_001/discard");
+    assert.deepEqual(payload, {
+      expected_version: 2,
+      note: "Customer cancelled",
+    });
+    assert.equal(draft.status, "REJECTED");
+    assert.equal(draft.termination_reason, "CLERK_DISCARDED");
+    assert.equal(draft.termination_note, "Customer cancelled");
+  } finally {
+    globalThis.fetch = original;
+  }
+});
