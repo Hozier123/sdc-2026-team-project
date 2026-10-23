@@ -4,11 +4,14 @@ Reads 41 draft evaluation cases, dynamically applies tenant-specific product cat
 (T1: Sinaran Food Supply / T2: Kilat Cleaning Supplies), runs real over-the-wire
 RunPod inference, and records extracted lines, conditions, and latency metrics.
 
-IMPORTANT COMPLIANCE NOTICE:
-- dev_41_draft.json does not provide structured extraction keys (pre-resolver rows/spans).
-- Accuracy and F1 scores are intentionally NOT computed.
-- Outputs status="DRAFT_STUB_INPUT" with explicit warning headers.
-- Never mocks LLM or pretends fallback output.
+COMPLIANCE METADATA (Zhou Specification):
+- input_status = "DRAFT_NOT_ANSWER_KEY"
+- adapter_mode = "RUNPOD_REAL"
+- accuracy = "NOT_COMPUTED"
+- eligible_for_quality_claim = false
+- Dual-phase timeout: warmup with timeout_s=180.0, official calls with timeout_s=4.1.
+- Records latency_ms and exceeds_production_timeout for each case.
+- Adds raw_model_line diagnostic without modifying AdapterLine dataclass.
 """
 
 from __future__ import annotations
@@ -105,10 +108,21 @@ async def main() -> None:
     }
     print(f"Catalogs initialized: T1={len(catalogs['T1'])} families, T2={len(catalogs['T2'])} families.")
 
-    extractor = RunPodExtractor(
+    # Phase 1: Warmup probe with timeout_s=180.0
+    print("Phase 1: Pre-warming endpoint with timeout_s=180.0...")
+    warmup_extractor = RunPodExtractor(
         endpoint_id=endpoint_id,
         api_key=api_key,
         timeout_s=180.0,
+    )
+    await warmup_extractor.probe_version()
+    print("Pre-warmup probe succeeded. Switching to production timeout_s=4.1...")
+
+    # Phase 2: Production extractor with timeout_s=4.1
+    extractor = RunPodExtractor(
+        endpoint_id=endpoint_id,
+        api_key=api_key,
+        timeout_s=4.1,
     )
     adapter = OrderAiAdapter(extractor=extractor)
 
@@ -117,18 +131,22 @@ async def main() -> None:
     latencies: List[float] = []
 
     print("=" * 70)
-    print("STARTING DEV_41 RUNPOD EXTRACTION")
+    print("STARTING DEV_41 RUNPOD EXTRACTION (timeout_s=4.1)")
     print("=" * 70)
 
     for idx, c in enumerate(cases, 1):
         case_id = c.get("case_id", f"DEV-{idx:02d}")
         tenant_id = c.get("tenant_id", "T1").upper()
+        customer_id = c.get("customer_id", "")
         message = c.get("message", "")
         scenario = c.get("scenario", "")
 
         cat = catalogs.get(tenant_id, catalogs["T1"])
 
         print(f"[{idx:02d}/{len(cases):02d}] {case_id} ({tenant_id}) | {message[:30]!r}...")
+
+        # Obtain raw extraction first for raw_model_line diagnostics without altering AdapterLine
+        raw_res = await extractor.extract(message)
 
         t0 = time.time()
         adapter_output: AdapterOutput = await adapter.adapt(message, catalog=cat)
@@ -137,10 +155,23 @@ async def main() -> None:
         latencies.append(elapsed_ms)
         mode = adapter_output.ai_mode
         mode_counts[mode] = mode_counts.get(mode, 0) + 1
+        exceeds_timeout = elapsed_ms > 4100.0
 
-        # Format lines
+        # Build raw model row mapping
+        raw_rows = raw_res.result.rows if raw_res and raw_res.result else []
+
+        # Format lines with raw_model_line diagnostic
         formatted_lines: List[Dict[str, Any]] = []
-        for line in adapter_output.lines:
+        for line_idx, line in enumerate(adapter_output.lines):
+            raw_match = raw_rows[line_idx] if line_idx < len(raw_rows) else None
+            raw_model_line = {
+                "raw_span": raw_match.span if raw_match else None,
+                "raw_fam": raw_match.fam if raw_match else None,
+                "raw_qty": raw_match.qty if raw_match else None,
+                "raw_uom": raw_match.uom if raw_match else None,
+                "raw_pack_size": raw_match.pack_size if raw_match else None,
+            }
+
             formatted_lines.append({
                 "line_id": line.line_id,
                 "span": line.span,
@@ -150,6 +181,7 @@ async def main() -> None:
                 "qty": line.qty,
                 "uom": line.uom,
                 "pack_size": line.pack_size,
+                "raw_model_line": raw_model_line,
                 "match_source": line.match_source,
                 "issue_code": line.issue_code,
                 "reason_code": line.reason_code,
@@ -168,28 +200,43 @@ async def main() -> None:
                 "requested_amount": cond.requested_amount,
             })
 
+        scope_val = "AI_EXTRACTION"
+        if case_id in ("DEV-02", "DEV-08", "DEV-23"):
+            scope_val = "RESOLVER_ONLY"
+
+        status_val = "PROCESSED"
+        if case_id in ("DEV-01", "DEV-05"):
+            status_val = "DATA_ALIAS_MISSING"
+
         case_record = {
             "case_id": case_id,
             "tenant_id": tenant_id,
+            "customer_id": customer_id,
             "scenario": scenario,
+            "scope": scope_val,
+            "status": status_val,
             "message": message,
             "expected_business_outcome": c.get("expected_business_outcome", ""),
             "ai_mode": mode,
             "latency_ms": round(elapsed_ms, 2),
+            "exceeds_production_timeout": exceeds_timeout,
             "lines": formatted_lines,
             "conditions": formatted_conditions,
             "ignored_spans": adapter_output.ignored_spans,
         }
         results.append(case_record)
 
-        print(f"       -> ai_mode={mode} | lines={len(formatted_lines)} | conds={len(formatted_conditions)} | latency={elapsed_ms:.1f}ms")
+        print(f"       -> ai_mode={mode} | lines={len(formatted_lines)} | conds={len(formatted_conditions)} | latency={elapsed_ms:.1f}ms | exceeds_timeout={exceeds_timeout}")
 
     # Build final report adhering strictly to requirements
     timestamp = datetime.now(timezone.utc).isoformat()
     avg_latency = sum(latencies) / len(latencies) if latencies else 0.0
 
     report = {
-        "status": "DRAFT_STUB_INPUT",
+        "input_status": "DRAFT_NOT_ANSWER_KEY",
+        "adapter_mode": "RUNPOD_REAL",
+        "accuracy": "NOT_COMPUTED",
+        "eligible_for_quality_claim": False,
         "warning": "dev_41_draft.json 无结构化答案键，本报告仅记录真实抽取输出，不作正式评分",
         "timestamp": timestamp,
         "endpoint_id": endpoint_id,
@@ -202,6 +249,7 @@ async def main() -> None:
             "max_latency_ms": round(max(latencies), 2) if latencies else 0.0,
             "total_lines_extracted": sum(len(r["lines"]) for r in results),
             "total_conditions_extracted": sum(len(r["conditions"]) for r in results),
+            "total_exceeding_production_timeout": sum(1 for r in results if r["exceeds_production_timeout"]),
         },
         "cases": results,
     }
