@@ -980,9 +980,11 @@ def discard_draft(
                 action="CANCEL_DRAFT",
                 event="DRAFT_DISCARDED",
                 user=user,
-                payload={"note": note},
-                before={"status": before_status},
-                after={"status": "REJECTED", "termination_reason": "CLERK_DISCARDED"},
+                payload={
+                    "note": note,
+                    "before_status": before_status,
+                    "after_status": "REJECTED",
+                },
             )
             draft = _draft_payload(conn, user, order)
             conn.execute("COMMIT")
