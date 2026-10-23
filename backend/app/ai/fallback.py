@@ -421,27 +421,39 @@ def parse_uom_h1_with_offsets(
     value = normalize_text(span)
     aliases = lexicon["uom_aliases"]
 
+    # A unit inside a pack-size token (the "kg" in "1kg") is not the order
+    # unit.  Prefer the quantity-adjacent unit ("bag" in "5 bag 1kg").
+    _, pack_start, pack_end = parse_pack_size_h1_with_offsets(span, lexicon=lexicon)
+
+    def in_pack(start: int, end: int) -> bool:
+        return (
+            pack_start is not None
+            and pack_end is not None
+            and start < pack_end
+            and end > pack_start
+        )
+
     for canonical, values in aliases.items():
         for alias in values:
             a = normalize_text(alias)
             if a.isascii():
                 m = re.search(rf"(?<![a-z]){re.escape(a)}(?![a-z])", value)
-                if m:
+                if m and not in_pack(m.start(), m.end()):
                     return canonical, m.start(), m.end()
             elif a in value:
                 m = re.search(re.escape(a), value)
-                if m:
+                if m and not in_pack(m.start(), m.end()):
                     return canonical, m.start(), m.end()
 
     for alias, canonical in lexicon.get("tenant_uom_extensions", {}).items():
         a = normalize_text(alias)
         if a.isascii():
             m = re.search(rf"(?<![a-z]){re.escape(a)}(?![a-z])", value)
-            if m:
+            if m and not in_pack(m.start(), m.end()):
                 return canonical, m.start(), m.end()
         elif a in value:
             m = re.search(re.escape(a), value)
-            if m:
+            if m and not in_pack(m.start(), m.end()):
                 return canonical, m.start(), m.end()
 
     return None, None, None
