@@ -157,6 +157,9 @@ seed_manifest：2 行；T1 重复导入 already_loaded
 
 仓库 seed 已核验为最新 T1 派生版（`a7be80...d773`，`alias_cache=2`，
 无外层 BEGIN/COMMIT；更新提交 `1ec33d8` 已在 main），不需要新 PR。
+Zhou 随后完成 fetch + ff-only，确认 HEAD = origin/main = `5d68741`，
+`git status --short` 与 `git diff origin/main -- data/seed ...` 均为空；
+此前确认为本地 checkout 落后，seed 争议关闭。
 AI 评测草案（`dev_41_draft` / `frozen_eval_32_draft`）只作结构草案，
 正式文件待真实 parse/approve 后由数据岗提供；Intake 清单见
 `docs/ops/ai-evaluation-intake.md`。
