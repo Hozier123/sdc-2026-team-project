@@ -1,8 +1,10 @@
-# KiraOrder for Orbyte
+﻿# KiraOrder for Orbyte
 
 SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
 **当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端已实现身份、parse、草稿/客户/审批/DO 读取、活动与审计、仓库裁剪、AI 状态/唤醒、自动目录解析与客户记忆、条件/澄清/回复、作废草稿、澄清复制事件、同日三选一、`confirmed_items` 兼容路径、`checks_enabled` 软检查和导出证据绑定；前端工作台已交付。AI handoff 的 Pre-Resolver 已作为进程内 provider 接入，默认 `AI_PROVIDER=auto` 仍走 Stub，真实 RunPod 端点尚未完成验收。当前 main 的完整测试为 407 passed。真实 AI 模型质量、公开部署、前端/数据独立 UAT 和正式赛事材料仍是外部验收边界；本地测试通过不等于生产验收完成，也不代表赛事提交已完成。**
+
+数据侧 seed 计数签字：2026-10-23，签字人 Zhou Jingxi，范围仅 seed 计数与导入证据；业务字段级验收、AI 准确率和 UAT 另行确认。记录见 [evidence/data-signoff/2026-10-23.md](evidence/data-signoff/2026-10-23.md)。AI 评测草案边界见 [docs/ops/ai-evaluation-intake.md](docs/ops/ai-evaluation-intake.md)。
 
 ## 项目信息
 
