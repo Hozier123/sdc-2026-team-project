@@ -946,13 +946,14 @@ def test_same_day_add_on_requires_explicit_do_and_persists(seeded_db):
         assert saved.status_code == 200, saved.text
         issue = next(i for i in saved.json()["issues"] if i["code"] == "SAME_DAY_ORDER")
         assert original in issue["data_used"]["existing_do_numbers"]
+        working_line = _line(1, line_id=saved.json()["lines"][0]["line_id"])
 
         missing = client.put(
             f"/api/v1/orders/drafts/{draft_id}/lines",
             headers=_headers(CLERK),
             json={
                 "expected_version": 2,
-                "lines": [_line(1)],
+                "lines": [working_line],
                 "resolutions": [
                     {
                         "issue_id": issue["issue_id"],
@@ -969,7 +970,7 @@ def test_same_day_add_on_requires_explicit_do_and_persists(seeded_db):
             headers=_headers(CLERK),
             json={
                 "expected_version": 2,
-                "lines": [_line(1)],
+                "lines": [working_line],
                 "resolutions": [
                     {
                         "issue_id": issue["issue_id"],
@@ -991,7 +992,7 @@ def test_same_day_add_on_requires_explicit_do_and_persists(seeded_db):
         carried = client.put(
             f"/api/v1/orders/drafts/{draft_id}/lines",
             headers=_headers(CLERK),
-            json={"expected_version": 3, "lines": [_line(1)]},
+            json={"expected_version": 3, "lines": [working_line]},
         )
         assert carried.status_code == 200, carried.text
         carried_issue = next(i for i in carried.json()["issues"] if i["code"] == "SAME_DAY_ORDER")
