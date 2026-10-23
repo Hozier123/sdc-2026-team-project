@@ -1,8 +1,8 @@
 # KiraOrder 后端：当前实现与验收边界
 
-当前已实现身份/租户权限、显式迁移与 seed、PII 掩码、AI HTTP 边界、字段证据防护、目录解析与客户记忆、草稿整批保存、条件与澄清、三语回复、作废草稿、价格升级、老板审批、DO/库存事务、查询/审计/仓库读取、AI 状态/唤醒、`checks_enabled` 软检查、并发回滚和契约回归。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`，本轮未修改。
+当前已实现身份/租户权限、显式迁移与 seed、PII 掩码、AI HTTP 边界、进程内 RunPod adapter、字段证据防护、目录解析与客户记忆、草稿整批保存、条件与澄清、三语回复、作废草稿、价格升级、老板审批、DO/库存事务、查询/审计/仓库读取、AI 状态/唤醒、`checks_enabled` 软检查、并发回滚和契约回归。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`，本轮未修改。
 
-2026-10-23 审查说明与后续状态见 `docs/audit/backend-audit-2026-10-23.md`。当前 main 完整测试为 **290 passed**。仍属外部验收边界：真实 AI endpoint/模型准确率、公开部署、前端/数据独立 UAT；未配置 AI 时仅提供人工录单占位路径，不应宣传为完成了真实模型抽取。
+2026-10-23 审查说明与后续状态见 `docs/audit/backend-audit-2026-10-23.md`。当前 main 完整测试为 **407 passed**。AI adapter 默认 `AI_PROVIDER=auto` 仍走 Stub；真实 RunPod 端点预检、模型质量、公开部署、前端/数据独立 UAT 仍是外部验收边界，不应宣传为已完成真实模型抽取。
 
 ## 安装和启动（Windows）
 
@@ -82,10 +82,37 @@ backend/.venv/Scripts/python -m app.seed `
 
 ## PII 与 parse-draft 骨架
 
-`POST /api/v1/orders/parse-draft` 已可调用。未配置 `AI_SERVICE_URL` 时使用确定性
-`StubExtractor`，会生成一个 `DISAMBIGUATION_REQUIRED` 的 v1 草稿，不生成正式商品行。
+`POST /api/v1/orders/parse-draft` 已可调用。默认 `AI_PROVIDER=auto`：未配置
+`AI_SERVICE_URL` 时使用确定性 `StubExtractor`，会生成一个
+`DISAMBIGUATION_REQUIRED` 的 v1 草稿，不生成正式商品行。
 
-配置 `AI_SERVICE_URL` 后使用 `HttpAiExtractor`：
+Provider 选择：
+
+```text
+AI_PROVIDER=auto
+  有 AI_SERVICE_URL → HttpAiExtractor；否则 StubExtractor
+AI_PROVIDER=stub
+  强制 StubExtractor
+AI_PROVIDER=http
+  HttpAiExtractor（需要 AI_SERVICE_URL）
+AI_PROVIDER=runpod_adapter
+  进程内 OrderAiAdapter + RunPodExtractor（需要 RUNPOD_*）
+```
+
+`runpod_adapter` 配置：
+
+```text
+AI_PROVIDER=runpod_adapter
+RUNPOD_API_KEY=...
+RUNPOD_ENDPOINT_ID=...
+RUNPOD_MODEL_NAME=Qwen/Qwen2.5-7B-Instruct-AWQ
+LLM_TIMEOUT_S=4.1
+```
+
+AI adapter 只在 `parse-draft` 进程内调用，不新增 `/api/v1/extract`。RunPod 公开端点恢复后，
+先用 `docs/ops/ai-sample-runbook.md` 跑三阶段预检，再执行六样例运行器。
+
+仍保留的 HTTP 边界配置：
 
 ```text
 AI_SERVICE_URL=https://.../api/v1/extract
@@ -107,9 +134,9 @@ endpoint，不出现在任何响应。
 
 ```text
 Bearer → customer tenant check → PII mask
-→ ExtractionProvider.extract(masked_text)
-→ AI-Contract-v1.3 schema 校验
-→ generic FAM_* 到 canonical seed 的显式映射
+→ Stub / HttpAiExtractor / in-process RunPod adapter
+→ HTTP：AI-Contract-v1.3 schema 校验 + generic FAM_* 显式映射
+→ Adapter：DB family catalog 注入 + Pre-Resolver 输出
 → conds / ignored_spans 转换
 → 基础 RawExtraction 校验
 → AI 行进入草稿（未选 SKU 时标记 NO_CANDIDATE）
@@ -118,10 +145,11 @@ Bearer → customer tenant check → PII mask
 ```
 
 - AI 契约、样例和 H1/H5 映射在 `docs/ai_contract/`；
-- AI 只返回 `rows` + `ignored_spans`，不得返回 `sku_id`、价格、库存、审批或 DO；
-- `FAM_FLOUR`/`FAM_RICE`/`FAM_OIL`/`FAM_SUGAR` 目前显式映射到 canonical T1 的
-  `FAM_TEPUNG`/`FAM_BERAS`/`FAM_MINYAK`/`FAM_GULA`；租户差异后续用 catalog 注入；
-- 真实 endpoint/key 不在仓库；未配置时不会伪造 AI 调用；
+- AI 只返回 Pre-Resolver 数据，不得返回 `sku_id`、价格、库存、审批或 DO；
+- HTTP 路径仍把 `FAM_FLOUR`/`FAM_RICE`/`FAM_OIL`/`FAM_SUGAR` 显式映射到 canonical T1；
+  `runpod_adapter` 路径直接把 DB 的 `product_families` + `family_aliases` 注入 adapter，
+  不新建第二套 tenant 映射；
+- 真实 endpoint/key 不在仓库；默认不会伪造 AI 调用；
 - PII 只允许 `[REDACTED_PHONE]`、`[REDACTED_MYKAD]`、`[REDACTED_EMAIL]`；
 - 仅 `CLERK` / `OWNER` 可调用；`WAREHOUSE` 返回 403 `FORBIDDEN_ACTION`；
 - 原始 `message_text` 不写日志、不落库、不传给 provider；
@@ -244,6 +272,6 @@ GitHub Actions 使用隔离 PostgreSQL 17.10 service 执行完整验收。Gate 0
 
 ## 当前验收边界
 
-内部后端主链路已完成并有自动测试；当前 main 为 **290 passed**。仍需外部材料或现场验收的部分：真实 AI endpoint 的模型质量与独立准确率、公开部署、前端/数据独立 UAT、真人试用记录。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新；不回写冻结文件。
+内部后端主链路已完成并有自动测试；当前 main 为 **407 passed**。AI adapter 已合并但默认 Stub；仍需外部材料或现场验收的部分：真实 RunPod 端点预检与模型质量/独立准确率、公开部署、前端/数据独立 UAT、真人试用记录。六样例运行器见 [runbook](../docs/ops/ai-sample-runbook.md)。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新；不回写冻结文件。
 
 实现依据：[psycopg 事务管理](https://www.psycopg.org/psycopg3/docs/basic/transactions.html)、[pglast SQL 解析器](https://pglast.readthedocs.io/en/v7/parser.html)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/17/explicit-locking.html#ADVISORY-LOCKS)。
