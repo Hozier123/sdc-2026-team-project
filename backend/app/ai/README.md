@@ -28,6 +28,10 @@ in-process module called from the parse-draft pipeline.
 
 Runtime dependency added: `rapidfuzz==3.14.6`.
 
+`catalog.py` builds the per-tenant `family_id -> aliases` mapping from
+`product_families` and `family_aliases`. It is the catalog injected into
+`OrderAiAdapter.adapt`; it does not contain hard-coded family IDs.
+
 The ported tests are under `backend/tests/ai_handoff/`; the 8 warmup tests and
 8 duplicate PII tests are intentionally excluded because those concerns are
 covered by the existing backend B29/PII suites.
