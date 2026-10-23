@@ -4,6 +4,7 @@ import json
 from types import SimpleNamespace
 from unittest.mock import Mock
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
@@ -11,6 +12,7 @@ from test_drafts_approve_do import CLERK, OWNER, WAREHOUSE, _headers, _line, _pu
 from test_drafts_approve_do import seeded_db as seeded_db
 from test_export_trial_record import DO
 
+from app.ai_status import AiOrchestrator
 from app.config import REPO_ROOT
 from app.db import connect
 from app.extraction.ai import classify_condition, to_raw_extraction
@@ -163,12 +165,23 @@ def test_warehouse_cannot_read_activity_payloads(seeded_db):
 @pytest.mark.integration
 def test_configured_url_does_not_claim_proven_ai_readiness(seeded_db):
     seeded_db.ai_service_url = "https://not-contacted.invalid/extract"
-    with TestClient(create_app(seeded_db)) as client:
-        status = client.get("/api/v1/ai/status", headers=_headers(CLERK)).json()
-        wake = client.post("/api/v1/ai/wake", headers=_headers(CLERK)).json()
+    seeded_db.ai_health_url = "https://not-contacted.invalid/health"
+    seeded_db.ai_wake_url = "https://not-contacted.invalid/wake"
+    client_transport = httpx.Client(
+        transport=httpx.MockTransport(lambda request: httpx.Response(503))
+    )
+    app = create_app(seeded_db)
+    app.state.ai_orchestrator = AiOrchestrator(seeded_db, client=client_transport)
+    try:
+        with TestClient(app) as client:
+            status = client.get("/api/v1/ai/status", headers=_headers(CLERK)).json()
+            wake = client.post("/api/v1/ai/wake", headers=_headers(CLERK)).json()
+    finally:
+        client_transport.close()
     assert status["state"] != "READY"
-    assert status["fallback_available"] is False
+    assert status["fallback_available"] is True
     assert wake["state"] != "READY" and wake["accepted"] is False
+    assert wake["fallback_available"] is True
 
 
 @pytest.mark.integration

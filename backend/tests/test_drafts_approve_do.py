@@ -1,6 +1,8 @@
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from app.ai_status import AiOrchestrator
 from app.auth import hash_token
 from app.db import connect
 from app.main import create_app
@@ -631,3 +633,84 @@ def test_parse_all_invalid_rows_becomes_fallback_not_503(seeded_db):
     assert body["ai_mode"] == "FALLBACK"
     assert body["lines"] == []
     assert any(issue["reason_code"] == "SOURCE_EVIDENCE_INVALID" for issue in body["issues"])
+
+
+def test_ai_status_probe_wake_transition_and_rate_limit(seeded_db):
+    seeded_db.ai_service_url = "https://ai.test/extract"
+    seeded_db.ai_health_url = "https://ai.test/health"
+    seeded_db.ai_wake_url = "https://ai.test/wake"
+    seeded_db.ai_warmup_grace_s = 0
+    seeded_db.ai_wake_rate_limit_s = 60
+    calls = []
+
+    def handler(request):
+        calls.append((request.method, str(request.url)))
+        if request.method == "GET":
+            return httpx.Response(200, json={"status": "ok"})
+        return httpx.Response(200, json={"status": "warming"})
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    app = create_app(seeded_db)
+    app.state.ai_orchestrator = AiOrchestrator(seeded_db, client=client)
+    try:
+        with TestClient(app) as api:
+            status = api.get("/api/v1/ai/status", headers=_headers(CLERK))
+            assert status.status_code == 200
+            assert status.json()["state"] == "READY"
+            assert status.json()["available_modes"] == ["LLM", "FALLBACK", "ALIAS_ONLY"]
+            assert status.json()["fallback_available"] is True
+
+            wake = api.post("/api/v1/ai/wake", headers=_headers(CLERK))
+            assert wake.status_code == 200
+            assert wake.json()["accepted"] is True
+            assert wake.json()["state"] == "WARMING"
+
+            after = api.get("/api/v1/ai/status", headers=_headers(CLERK))
+            assert after.json()["state"] == "READY"
+
+            limited = api.post("/api/v1/ai/wake", headers=_headers(CLERK))
+            assert limited.status_code == 429
+            assert limited.json()["error_code"] == "RATE_LIMITED"
+            assert limited.json()["details"]["scope"] == "AI_WAKE"
+            assert limited.headers["Retry-After"]
+    finally:
+        client.close()
+    assert ("GET", "https://ai.test/health") in calls
+    assert ("POST", "https://ai.test/wake") in calls
+
+
+def test_ai_wake_failure_returns_degraded_not_ready(seeded_db):
+    seeded_db.ai_service_url = "https://ai.test/extract"
+    seeded_db.ai_health_url = "https://ai.test/health"
+    seeded_db.ai_wake_url = "https://ai.test/wake"
+
+    def handler(request):
+        if request.method == "GET":
+            return httpx.Response(200)
+        return httpx.Response(500)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    app = create_app(seeded_db)
+    app.state.ai_orchestrator = AiOrchestrator(seeded_db, client=client)
+    try:
+        with TestClient(app) as api:
+            wake = api.post("/api/v1/ai/wake", headers=_headers(CLERK))
+            assert wake.status_code == 200
+            assert wake.json()["accepted"] is False
+            assert wake.json()["state"] == "DEGRADED"
+            assert wake.json()["fallback_available"] is True
+    finally:
+        client.close()
+
+
+def test_ai_status_offline_without_endpoint(seeded_db):
+    seeded_db.ai_service_url = None
+    with TestClient(create_app(seeded_db)) as api:
+        status = api.get("/api/v1/ai/status", headers=_headers(CLERK)).json()
+        wake = api.post("/api/v1/ai/wake", headers=_headers(CLERK)).json()
+    assert status["state"] == "OFFLINE"
+    assert status["available_modes"] == ["FALLBACK", "ALIAS_ONLY"]
+    assert status["fallback_available"] is True
+    assert wake["state"] == "OFFLINE"
+    assert wake["accepted"] is False
+    assert wake["fallback_available"] is True
