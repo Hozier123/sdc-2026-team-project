@@ -123,3 +123,23 @@ def exact_phrase(phrase, span):
     if phrase[-1].isascii() and phrase[-1].isalnum():
         pattern += r"(?![a-z])"
     return re.search(pattern, normalize(span)) is not None
+
+
+def pack_size_evidence(span):
+    """Return (value, start, end) for a registered pack-size pattern."""
+    if not span:
+        return None
+    text, starts, ends = projected(span)
+    best = None
+    for pattern in lexicon()["pack_size"]["patterns"]:
+        for match in re.finditer(pattern, text, re.IGNORECASE):
+            if best is None or (match.end() - match.start()) > (best[2] - best[1]):
+                best = (match.group(), match.start(), match.end())
+    if best is None:
+        return None
+    start, end = best[1], best[2]
+    while end > start and span[starts[end - 1] : ends[end - 1]].isspace():
+        end -= 1
+    value = span[starts[start] : ends[end - 1]]
+    value = re.sub(r"\s*(?:装|pack|packs)\s*$", "", value, flags=re.IGNORECASE).strip()
+    return value, starts[start], ends[end - 1]

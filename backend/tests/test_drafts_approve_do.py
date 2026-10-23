@@ -500,3 +500,112 @@ def test_contract_read_endpoints_after_do(seeded_db):
         wake = client.post("/api/v1/ai/wake", headers=_headers(CLERK))
         assert wake.status_code == 200
         assert wake.json()["accepted"] is False
+
+
+def test_parse_propagates_mixed_row_sources(seeded_db):
+    from app.extraction.base import RawExtraction, RawRow
+
+    class SourceProvider:
+        def extract(self, masked_text, language_hint, request_id):
+            return RawExtraction(
+                rows=(
+                    RawRow(
+                        span="Milo 5 ctn",
+                        qty=5,
+                        uom="ctn",
+                        fam="FAM_MILO",
+                        source="LLM_EXTRACTED",
+                    ),
+                    RawRow(
+                        span="Milo 2 ctn",
+                        qty=2,
+                        uom="ctn",
+                        fam="FAM_MILO",
+                        source="RAPIDFUZZ_FALLBACK",
+                    ),
+                )
+            )
+
+    app = create_app(seeded_db)
+    app.state.extraction_provider = SourceProvider()
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 5 ctn\nMilo 2 ctn"},
+        )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["ai_mode"] == "MIXED"
+    assert {line["match_source"] for line in body["lines"]} == {
+        "LLM_EXTRACTED",
+        "RAPIDFUZZ_FALLBACK",
+    }
+
+
+def test_parse_isolates_invalid_row_instead_of_503(seeded_db):
+    from app.extraction.base import RawExtraction, RawRow
+
+    class BadRowProvider:
+        def extract(self, masked_text, language_hint, request_id):
+            return RawExtraction(
+                rows=(
+                    RawRow(
+                        span="Milo 5 ctn",
+                        qty=5,
+                        uom="ctn",
+                        fam="FAM_MILO",
+                    ),
+                    RawRow(
+                        span="span-not-present",
+                        qty=1,
+                        uom="ctn",
+                        fam="FAM_MILO",
+                    ),
+                )
+            )
+
+    app = create_app(seeded_db)
+    app.state.extraction_provider = BadRowProvider()
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 5 ctn"},
+        )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert len(body["lines"]) == 1
+    assert body["lines"][0]["sku_id"] == "SKU_MILO_1KG"
+    assert any(issue["reason_code"] == "SOURCE_EVIDENCE_INVALID" for issue in body["issues"])
+
+
+def test_parse_marks_all_fallback_rows(seeded_db):
+    from app.extraction.base import RawExtraction, RawRow
+
+    class FallbackProvider:
+        def extract(self, masked_text, language_hint, request_id):
+            return RawExtraction(
+                rows=(
+                    RawRow(
+                        span="Milo 5 ctn",
+                        qty=5,
+                        uom="ctn",
+                        fam="FAM_MILO",
+                        source="RAPIDFUZZ_FALLBACK",
+                    ),
+                )
+            )
+
+    app = create_app(seeded_db)
+    app.state.extraction_provider = FallbackProvider()
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/orders/parse-draft",
+            headers=_headers(CLERK),
+            json={"customer_id": "CUS_T1", "message_text": "Milo 5 ctn"},
+        )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["ai_mode"] == "FALLBACK"
+    assert body["lines"][0]["match_source"] == "RAPIDFUZZ_FALLBACK"

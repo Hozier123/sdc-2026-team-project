@@ -31,7 +31,7 @@ from app.errors import (
 )
 from app.extraction.ai import AiServiceError, classify_condition
 from app.extraction.base import ExtractionProvider, RawExtraction, RawRow, validate_raw_extraction
-from app.extraction.evidence import exact_phrase, quantity_evidence
+from app.extraction.evidence import exact_phrase, pack_size_evidence, quantity_evidence
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
 from app.resolver import (
@@ -147,6 +147,16 @@ def _ai_draft(
         start = masked_text.find(row.span, cursor)
         end = start + len(row.span) if start >= 0 else None
         line_id = None
+        if row.invalid_reason:
+            add_issue(
+                code="LOW_CONFIDENCE_MATCH",
+                line_id=None,
+                span=row.span or None,
+                start=start if start >= 0 else None,
+                end=end,
+                reason_code=row.invalid_reason,
+            )
+            continue
         qty, qty_reason, qty_start, qty_end = quantity_evidence(row.span)
         if start < 0:
             key = (row.span, row.qty, row.fam, row.uom, row.pack_size)
@@ -205,7 +215,7 @@ def _ai_draft(
                 if effective_price is not None
                 else None,
                 subtotal_rm=format(subtotal, ".2f") if subtotal is not None else None,
-                match_source="SUGGESTED_DEFAULT" if row.memory else "LLM_EXTRACTED",
+                match_source=row.source,
                 source_span=row.span,
                 span_start=start if start >= 0 else None,
                 span_end=end,
@@ -399,6 +409,9 @@ def _guard_families_and_units(raw, settings, user, customer_id, masked_text, cat
     active = {product.family_id for product in catalog.products}
     guarded = []
     for row in raw.rows:
+        if row.invalid_reason:
+            guarded.append(row)
+            continue
         if row.memory:
             # Memory rows are derived from a confirmed alias + active catalog row.
             guarded.append(row)
@@ -415,6 +428,10 @@ def _guard_families_and_units(raw, settings, user, customer_id, masked_text, cat
             else None
         )
         pack = row.pack_size if row.pack_size and exact_phrase(row.pack_size, row.span) else None
+        if pack is None and not row.pack_size:
+            evidence = pack_size_evidence(row.span)
+            if evidence is not None:
+                pack = evidence[0]
         guarded.append(replace(row, fam=family, uom=unit, pack_size=pack))
     # H5 belongs to the backend. An omitted AI conds[] must not remove a price gate.
     for chunk in masked_text.splitlines():
@@ -478,23 +495,26 @@ def parse_draft(
             # A confirmed customer alias plus an evidenced quantity bypasses
             # the extraction provider entirely.
             raw = RawExtraction(rows=tuple(memory))
-            validate_raw_extraction(raw, masked.masked_text)
+            validate_raw_extraction(raw, masked.masked_text, strict=False)
         else:
             raw = extractor.extract(
                 masked.masked_text,
                 body.language_hint,
                 request.state.request_id,
             )
-            validate_raw_extraction(raw, masked.masked_text)
+            validate_raw_extraction(raw, masked.masked_text, strict=False)
             raw, memory_used = merge_memory(raw, memory)
     except (AiServiceError, ValueError, TypeError) as exc:
         raise AiAndFallbackUnavailableError() from exc
     raw = _guard_families_and_units(
         raw, settings, user, body.customer_id, masked.masked_text, catalog
     )
+    sources = {row.source for row in raw.rows if not row.invalid_reason}
     if memory_covers:
         ai_mode = "ALIAS_ONLY"
-    elif memory_used:
+    elif sources and all(source == "RAPIDFUZZ_FALLBACK" for source in sources):
+        ai_mode = "FALLBACK"
+    elif memory_used or len(sources) > 1 or any(source != "LLM_EXTRACTED" for source in sources):
         ai_mode = "MIXED"
     elif isinstance(extractor, StubExtractor):
         ai_mode = "FALLBACK"
