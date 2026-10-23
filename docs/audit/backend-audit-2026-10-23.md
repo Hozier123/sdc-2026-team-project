@@ -5,13 +5,13 @@
 
 ## 一、结论与范围
 
-**目前不能认定“所有不依赖外部材料的后端任务均已完成”。人工确认后的保存、核价、审批、出单等主要链路已经实现并通过本地测试；自动商品匹配、记忆复用、完整沟通模板及部分契约行为仍未完成。**
+**2026-10-23 B34 更新：原审查快照（215 passed）之后，B22–B33 已由后续 PR 完成并进入 main；当前 main 为 `480486ea6af7e4ae95c133b3ce466681807222f8`，完整测试 282 passed。原报告正文保留为历史快照，当前逐项状态见第六节。真实 AI 模型质量、公开部署、独立 UAT 和真人试用记录仍属外部验收边界。**
 
 本报告中的“不依赖外部材料”，指利用仓库已有的冻结契约、词表、两租户种子、合成样例及本地 PostgreSQL，即可实现和验证。不需要再等待真实 AI 端点、部署账号、新数据文件、前端页面或真人试用记录。
 
 只评估后端负责的实现。AI 模型与抽取服务本身、真实部署、前端联调、数据负责人新增的独立评测集、真人 UAT，不计入下面的完成清单。涉及 AI 的项目只评价后端的适配、校验、状态和故障处理，不把 AI 负责人的工作转给你。
 
-判定对象是本地分支 `codex/backend-audit-2026-10-23` 的当前工作区，包含本次审查已经实施的修复；基础提交为 `da75feb68f98eb46ad5c5efe273883d879c3b7ae`。**本次修复尚未提交、推送或合并，不能视为 GitHub 主分支已经具备。**
+判定对象是原审查时的本地分支 `codex/backend-audit-2026-10-23` 工作区，基础提交为 `da75feb68f98eb46ad5c5efe273883d879c3b7ae`。**该段是历史快照：原修复后续已提交、评审并合并；当前主分支状态与后续 PR 见第六节。**
 
 “已完成”只表示表中限定功能已实现且有本地验证，不表示无任何潜在缺陷，也不表示完成真实环境验收。
 
@@ -41,7 +41,9 @@
 | B20 | 当前冻结条件规则及人工处理闭环 | 已完成（限定范围） | 生产条件分类函数通过冻结的 16 行真值表；后端补查 AI 漏报条件，保存处理结果；接受单价条件会作用到目标行，修改相关数据后会重新打开条件，STOCK 按库存判定。此结论不是任意自然语言识别准确率保证。 |
 | B21 | 演示重置工具的本地安全机制 | 已完成 | 有真实哈希与模板内容校验、目标保护、候选库校验和旧库备份保留；本地临时数据库测试通过。未对真实演示库执行重置。 |
 
-## 三、仍未完成或未充分验证的后端任务
+## 三、原审查快照：当时未完成或未充分验证的后端任务
+
+> 以下是原审查时（215 passed）的历史判断，保留用于追踪。B22–B34 的当前状态见第六节；不要用本表覆盖后续已完成的实现。
 
 以下缺口可以利用现有材料继续实现或测试，**不能统一解释为“等 AI、前端或数据负责人给材料”**。
 
@@ -73,15 +75,37 @@
 
 ## 五、本次判定依据
 
-- 后端全套测试连续运行三轮，每轮均为 **215 passed、0 failed、0 errors、0 skipped**；每轮有 1 条测试客户端依赖弃用警告。重复通过说明当前用例运行稳定，不代表已经覆盖所有要求。
+- 后端全套测试连续运行三轮，每轮均为 **215 passed、0 failed、0 errors、0 skipped**；每轮有 1 条测试客户端依赖弃用警告。这是原审查快照；当前 main 为 **282 passed**，见第六节。
 - 测试使用独立的本地临时 PostgreSQL，不是线上数据库；测试结束后已停止该临时服务。
 - 当前 `gate0/` 与 `gate0-baseline-v1` 比较无差异，冻结基线未改动；本次工作区差异检查通过。
 - 判定结合冻结方案／契约、实际代码和测试，不采用“没有 TODO”“16 个路由都有”“CI 曾经通过”作为全部完成证明。
 
 主要核查入口：
 
-- [冻结执行方案 v2.1](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/gate0/external-inputs/baseline/KiraOrder_终版执行方案_v2.1_2026-10-21.md>)、[冻结字段契约](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/gate0/contracts/fields.md>)。
-- [解析与来源处理](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/backend/app/parse.py>)、[保存与规则重算](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/backend/app/drafts.py>)、[审批与回复](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/backend/app/approvals.py>)、[澄清模板](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/backend/app/clarification.py>)。
-- [本次补充的业务回归测试](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/backend/tests/test_backend_audit.py>)、[实际接口响应契约测试](<C:/Users/n_bom/Documents/ChatGPT/SDC HACKATHON/sdc-2026-team-project/backend/tests/test_live_contract_audit.py>)。
+- [冻结执行方案 v2.1](<../../gate0/external-inputs/baseline/KiraOrder_终版执行方案_v2.1_2026-10-21.md>)、[冻结字段契约](../../gate0/contracts/fields.md)。
+- [解析与来源处理](../../backend/app/parse.py)、[保存与规则重算](../../backend/app/drafts.py)、[审批与回复](../../backend/app/approvals.py)、[澄清模板](../../backend/app/clarification.py)。
+- [本次补充的业务回归测试](../../backend/tests/test_backend_audit.py)、[实际接口响应契约测试](../../backend/tests/test_live_contract_audit.py)、[B33 契约回归矩阵](../../backend/tests/test_contract_regression.py)。
 
-**最终判断：已经具备可本地验证的人工确认后端主链路，但仍有不依赖新增外部材料的后端功能和验证缺口，尚不能宣称纯后端工作全部收尾。**
+## 六、B34 后续状态更新（当前 main）
+
+> 本节优先于第三节的历史快照。对应实现均已通过 PR 进入 main；当前 main 为 `480486ea6af7e4ae95c133b3ce466681807222f8`，完整测试 **282 passed**。`gate0/` 未修改。
+
+| 编号 | 当前状态 | 依据 |
+|---|---|---|
+| B22 | 已完成（当前 catalog 范围） | 目录解析器按 family/unit/pack/grade 生成唯一 SKU 或候选；歧义不静默解决。`test_resolver_memory.py`。 |
+| B23 | 已完成（客户/租户别名范围） | 别名优先恢复 SKU；`ALIAS_ONLY` 绕过模型路径已接入。`test_resolver_memory.py`。 |
+| B24 | 已完成（后端适配器边界） | 逐行 `source`、`invalid_reason`、`ai_mode` 传播；真实 AI 质量仍属外部边界。 |
+| B25 | 已完成（当前证据集） | 数量/规格/单位/重复片段等证据校验与逐行失败隔离；完整真实消息集仍属独立评测。 |
+| B26 | 已完成（当前模板范围） | 三语澄清模板代入具体商品、候选规格、库存和价格；文本语言检测。 |
+| B27 | 已完成（当前模板范围） | 批准后回复包含 DO 明细、总额和三语选择。 |
+| B28 | 已完成 | `confirmed_items` 同事务保存新版本并批准；失败整体回滚。 |
+| B29 | 已完成（后端编排） | health/wake 状态机、限流、`available_modes`；真实 endpoint 不计。 |
+| B30 | 已完成 | 抢最后库存、同单并发、批准中途故障回滚专项测试。 |
+| B31 | 已完成 | `customer_condition`、`same_day_order`、`unusual_qty` 逐项消费；库存等硬规则不可绕过。 |
+| B32 | 已完成 | products 文件 SHA-256 + 逐 SKU 与 DB pack/grade 对账；失败不生成已验证证据。 |
+| B33 | 已完成 | 20 个 fixture/error body schema 校验 + 12 类实际错误分支；修复 approve 的 `DISAMBIGUATION_UNRESOLVED` 契约偏差。 |
+| B34 | 已完成（本 PR；合并后生效） | README、backend README、审计状态、链接和测试数字对齐当前实现。 |
+
+仍未完成：P1-01 的“另开补单／重复作废／改原单”完整三选一处置（当前只有同日 DO 检查）、P1-02 作废端点、P1-03 澄清复制事件记录；以及外部边界中的真实 AI 质量、公开部署、独立 UAT 和真人试用。
+
+**最终判断：当前 main 已具备可本地验证的人工确认后端主链路和 B22–B33 的自动回归；真实 AI 质量、公开部署、独立 UAT 与真人试用仍是外部验收边界。**

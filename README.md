@@ -2,7 +2,7 @@
 
 SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
-**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端实现身份读取、parse、草稿行保存、审批与 DO 读取；前端工作台已交付并可连接真实后端运行。** 后端尚未实现草稿/客户列表与详情、活动、仓库检索和 AI 状态等端点，AI 仍为 stub 抽取（`ai_mode=FALLBACK`）。完整业务链路尚未全部打通，不代表可用业务原型已完成。
+**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端已实现身份、parse、草稿/客户/审批/DO 读取、活动与审计、仓库裁剪、AI 状态/唤醒、自动目录解析与客户记忆、条件/澄清/回复、`confirmed_items` 兼容路径、`checks_enabled` 软检查和导出证据绑定；前端工作台已交付。当前 main 的完整测试为 282 passed。** 真实 AI endpoint、公开部署、前端/数据独立 UAT 和正式赛事材料仍是外部验收边界；本地测试通过不等于生产验收完成，也不代表赛事提交已完成。
 
 ## 项目信息
 
@@ -16,7 +16,7 @@ SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 | 成员及分工 | TODO：按团队最终分工填写 |
 | 仓库 | https://github.com/Hozier123/sdc-2026-team-project |
 
-计划解决的问题：将马来西亚批发商收到的 WhatsApp 混语订单，转为经核对、经人工批准、可追溯的送货单。不确定的信息交给适当的人处理。上述业务目标尚未实现。
+计划解决的问题：将马来西亚批发商收到的 WhatsApp 混语订单，转为经核对、经人工批准、可追溯的送货单。不确定的信息交给适当的人处理。当前已形成可本地运行的原型；真实部署与真人试用验收尚未完成。
 
 ## 仓库根目录
 
@@ -24,19 +24,21 @@ SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
 ```text
 sdc-2026-team-project/
-├── .github/workflows/          # 后端基础 CI：隔离 PostgreSQL 验收
-├── backend/                    # FastAPI 后端基础
-│   ├── app/                    # 存活/就绪探针、配置、连接、迁移执行器
-│   ├── tests/                  # 单元与 PostgreSQL 集成测试
+├── .github/workflows/          # 后端/前端 CI：隔离 PostgreSQL 与前端构建
+├── backend/                    # FastAPI 后端
+│   ├── app/                    # 业务路由、解析、审批、DO、AI 状态编排
+│   ├── tests/                  # 单元、PostgreSQL 集成、契约回归
+│   ├── tools/                  # 试次记录导出等运维工具
 │   ├── pyproject.toml
 │   ├── requirements.lock       # 精确版本安装约束
 │   └── README.md               # 安装、启动、迁移与测试说明
 ├── data/
-│   ├── seed/                   # 团队自建合成种子数据
-│   │   └── .gitkeep
+│   ├── seed/                   # T1/T2 合成种子、manifest 与哈希
 │   └── README.md               # 数据目录说明
 ├── docs/
-│   ├── .gitkeep
+│   ├── audit/                  # 后端审计与当前状态更新
+│   ├── ops/                    # 导出、重置、AI 一致性协议
+│   ├── rules/                  # v1.3 工作规则
 │   ├── competition-checklist.md
 │   └── setup-windows.md
 ├── evidence/
@@ -94,31 +96,55 @@ if (-not (Test-Path -LiteralPath .env)) {
 
 仓库已有本地副本的组员，先妥善保存现有修改，再运行 `git pull --ff-only` 更新。真实 `.env` 已被 Git 忽略。
 
-后端使用 Python 3.13 + PostgreSQL 17，依赖、显式迁移命令、`/healthz` 与 `/readyz` 及完整测试步骤见 [backend/README.md](backend/README.md)。安装与协作说明见 [docs/setup-windows.md](docs/setup-windows.md)，实测范围与限制见 [后端基础验证记录](evidence/backend-foundation/README.md)。
+后端使用 Python 3.13 + PostgreSQL 17，依赖、显式迁移命令、`/healthz` 与 `/readyz` 及完整测试步骤见 [backend/README.md](backend/README.md)。安装与协作说明见 [docs/setup-windows.md](docs/setup-windows.md)；历史基线记录见 [后端基础验证记录](evidence/backend-foundation/README.md)，当前完成状态与边界见 [后端审计报告](docs/audit/backend-audit-2026-10-23.md)。
 
 前端使用 Node.js 22 + npm，在 `frontend/` 内执行 `npm ci`、`npm run dev`（默认 http://127.0.0.1:5173/）。连接真实后端时在界面填入 API base `http://127.0.0.1:8000/api/v1` 与会话 Bearer token，或用 `.env.local` 的 `VITE_API_BASE_URL` 设置默认地址。前端测试与构建为 `npm test`、`npm run build`，CI 见 `.github/workflows/frontend.yml`；详细说明见 [frontend/README.md](frontend/README.md)。
 
 计划采用的开发与部署方式：
-- 开发：Vite 将 API 请求代理到 FastAPI。
-- 部署：FastAPI 托管前端构建产物，合并到一个 Replit 部署。
-- 当前仅记录约定，尚未配置代理、构建或部署。
+- 开发：前端通过 `VITE_API_BASE_URL` 直接连接 FastAPI；当前 Vite 配置未启用 API 代理。
+- 部署：计划由 FastAPI 托管前端构建产物并合并到一个 Replit 部署。
+- 当前尚未完成代理、静态托管或 Replit 部署；不要把本地 `npm run dev` 当作已部署。
 
 ## 配置项
 
-`.env.example` 保留方案中的六个变量名，值均为空：
-`DATABASE_URL`、`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`、`LLM_TIMEOUT_S`、`DEMO_MODE`、`SIM_INBOUND_KEY`。
+`.env.example` 给出配置变量名，值为空。后端实际读取：
 
-本阶段仅使用 `DATABASE_URL`（PostgreSQL URI）；其余五项尚未接入。真实密钥只放本地环境或 Replit Secrets，不写入代码、文档或截图。业务演示只使用团队自建合成数据。
+```text
+DATABASE_URL
+AI_SERVICE_URL / AI_HEALTH_URL / AI_WAKE_URL
+AI_API_KEY / AI_TIMEOUT_S
+AI_WAKE_RATE_LIMIT_S / AI_WARMUP_GRACE_S
+CORS_ALLOW_ORIGINS
+```
 
-## 后续实现顺序
+`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`、`LLM_TIMEOUT_S`、`DEMO_MODE`、`SIM_INBOUND_KEY`
+仍作为部署/联调预留名，当前后端代码不读取。真实密钥只放本地环境或 Replit Secrets，
+不写入代码、文档或截图。业务演示只使用团队自建合成数据。
 
-后端基础 PR 验收后，依次推进 seed + Bearer 鉴权 + `/me`、PII + parse（包含 H1/H5）、GET draft + PUT lines、approve/DO、approvals/decide。H1/H5 和批准主链路不能长期后置。01—04 的 v1.3 工作文档放在 `docs/rules/`，以独立提交随对应实现更新；不回写冻结原件。
+## 当前实现与验收边界
+
+```text
+已完成并有自动测试：
+身份/租户权限、seed、PII、parse、目录解析、客户记忆、字段证据、
+草稿保存/状态、条件与澄清、三语回复、审批/DO/库存事务、
+客户/草稿/审批/活动/审计/仓库读取、AI 状态与唤醒、
+checks_enabled 三个软检查、并发/回滚、导出证据绑定、契约 fixture 回归。
+```
+
+当前 main 完整测试：**282 passed**。外部边界仍未完成：
+
+- 真实 AI endpoint、模型质量与独立准确率评测；
+- 公开部署、Replit/RunPod 实际使用证明；
+- 前端与数据负责人的独立 UAT、真人试用记录；
+- 正式提案、工具声明、幻灯片与路演视频。
+
+01—04 的 v1.3 工作文档放在 `docs/rules/`，以独立提交随实现更新；不回写冻结原件。
 
 ## 必要链接与正式材料
 
 | 内容 | 链接或状态 |
 | --- | --- |
-| 原型 / 可访问构建 | TODO：开发后填写 |
+| 原型 / 可访问构建 | 本地可运行；公开部署与可访问链接待完成 |
 | Replit 项目 / 部署 | TODO：实际使用后填写 |
 | RunPod 端点 | TODO：实际接入后填写，不含密钥 |
 | 幻灯片 | TODO |

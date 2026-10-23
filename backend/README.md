@@ -1,8 +1,8 @@
 # KiraOrder 后端：当前实现与验收边界
 
-当前已实现身份/租户权限、显式迁移与 seed、PII 掩码、AI HTTP 边界、字段证据防护、草稿整批保存、条件处理、价格升级、老板审批、DO/库存事务、查询/审计和试次工具。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`，本轮未修改。
+当前已实现身份/租户权限、显式迁移与 seed、PII 掩码、AI HTTP 边界、字段证据防护、目录解析与客户记忆、草稿整批保存、条件与澄清、三语回复、价格升级、老板审批、DO/库存事务、查询/审计/仓库读取、AI 状态/唤醒、`checks_enabled` 软检查、并发回滚和契约回归。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`，本轮未修改。
 
-2026-10-23 审查说明见 `docs/audit/backend-audit-2026-10-23.md`。路由齐全不代表完整业务/真实部署验收通过：自动 SKU Resolver、完整 H1/H2/H3/H4 回放、真实 AI/唤醒/本地提取兜底和独立 UAT 仍有边界；未配置 AI 时仅提供人工录单占位路径，不应宣传为完成了 fallback 识别。
+2026-10-23 审查说明与后续状态见 `docs/audit/backend-audit-2026-10-23.md`。当前 main 完整测试为 **282 passed**。仍属外部验收边界：真实 AI endpoint/模型准确率、公开部署、前端/数据独立 UAT；未配置 AI 时仅提供人工录单占位路径，不应宣传为完成了真实模型抽取。
 
 ## 安装和启动（Windows）
 
@@ -61,7 +61,7 @@ SHA-256(token UTF-8) 的小写 hex
 ```powershell
 backend/.venv/Scripts/python -m app.seed `
   --tenant T1 `
-  --seed-sql ..\data\seed\seed_T1.sql `
+  --seed-sql ..\data\seed\T1_seed.sql `
   --seed-version T1-0.1 `
   --expect-sha256 <sql-sha256> `
   --expect-products 40 `
@@ -226,8 +226,8 @@ $env:TEST_DATABASE_ADMIN_URL = 'postgresql://测试用户:测试密码@127.0.0.1
 
 GitHub Actions 使用隔离 PostgreSQL 17.10 service 执行完整验收。Gate 0 自身的 42 项契约检查仍通过原 `gate0/scripts/bootstrap_gate0.ps1` 运行；不与新后端依赖环境混装。
 
-## 后续衔接
+## 当前验收边界
 
-后续提交依次接真实 AI/H1/H5、draft/PUT lines、approve/DO、approvals/decide，再补齐 OWNER、审计和回复主链路。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新，本次不修改冻结文件。
+内部后端主链路已完成并有自动测试；当前 main 为 **282 passed**。仍需外部材料或现场验收的部分：真实 AI endpoint 的模型质量与独立准确率、公开部署、前端/数据独立 UAT、真人试用记录。01—04 的 v1.3 工作文档在 `docs/rules/` 以独立提交随对应实现更新；不回写冻结文件。
 
 实现依据：[psycopg 事务管理](https://www.psycopg.org/psycopg3/docs/basic/transactions.html)、[pglast SQL 解析器](https://pglast.readthedocs.io/en/v7/parser.html)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/17/explicit-locking.html#ADVISORY-LOCKS)。
