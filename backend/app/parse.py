@@ -30,11 +30,19 @@ from app.errors import (
     ResourceNotFoundError,
 )
 from app.extraction.ai import AiServiceError, classify_condition
-from app.extraction.base import ExtractionProvider, RawRow, validate_raw_extraction
+from app.extraction.base import ExtractionProvider, RawExtraction, RawRow, validate_raw_extraction
 from app.extraction.evidence import exact_phrase, quantity_evidence
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
-from app.schemas import Issue, OrderDraftResponse, WorkingLine
+from app.resolver import (
+    Catalog,
+    candidate_payload,
+    load_catalog,
+    memory_rows,
+    merge_memory,
+    resolve_row,
+)
+from app.schemas import Issue, OrderDraftResponse, SkuCandidate, WorkingLine
 
 router = APIRouter(prefix="/api/v1", tags=["Orders"])
 
@@ -95,7 +103,10 @@ def _ai_draft(
     draft_id: str,
     now: str,
     language_hint: str | None,
+    catalog: Catalog | None = None,
+    ai_mode: str = "LLM",
 ) -> dict[str, Any]:
+    catalog = catalog or Catalog(products=(), aliases=())
     lines: list[WorkingLine] = []
     issues: list[Issue] = []
     conditions: list[Issue] = []
@@ -109,6 +120,7 @@ def _ai_draft(
         start: int | None,
         end: int | None,
         reason_code: str | None = None,
+        data_used: dict[str, Any] | None = None,
     ) -> None:
         issues.append(
             Issue(
@@ -121,7 +133,7 @@ def _ai_draft(
                 span_end=end,
                 reason_code=reason_code,
                 ask="CLERK",
-                data_used={"extractor": "AI"},
+                data_used=data_used or {"extractor": "AI"},
                 blocking=True,
                 resolved=False,
             )
@@ -155,18 +167,45 @@ def _ai_draft(
             )
         else:
             line_id = f"LNE_{uuid4().hex.upper()}"
-            family_id = row.fam or "UNKNOWN"
+            resolution = resolve_row(row, catalog)
+            product = resolution.product
+            family_id = product.family_id if product else (row.fam or "UNKNOWN")
+            tier_price: Decimal | None = None
+            effective_price: Decimal | None = None
+            subtotal: Decimal | None = None
+            available: int | None = None
+            candidates: list[SkuCandidate] = []
+            saved_alias = row.alias if row.memory else None
+            if product is not None:
+                tier_price = product.tier_price
+                effective_price = tier_price
+                subtotal = effective_price * qty if effective_price is not None else None
+                available = product.available_qty
+            elif resolution.candidates:
+                candidates = [
+                    SkuCandidate.model_validate(candidate_payload(candidate))
+                    for candidate in resolution.candidates
+                ]
             line = WorkingLine(
                 line_id=line_id,
                 client_line_ref=f"ai-{index + 1}",
+                sku_id=product.sku_id if product else None,
                 family_id=family_id,
-                description=row.span,
+                description=product.name if product else row.span,
                 requested_qty=qty,
                 confirmed_qty=None,
                 effective_qty=qty,
-                uom=row.uom,
-                pack_size=row.pack_size,
-                match_source="LLM_EXTRACTED",
+                uom=product.base_unit if product else row.uom,
+                pack_size=product.pack_size if product else row.pack_size,
+                grade=product.grade if product else None,
+                tier_unit_price=format(tier_price, ".2f") if tier_price is not None else None,
+                unit_price_override=None,
+                override_reason=None,
+                effective_unit_price=format(effective_price, ".2f")
+                if effective_price is not None
+                else None,
+                subtotal_rm=format(subtotal, ".2f") if subtotal is not None else None,
+                match_source="SUGGESTED_DEFAULT" if row.memory else "LLM_EXTRACTED",
                 source_span=row.span,
                 span_start=start if start >= 0 else None,
                 span_end=end,
@@ -179,6 +218,9 @@ def _ai_draft(
                         "normalizer_version": "field-evidence-v2",
                     }
                 ],
+                candidate_skus=candidates,
+                saved_alias=saved_alias,
+                available_qty=available,
             )
             lines.append(line)
             if family_id == "UNKNOWN":
@@ -190,7 +232,7 @@ def _ai_draft(
                     end=end,
                     reason_code="FAMILY_NOT_EVIDENCED",
                 )
-            if row.uom is None:
+            if product is None and row.uom is None:
                 add_issue(
                     code="MISSING_UOM",
                     line_id=line_id,
@@ -199,14 +241,37 @@ def _ai_draft(
                     end=end,
                     reason_code="FIELD_NOT_EVIDENCED",
                 )
-            add_issue(
-                code="LOW_CONFIDENCE_MATCH",
-                line_id=line_id,
-                span=row.span,
-                start=start if start >= 0 else None,
-                end=end,
-                reason_code="NO_CANDIDATE",
-            )
+            if product is None and candidates:
+                add_issue(
+                    code=resolution.issue_code or "MULTIPLE_PACK_SIZES",
+                    line_id=line_id,
+                    span=row.span,
+                    start=start if start >= 0 else None,
+                    end=end,
+                    data_used={
+                        "candidate_skus": [
+                            candidate.model_dump(mode="json") for candidate in candidates
+                        ]
+                    },
+                )
+            elif product is None:
+                add_issue(
+                    code="LOW_CONFIDENCE_MATCH",
+                    line_id=line_id,
+                    span=row.span,
+                    start=start if start >= 0 else None,
+                    end=end,
+                    reason_code="NO_CANDIDATE",
+                )
+            if product is not None and available is not None and available < qty:
+                add_issue(
+                    code="INSUFFICIENT_STOCK",
+                    line_id=line_id,
+                    span=row.span,
+                    start=start if start >= 0 else None,
+                    end=end,
+                    data_used={"available_qty": available, "effective_qty": qty},
+                )
         # Conditions survive even when their item's quantity is unusable.
         for cond in row.conds:
             kind = cond.get("kind", "OTHER")
@@ -252,9 +317,14 @@ def _ai_draft(
                 blocking.add("CUSTOMER_CONDITION")
     conditions = list(condition_records.values())
 
+    total: Decimal | None = None
+    if lines and all(line.subtotal_rm is not None for line in lines):
+        total = sum(Decimal(line.subtotal_rm) for line in lines)
     status = "READY_FOR_APPROVAL" if lines and not blocking else "DISAMBIGUATION_REQUIRED"
     clarification, clarification_lang = build_clarification(issues, conditions, language_hint)
     allowed_actions = ["EDIT_DRAFT", "RESOLVE_ISSUE"]
+    if status == "READY_FOR_APPROVAL":
+        allowed_actions.append("APPROVE_AND_GENERATE_DO")
     if clarification is not None:
         allowed_actions.append("COPY_CLARIFICATION")
     return {
@@ -271,15 +341,19 @@ def _ai_draft(
             "phone_e164": customer["phone_e164"],
         },
         "masked_message": masked_text,
-        "ai_mode": "LLM",
+        "ai_mode": ai_mode,
         "lines": [line.model_dump(mode="json") for line in lines],
         "issues": [issue.model_dump(mode="json") for issue in [*issues, *conditions]],
         "conditions": [condition.model_dump(mode="json") for condition in conditions],
         "blocking_issues": sorted(blocking),
         "escalation_preview": [],
-        "totals": {"order_total": None, "currency": "MYR", "is_complete": False},
+        "totals": {
+            "order_total": format(total, ".2f") if total is not None else None,
+            "currency": "MYR",
+            "is_complete": total is not None,
+        },
         "allowed_actions": allowed_actions,
-        "blocked_actions": {"APPROVE_AND_GENERATE_DO": sorted(blocking)},
+        "blocked_actions": ({"APPROVE_AND_GENERATE_DO": sorted(blocking)} if blocking else {}),
         "clarification_draft": clarification.model_dump(mode="json") if clarification else None,
         "clarification_lang": clarification_lang,
         "ignored_spans": [dict(span) for span in raw.ignored_spans],
@@ -288,7 +362,7 @@ def _ai_draft(
     }
 
 
-def _guard_families_and_units(raw, settings, user, customer_id, masked_text):
+def _guard_families_and_units(raw, settings, user, customer_id, masked_text, catalog: Catalog):
     """Only exact, tenant/customer-scoped evidence may support AI fields."""
     with connect(settings) as conn:
         families = conn.execute(
@@ -316,9 +390,13 @@ def _guard_families_and_units(raw, settings, user, customer_id, masked_text):
     units += [
         (unit, alias) for unit, values in lexicon()["uom_aliases"].items() for alias in values
     ]
-    active = {family_id for family_id, _ in families}
+    active = {product.family_id for product in catalog.products}
     guarded = []
     for row in raw.rows:
+        if row.memory:
+            # Memory rows are derived from a confirmed alias + active catalog row.
+            guarded.append(row)
+            continue
         hits = {
             family_id
             for family_id, phrase in [*families, *aliases]
@@ -380,16 +458,42 @@ def parse_draft(
         raise MessageTooLongError()
 
     customer = _customer(settings, user, body.customer_id)
-    try:
-        raw = extractor.extract(
-            masked.masked_text,
-            body.language_hint,
-            request.state.request_id,
+    with connect(settings) as conn:
+        catalog = load_catalog(
+            conn,
+            tenant=user.tenant_id,
+            customer_id=body.customer_id,
+            tier=customer["tier"],
         )
-        validate_raw_extraction(raw, masked.masked_text)
+    memory, memory_covers = memory_rows(masked.masked_text, catalog)
+    memory_used = bool(memory_covers)
+    try:
+        if memory_covers:
+            # A confirmed customer alias plus an evidenced quantity bypasses
+            # the extraction provider entirely.
+            raw = RawExtraction(rows=tuple(memory))
+            validate_raw_extraction(raw, masked.masked_text)
+        else:
+            raw = extractor.extract(
+                masked.masked_text,
+                body.language_hint,
+                request.state.request_id,
+            )
+            validate_raw_extraction(raw, masked.masked_text)
+            raw, memory_used = merge_memory(raw, memory)
     except (AiServiceError, ValueError, TypeError) as exc:
         raise AiAndFallbackUnavailableError() from exc
-    raw = _guard_families_and_units(raw, settings, user, body.customer_id, masked.masked_text)
+    raw = _guard_families_and_units(
+        raw, settings, user, body.customer_id, masked.masked_text, catalog
+    )
+    if memory_covers:
+        ai_mode = "ALIAS_ONLY"
+    elif memory_used:
+        ai_mode = "MIXED"
+    elif isinstance(extractor, StubExtractor):
+        ai_mode = "FALLBACK"
+    else:
+        ai_mode = "LLM"
     now = datetime.now(timezone.utc).isoformat()
     draft_id = f"DRF_{uuid4().hex.upper()}"
     if raw.rows:
@@ -400,6 +504,8 @@ def parse_draft(
             draft_id=draft_id,
             now=now,
             language_hint=body.language_hint,
+            catalog=catalog,
+            ai_mode=ai_mode,
         )
     else:
         issue = Issue(**_unresolved_issue())
@@ -421,7 +527,7 @@ def parse_draft(
                 "phone_e164": customer["phone_e164"],
             },
             "masked_message": masked.masked_text,
-            "ai_mode": "FALLBACK" if isinstance(extractor, StubExtractor) else "LLM",
+            "ai_mode": ai_mode,
             "lines": [],
             "issues": [issue.model_dump(mode="json")],
             "conditions": [],
@@ -439,8 +545,6 @@ def parse_draft(
             "updated_at": now,
         }
 
-    if isinstance(extractor, StubExtractor):
-        draft["ai_mode"] = "FALLBACK"
     response_draft = OrderDraftResponse(**draft)
     persist_parse_draft(
         settings,
