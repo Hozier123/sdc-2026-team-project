@@ -20,6 +20,7 @@
 [ ] 运行 python -m app.migrations
 [ ] /healthz = 200
 [ ] /readyz = 200
+[✓] 数据侧 seed 计数签字（2026-10-23，范围仅 seed）
 [ ] 数据库使用专用非生产/演示库
 [ ] DATABASE_URL 只放平台 Secrets
 [ ] CORS_ALLOW_ORIGINS 加入前端公开域名

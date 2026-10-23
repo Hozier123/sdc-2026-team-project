@@ -138,3 +138,25 @@ cd backend
 ```
 
 当前不应声明：真实 AI 已验收、AI 准确率已完成、公开部署已完成。
+
+## 八、数据侧 seed 计数签字（2026-10-23）
+
+Zhou Jingxi 已确认：
+
+```text
+T1：40 products / 795 inventory / alias_cache 2 / customers 8 / users 3
+T2：16 products / 450 inventory / alias_cache 2 / customers 5 / users 3
+seed_manifest：2 行；T1 重复导入 already_loaded
+18 public tables / 6 triggers / 12 events；baseline 哈希一致
+/healthz、/readyz、/me：200
+结论：计数无差异，同意进入前端联调/部署
+```
+
+范围仅限 seed 计数与导入证据；业务字段级验收、AI 准确率、UAT 另行确认。
+记录见 `evidence/data-signoff/2026-10-23.md`。
+
+仓库 seed 已核验为最新 T1 派生版（`a7be80...d773`，`alias_cache=2`，
+无外层 BEGIN/COMMIT；更新提交 `1ec33d8` 已在 main），不需要新 PR。
+AI 评测草案（`dev_41_draft` / `frozen_eval_32_draft`）只作结构草案，
+正式文件待真实 parse/approve 后由数据岗提供；Intake 清单见
+`docs/ops/ai-evaluation-intake.md`。
