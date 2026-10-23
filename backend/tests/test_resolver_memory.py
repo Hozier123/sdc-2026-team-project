@@ -195,7 +195,7 @@ def test_save_then_second_parse_reuses_customer_alias(t1_db):
             }
         ),
         "CUS_RASA",
-        "辣椒酱 2 btl",
+        "CILI 2 btl",
     )
     assert first["status"] == "READY_FOR_APPROVAL"
     line = first["lines"][0]
