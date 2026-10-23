@@ -18,12 +18,15 @@ class RawRow:
     invalid_reason: str | None = None
     memory: bool = False
     alias: dict[str, Any] | None = None
+    field_evidence: tuple[dict[str, Any], ...] = ()
 
 
 @dataclass(frozen=True)
 class RawExtraction:
     rows: tuple[RawRow, ...] = ()
     ignored_spans: tuple[dict[str, Any], ...] = ()
+    ai_mode: str | None = None
+    conditions: tuple[dict[str, Any], ...] = ()
 
 
 class ExtractionProvider(Protocol):
