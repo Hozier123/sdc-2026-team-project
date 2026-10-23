@@ -116,6 +116,12 @@ def test_resolver_returns_pack_candidates_instead_of_guessing(t1_db):
     }
     assert "MULTIPLE_PACK_SIZES" in draft["blocking_issues"]
     assert "NO_CANDIDATE" not in draft["blocking_issues"]
+    clarification = draft["clarification_draft"]
+    assert clarification is not None
+    assert "Milo" in clarification["message"]
+    assert "1kg" in clarification["message"]
+    assert "2kg" in clarification["message"]
+    assert "RM" in clarification["message"]
 
 
 def test_resolver_returns_grade_candidates(t1_db):
