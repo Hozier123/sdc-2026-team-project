@@ -17,7 +17,10 @@ from tools.export_trial_record import (
     build_export,
     fetch_orders,
     load_fixture,
+    load_products_file,
     main,
+    sha256_file,
+    verify_products_file,
     write_outputs,
 )
 
@@ -268,3 +271,112 @@ def test_module_entry_point_is_wired():
     )
     assert result.returncode == 0
     assert "usage" in result.stdout.lower()
+
+
+def test_products_file_hash_and_sku_binding(tmp_path):
+    products = tmp_path / "products.csv"
+    products.write_text(
+        "sku_id,pack_size,grade\nSKU_OIL_5KG,5kg,\n",
+        encoding="utf-8",
+    )
+    sha = sha256_file(products)
+    mapped, meta = verify_products_file(
+        products,
+        expected_sha256=sha,
+        version="T1-0.1",
+        database_products={"SKU_OIL_5KG": {"pack_size": "5kg", "grade": None}},
+        used_skus={"SKU_OIL_5KG"},
+    )
+    assert mapped["SKU_OIL_5KG"]["pack_size"] == "5kg"
+    assert meta["verification"] == "FILE_HASH_AND_SKU_MATCH"
+    assert meta["sha256"] == sha
+    assert meta["matched_skus"] == ["SKU_OIL_5KG"]
+
+
+def test_products_file_rejects_hash_mismatch(tmp_path):
+    products = tmp_path / "products.csv"
+    products.write_text("sku_id,pack_size,grade\nSKU_OIL_5KG,5kg,\n", encoding="utf-8")
+    with pytest.raises(ExportError, match="SHA-256 mismatch"):
+        verify_products_file(
+            products,
+            expected_sha256="0" * 64,
+            version=None,
+            database_products=None,
+            used_skus={"SKU_OIL_5KG"},
+        )
+
+
+def test_products_file_rejects_database_value_mismatch(tmp_path):
+    products = tmp_path / "products.csv"
+    products.write_text("sku_id,pack_size,grade\nSKU_OIL_5KG,1kg,\n", encoding="utf-8")
+    with pytest.raises(ExportError, match="pack_size mismatch"):
+        verify_products_file(
+            products,
+            expected_sha256=None,
+            version=None,
+            database_products={"SKU_OIL_5KG": {"pack_size": "5kg", "grade": None}},
+            used_skus={"SKU_OIL_5KG"},
+        )
+
+
+def test_cli_fixture_with_bound_products_file(tmp_path):
+    fixture = tmp_path / "delivery_order.json"
+    fixture.write_text(json.dumps({"body": DO}), encoding="utf-8")
+    products = tmp_path / "products.csv"
+    products.write_text("sku_id,pack_size,grade\nSKU_OIL_5KG,5kg,\n", encoding="utf-8")
+    sha = sha256_file(products)
+
+    code = main(
+        [
+            "--fixture",
+            str(fixture),
+            "--case-id",
+            "TEST-01",
+            "--out-dir",
+            str(tmp_path / "out"),
+            "--products-file",
+            str(products),
+            "--products-sha256",
+            sha,
+            "--products-version",
+            "T1-0.1",
+        ]
+    )
+
+    assert code == 0
+    payload = json.loads((tmp_path / "out" / "TEST-01_do_lines.json").read_text(encoding="utf-8"))
+    assert payload["products"]["verification"] == "FILE_HASH_AND_SKU_MATCH"
+    assert payload["products"]["sha256"] == sha
+    assert payload["products"]["source_file"].endswith("products.csv")
+
+
+def test_cli_products_file_hash_mismatch_exits_1(tmp_path):
+    fixture = tmp_path / "delivery_order.json"
+    fixture.write_text(json.dumps({"body": DO}), encoding="utf-8")
+    products = tmp_path / "products.csv"
+    products.write_text("sku_id,pack_size,grade\nSKU_OIL_5KG,5kg,\n", encoding="utf-8")
+
+    code = main(
+        [
+            "--fixture",
+            str(fixture),
+            "--case-id",
+            "TEST-01",
+            "--out-dir",
+            str(tmp_path / "out"),
+            "--products-file",
+            str(products),
+            "--products-sha256",
+            "0" * 64,
+        ]
+    )
+
+    assert code == 1
+    assert not (tmp_path / "out" / "TEST-01_do_lines.json").exists()
+
+
+def test_products_file_requires_sku_and_pack_columns(tmp_path):
+    products = tmp_path / "products.csv"
+    products.write_text("sku_id,grade\nSKU_A,A\n", encoding="utf-8")
+    with pytest.raises(ExportError, match="pack_size"):
+        load_products_file(products)

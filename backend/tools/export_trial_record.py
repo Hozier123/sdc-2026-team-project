@@ -28,6 +28,7 @@ Usage (from ``backend/``)::
 
     python -m tools.export_trial_record --database-url "$DATABASE_URL" \\
         --tenant T1 --case-id TEST-01 --out-dir ../evidence/records \\
+        --products-file ../evidence/products/T1_products.csv \
         --products-version T1-0.1 --products-sha256 <sha>
 """
 
@@ -35,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import re
@@ -217,6 +219,86 @@ def load_fixture(path: Path) -> dict[str, Any]:
     return body
 
 
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_products_file(path: Path) -> dict[str, dict[str, Any]]:
+    """Load the CSV snapshot used to prove pack_size/grade inputs."""
+    if not path.is_file():
+        raise ExportError(f"products file not found: {path}")
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            fields = set(reader.fieldnames or ())
+            sku_field = (
+                "sku_id" if "sku_id" in fields else "product_id" if "product_id" in fields else None
+            )
+            if sku_field is None or "pack_size" not in fields or "grade" not in fields:
+                raise ExportError(
+                    "products file needs sku_id/product_id, pack_size and grade columns"
+                )
+            products: dict[str, dict[str, Any]] = {}
+            for line_no, row in enumerate(reader, start=2):
+                sku_id = (row.get(sku_field) or "").strip()
+                if not sku_id:
+                    raise ExportError(f"products file line {line_no}: empty SKU")
+                if sku_id in products:
+                    raise ExportError(f"products file line {line_no}: duplicate SKU {sku_id}")
+                products[sku_id] = {
+                    "pack_size": (row.get("pack_size") or "").strip() or None,
+                    "grade": (row.get("grade") or "").strip() or None,
+                }
+    except UnicodeDecodeError as exc:
+        raise ExportError("products file must be UTF-8") from exc
+    if not products:
+        raise ExportError("products file is empty")
+    return products
+
+
+def verify_products_file(
+    path: Path,
+    *,
+    expected_sha256: str | None,
+    version: str | None,
+    database_products: dict[str, dict[str, Any]] | None,
+    used_skus: Iterable[str],
+) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    """Bind products metadata to the actual file and to rows used in the DOs."""
+    if not path.is_file():
+        raise ExportError(f"products file not found: {path}")
+    actual_sha = sha256_file(path)
+    if expected_sha256 and actual_sha.casefold() != expected_sha256.casefold():
+        raise ExportError(
+            f"products SHA-256 mismatch: file={actual_sha} expected={expected_sha256}"
+        )
+    products = load_products_file(path)
+    matched: list[str] = []
+    for sku_id in sorted(set(used_skus)):
+        if sku_id not in products:
+            raise ExportError(f"products file has no row for DO SKU {sku_id}")
+        if database_products is not None:
+            if sku_id not in database_products:
+                raise ExportError(f"database has no product row for DO SKU {sku_id}")
+            database = database_products[sku_id]
+            if (products[sku_id]["pack_size"] or "") != (database.get("pack_size") or ""):
+                raise ExportError(f"products file pack_size mismatch for {sku_id}")
+            if (products[sku_id]["grade"] or "") != (database.get("grade") or ""):
+                raise ExportError(f"products file grade mismatch for {sku_id}")
+        matched.append(sku_id)
+    return products, {
+        "version": version,
+        "sha256": actual_sha,
+        "source_file": str(path),
+        "matched_skus": matched,
+        "verification": "FILE_HASH_AND_SKU_MATCH",
+    }
+
+
 def fetch_orders(
     database_url: str, tenant_id: str, do_number: str | None
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
@@ -314,7 +396,12 @@ def write_outputs(
     payload = {
         "case_id": case_id,
         "exported_at": datetime.now().astimezone().isoformat(),
-        "products": {**(products_meta or {}), "verification": "OPERATOR_ASSERTED_NOT_VERIFIED"},
+        "products": {
+            **(products_meta or {}),
+            "verification": (products_meta or {}).get(
+                "verification", "OPERATOR_ASSERTED_NOT_VERIFIED"
+            ),
+        },
         "totals_match": all(export.totals_match for export in exports),
         "mixed_orders": mixed,
         "order_mismatch_orders": order_mismatch,
@@ -338,6 +425,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--products-version", help="products snapshot version, e.g. T1-0.1")
     parser.add_argument("--products-sha256", help="products.csv SHA-256 used for pack_size/grade")
     parser.add_argument(
+        "--products-file",
+        help="products CSV used to independently bind pack_size/grade evidence",
+    )
+    parser.add_argument(
         "--no-total-row",
         action="store_true",
         help="omit the human-readable 合计 row from the CSV",
@@ -353,6 +444,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         products: dict[str, dict[str, Any]] = {}
+        database_products: dict[str, dict[str, Any]] | None = None
         if args.fixture:
             path = Path(args.fixture).expanduser().resolve()
             if not path.is_file():
@@ -361,12 +453,41 @@ def main(argv: list[str] | None = None) -> int:
         else:
             if not args.database_url:
                 raise ExportError("DATABASE_URL (or --database-url) is required")
-            orders, products = fetch_orders(args.database_url, args.tenant, args.do_number)
+            if not args.products_file:
+                raise ExportError("--products-file is required for database exports")
+            orders, database_products = fetch_orders(args.database_url, args.tenant, args.do_number)
             if not orders:
                 raise ExportError(
                     f"no delivery orders for tenant {args.tenant}"
                     + (f" and do_number {args.do_number}" if args.do_number else "")
                 )
+
+        used_skus = {
+            line.get("sku_id")
+            for do in orders
+            for line in do.get("lines", [])
+            if line.get("sku_id")
+        }
+        if args.products_file:
+            products_path = Path(args.products_file).expanduser().resolve()
+            products, products_meta = verify_products_file(
+                products_path,
+                expected_sha256=args.products_sha256,
+                version=args.products_version,
+                database_products=database_products,
+                used_skus=used_skus,
+            )
+        elif args.fixture:
+            products_meta = {
+                key: value
+                for key, value in (
+                    ("version", args.products_version),
+                    ("sha256", args.products_sha256),
+                )
+                if value
+            }
+        else:
+            raise ExportError("--products-file is required for database exports")
 
         exports = [
             build_export(
@@ -378,14 +499,6 @@ def main(argv: list[str] | None = None) -> int:
             )
             for do in orders
         ]
-        products_meta = {
-            key: value
-            for key, value in (
-                ("version", args.products_version),
-                ("sha256", args.products_sha256),
-            )
-            if value
-        }
         csv_path, json_path = write_outputs(
             Path(args.out_dir), args.case_id, exports, not args.no_total_row, products_meta
         )
