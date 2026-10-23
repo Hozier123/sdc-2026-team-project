@@ -273,5 +273,12 @@ export class HttpService implements Service {
   wake() {
     return this.request<AiStatus>("/ai/wake", "POST");
   }
-  // Discard is P1 and deliberately unavailable in live mode until its API is supplied.
+  async discard(id: string, version: number, note: string) {
+    const result = await this.request<Gate0["OrderDraft"]>(
+      `/orders/drafts/${encodeURIComponent(id)}/discard`,
+      "POST",
+      { expected_version: version, note },
+    );
+    return draftView(result);
+  }
 }

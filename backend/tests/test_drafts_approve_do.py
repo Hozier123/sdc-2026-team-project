@@ -715,3 +715,125 @@ def test_ai_status_offline_without_endpoint(seeded_db):
     assert wake["state"] == "OFFLINE"
     assert wake["accepted"] is False
     assert wake["fallback_available"] is True
+
+
+def test_clerk_discards_ready_draft_with_audit(seeded_db):
+    with _client(seeded_db) as client:
+        saved = _put(client)
+        assert saved.status_code == 200
+        assert "CANCEL_DRAFT" in saved.json()["allowed_actions"]
+
+        discarded = client.post(
+            "/api/v1/orders/drafts/DRF_T1/discard",
+            headers=_headers(CLERK),
+            json={
+                "expected_version": 2,
+                "note": "Customer cancelled; call +60 12-345 6789",
+            },
+        )
+        assert discarded.status_code == 200, discarded.text
+        draft = discarded.json()
+        assert draft["status"] == "REJECTED"
+        assert draft["termination_reason"] == "CLERK_DISCARDED"
+        assert draft["terminated_by_user_id"] == "USR_T1_CLERK"
+        assert "[REDACTED_PHONE]" in draft["termination_note"]
+        assert draft["allowed_actions"] == ["VIEW_ACTIVITY"]
+
+        fetched = client.get("/api/v1/orders/drafts/DRF_T1", headers=_headers(CLERK))
+        assert fetched.status_code == 200
+        assert fetched.json()["status"] == "REJECTED"
+        assert fetched.json()["termination_reason"] == "CLERK_DISCARDED"
+
+        again = client.post(
+            "/api/v1/orders/drafts/DRF_T1/discard",
+            headers=_headers(CLERK),
+            json={"expected_version": 2, "note": "again"},
+        )
+        assert again.status_code == 409
+        assert again.json()["error_code"] == "DRAFT_REJECTED"
+
+        blocked = _put(client)
+        assert blocked.status_code == 409
+        assert blocked.json()["error_code"] == "DRAFT_REJECTED"
+
+    with connect(seeded_db) as conn:
+        row = conn.execute(
+            "SELECT status, version, termination_reason, terminated_by_user_id, termination_note "
+            "FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()
+        audit = conn.execute(
+            "SELECT action, payload FROM audit_logs "
+            "WHERE tenant_id='T1' AND draft_id='DRF_T1' AND action='CANCEL_DRAFT'"
+        ).fetchone()
+    assert row[0] == "REJECTED"
+    assert row[1] == 2
+    assert row[2] == "CLERK_DISCARDED"
+    assert row[3] == "USR_T1_CLERK"
+    assert "[REDACTED_PHONE]" in row[4]
+    assert audit is not None
+    assert audit[0] == "CANCEL_DRAFT"
+    assert "[REDACTED_PHONE]" in audit[1]["note"]
+
+
+def test_discard_requires_note_and_current_version(seeded_db):
+    with _client(seeded_db) as client:
+        assert _put(client).status_code == 200
+        missing = client.post(
+            "/api/v1/orders/drafts/DRF_T1/discard",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert missing.status_code == 400
+        assert missing.json()["error_code"] == "NOTE_REQUIRED"
+
+        stale = client.post(
+            "/api/v1/orders/drafts/DRF_T1/discard",
+            headers=_headers(CLERK),
+            json={"expected_version": 1, "note": "duplicate"},
+        )
+        assert stale.status_code == 409
+        assert stale.json()["error_code"] == "STALE_VERSION"
+
+        denied = client.post(
+            "/api/v1/orders/drafts/DRF_T1/discard",
+            headers=_headers(WAREHOUSE),
+            json={"expected_version": 2, "note": "duplicate"},
+        )
+        assert denied.status_code == 403
+        assert denied.json()["error_code"] == "FORBIDDEN_ACTION"
+
+
+def test_discard_is_blocked_while_pending(seeded_db):
+    with _client(seeded_db) as client:
+        assert _put(client, lines=[_line(3)]).status_code == 200
+        pending = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert pending.status_code == 202, pending.text
+        blocked_pending = client.post(
+            "/api/v1/orders/drafts/DRF_T1/discard",
+            headers=_headers(CLERK),
+            json={"expected_version": 2, "note": "duplicate"},
+        )
+        assert blocked_pending.status_code == 409
+        assert blocked_pending.json()["error_code"] == "PENDING_OWNER_APPROVAL"
+
+
+def test_discard_is_blocked_after_approval(seeded_db):
+    with _client(seeded_db) as client:
+        assert _put(client).status_code == 200
+        approved = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert approved.status_code == 200, approved.text
+        blocked_approved = client.post(
+            "/api/v1/orders/drafts/DRF_T1/discard",
+            headers=_headers(CLERK),
+            json={"expected_version": 2, "note": "duplicate"},
+        )
+        assert blocked_approved.status_code == 409
+        assert blocked_approved.json()["error_code"] == "ALREADY_APPROVED"

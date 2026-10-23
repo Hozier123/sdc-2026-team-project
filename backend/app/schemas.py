@@ -352,6 +352,13 @@ class ApprovalListResponse(BaseModel):
     next_cursor: str | None = None
 
 
+class DiscardRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    expected_version: int = Field(ge=1)
+    note: str = Field(default="", max_length=500)
+
+
 class DecideRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
