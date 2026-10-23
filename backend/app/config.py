@@ -1,6 +1,7 @@
 """Configuration from the repository .env, overridden by process environment."""
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -17,10 +18,15 @@ class Settings(BaseSettings):
     )
 
     database_url: SecretStr | None = None
+    ai_provider: Literal["auto", "stub", "http", "runpod_adapter"] = "auto"
     ai_service_url: str | None = None
     ai_health_url: str | None = None
     ai_wake_url: str | None = None
     ai_api_key: SecretStr | None = None
+    runpod_api_key: SecretStr | None = None
+    runpod_endpoint_id: str | None = None
+    runpod_model_name: str = "Qwen/Qwen2.5-7B-Instruct-AWQ"
+    llm_timeout_s: float = Field(default=4.1, gt=0, le=120, allow_inf_nan=False)
     ai_timeout_s: float = Field(default=8.0, gt=0, le=120, allow_inf_nan=False)
     ai_wake_rate_limit_s: int = Field(default=60, ge=1, le=3600)
     ai_warmup_grace_s: int = Field(default=15, ge=0, le=600)
