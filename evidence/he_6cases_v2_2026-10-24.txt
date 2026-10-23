@@ -1,0 +1,80 @@
+==============================================================================
+HE MINGHAO 6-CASE ACCEPTANCE REPORT (PROMPT V2)
+Timestamp: 2026-10-23T18:51:25.876101+00:00
+Endpoint ID: lx22t9308hc10c
+Evaluator: scripts/eval_dev41_v1_v2.py (run_he_6cases_v2)
+Prompt Version: v2 (closed-set whitelist copy instruction)
+Cases Evaluated: 6 (Passed: 5, Failed: 1)
+==============================================================================
+
+[1] CASE: normal.json --> FAIL
+    Input: 'Tepung Gandum 5 ctn 1kg [REDACTED_PHONE]'
+    AI Mode: LLM | Latency: 1858.5ms
+    - Row 1:
+        extracted : span='Tepung Gandum 5 ctn', qty=5, uom='ctn', fam='FAM_TEPUNG', pack=None
+        expected  : span='Tepung Gandum 5 ctn 1kg', qty=5, uom='ctn', fam='FAM_FLOUR', pack='1kg'
+        diffs     : span: extracted='Tepung Gandum 5 ctn' vs expected='Tepung Gandum 5 ctn 1kg', pack: extracted='None' vs expected='1kg', fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_TEPUNG' maps to 'FAM_FLOUR' vs expected='FAM_FLOUR'
+    Audit Notes / Differences:
+      * span: extracted='Tepung Gandum 5 ctn' vs expected='Tepung Gandum 5 ctn 1kg'
+      * pack: extracted='None' vs expected='1kg'
+      * audit_code=MODEL_SPAN_TRUNCATED: Model span truncated '1kg', pack_size=None recorded per spec (prompt unchanged)
+
+[2] CASE: multi_line.json --> PASS
+    Input: 'Beras Wangi 10 bag\nMinyak Masak 4 ctn 1L\nGula Pasir 20 pack'
+    AI Mode: LLM | Latency: 3287.6ms
+    - Row 1:
+        extracted : span='Beras Wangi 10 bag', qty=10, uom='bag', fam='FAM_BERAS', pack=None
+        expected  : span='Beras Wangi 10 bag', qty=10, uom='bag', fam='FAM_RICE', pack=None
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_BERAS' maps to 'FAM_RICE' vs expected='FAM_RICE'
+    - Row 2:
+        extracted : span='Minyak Masak 4 ctn 1L', qty=4, uom='ctn', fam='FAM_MINYAK', pack='1L'
+        expected  : span='Minyak Masak 4 ctn 1L', qty=4, uom='ctn', fam='FAM_OIL', pack='1L'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+    - Row 3:
+        extracted : span='Gula Pasir 20 pack', qty=20, uom='pack', fam='FAM_GULA', pack=None
+        expected  : span='Gula Pasir 20 pack', qty=20, uom='pack', fam='FAM_SUGAR', pack=None
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_GULA' maps to 'FAM_SUGAR' vs expected='FAM_SUGAR'
+
+[3] CASE: multi_candidate.json --> PASS
+    Input: 'Minyak Masak 5 ctn 1L\nMinyak Masak 10 ctn 250ml'
+    AI Mode: LLM | Latency: 2678.2ms
+    - Row 1:
+        extracted : span='Minyak Masak 5 ctn 1L', qty=5, uom='ctn', fam='FAM_MINYAK', pack='1L'
+        expected  : span='Minyak Masak 5 ctn 1L', qty=5, uom='ctn', fam='FAM_OIL', pack='1L'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+    - Row 2:
+        extracted : span='Minyak Masak 10 ctn 250ml', qty=10, uom='ctn', fam='FAM_MINYAK', pack='250ml'
+        expected  : span='Minyak Masak 10 ctn 250ml', qty=10, uom='ctn', fam='FAM_OIL', pack='250ml'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+
+[4] CASE: ambiguous.json --> PASS
+    Input: 'Beras Wangi 2.5 ctn\nMinyak Masak 1,5kg'
+    AI Mode: LLM | Latency: 2710.0ms
+    - Row 1:
+        extracted : span='Beras Wangi 2.5 ctn', qty=None, uom='ctn', fam='FAM_BERAS', pack=None
+        expected  : span='Beras Wangi 2.5 ctn', qty=None, uom='ctn', fam='FAM_RICE', pack=None
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_BERAS' maps to 'FAM_RICE' vs expected='FAM_RICE'
+    - Row 2:
+        extracted : span='Minyak Masak 1,5kg', qty=None, uom='kg', fam='FAM_MINYAK', pack=None
+        expected  : span='Minyak Masak 1,5kg', qty=None, uom='kg', fam='FAM_OIL', pack=None
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+
+[5] CASE: condition.json --> PASS
+    Input: 'Tepung Gandum 5 ctn, kalau RM95 untuk 1 ctn boleh?'
+    AI Mode: LLM | Latency: 1902.7ms
+    - Row 1:
+        extracted : span='Tepung Gandum 5 ctn', qty=5, uom='ctn', fam='FAM_TEPUNG', pack=None
+        expected  : span='Tepung Gandum 5 ctn', qty=5, uom='ctn', fam='FAM_FLOUR', pack=None
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_TEPUNG' maps to 'FAM_FLOUR' vs expected='FAM_FLOUR'
+
+[6] CASE: empty.json --> PASS
+    Input: 'hantar esok terima kasih'
+    AI Mode: LLM | Latency: 1036.5ms
+    Ignored Span Coverage: PASS
+    Exact Segmentation Required: False
+    Raw Ignored Spans: ['hantar esok terima kasih']
+    Coverage Diff: ''
+
+==============================================================================
+SUMMARY: 5/6 CASES MET ACCEPTANCE SPECIFICATIONS.
+==============================================================================

@@ -86,10 +86,12 @@ class RunPodExtractor:
         endpoint_id: Optional[str] = None,
         timeout_s: Optional[float] = None,
         base_url: Optional[str] = None,
+        prompt_version: str = "v1",
     ):
         self.api_key = api_key if api_key is not None else os.getenv("RUNPOD_API_KEY", "")
         self.endpoint_id = endpoint_id if endpoint_id is not None else os.getenv("RUNPOD_ENDPOINT_ID", "")
         self.timeout_s = timeout_s or float(os.getenv("LLM_TIMEOUT_S", str(DEFAULT_TIMEOUT_S)))
+        self.prompt_version = prompt_version
 
         if base_url:
             self.api_url = base_url
@@ -168,7 +170,7 @@ class RunPodExtractor:
                     raise fb_err
                 raise AiAndFallbackUnavailableError(str(fb_err)) from fb_err
 
-        system_prompt = build_system_prompt(family_ids)
+        system_prompt = build_system_prompt(family_ids, prompt_version=self.prompt_version)
         payload = {
             "model": os.getenv("MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct-AWQ"),
             "messages": [
