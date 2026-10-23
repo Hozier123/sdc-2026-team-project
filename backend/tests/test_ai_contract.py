@@ -5,6 +5,7 @@ import pytest
 
 from app.config import REPO_ROOT
 from app.extraction.ai import (
+    LEGACY_HTTP_FAMILY_ALIASES,
     AiPayloadError,
     AiServiceError,
     HttpAiExtractor,
@@ -40,6 +41,7 @@ def test_ai_samples_convert_to_backend_extraction(name):
     for row, expected_row in zip(raw.rows, expected["rows"], strict=True):
         assert row.span == expected_row["span"]
         assert row.span in masked_text
+        assert row.fam == expected_row["fam"]
         assert row.qty == expected_row["qty"]
         assert row.uom == expected_row["uom"]
         assert row.pack_size == expected_row["pack_size"]
@@ -48,12 +50,23 @@ def test_ai_samples_convert_to_backend_extraction(name):
         assert masked_text[ignored["start"] : ignored["end"]] == expected_ignored
 
 
-def test_ai_samples_map_generic_families_to_canonical_seed():
+def test_generic_family_is_not_translated_by_default():
+    """Generic contract fixtures stay generic: they are not T1 ground truth."""
     sample = _sample("normal")
     raw = to_raw_extraction(sample["expected_response"], sample["input"]["masked_text"])
-    assert raw.rows[0].fam == "FAM_TEPUNG"
+    assert raw.rows[0].fam == "FAM_FLOUR"
     assert raw.rows[0].uom == "ctn"
     assert raw.rows[0].qty == 5
+
+
+def test_legacy_http_family_translation_is_explicit_opt_in():
+    sample = _sample("normal")
+    raw = to_raw_extraction(
+        sample["expected_response"],
+        sample["input"]["masked_text"],
+        family_aliases=LEGACY_HTTP_FAMILY_ALIASES,
+    )
+    assert raw.rows[0].fam == "FAM_TEPUNG"
 
 
 def test_ai_condition_is_classified_as_unit_price_condition():
@@ -154,7 +167,11 @@ def test_ai_draft_conversion_builds_lines_and_conditions():
 
     sample = _sample("condition")
     masked_text = sample["input"]["masked_text"]
-    raw = to_raw_extraction(sample["expected_response"], masked_text)
+    raw = to_raw_extraction(
+        sample["expected_response"],
+        masked_text,
+        family_aliases=LEGACY_HTTP_FAMILY_ALIASES,
+    )
     draft = _ai_draft(
         customer={
             "customer_id": "CUS_ALI",

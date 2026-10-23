@@ -1,5 +1,7 @@
 {
   "description": "Normal single-line order with quantity, unit of measure, product family, pack size, and masked PII token",
+  "family_scored": false,
+  "reason": "GENERIC_CONTRACT_SAMPLE",
   "input": {
     "masked_text": "Tepung Gandum 5 ctn 1kg [REDACTED_PHONE]",
     "language_hint": "ms",

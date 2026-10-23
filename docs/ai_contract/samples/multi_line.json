@@ -1,5 +1,7 @@
 {
   "description": "Multi-line order with multiple distinct products across lines (Rice, Cooking Oil, Sugar)",
+  "family_scored": false,
+  "reason": "GENERIC_CONTRACT_SAMPLE",
   "input": {
     "masked_text": "Beras Wangi 10 bag\nMinyak Masak 4 ctn 1L\nGula Pasir 20 pack",
     "language_hint": "ms",

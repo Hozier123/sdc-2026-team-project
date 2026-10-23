@@ -3,6 +3,13 @@
 The provider returns only ``rows`` and ``ignored_spans``. This module turns that
 wire format into the backend's ``RawExtraction`` and classifies the verbatim
 condition phrases using the frozen H5 lexicon.
+
+``HttpAiExtractor`` is the **legacy** HTTP transport for that contract. It is not
+the production parse-draft path: the supported path is the in-process
+``AI_PROVIDER=runpod_adapter`` provider, which injects the tenant catalog and
+validates ``fam`` against it without any translation. Generic contract IDs
+(``FAM_FLOUR``) are only translated on the legacy HTTP path, and that
+translation must never become T1 evaluation ground truth.
 """
 
 from __future__ import annotations
@@ -21,17 +28,6 @@ from app.config import REPO_ROOT
 from app.extraction.base import RawExtraction, RawRow
 
 AI_CONTRACT_VERSION = "AI-Contract-v1.3"
-
-# AI samples use generic family names. The canonical seed uses tenant-specific
-# IDs; this mapping is intentionally explicit rather than fuzzy.
-DEFAULT_FAMILY_ALIASES: dict[str, str] = {
-    "FAM_FLOUR": "FAM_TEPUNG",
-    "FAM_RICE": "FAM_BERAS",
-    "FAM_OIL": "FAM_MINYAK",
-    "FAM_SUGAR": "FAM_GULA",
-    "FAM_SALT": "FAM_GARAM",
-    "FAM_EGG": "FAM_TELUR",
-}
 
 _AMOUNT = re.compile(r"rm\s*(\d+(?:\.\d{1,2})?)", re.IGNORECASE)
 _UNIT_PRICE = re.compile(
@@ -178,7 +174,13 @@ def to_raw_extraction(
     masked_text: str,
     family_aliases: dict[str, str] | None = None,
 ) -> RawExtraction:
-    """Validate an AI payload and convert it to the backend provider type."""
+    """Validate an AI payload and convert it to the backend provider type.
+
+    ``family_aliases`` is an explicit opt-in mapping. No implicit tenant mapping
+    is applied here: a generic contract ID such as ``FAM_FLOUR`` stays as-is
+    unless the caller passes a mapping. The in-process RunPod path never calls
+    this function; it converts adapter output directly.
+    """
     try:
         if isinstance(payload, AiExtraction):
             parsed = payload
@@ -186,7 +188,7 @@ def to_raw_extraction(
             parsed = AiExtraction.model_validate(payload)
     except Exception as exc:  # pydantic's ValidationError is intentionally narrow
         raise AiPayloadError(f"AI response failed schema validation: {exc}") from exc
-    aliases = {**DEFAULT_FAMILY_ALIASES, **(family_aliases or {})}
+    aliases = dict(family_aliases or {})
     rows: list[RawRow] = []
     for row in parsed.rows:
         _offset(masked_text, row.span)
@@ -215,8 +217,30 @@ class AiServiceError(RuntimeError):
     """The configured AI service is unavailable or returned an invalid payload."""
 
 
+# LEGACY HTTP SHIM — NOT EVAL TRUTH.
+# Only ``HttpAiExtractor`` (AI_PROVIDER=http, deprecated) applies this mapping.
+# The in-process ``runpod_adapter`` path validates ``fam`` against the injected
+# tenant catalog and never translates generic contract IDs. Do not use this
+# table to build T1 evaluation truth.
+LEGACY_HTTP_FAMILY_ALIASES: dict[str, str] = {
+    "FAM_FLOUR": "FAM_TEPUNG",
+    "FAM_RICE": "FAM_BERAS",
+    "FAM_OIL": "FAM_MINYAK",
+    "FAM_SUGAR": "FAM_GULA",
+    "FAM_SALT": "FAM_GARAM",
+    "FAM_EGG": "FAM_TELUR",
+}
+
+
 class HttpAiExtractor:
-    """HTTP client for Xiong's AI-Contract-v1.3 microservice endpoint."""
+    """Deprecated HTTP client for Xiong's AI-Contract-v1.3 microservice endpoint.
+
+    This transport predates the in-process adapter. It translates generic
+    contract family IDs through ``LEGACY_HTTP_FAMILY_ALIASES`` and never injects
+    a tenant catalog. It is retained only for compatibility; parse-draft's
+    production path is ``AI_PROVIDER=runpod_adapter`` and must not use this
+    mapping as T1 family ground truth.
+    """
 
     def __init__(
         self,
@@ -266,7 +290,10 @@ class HttpAiExtractor:
             payload = response.json()
         except ValueError as exc:
             raise AiServiceError("AI service returned non-JSON") from exc
+        # Legacy transport: translate generic contract IDs explicitly here, so
+        # ``to_raw_extraction`` itself stays translation-free.
+        aliases = {**LEGACY_HTTP_FAMILY_ALIASES, **(self.family_aliases or {})}
         try:
-            return to_raw_extraction(payload, masked_text, self.family_aliases)
+            return to_raw_extraction(payload, masked_text, aliases)
         except AiPayloadError:
             raise AiServiceError("AI service returned an invalid payload") from None

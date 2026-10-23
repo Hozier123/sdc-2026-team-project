@@ -1,5 +1,7 @@
 {
   "description": "Decimal / fractional quantity interception ('2.5 ctn' and '1,5kg') defensively downgraded to qty: null",
+  "family_scored": false,
+  "reason": "GENERIC_CONTRACT_SAMPLE",
   "input": {
     "masked_text": "Beras Wangi 2.5 ctn\nMinyak Masak 1,5kg",
     "language_hint": "ms",

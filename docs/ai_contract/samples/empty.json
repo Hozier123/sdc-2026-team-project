@@ -1,5 +1,7 @@
 {
   "description": "Conversational chitchat and non-conditional delivery message yielding empty rows and populated ignored_spans",
+  "family_scored": false,
+  "reason": "GENERIC_CONTRACT_SAMPLE",
   "input": {
     "masked_text": "hantar esok terima kasih",
     "language_hint": "ms",

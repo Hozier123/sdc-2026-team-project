@@ -45,6 +45,9 @@ def test_load_samples_returns_exactly_six_canonical_files():
         "multi_candidate",
         "multi_line",
     ]
+    # Zhou 2026-10-24 decision B: generic contract fixtures are never T1 truth.
+    assert all(sample["family_scored"] is False for sample in samples)
+    assert all(sample["reason"] == "GENERIC_CONTRACT_SAMPLE" for sample in samples)
 
 
 def test_run_samples_preserves_request_actual_and_summary():
@@ -67,6 +70,7 @@ def test_run_samples_preserves_request_actual_and_summary():
         "mixed": 0,
         "alias_only": 0,
         "errors": 0,
+        "family_scored_samples": 0,
     }
 
 
