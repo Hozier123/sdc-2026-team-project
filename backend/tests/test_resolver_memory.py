@@ -188,7 +188,7 @@ def test_save_then_second_parse_reuses_customer_alias(t1_db):
         t1_db,
         _provider(
             {
-                "span": "辣椒酱 2 btl",
+                "span": "CILI 2 btl",
                 "qty": 2,
                 "uom": "btl",
                 "fam": "FAM_CILI",
@@ -232,7 +232,7 @@ def test_save_then_second_parse_reuses_customer_alias(t1_db):
         second = client.post(
             "/api/v1/orders/parse-draft",
             headers=_headers(),
-            json={"customer_id": "CUS_RASA", "message_text": "辣椒酱 2 btl"},
+            json={"customer_id": "CUS_RASA", "message_text": "CILI 2 btl"},
         )
     assert second.status_code == 200, second.text
     body = second.json()
