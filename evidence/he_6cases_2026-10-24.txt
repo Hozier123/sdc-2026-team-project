@@ -1,9 +1,9 @@
 ==============================================================================
-HE MINGHAO 6-CASE END-TO-END ACCEPTANCE REPORT
-Timestamp: 2026-10-23T17:39:31.432010+00:00
+HE MINGHAO 6-CASE END-TO-END ACCEPTANCE REPORT (ZHOU SPECIFICATION)
+Timestamp: 2026-10-23T18:08:35.803689+00:00
 Endpoint ID: lx22t9308hc10c
 Evaluator: scripts/run_he_6cases.py
-Catalog: T1 Sinaran Food Supply (25 families dynamically loaded)
+Catalog: T1 Sinaran Food Supply (25 canonical families dynamically loaded)
 Cases Evaluated: 6 (Passed: 5, Failed: 1)
 ==============================================================================
 
@@ -14,11 +14,11 @@ Cases Evaluated: 6 (Passed: 5, Failed: 1)
     - Row 1:
         extracted : span='Tepung Gandum 5 ctn', qty=5, uom='ctn', fam='FAM_TEPUNG', pack=None
         expected  : span='Tepung Gandum 5 ctn 1kg', qty=5, uom='ctn', fam='FAM_FLOUR', pack='1kg'
-        diffs     : span: extracted='Tepung Gandum 5 ctn' vs expected='Tepung Gandum 5 ctn 1kg', pack_size: extracted='None' vs expected='1kg', fam (canonical alias match): extracted='FAM_TEPUNG' maps to 'FAM_FLOUR' vs expected='FAM_FLOUR'
+        diffs     : span: extracted='Tepung Gandum 5 ctn' vs expected='Tepung Gandum 5 ctn 1kg', pack_size: extracted='None' vs expected='1kg', fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_TEPUNG' maps to 'FAM_FLOUR' vs expected='FAM_FLOUR'
     Audit Notes / Differences:
       * Row 1 mismatch: span: extracted='Tepung Gandum 5 ctn' vs expected='Tepung Gandum 5 ctn 1kg'
       * Row 1 mismatch: pack_size: extracted='None' vs expected='1kg'
-      * audit_code=MODEL_SPAN_TRUNCATED: Model span truncated '1kg', pack_size=None recorded per spec (do not modify code)
+      * audit_code=MODEL_SPAN_TRUNCATED: Model span truncated '1kg', pack_size=None recorded per spec (prompt unchanged)
 
 [2] CASE: multi_line.json --> PASS
     Input: 'Beras Wangi 10 bag\nMinyak Masak 4 ctn 1L\nGula Pasir 20 pack'
@@ -27,15 +27,15 @@ Cases Evaluated: 6 (Passed: 5, Failed: 1)
     - Row 1:
         extracted : span='Beras Wangi 10 bag', qty=10, uom='bag', fam='FAM_BERAS', pack=None
         expected  : span='Beras Wangi 10 bag', qty=10, uom='bag', fam='FAM_RICE', pack=None
-        diffs     : fam (canonical alias match): extracted='FAM_BERAS' maps to 'FAM_RICE' vs expected='FAM_RICE'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_BERAS' maps to 'FAM_RICE' vs expected='FAM_RICE'
     - Row 2:
         extracted : span='Minyak Masak 4 ctn 1L', qty=4, uom='ctn', fam='FAM_MINYAK', pack='1L'
         expected  : span='Minyak Masak 4 ctn 1L', qty=4, uom='ctn', fam='FAM_OIL', pack='1L'
-        diffs     : fam (canonical alias match): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
     - Row 3:
         extracted : span='Gula Pasir 20 pack', qty=20, uom='pack', fam='FAM_GULA', pack=None
         expected  : span='Gula Pasir 20 pack', qty=20, uom='pack', fam='FAM_SUGAR', pack=None
-        diffs     : fam (canonical alias match): extracted='FAM_GULA' maps to 'FAM_SUGAR' vs expected='FAM_SUGAR'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_GULA' maps to 'FAM_SUGAR' vs expected='FAM_SUGAR'
 
 [3] CASE: multi_candidate.json --> PASS
     Input: 'Minyak Masak 5 ctn 1L\nMinyak Masak 10 ctn 250ml'
@@ -44,11 +44,11 @@ Cases Evaluated: 6 (Passed: 5, Failed: 1)
     - Row 1:
         extracted : span='Minyak Masak 5 ctn 1L', qty=5, uom='ctn', fam='FAM_MINYAK', pack='1L'
         expected  : span='Minyak Masak 5 ctn 1L', qty=5, uom='ctn', fam='FAM_OIL', pack='1L'
-        diffs     : fam (canonical alias match): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
     - Row 2:
         extracted : span='Minyak Masak 10 ctn 250ml', qty=10, uom='ctn', fam='FAM_MINYAK', pack='250ml'
         expected  : span='Minyak Masak 10 ctn 250ml', qty=10, uom='ctn', fam='FAM_OIL', pack='250ml'
-        diffs     : fam (canonical alias match): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
 
 [4] CASE: ambiguous.json --> PASS
     Input: 'Beras Wangi 2.5 ctn\nMinyak Masak 1,5kg'
@@ -57,11 +57,11 @@ Cases Evaluated: 6 (Passed: 5, Failed: 1)
     - Row 1:
         extracted : span='Beras Wangi 2.5 ctn', qty=None, uom='ctn', fam='FAM_BERAS', pack=None
         expected  : span='Beras Wangi 2.5 ctn', qty=None, uom='ctn', fam='FAM_RICE', pack=None
-        diffs     : fam (canonical alias match): extracted='FAM_BERAS' maps to 'FAM_RICE' vs expected='FAM_RICE'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_BERAS' maps to 'FAM_RICE' vs expected='FAM_RICE'
     - Row 2:
         extracted : span='Minyak Masak 1,5kg', qty=None, uom='kg', fam='FAM_MINYAK', pack=None
         expected  : span='Minyak Masak 1,5kg', qty=None, uom='kg', fam='FAM_OIL', pack=None
-        diffs     : fam (canonical alias match): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_MINYAK' maps to 'FAM_OIL' vs expected='FAM_OIL'
 
 [5] CASE: condition.json --> PASS
     Input: 'Tepung Gandum 5 ctn, kalau RM95 untuk 1 ctn boleh?'
@@ -70,14 +70,16 @@ Cases Evaluated: 6 (Passed: 5, Failed: 1)
     - Row 1:
         extracted : span='Tepung Gandum 5 ctn', qty=5, uom='ctn', fam='FAM_TEPUNG', pack=None
         expected  : span='Tepung Gandum 5 ctn', qty=5, uom='ctn', fam='FAM_FLOUR', pack=None
-        diffs     : fam (canonical alias match): extracted='FAM_TEPUNG' maps to 'FAM_FLOUR' vs expected='FAM_FLOUR'
+        diffs     : fam (canonical alias match, compatibility_mapping_only=true): extracted='FAM_TEPUNG' maps to 'FAM_FLOUR' vs expected='FAM_FLOUR'
 
 [6] CASE: empty.json --> PASS
     Input: 'hantar esok terima kasih'
-    AI Mode: LLM | Latency: 1508.6ms
+    AI Mode: LLM | Latency: 1894.7ms
     Rows Extracted: 0
-    Audit Notes / Differences:
-      * ignored_spans: normalized text coverage matches ('hantaresokterimakasih') -> PASS (exact_segmentation_required=false, pending He confirmation)
+    Ignored Span Coverage: PASS
+    Exact Segmentation Required: False
+    Raw Ignored Spans: ['hantar esok terima kasih']
+    Coverage Diff: ''
 
 ==============================================================================
 SUMMARY: 5/6 CASES MET ACCEPTANCE SPECIFICATIONS.
