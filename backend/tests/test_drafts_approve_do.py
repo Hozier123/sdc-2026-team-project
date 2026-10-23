@@ -178,10 +178,14 @@ def test_parse_uses_ai_rows_instead_of_runtime_error(seeded_db):
     assert parsed.status_code == 200, parsed.text
     body = parsed.json()
     assert body["ai_mode"] == "LLM"
-    assert body["status"] == "DISAMBIGUATION_REQUIRED"
+    assert body["status"] == "READY_FOR_APPROVAL"
     assert len(body["lines"]) == 1
-    assert body["lines"][0]["source_span"] == "Milo 5 ctn"
-    assert any(issue["reason_code"] == "NO_CANDIDATE" for issue in body["issues"])
+    line = body["lines"][0]
+    assert line["source_span"] == "Milo 5 ctn"
+    assert line["sku_id"] == "SKU_MILO_1KG"
+    assert line["match_source"] == "LLM_EXTRACTED"
+    assert line["candidate_skus"] == []
+    assert not any(issue["reason_code"] == "NO_CANDIDATE" for issue in body["issues"])
 
 
 def test_put_then_direct_approve_and_do(seeded_db):

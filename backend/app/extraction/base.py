@@ -14,6 +14,8 @@ class RawRow:
     fam: str | None = None
     pack_size: str | None = None
     conds: tuple[dict[str, Any], ...] = ()
+    memory: bool = False
+    alias: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
