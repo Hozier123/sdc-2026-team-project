@@ -1075,6 +1075,9 @@ export function OrderDetail({
                 <CopyButton
                   text={draft.clarification_draft.message}
                   onCopy={notify}
+                  onCopied={() =>
+                    service.clarificationCopied?.(id, draft.version)
+                  }
                   label="Copy clarification"
                 />
                 <p className="micro-copy">

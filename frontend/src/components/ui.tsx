@@ -229,10 +229,12 @@ export function Modal({
 export function CopyButton({
   text,
   onCopy,
+  onCopied,
   label = "Copy message",
 }: {
   text: string;
   onCopy: (s: string) => void;
+  onCopied?: () => void | Promise<void>;
   label?: string;
 }) {
   return (
@@ -242,6 +244,9 @@ export function CopyButton({
         try {
           await navigator.clipboard.writeText(text);
           onCopy("Copied to clipboard. Send it when you’re ready.");
+          void Promise.resolve()
+            .then(() => onCopied?.())
+            .catch(() => undefined);
         } catch {
           onCopy(
             "Clipboard is unavailable. Select and copy the message manually.",
