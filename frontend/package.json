@@ -14,8 +14,10 @@
     "mock:scenario": "node scripts/fixture_scenario.mjs"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
+    "gsap": "^3.15.0",
     "lucide-react": "0.468.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",

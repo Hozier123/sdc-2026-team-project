@@ -7,6 +7,9 @@ import { SeamlessBackdrop } from "./SeamlessBackdrop";
 import { useIntroMotion } from "./useIntroMotion";
 import { usePageVisibility } from "./usePageVisibility";
 import { advanceSpring } from "../lib/spring";
+import { useIntroChoreography } from "./useIntroChoreography";
+import { IntroDepthForeground } from "./IntroDepthForeground";
+import "../styles/intro-depth.css";
 
 const VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_133255_956f653f-5d80-4b06-abd5-0f46c98b60fa.mp4";
@@ -56,33 +59,6 @@ const GREETINGS: Greeting[] = [
   { text: "Xin chào", lang: "Vietnamese", region: "Vietnam" },
   { text: "Kumusta", lang: "Filipino", region: "Philippines" },
   { text: "Jambo", lang: "Swahili", region: "Kenya" },
-];
-
-const NOTES = [
-  {
-    n: "001",
-    title: "AI reads.",
-    body: "English, Malay and Chinese messages become one order draft. Unclear specifications go back to the customer.",
-    side: "left",
-  },
-  {
-    n: "002",
-    title: "Rules check.",
-    body: "Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically.",
-    side: "right",
-  },
-  {
-    n: "003",
-    title: "People approve.",
-    body: "Routine orders go to the clerk. Discounts, large orders and credit notices go to the owner. Stock limits always apply.",
-    side: "left",
-  },
-] as const;
-
-const NOTE_POS: { top: string }[] = [
-  { top: "18%" },
-  { top: "42%" },
-  { top: "64%" },
 ];
 
 const RING_TILTS: [number, number, number][] = [
@@ -320,7 +296,11 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
   const motionPaused = !usePageVisibility();
   const introRef = useRef<HTMLDivElement | null>(null);
   const atmosphereRef = useRef<HTMLDivElement | null>(null);
-  const enterHintRef = useRef<HTMLSpanElement | null>(null);
+  const enterHintRef = useRef<HTMLButtonElement | null>(null);
+  const entryDockRef = useRef<HTMLDivElement | null>(null);
+  const backgroundRef = useRef<HTMLDivElement | null>(null);
+  const foregroundRef = useRef<HTMLDivElement | null>(null);
+  const openingRef = useRef<HTMLElement | null>(null);
   const { ringRef, dotRef, pointer } = useIntroMotion(
     introRef,
     atmosphereRef,
@@ -342,6 +322,10 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
   const htmlPortal = useRef<HTMLDivElement | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const rings = useMemo(buildNodes, []);
+  const { chapter, reduced } = useIntroChoreography(introRef, {
+    background: backgroundRef, scene: canvasWrapRef, foreground: foregroundRef,
+    opening: openingRef, notes: noteRefs, closing: closingRef, entry: entryDockRef, stages: STAGES,
+  });
 
   useEffect(() => {
     const intro = introRef.current;
@@ -386,6 +370,8 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
         event.shiftKey
       )
         return;
+      // Native keyboard activation of the real entry button is never a drag.
+      if (event.detail === 0) { pointer = null; enter(); return; }
       const dragged =
         cancelled ||
         (pointer &&
@@ -440,51 +426,25 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
     return () => removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    const apply = () => {
-      const vh = window.innerHeight || 1;
-      const total = (STAGES - 1) * vh;
-      const p = total > 0 ? clamp(window.scrollY / total, 0, 1) : 0;
-      const sf = p * (STAGES - 1);
-      const closingW = clamp(sf - (STAGES - 2), 0, 1);
-      noteRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const reveal = clamp((sf - (0.7 + i * 0.8)) / 0.8, 0, 1);
-        const w = reveal * (1 - closingW);
-        el.style.opacity = String(w);
-        el.style.transform = `translateY(${(1 - reveal) * 26}px)`;
-      });
-      if (closingRef.current) {
-        closingRef.current.style.opacity = String(closingW);
-        closingRef.current.style.pointerEvents =
-          closingW > 0.5 ? "auto" : "none";
-      }
-      if (canvasWrapRef.current)
-        canvasWrapRef.current.style.opacity = String(1 - closingW * 0.55);
-    };
-    apply();
-    addEventListener("scroll", apply, { passive: true });
-    addEventListener("resize", apply);
-    return () => {
-      removeEventListener("scroll", apply);
-      removeEventListener("resize", apply);
-    };
-  }, []);
-
   return (
     <>
       <div
         ref={introRef}
         data-motion-paused={motionPaused}
-        role="button"
-        tabIndex={0}
-        aria-label="Enter KiraOrder workspace"
+        data-motion-policy="full"
+        data-intro-chapter={chapter}
+        data-reduced-motion={reduced}
+        role="main"
+        tabIndex={-1}
+        aria-label="KiraOrder introduction"
         aria-describedby="intro-enter-hint"
         className="intro-root group relative cursor-pointer text-[#e2ebe9] outline-none"
         style={{ background: "#05090f" }}
       >
-        {/* Blended full-page backdrop: nebula base + generated animation, no hard planet frame */}
-        <div className="fixed inset-0 z-0 overflow-hidden">
+        <div className="intro-depth-viewport">
+        <div className="intro-depth-stage">
+        {/* The background plane contains the independent spring atmosphere. */}
+        <div ref={backgroundRef} className="intro-depth-background" data-depth-layer="background">
           <div ref={atmosphereRef} className="intro-atmosphere">
             <div
               className="absolute inset-0"
@@ -511,7 +471,8 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
         </div>
 
         {/* Orbiting greetings */}
-        <div ref={canvasWrapRef} className="fixed inset-0 z-10">
+        <div ref={canvasWrapRef} className="intro-depth-middle" data-depth-layer="middle">
+          <div data-intro-welcome="" className="absolute inset-0">
           <div
             ref={htmlPortal}
             className="pointer-events-none absolute inset-0 z-20"
@@ -541,101 +502,37 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
               />
             </Suspense>
           </Canvas>
-        </div>
-
-        {/* Scroll-revealed side story notes */}
-        {NOTES.map((note, i) => (
-          <aside
-            key={note.n}
-            ref={(el) => {
-              noteRefs.current[i] = el;
-            }}
-            className={`pointer-events-none fixed z-20 w-[min(340px,27vw)] opacity-0 ${
-              note.side === "left"
-                ? "left-[5vw] text-left"
-                : "right-[5vw] text-right"
-            }`}
-            style={{ top: NOTE_POS[i].top, textShadow: "0 2px 16px #03070c" }}
-          >
-            <div
-              className="text-[15px] tracking-[0.16em] text-[#a5e6c7]"
-              style={{ fontFamily: SERIF }}
-            >
-              {note.n}
-            </div>
-            <h2
-              className="my-3 text-[clamp(34px,3vw,46px)] leading-[1.1] text-[#e2ebe9]"
-              style={{ fontFamily: SERIF }}
-            >
-              {note.title}
-            </h2>
-            <p
-              className="text-[22px] leading-[1.55] text-[#b4c5cf]"
-              style={{ fontFamily: SERIF, textWrap: "pretty" }}
-            >
-              {note.body}
-            </p>
-            <div
-              className={`mt-5 h-px w-14 bg-[#a5e6c7]/40 ${note.side === "right" ? "ml-auto" : ""}`}
-            />
-          </aside>
-        ))}
-
-        {/* Closing / entry */}
-        <div
-          ref={closingRef}
-          className="pointer-events-none fixed inset-0 z-20 flex flex-col items-center justify-center px-10 text-center opacity-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 50% 40%, rgba(16,30,42,0.45), rgba(5,9,15,0.72) 78%)",
-          }}
-        >
-          <h1
-            className="text-[clamp(68px,7vw,112px)] leading-[1.05] tracking-[-0.035em] text-[#e2ebe9]"
-            style={{ fontFamily: SERIF }}
-          >
-            KiraOrder
-          </h1>
-          <p
-            className="mt-4 text-[clamp(24px,2.2vw,34px)] text-[#e2ebe9]"
-            style={{ fontFamily: SERIF }}
-          >
-            Every order, in the right hands.
-          </p>
-          <p
-            className="mt-4 max-w-[620px] text-[22px] leading-[1.55] text-[#b4c5cf]"
-            style={{ fontFamily: SERIF, textWrap: "pretty" }}
-          >
-            From a WhatsApp message to a checked delivery order. You make the
-            decisions.
-          </p>
-        </div>
-
-        {/* Topline */}
-        <div className="pointer-events-none fixed inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-5 md:px-10">
-          <div
-            className="flex items-center gap-3 text-[13px] tracking-[0.3em] text-[#b4c5cf] uppercase"
-            style={{ fontFamily: SERIF }}
-          >
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#a5e6c7]" />
-            KiraOrder for Orbyte
           </div>
         </div>
 
+        <IntroDepthForeground
+          foreground={foregroundRef} opening={openingRef} notes={noteRefs} closing={closingRef}
+          chapter={chapter} paused={motionPaused} reduced={reduced}
+        />
+        </div>
+        </div>
+
+        {/* Topline */}
+        <div className="intro-masthead" data-intro-brand="">
+          KiraOrder for Orbyte
+        </div>
+
         <div
+          ref={entryDockRef}
           id="intro-enter-hint"
-          className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex flex-col items-center gap-2 bg-gradient-to-t from-[#05090f]/90 to-transparent px-5 pt-12 pb-[max(28px,env(safe-area-inset-bottom))] text-center"
-          style={{ fontFamily: SERIF }}
+          data-intro-prompt=""
+          className="intro-entry-dock"
         >
-          <span className="mb-1 h-7 w-px bg-gradient-to-b from-transparent to-[#a5e6c7]/60" />
-          <span
+          <div className="intro-entry-anchor" data-intro-entry-anchor="">
+          <button
+            type="button"
             ref={enterHintRef}
-            className="intro-enter-label rounded-sm px-3 py-1 text-[20px] tracking-[0.04em] text-[#c8f8e2] group-focus-visible:ring-1 group-focus-visible:ring-[#a5e6c7]"
+            className="intro-enter-label"
           >
-            <span className="hidden md:inline">Click anywhere to enter</span>
-            <span className="md:hidden">Tap anywhere to enter</span>
-          </span>
-          <span className="text-[13px] tracking-[0.12em] text-[#b4c5cf]">
+            Enter workspace
+          </button>
+          </div>
+          <span className="intro-scroll-hint" data-intro-scroll-hint="" aria-hidden={chapter === "close"}>
             <span className="hidden md:inline">
               Scroll to explore · Enter / Space
             </span>
@@ -644,7 +541,7 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
         </div>
 
         {/* Scroll length */}
-        <div style={{ height: `${STAGES * 100}vh` }} />
+        <div style={{ height: `${STAGES * 100}svh` }} />
       </div>
       <div ref={ringRef} className="intro-cursor-ring" aria-hidden="true">
         <span />

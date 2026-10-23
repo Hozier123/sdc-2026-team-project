@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useWorkbenchMotion } from "./components/useWorkbenchMotion";
 import {
   ArrowDownLeft,
   ArrowRight,
@@ -798,6 +799,8 @@ function Overview({
   activityResource: ReturnType<typeof useResource<Activity[]>>;
   navigate: Navigate;
 }) {
+  const motionRoot = useRef<HTMLDivElement>(null);
+  useWorkbenchMotion(motionRoot);
   const needs = drafts.filter((d) => d.status === "DISAMBIGUATION_REQUIRED"),
     ready = drafts.filter((d) => d.status === "READY_FOR_APPROVAL"),
     pending = drafts.filter((d) => d.status === "PENDING_OWNER_APPROVAL"),
@@ -814,7 +817,7 @@ function Overview({
     OWNER_REJECTED: "Order rejected",
   };
   return (
-    <>
+    <div ref={motionRoot} className="overview-motion">
       <div className="overview-heading desk-heading">
         <div>
           <h1>
@@ -974,7 +977,7 @@ function Overview({
           </button>
         </section>
       </div>
-    </>
+    </div>
   );
 }
 export function OrderQueue({

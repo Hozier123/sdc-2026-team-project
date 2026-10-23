@@ -3140,13 +3140,6 @@ a {
   border-radius: 11px;
   box-shadow: 0 25px 100px #0007;
   padding: 26px;
-  animation: modal-in 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.05);
-}
-@keyframes modal-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.985);
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .toast,

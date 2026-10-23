@@ -1,0 +1,79 @@
+{
+  "production": [
+    {
+      "check": "production workbench",
+      "state": {
+        "overflow": false,
+        "phase": "ready",
+        "width": 1280
+      }
+    },
+    {
+      "check": "production intro",
+      "state": {
+        "overflow": false,
+        "phase": "ready",
+        "welcomeStyle": "",
+        "width": 1280
+      }
+    },
+    {
+      "check": "production first story",
+      "state": {
+        "notesBottom": [
+          400.8203125
+        ],
+        "progress": "0.250",
+        "promptTop": 561.5,
+        "visible": [
+          "AI reads."
+        ]
+      }
+    },
+    {
+      "check": "production Space entry",
+      "route": "http://127.0.0.1:5175/#/workspace"
+    }
+  ],
+  "mobileStory": [
+    {
+      "closingVisible": "hidden",
+      "progress": "0.500",
+      "route": "#/intro",
+      "scroll": 1624,
+      "visibleNotes": [
+        "Rules check."
+      ]
+    },
+    {
+      "closingVisible": "hidden",
+      "progress": "0.750",
+      "route": "#/intro",
+      "scroll": 2436,
+      "visibleNotes": [
+        "People approve."
+      ]
+    },
+    {
+      "closingVisible": "visible",
+      "progress": "1.000",
+      "route": "#/intro",
+      "scroll": 3248,
+      "visibleNotes": []
+    }
+  ],
+  "interactions": {
+    "clickEntry": true,
+    "enterEntry": true,
+    "spaceEntry": true,
+    "companyKeyboard": true,
+    "roleKeyboard": true,
+    "customerTypeahead": true,
+    "languageKeyboard": true,
+    "unitKeyboard": true,
+    "repeatOpenClose": true,
+    "dialogFocusTrap": true,
+    "escapeAndFocusReturn": true
+  },
+  "productionConsoleErrors": []
+}

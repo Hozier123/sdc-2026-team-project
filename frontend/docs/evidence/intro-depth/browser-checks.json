@@ -1,0 +1,775 @@
+{
+  "captured": "2026-10-23",
+  "samples": [
+    {
+      "label": "desktop-read",
+      "chapter": "read",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.28993, 0.0135086, 0, 0, -0.0135086, 1.28993, 0, 0, 0, 0, 1, 0, 0, -20, -330, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.0675, 0, 0, 0, 0, 1.0675, 0, 0, 0, 0, 1, 0, 259.2, -52.5, -40, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.250",
+      "reduced": "false",
+      "scroll": 900,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 475.625,
+            "height": 201.625,
+            "left": 86.39845275878906,
+            "right": 566.3984527587891,
+            "top": 274,
+            "width": 480,
+            "x": 86.39845275878906,
+            "y": 274
+          },
+          "text": "AI reads.English, Malay and Chinese messages become one order draft. Unclear specifications go back to the customer."
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "desktop-check",
+      "chapter": "check",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.27972, 0.0268063, 0, 0, -0.0268063, 1.27972, 0, 0, 0, 0, 1, 0, 0, -40, -300, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.03721, 0, -0.127353, 0, 0, 1.045, 0, 0, 0.121869, 0, 0.992546, 0, -288, -105, 20, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.500",
+      "reduced": "false",
+      "scroll": 1800,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 475.625,
+            "height": 201.625,
+            "left": 777.59375,
+            "right": 1257.59375,
+            "top": 274,
+            "width": 480,
+            "x": 777.59375,
+            "y": 274
+          },
+          "text": "Rules check.Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically."
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "desktop-approve",
+      "chapter": "approve",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.26937, 0.0398917, 0, 0, -0.0398917, 1.26937, 0, 0, 0, 0, 1, 0, 0, -60, -270, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.01861, 0, 0.0891168, 0, 0, 1.0225, 0, 0, -0.0871557, 0, 0.996195, 0, 288, -157.5, 80, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.750",
+      "reduced": "false",
+      "scroll": 2700,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 475.625,
+            "height": 201.625,
+            "left": 86.39845275878906,
+            "right": 566.3984527587891,
+            "top": 274,
+            "width": 480,
+            "x": 86.39845275878906,
+            "y": 274
+          },
+          "text": "People approve.Routine orders go to the clerk. Discounts, large orders and credit notices go to the owner. Stock limits always apply."
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "desktop-close",
+      "chapter": "close",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.25889, 0.0527633, 0, 0, -0.0527633, 1.25889, 0, 0, 0, 0, 1, 0, 0, -80, -240, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -210, 140, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "1.000",
+      "reduced": "false",
+      "scroll": 3600,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 904.000011920929,
+            "height": 900,
+            "left": 0.000019073486328125,
+            "right": 1440.0000190734863,
+            "top": 4.000011920928955,
+            "width": 1440,
+            "x": 0.000019073486328125,
+            "y": 4.000011920928955
+          },
+          "text": "KiraOrderEvery order, in the right hands.From a WhatsApp message to a checked delivery order. You make the decisions."
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "desktop-reverse-check",
+      "chapter": "check",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.27972, 0.0268063, 0, 0, -0.0268063, 1.27972, 0, 0, 0, 0, 1, 0, 0, -40, -300, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.03721, 0, -0.127353, 0, 0, 1.045, 0, 0, 0.121869, 0, 0.992546, 0, -288, -105, 20, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.500",
+      "reduced": "false",
+      "scroll": 1800,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 475.625,
+            "height": 201.625,
+            "left": 777.59375,
+            "right": 1257.59375,
+            "top": 274,
+            "width": 480,
+            "x": 777.59375,
+            "y": 274
+          },
+          "text": "Rules check.Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically."
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "phone-welcome",
+      "chapter": "welcome",
+      "height": 844,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.3, 0, 0, 0, 0, 1.3, 0, 0, 0, 0, 1, 0, 0, 0, -360, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.09, 0, 0, 0, 0, 1.09, 0, 0, 0, 0, 1, 0, 19.5, 0, -100, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.000",
+      "reduced": "false",
+      "scroll": 0,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 395.7120361328125,
+            "height": 147.20310974121094,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 248.50892639160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 248.50892639160156
+          },
+          "text": "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderFrom a WhatsApp message to a checked delivery order."
+        }
+      ],
+      "width": 390
+    },
+    {
+      "label": "phone-read",
+      "chapter": "read",
+      "height": 844,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.28993, 0.0135086, 0, 0, -0.0135086, 1.28993, 0, 0, 0, 0, 1, 0, 0, -7.5, -330, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.0675, 0, 0, 0, 0, 1.0675, 0, 0, 0, 0, 1, 0, 19.5, -23.75, -40, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.250",
+      "reduced": "false",
+      "scroll": 844,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 356.9151916503906,
+            "height": 150.60939025878906,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 206.30580139160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 206.30580139160156
+          },
+          "text": "AI reads.English, Malay and Chinese messages become one order draft. Unclear specifications go back to the customer."
+        }
+      ],
+      "width": 390
+    },
+    {
+      "label": "phone-check",
+      "chapter": "check",
+      "height": 844,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.27972, 0.0268063, 0, 0, -0.0268063, 1.27972, 0, 0, 0, 0, 1, 0, 0, -15, -300, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.03721, 0, -0.127353, 0, 0, 1.045, 0, 0, 0.121869, 0, 0.992546, 0, -27.3, -47.5, 20, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.500",
+      "reduced": "false",
+      "scroll": 1688,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 356.9151916503906,
+            "height": 150.60939025878906,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 206.30580139160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 206.30580139160156
+          },
+          "text": "Rules check.Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically."
+        }
+      ],
+      "width": 390
+    },
+    {
+      "label": "phone-approve",
+      "chapter": "approve",
+      "height": 844,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.26937, 0.0398917, 0, 0, -0.0398917, 1.26937, 0, 0, 0, 0, 1, 0, 0, -22.5, -270, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.01861, 0, 0.0891168, 0, 0, 1.0225, 0, 0, -0.0871557, 0, 0.996195, 0, 27.3, -71.25, 80, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.750",
+      "reduced": "false",
+      "scroll": 2532,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 356.9151916503906,
+            "height": 150.60939025878906,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 206.30580139160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 206.30580139160156
+          },
+          "text": "People approve.Routine orders go to the clerk. Discounts, large orders and credit notices go to the owner. Stock limits always apply."
+        }
+      ],
+      "width": 390
+    },
+    {
+      "label": "phone-close",
+      "chapter": "close",
+      "height": 844,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.25889, 0.0527633, 0, 0, -0.0527633, 1.25889, 0, 0, 0, 0, 1, 0, 0, -30, -240, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -95, 140, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "1.000",
+      "reduced": "false",
+      "scroll": 3376,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 847.7511234283447,
+            "height": 844,
+            "left": 0.000005165735728951404,
+            "right": 390.0000051657358,
+            "top": 3.7511234283447266,
+            "width": 390,
+            "x": 0.000005165735728951404,
+            "y": 3.7511234283447266
+          },
+          "text": "KiraOrderEvery order, in the right hands.From a WhatsApp message to a checked delivery order. You make the decisions."
+        }
+      ],
+      "width": 390
+    },
+    {
+      "label": "tablet-welcome",
+      "chapter": "welcome",
+      "height": 1024,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.3, 0, 0, 0, 0, 1.3, 0, 0, 0, 0, 1, 0, 0, 0, -360, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.09, 0, 0, 0, 0, 1.09, 0, 0, 0, 0, 1, 0, 138.24, 0, -100, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.000",
+      "reduced": "false",
+      "scroll": 0,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 475.8401794433594,
+            "height": 164.09375,
+            "left": 46.07813262939453,
+            "right": 468.4765701293946,
+            "top": 311.7464294433594,
+            "width": 422.3984375,
+            "x": 46.07813262939453,
+            "y": 311.7464294433594
+          },
+          "text": "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderFrom a WhatsApp message to a checked delivery order."
+        }
+      ],
+      "width": 768
+    },
+    {
+      "label": "tablet-check",
+      "chapter": "check",
+      "height": 1024,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.27972, 0.0268063, 0, 0, -0.0268063, 1.27972, 0, 0, 0, 0, 1, 0, 0, -40, -300, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.03721, 0, -0.127353, 0, 0, 1.045, 0, 0, 0.121869, 0, 0.992546, 0, -153.6, -105, 20, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.500",
+      "reduced": "false",
+      "scroll": 2048,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 466.0823669433594,
+            "height": 154.3359375,
+            "left": 414.71875,
+            "right": 737.2734375,
+            "top": 311.7464294433594,
+            "width": 322.5546875,
+            "x": 414.71875,
+            "y": 311.7464294433594
+          },
+          "text": "Rules check.Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically."
+        }
+      ],
+      "width": 768
+    },
+    {
+      "label": "reduced-welcome-before-user-override",
+      "chapter": "welcome",
+      "height": 1024,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "none",
+      "progress": "0.000",
+      "reduced": "true",
+      "scroll": 0,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 471.2890625,
+            "height": 164.09375,
+            "left": 46.078125,
+            "right": 468.4765625,
+            "top": 307.1953125,
+            "width": 422.3984375,
+            "x": 46.078125,
+            "y": 307.1953125
+          },
+          "text": "KiraOrderFrom a WhatsApp message to a checked delivery order."
+        }
+      ],
+      "width": 768
+    },
+    {
+      "label": "reduced-story",
+      "chapter": "check",
+      "height": 1024,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix(1, 0, 0, 1, 0, 0)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "none",
+      "progress": "0.500",
+      "reduced": "true",
+      "scroll": 2048,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 461.53125,
+            "height": 154.3359375,
+            "left": 414.71875,
+            "right": 737.2734375,
+            "top": 307.1953125,
+            "width": 322.5546875,
+            "x": 414.71875,
+            "y": 307.1953125
+          },
+          "text": "Rules check.Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically."
+        }
+      ],
+      "width": 768
+    },
+    {
+      "label": "desktop-welcome",
+      "chapter": "welcome",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.3, 0, 0, 0, 0, 1.3, 0, 0, 0, 0, 1, 0, 0, 0, -360, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.09, 0, 0, 0, 0, 1.09, 0, 0, 0, 0, 1, 0, 259.2, 0, -100, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.000",
+      "reduced": "false",
+      "scroll": 0,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 465.3984375,
+            "height": 191.3984375,
+            "left": 86.39845275878906,
+            "right": 766.3984527587891,
+            "top": 274,
+            "width": 680,
+            "x": 86.39845275878906,
+            "y": 274
+          },
+          "text": "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderFrom a WhatsApp message to a checked delivery order."
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "desktop-transition",
+      "chapter": "welcome",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.29599, 0.00542866, 0, 0, -0.00542866, 1.29599, 0, 0, 0, 0, 1, 0, 0, -8, -348, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.081, 0, 0, 0, 0, 1.081, 0, 0, 0, 0, 1, 0, 259.2, -21, -76, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.100",
+      "reduced": "false",
+      "scroll": 360,
+      "visible": [],
+      "width": 1440
+    },
+    {
+      "label": "desktop-read",
+      "chapter": "read",
+      "height": 900,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.28993, 0.0135086, 0, 0, -0.0135086, 1.28993, 0, 0, 0, 0, 1, 0, 0, -20, -330, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.0675, 0, 0, 0, 0, 1.0675, 0, 0, 0, 0, 1, 0, 259.2, -52.5, -40, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.250",
+      "reduced": "false",
+      "scroll": 900,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 475.625,
+            "height": 201.625,
+            "left": 86.39845275878906,
+            "right": 566.3984527587891,
+            "top": 274,
+            "width": 480,
+            "x": 86.39845275878906,
+            "y": 274
+          },
+          "text": "AI reads.English, Malay and Chinese messages become one order draft. Unclear specifications go back to the customer."
+        }
+      ],
+      "width": 1440
+    },
+    {
+      "label": "phone-welcome",
+      "chapter": "welcome",
+      "height": 844,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.3, 0, 0, 0, 0, 1.3, 0, 0, 0, 0, 1, 0, 0, 0, -360, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.09, 0, 0, 0, 0, 1.09, 0, 0, 0, 0, 1, 0, 19.5, 0, -100, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.000",
+      "reduced": "false",
+      "scroll": 0,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 395.7120361328125,
+            "height": 147.20310974121094,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 248.50892639160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 248.50892639160156
+          },
+          "text": "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderFrom a WhatsApp message to a checked delivery order."
+        }
+      ],
+      "width": 390
+    },
+    {
+      "label": "phone-read",
+      "chapter": "read",
+      "height": 844,
+      "layers": [
+        {
+          "layer": "background",
+          "matrix": "matrix3d(1.28993, 0.0135086, 0, 0, -0.0135086, 1.28993, 0, 0, 0, 0, 1, 0, 0, -7.5, -330, 1)"
+        },
+        {
+          "layer": "middle",
+          "matrix": "matrix3d(1.0675, 0, 0, 0, 0, 1.0675, 0, 0, 0, 0, 1, 0, 19.5, -23.75, -40, 1)"
+        },
+        {
+          "layer": "foreground",
+          "matrix": "matrix3d(0.9, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 1, 0, 0, 0, 120, 1)"
+        }
+      ],
+      "overflow": false,
+      "perspective": "1200px",
+      "progress": "0.250",
+      "reduced": "false",
+      "scroll": 844,
+      "visible": [
+        {
+          "bounds": {
+            "bottom": 356.9151916503906,
+            "height": 150.60939025878906,
+            "left": 24.000003814697266,
+            "right": 366.00000381469727,
+            "top": 206.30580139160156,
+            "width": 342,
+            "x": 24.000003814697266,
+            "y": 206.30580139160156
+          },
+          "text": "AI reads.English, Malay and Chinese messages become one order draft. Unclear specifications go back to the customer."
+        }
+      ],
+      "width": 390
+    }
+  ],
+  "lifecycle": [
+    {
+      "phase": "hidden",
+      "status": "{\"reduced\":false,\"hidden\":true,\"triggers\":1,\"enabled\":0,\"animations\":0,\"chapter\":\"welcome\",\"backdropPaused\":\"true\",\"cursor\":\"false\",\"depthText\":false}"
+    },
+    {
+      "phase": "restored",
+      "status": "{\"reduced\":false,\"hidden\":false,\"triggers\":1,\"enabled\":1,\"animations\":0,\"chapter\":\"welcome\",\"backdropPaused\":\"false\",\"cursor\":\"true\",\"depthText\":true}"
+    },
+    {
+      "phase": "unmounted",
+      "status": "{\"reduced\":false,\"hidden\":false,\"triggers\":0,\"enabled\":0,\"animations\":0,\"depthText\":false}"
+    }
+  ],
+  "entry": {
+    "enter": "workspace rendered",
+    "space": "workspace rendered after key dispatch timed out on route change",
+    "pageClick": "workspace rendered"
+  },
+  "notes": [
+    "Earlier samples used the temporary normal-motion harness because native reduce was enabled.",
+    "Final desktop-welcome, desktop-transition, desktop-read, phone-welcome and phone-read use the actual app with the user-selected full policy.",
+    "Reduced samples describe the pre-override fallback branch; the final homepage explicitly selects full motion."
+  ]
+}

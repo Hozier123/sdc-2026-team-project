@@ -4,7 +4,7 @@ import { advanceSpring } from "../lib/spring";
 export function useIntroMotion(
   rootRef: RefObject<HTMLDivElement | null>,
   atmosphereRef: RefObject<HTMLDivElement | null>,
-  enterRef: RefObject<HTMLSpanElement | null>,
+  enterRef: RefObject<HTMLElement | null>,
   paused: boolean,
 ) {
   const ringRef = useRef<HTMLDivElement>(null);
@@ -33,8 +33,10 @@ export function useIntroMotion(
     let frame = 0,
       last = 0;
     const measure = () => {
-      anchor = enterRef.current?.getBoundingClientRect();
+      // The dock travels during the closing scene; measure the unsprung wrapper.
+      anchor = enterRef.current?.parentElement?.getBoundingClientRect();
     };
+    const scrolling = () => { anchor = undefined; };
     const hide = () => {
       visible = false;
       down = false;
@@ -46,6 +48,7 @@ export function useIntroMotion(
       if (paused || !media.matches || event.pointerType !== "mouse") return;
       targetX = event.clientX;
       targetY = event.clientY;
+      measure();
       hovering =
         event.target instanceof Element &&
         !!event.target.closest("[data-greeting], #intro-enter-hint");
@@ -127,6 +130,7 @@ export function useIntroMotion(
     window.addEventListener("blur", hide);
     window.addEventListener("keydown", keyboard);
     window.addEventListener("resize", measure);
+    window.addEventListener("scroll", scrolling, { passive: true });
     media.addEventListener("change", updateMedia);
     updateMedia();
     return () => {
@@ -139,6 +143,7 @@ export function useIntroMotion(
       window.removeEventListener("blur", hide);
       window.removeEventListener("keydown", keyboard);
       window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", scrolling);
       media.removeEventListener("change", updateMedia);
       delete root.dataset.cursorVisible;
       delete root.dataset.cursorRunning;

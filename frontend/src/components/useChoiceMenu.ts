@@ -6,6 +6,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { finishWhenHidden, gsap, useGSAP } from "../lib/motion";
 
 /** Shared focus, placement and dismissal for menus and form selection lists. */
 export function useChoiceMenu(
@@ -118,6 +119,24 @@ export function useChoiceMenu(
     };
   }, [open, align, matchTrigger, maxWidth]);
   const positioned = position !== null;
+  useGSAP(() => {
+    const element = menu.current;
+    if (!open || !positioned || !element) return;
+    const anchor = trigger.current?.getBoundingClientRect();
+    const below = !anchor || element.getBoundingClientRect().top >= anchor.bottom;
+    const media = gsap.matchMedia();
+    media.add({ reduce: "(prefers-reduced-motion: reduce)", normal: "(prefers-reduced-motion: no-preference)" }, (context) => {
+      const reduce = context.conditions?.reduce;
+      const tween = gsap.from(element, {
+        opacity: 0.55, y: reduce ? 0 : below ? -6 : 6,
+        scale: reduce ? 1 : 0.985, transformOrigin: below ? "top center" : "bottom center",
+        duration: reduce ? 0.1 : 0.18, ease: "power3.out",
+        clearProps: "opacity,transform,transformOrigin",
+      });
+      return finishWhenHidden(tween);
+    });
+    return () => media.revert();
+  }, { scope: menu, dependencies: [open, positioned], revertOnUpdate: true });
   useLayoutEffect(() => {
     if (open && positioned) {
       const selected = menu.current?.querySelector<HTMLElement>('[aria-checked="true"], [aria-selected="true"]');

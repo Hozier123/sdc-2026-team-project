@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useDialogMotion } from "./useWorkbenchMotion";
 import {
   Check,
   Copy,
@@ -158,6 +159,8 @@ export function Modal({
 }) {
   const titleId = useId();
   const ref = useRef<HTMLDivElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
+  useDialogMotion(overlay);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
   const initial = useRef(document.activeElement as HTMLElement | null);
@@ -199,6 +202,7 @@ export function Modal({
   }, []);
   return (
     <div
+      ref={overlay}
       className="modal-overlay"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();

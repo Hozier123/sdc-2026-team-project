@@ -1,0 +1,77 @@
+[
+  {
+    "check": "hidden intro",
+    "state": {
+      "reduced": false,
+      "hidden": true,
+      "triggers": 1,
+      "enabledTriggers": 0,
+      "activeAnimations": 0,
+      "phase": "ready",
+      "cursor": "false",
+      "backdropPaused": "true",
+      "welcomeTransform": ""
+    }
+  },
+  {
+    "check": "reduced intro",
+    "state": {
+      "reduced": true,
+      "hidden": false,
+      "triggers": 1,
+      "enabledTriggers": 1,
+      "activeAnimations": 0,
+      "phase": "ready",
+      "cursor": "true",
+      "backdropPaused": "false",
+      "welcomeTransform": ""
+    }
+  },
+  {
+    "check": "reduced workbench after intro unmount",
+    "state": {
+      "reduced": true,
+      "hidden": false,
+      "triggers": 0,
+      "enabledTriggers": 0,
+      "activeAnimations": 0,
+      "phase": "ready"
+    }
+  },
+  {
+    "check": "normal workbench after repeated navigation",
+    "state": {
+      "reduced": false,
+      "hidden": false,
+      "triggers": 0,
+      "enabledTriggers": 0,
+      "activeAnimations": 6,
+      "phase": "entering"
+    }
+  },
+  {
+    "check": "all surfaces unmounted",
+    "state": {
+      "reduced": false,
+      "hidden": false,
+      "triggers": 0,
+      "enabledTriggers": 0,
+      "activeAnimations": 0
+    }
+  },
+  {
+    "check": "unit keyboard selection",
+    "value": "tray"
+  },
+  {
+    "check": "phone workbench settled",
+    "state": {
+      "reduced": false,
+      "hidden": false,
+      "triggers": 0,
+      "enabledTriggers": 0,
+      "activeAnimations": 0,
+      "phase": "ready"
+    }
+  }
+]

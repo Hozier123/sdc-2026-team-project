@@ -1,0 +1,298 @@
+{
+  "date": "2026-10-23",
+  "samples": [
+    {
+      "label": "desktop-close",
+      "button": {
+        "bottom": 535.0041885375977,
+        "height": 51.99573516845703,
+        "left": 625.32666015625,
+        "right": 814.6661376953125,
+        "top": 483.0084533691406,
+        "width": 189.3394775390625,
+        "x": 625.32666015625,
+        "y": 483.0084533691406
+      },
+      "buttonBackground": "rgb(166, 231, 200)",
+      "buttons": 1,
+      "chapter": "close",
+      "heading": {
+        "bottom": 451.20167541503906,
+        "height": 134.3892059326172,
+        "left": 506.78265380859375,
+        "right": 933.21728515625,
+        "top": 316.8124694824219,
+        "width": 426.43463134765625,
+        "x": 506.78265380859375,
+        "y": 316.8124694824219
+      },
+      "height": 900,
+      "hintVisibility": "hidden",
+      "middle": "matrix3d(1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, 0, -180, -220, 1)",
+      "overflow": false,
+      "progress": "1.000",
+      "scroll": 3600,
+      "visible": [
+        "Every order,in the right hands."
+      ],
+      "width": 1440
+    },
+    {
+      "label": "desktop-reverse",
+      "button": {
+        "bottom": 848,
+        "height": 52,
+        "left": 624.328125,
+        "right": 815.671875,
+        "top": 796,
+        "width": 191.34375,
+        "x": 624.328125,
+        "y": 796
+      },
+      "buttonBackground": "rgba(0, 0, 0, 0)",
+      "buttons": 1,
+      "chapter": "check",
+      "heading": {
+        "bottom": 473.009765625,
+        "height": 129.5909423828125,
+        "left": 514.396240234375,
+        "right": 925.603759765625,
+        "top": 343.4188232421875,
+        "width": 411.20751953125,
+        "x": 514.396240234375,
+        "y": 343.4188232421875
+      },
+      "height": 900,
+      "hintVisibility": "visible",
+      "middle": "matrix3d(1.0383, 0, -0.127488, 0, 0, 1.0461, 0, 0, 0.121869, 0, 0.992546, 0, -288, -102.792, 17.3334, 1)",
+      "overflow": false,
+      "progress": "0.489",
+      "scroll": 1760,
+      "visible": [
+        "Rules check.Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically."
+      ],
+      "width": 1440
+    },
+    {
+      "label": "phone-close",
+      "button": {
+        "bottom": 474.39008712768555,
+        "height": 51.99570846557617,
+        "left": 100.32669830322266,
+        "right": 289.66617584228516,
+        "top": 422.3943786621094,
+        "width": 189.3394775390625,
+        "x": 100.32669830322266,
+        "y": 422.3943786621094
+      },
+      "buttonBackground": "rgb(166, 231, 200)",
+      "buttons": 1,
+      "chapter": "close",
+      "heading": {
+        "bottom": 391.1926727294922,
+        "height": 71.23579406738281,
+        "left": 81.96732330322266,
+        "right": 308.02555084228516,
+        "top": 319.9568786621094,
+        "width": 226.0582275390625,
+        "x": 81.96732330322266,
+        "y": 319.9568786621094
+      },
+      "height": 843,
+      "hintVisibility": "hidden",
+      "middle": "matrix3d(1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, 0, -80, -220, 1)",
+      "overflow": false,
+      "progress": "1.000",
+      "scroll": 3374.54541015625,
+      "visible": [
+        "Every order,in the right hands."
+      ],
+      "width": 390
+    },
+    {
+      "label": "phone-transition-84",
+      "button": {
+        "bottom": 791.6405715942383,
+        "height": 51.99573516845703,
+        "left": 100.32669830322266,
+        "right": 289.66617584228516,
+        "top": 739.6448364257812,
+        "width": 189.3394775390625,
+        "x": 100.32669830322266,
+        "y": 739.6448364257812
+      },
+      "buttonBackground": "rgba(0, 0, 0, 0)",
+      "buttons": 1,
+      "chapter": "approve",
+      "heading": {
+        "bottom": 414.2240905761719,
+        "height": 68.691650390625,
+        "left": 86.00421142578125,
+        "right": 303.98890686035156,
+        "top": 345.5324401855469,
+        "width": 217.9846954345703,
+        "x": 86.00421142578125,
+        "y": 345.5324401855469
+      },
+      "height": 843,
+      "hintVisibility": "visible",
+      "middle": "matrix3d(1.09141, 0, 0.0143978, 0, 0, 1.0915, 0, 0, -0.0131908, 0, 0.999913, 0, 4.1266, -75.8639, -8.2325, 1)",
+      "overflow": false,
+      "progress": "0.840",
+      "scroll": 2834.0908203125,
+      "visible": [],
+      "width": 390
+    },
+    {
+      "label": "phone-transition-85",
+      "button": {
+        "bottom": 788.7672805786133,
+        "height": 51.99573516845703,
+        "left": 100.32669830322266,
+        "right": 289.66617584228516,
+        "top": 736.7715454101562,
+        "width": 189.3394775390625,
+        "x": 100.32669830322266,
+        "y": 736.7715454101562
+      },
+      "buttonBackground": "rgb(166, 231, 200)",
+      "buttons": 1,
+      "chapter": "close",
+      "heading": {
+        "bottom": 406.4784927368164,
+        "height": 69.54727935791016,
+        "left": 84.64657592773438,
+        "right": 305.3464813232422,
+        "top": 336.93121337890625,
+        "width": 220.6999053955078,
+        "x": 84.64657592773438,
+        "y": 336.93121337890625
+      },
+      "height": 843,
+      "hintVisibility": "hidden",
+      "middle": "matrix3d(1.13748, 0, 0.00589635, 0, 0, 1.1375, 0, 0, -0.0051836, 0, 0.999987, 0, 1.6215, -77.0645, -69.7004, 1)",
+      "overflow": false,
+      "progress": "0.851",
+      "scroll": 2870.45458984375,
+      "visible": [],
+      "width": 390
+    },
+    {
+      "label": "narrow-phone-close",
+      "button": {
+        "bottom": 449.55982208251953,
+        "height": 51.99573516845703,
+        "left": 65.32670593261719,
+        "right": 254.6661834716797,
+        "top": 397.5640869140625,
+        "width": 189.3394775390625,
+        "x": 65.32670593261719,
+        "y": 397.5640869140625
+      },
+      "buttonBackground": "rgb(166, 231, 200)",
+      "buttons": 1,
+      "chapter": "close",
+      "heading": {
+        "bottom": 365.0612144470215,
+        "height": 62.99715805053711,
+        "left": 60.049713134765625,
+        "right": 259.94317626953125,
+        "top": 302.0640563964844,
+        "width": 199.8934631347656,
+        "x": 60.049713134765625,
+        "y": 302.0640563964844
+      },
+      "height": 800,
+      "hintVisibility": "hidden",
+      "middle": "matrix3d(1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, 0, -80, -220, 1)",
+      "overflow": false,
+      "progress": "1.000",
+      "scroll": 3200,
+      "visible": [
+        "Every order,in the right hands."
+      ],
+      "width": 320
+    },
+    {
+      "label": "tablet-close",
+      "button": {
+        "bottom": 580.190071105957,
+        "height": 51.99573516845703,
+        "left": 289.4176025390625,
+        "right": 478.757080078125,
+        "top": 528.1943359375,
+        "width": 189.3394775390625,
+        "x": 289.4176025390625,
+        "y": 528.1943359375
+      },
+      "buttonBackground": "rgb(166, 231, 200)",
+      "buttons": 1,
+      "chapter": "close",
+      "heading": {
+        "bottom": 496.7654113769531,
+        "height": 100.78125,
+        "left": 224.17613220214844,
+        "right": 544.0056610107422,
+        "top": 395.9841613769531,
+        "width": 319.82952880859375,
+        "x": 224.17613220214844,
+        "y": 395.9841613769531
+      },
+      "height": 1023,
+      "hintVisibility": "hidden",
+      "middle": "matrix3d(1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, 0, -180, -220, 1)",
+      "overflow": false,
+      "progress": "1.000",
+      "scroll": 4094.54541015625,
+      "visible": [
+        "Every order,in the right hands."
+      ],
+      "width": 768
+    },
+    {
+      "label": "desktop-opening",
+      "button": {
+        "bottom": 848.0042190551758,
+        "height": 51.99573516845703,
+        "left": 625.32666015625,
+        "right": 814.6661376953125,
+        "top": 796.0084838867188,
+        "width": 189.3394775390625,
+        "x": 625.32666015625,
+        "y": 796.0084838867188
+      },
+      "buttonBackground": "rgba(0, 0, 0, 0)",
+      "buttons": 1,
+      "chapter": "welcome",
+      "heading": {
+        "bottom": 473.0158996582031,
+        "height": 129.58956909179688,
+        "left": 514.3975830078125,
+        "right": 925.6024169921876,
+        "top": 343.42633056640625,
+        "width": 411.204833984375,
+        "x": 514.3975830078125,
+        "y": 343.42633056640625
+      },
+      "height": 900,
+      "hintVisibility": "visible",
+      "middle": "matrix3d(1.09, 0, 0, 0, 0, 1.09, 0, 0, 0, 0, 1, 0, 138.24, 0, -100, 1)",
+      "overflow": false,
+      "progress": "0.000",
+      "scroll": 0,
+      "visible": [
+        "KiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderKiraOrderFrom a WhatsApp message to a checked delivery order."
+      ],
+      "width": 1440
+    }
+  ],
+  "entry": {
+    "click": "workspace rendered",
+    "enter": "workspace rendered"
+  },
+  "notes": [
+    "Actual CSS viewport sizes and timeline progress are recorded; test input did not land on every exact planned threshold.",
+    "Exploratory narrow-width overflow inherited from the body was fixed; final 320px sample has no horizontal overflow.",
+    "Earlier captures were replaced by final images where their labels match."
+  ]
+}

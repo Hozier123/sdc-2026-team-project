@@ -1,0 +1,52 @@
+body:has(.intro-root) { min-width: 0; }
+.intro-depth-viewport { position: fixed; inset: 0; overflow: hidden; }
+.intro-depth-stage { position: relative; width: 100%; height: 100%; perspective: 1200px; perspective-origin: 50% 46%; transform-style: preserve-3d; }
+.intro-depth-background { position: absolute; inset: -8%; }
+.intro-depth-middle, .intro-depth-foreground { position: absolute; inset: 0; transform-style: preserve-3d; }
+.intro-depth-foreground { pointer-events: none; }
+.intro-reading-scrim, .intro-depth-shade { position: absolute; inset: -15%; pointer-events: none; }
+.intro-reading-scrim {
+  background: linear-gradient(90deg, #05090ff0, #05090fc9 44%, #05090f00 76%); /* taste-skill-ignore: neutral reading scrim over existing video, not a decorative fill. */
+}
+.intro-depth-shade { background: #05090f; opacity: 0; }
+.intro-root[data-intro-chapter="check"] .intro-reading-scrim { transform: scaleX(-1); }
+.intro-root[data-intro-chapter="close"] .intro-reading-scrim { background: #05090f99; }
+.intro-reading-plane { position: absolute; z-index: 2; left: 6vw; top: 30%; width: min(480px, 42vw); color: #e2ebe9; transform-style: preserve-3d; }
+.intro-opening { width: min(680px, 55vw); }
+.intro-opening h1 { font-family: var(--serif); font-size: clamp(80px, 9vw, 128px); line-height: 1.05; font-weight: 400; letter-spacing: -0.025em; }
+.intro-opening p, .intro-chapter p { max-width: 34ch; margin-top: 24px; font-family: var(--font-ui); font-size: clamp(17px, 1.5vw, 20px); line-height: 1.65; color: #e2ebe9; text-wrap: pretty; }
+.intro-depth-title .depth-text__face, .intro-depth-title .depth-text__layer { line-height: 1.05; letter-spacing: -0.025em; }
+.intro-depth-title .depth-text__stage { will-change: auto; }
+.intro-chapter, .intro-depth-close { opacity: 0; visibility: hidden; }
+.intro-chapter[data-side="right"] { left: 54vw; }
+.intro-chapter h2 { margin: 0; font-family: var(--serif); font-size: clamp(44px, 5.2vw, 76px); font-weight: 400; line-height: 1.05; letter-spacing: -0.025em; }
+.intro-depth-close { inset: 0; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; padding: 0 24px 56px; text-align: center; }
+.intro-depth-close h2 { margin: 0; max-width: 640px; font-family: var(--serif); font-size: clamp(48px, 4.45vw, 64px); font-weight: 400; line-height: 1.05; letter-spacing: -0.025em; }
+.intro-close-action-slot { flex: 0 0 52px; height: 52px; }
+.intro-root[data-intro-chapter="close"] .intro-depth-middle [data-intro-welcome] {
+  mask-image: radial-gradient(ellipse 44% 34% at 50% 46%, transparent 65%, #000 100%); /* taste-skill-ignore: masks orbit labels out of the closing reading area. */
+}
+.intro-masthead { position: fixed; z-index: 30; inset: 24px 6vw auto; pointer-events: none; color: #c2d1d5; font-family: var(--font-ui); font-size: 14px; }
+.intro-entry-dock { position: fixed; z-index: 30; inset: auto 0 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 24px 24px max(28px, env(safe-area-inset-bottom)); text-align: center; pointer-events: none; }
+.intro-entry-dock { background: linear-gradient(0deg, #05090fe6, #05090f00); /* taste-skill-ignore: neutral scrim behind the fixed entry action over the retained video. */ }
+.intro-entry-anchor { position: relative; pointer-events: auto; }
+.intro-entry-dock .intro-enter-label { height: 52px; padding: 12px 28px; border: 0; border-radius: 999px; background: transparent; font-family: var(--font-ui); font-size: 18px; line-height: 1.4; color: #c8f8e2; transition: background-color 180ms, color 180ms; }
+.intro-entry-dock .intro-enter-label:hover { color: #fff; }
+.intro-root[data-intro-chapter="close"] .intro-entry-dock { background: transparent; }
+.intro-root[data-intro-chapter="close"] .intro-enter-label { background: #a6e7c8; color: #0b1c15; }
+.intro-root[data-intro-chapter="close"] .intro-enter-label:hover { background: #c8f8e2; color: #0b1c15; }
+.intro-root[data-intro-chapter="close"] .intro-scroll-hint { visibility: hidden; }
+.intro-entry-dock > span { font-family: var(--font-ui); font-size: 12.5px; line-height: 1.6; color: #b4c5cf; }
+@media (max-width: 760px) {
+  .intro-reading-plane, .intro-chapter[data-side="right"] { top: 24%; left: 24px; width: calc(100% - 48px); }
+  .intro-opening { top: 29%; }
+  .intro-opening h1 { font-size: clamp(64px, 17vw, 76px); }
+  .intro-opening p, .intro-chapter p { margin-top: 20px; font-size: 18px; line-height: 1.6; }
+  .intro-chapter h2 { font-size: clamp(42px, 10.8vw, 56px); }
+  .intro-masthead { inset: 20px 24px auto; font-size: 13px; }
+  .intro-depth-close { inset: 0; width: 100%; }
+  .intro-depth-close h2 { font-size: clamp(30px, 8.7vw, 34px); }
+  .intro-root[data-intro-chapter="close"] .intro-depth-middle [data-intro-welcome] { mask-image: radial-gradient(ellipse 90% 32% at 50% 47%, transparent 65%, #000 100%); } /* taste-skill-ignore: retains the closing text clearance on narrow screens. */
+  .intro-reading-scrim { background: #05090f99; }
+}
+.intro-root[data-reduced-motion="true"] .intro-depth-stage { perspective: none; }

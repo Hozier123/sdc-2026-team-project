@@ -1,0 +1,2 @@
+/* GSAP owns transient transforms; settled surfaces return to their CSS state. */
+.overview-motion { min-width: 0; }

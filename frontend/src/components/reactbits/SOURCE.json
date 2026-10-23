@@ -1,0 +1,13 @@
+{
+  "component": "DepthText",
+  "variant": "TS-CSS",
+  "registry": "https://reactbits.dev/r/DepthText-TS-CSS.json",
+  "retrieved_on": "2026-10-23",
+  "license_source": "https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md",
+  "files": {
+    "DepthText.tsx": "45ac219cbf8addc44ef6f936840b4cd248f7cf25b1cd54105477fdadecc7b5c1",
+    "DepthText.css": "73b3d95a51aaebd57d52bc40a2ea9ed38714cf9335ec20964125cc547624ef2c",
+    "LICENSE-ReactBits.txt": "4bdd1fa59a6b7d5954bc3b213dbc34e455c635a94bbcecf9293553797d0fad02"
+  },
+  "integration": "Opening wordmark only. Existing display face, shallow depth, regular weight, no shadow and no auto orbit. Source fetched live rather than recreated."
+}
