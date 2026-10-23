@@ -151,6 +151,16 @@ def _ai_draft(
     condition_records: dict[str, Issue] = {}
     row_conditions: list[tuple[dict[str, Any], str]] = []
     line_ids_by_span: dict[str, list[str]] = {}
+    adapter_conditions = tuple(getattr(raw, "conditions", ()))
+
+    def covered_by_adapter(cond: dict[str, Any]) -> bool:
+        span = cond.get("span", "")
+        return any(
+            candidate.get("kind") == cond.get("kind")
+            and candidate.get("span")
+            and (candidate.get("span") == span or candidate.get("span") in span)
+            for candidate in adapter_conditions
+        )
 
     def add_condition(cond: dict[str, Any], target_line_id: str | None) -> None:
         kind = cond.get("kind", "OTHER")
@@ -338,6 +348,10 @@ def _ai_draft(
                 )
     # Conditions survive even when their item's quantity is unusable.
     for cond, row_span in row_conditions:
+        if covered_by_adapter(cond):
+            # The adapter's condition has the precise span; do not also record
+            # the coarser whole-line condition produced by the H5 guard.
+            continue
         line_ids = line_ids_by_span.get(row_span, [])
         target = (
             line_ids[0]
