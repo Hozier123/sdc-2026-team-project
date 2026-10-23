@@ -946,7 +946,11 @@ def test_same_day_add_on_requires_explicit_do_and_persists(seeded_db):
         assert saved.status_code == 200, saved.text
         issue = next(i for i in saved.json()["issues"] if i["code"] == "SAME_DAY_ORDER")
         assert original in issue["data_used"]["existing_do_numbers"]
-        working_line = _line(1, line_id=saved.json()["lines"][0]["line_id"])
+        working_line = _line(
+            1,
+            line_id=saved.json()["lines"][0]["line_id"],
+            client_line_ref=None,
+        )
 
         missing = client.put(
             f"/api/v1/orders/drafts/{draft_id}/lines",
