@@ -30,13 +30,36 @@ AI：AI_PROVIDER=auto → Stub，直到 RunPod 验收完成
 | 职责 | 负责人 | 说明 |
 |---|---|---|
 | 总体部署、后端、Secrets | He Minghao | 后端部署、CORS、DB、/healthz、/readyz |
-| 前端 build、静态部署、UI smoke | 前端负责人（待确认姓名） | `npm run build`、VITE_API_BASE_URL、登录/草稿/审批 |
-| 平台账号所有者 | 团队负责人 / He | Replit 账号、部署权限、公开 URL |
+| 前端 build、静态部署、UI smoke | Ye Lianghui | `npm run build`、VITE_API_BASE_URL、登录/草稿/审批 |
+| 平台账号所有者 | He Minghao | Replit 账号、部署权限、公开 URL |
 | 数据与签字 | Zhou Jingxi | seed 计数已签；业务/UAT 另立 |
 | RunPod / 真实 AI | Xiong | 端点恢复与模型可用性 |
 | UAT | 测试/数据/前端 | 真人试次与证据 |
 
-**开放项：** 前端负责人姓名、Replit 账号所有者、公开域名。
+**开放项：** 公开域名、两个 Deployment 的实际名称。
+
+### 账号与演示
+
+```text
+Replit 计划：Core（$20/month）
+账号 owner：He Minghao
+Total remaining：$20.00（2026-10-23）
+Auto-reload：Off
+取消日期：2026-11-22
+演示计划：2026-10-24 录制 demo
+```
+
+Core 支持多个 published apps，两个 Deployment 数量可行。演示前不做充值；
+如果评审/UAT 超过 2026-11-22，需要续费或迁移。
+
+演示范围：
+
+```text
+公开 Stub 环境 + UI 主流程
+非 UAT、非真实 AI 准确率验收
+RunPod 未恢复时明确标注 Stub/fallback
+```
+
 
 ## 3. 环境
 
