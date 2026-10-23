@@ -33,6 +33,7 @@ from app.drafts import (
 )
 from app.errors import (
     AlreadyApprovedError,
+    DisambiguationUnresolvedError,
     DraftRejectedError,
     ForbiddenActionError,
     InsufficientStockError,
@@ -352,9 +353,14 @@ def _validate_for_approval(
     if order["status"] != "READY_FOR_APPROVAL" and not (
         allow_pending and order["status"] == "PENDING_OWNER_APPROVAL"
     ):
-        raise RequestValidationFailedError(
-            details={"fields": [{"path": "status", "reason": "draft is not ready"}]}
+        issue_ids = sorted(
+            {
+                issue["issue_id"]
+                for issue in (order.get("issues") or [])
+                if issue.get("blocking") and not issue.get("resolved")
+            }
         )
+        raise DisambiguationUnresolvedError(details={"issue_ids": issue_ids})
     lines = _old_lines(order)
     if not lines:
         raise RequestValidationFailedError(

@@ -196,7 +196,8 @@ def test_approve_confirmed_items_failure_after_save_rolls_back(seeded_db):
             headers=_headers(CLERK),
             json={"expected_version": 1, "confirmed_items": [_line(11)]},
         )
-        assert response.status_code == 422
+        assert response.status_code == 400
+        assert response.json()["error_code"] == "DISAMBIGUATION_UNRESOLVED"
     with connect(seeded_db) as conn:
         order = conn.execute(
             "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
