@@ -243,3 +243,25 @@ test("HTTP discard sends P1 version/note and projects the terminal draft", async
     globalThis.fetch = original;
   }
 });
+
+test("HTTP clarification copy records only the draft version", async () => {
+  const original = globalThis.fetch;
+  let url = "";
+  let payload: unknown;
+  globalThis.fetch = async (input, init) => {
+    url = String(input);
+    payload = JSON.parse(init?.body as string);
+    return new Response(JSON.stringify({ recorded: true }), { status: 200 });
+  };
+  try {
+    const s = new HttpService("http://localhost:8000/api/v1", "session");
+    await s.clarificationCopied("DRF_001", 2);
+    assert.equal(
+      url,
+      "http://localhost:8000/api/v1/orders/drafts/DRF_001/clarification-copied",
+    );
+    assert.deepEqual(payload, { expected_version: 2 });
+  } finally {
+    globalThis.fetch = original;
+  }
+});

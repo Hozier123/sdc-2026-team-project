@@ -321,6 +321,7 @@ export interface Service {
   aiStatus(): Promise<AiStatus>;
   wake(): Promise<AiStatus>;
   discard?(id: string, version: number, note: string): Promise<Draft>;
+  clarificationCopied?(id: string, version: number): Promise<void>;
 }
 export const STATUS: Record<DraftStatus, { label: string; tone: string }> = {
   DISAMBIGUATION_REQUIRED: { label: "Needs your decision", tone: "amber" },

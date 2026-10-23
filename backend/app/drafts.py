@@ -36,6 +36,8 @@ from app.errors import (
 )
 from app.pii import mask_message
 from app.schemas import (
+    ClarificationCopiedRequest,
+    ClarificationCopiedResult,
     ClarificationDraft,
     DiscardRequest,
     Issue,
@@ -992,6 +994,85 @@ def discard_draft(
             conn.execute("ROLLBACK")
             raise
     return draft
+
+
+@router.post(
+    "/orders/drafts/{draft_id}/clarification-copied",
+    response_model=ClarificationCopiedResult,
+    responses={
+        401: {"description": "Missing or invalid Bearer token"},
+        403: {"description": "Role not allowed"},
+        404: {"description": "Draft not found in tenant"},
+        409: {"description": "Stale version or draft not editable"},
+        422: {"description": "Clarification is not available"},
+    },
+)
+def clarification_copied(
+    draft_id: str,
+    body: ClarificationCopiedRequest,
+    user: Annotated[CurrentUser, Depends(get_current_user)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> ClarificationCopiedResult:
+    """Append a copy event; never mutate the draft or its clarification."""
+    if user.role not in {"CLERK", "OWNER"}:
+        raise ForbiddenActionError()
+
+    with connect(settings) as conn:
+        conn.execute("BEGIN")
+        try:
+            order = _order(conn, user.tenant_id, draft_id)
+            if order["status"] == "PENDING_OWNER_APPROVAL":
+                raise PendingOwnerApprovalError()
+            if order["status"] == "DO_GENERATED":
+                raise AlreadyApprovedError()
+            if order["status"] == "REJECTED":
+                raise DraftRejectedError()
+            if body.expected_version != order["version"]:
+                raise StaleVersionError(
+                    details={
+                        "expected_version": body.expected_version,
+                        "current_version": order["version"],
+                    }
+                )
+            clarification_data = order.get("clarification")
+            if not isinstance(clarification_data, dict):
+                raise RequestValidationFailedError("clarification is not available")
+            clarification = ClarificationDraft.model_validate(clarification_data)
+            issue_ids = list(clarification.unresolved_issue_ids)
+            issue_by_id = {
+                issue["issue_id"]: Issue.model_validate(issue) for issue in (order["issues"] or [])
+            }
+            if any(issue_id not in issue_by_id for issue_id in issue_ids):
+                raise RequestValidationFailedError("clarification issue binding is stale")
+            line_ids: set[str] = set()
+            for issue_id in issue_ids:
+                issue = issue_by_id[issue_id]
+                if issue.line_id:
+                    line_ids.add(issue.line_id)
+                line_ids.update(issue.target_line_ids)
+            _audit(
+                conn,
+                tenant=user.tenant_id,
+                draft_id=draft_id,
+                version=order["version"],
+                action="COPY_CLARIFICATION",
+                event="CLARIFICATION_COPIED",
+                user=user,
+                payload={
+                    "draft_version": order["version"],
+                    "language": clarification.language,
+                    "issue_ids": issue_ids,
+                    "line_ids": sorted(line_ids),
+                    "message_sha256": hashlib.sha256(
+                        clarification.message.encode("utf-8")
+                    ).hexdigest(),
+                },
+            )
+            conn.execute("COMMIT")
+        except BaseException:
+            conn.execute("ROLLBACK")
+            raise
+    return ClarificationCopiedResult(recorded=True)
 
 
 def _apply_save_lines(conn, user, order, body):

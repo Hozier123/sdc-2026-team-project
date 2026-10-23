@@ -352,6 +352,18 @@ class ApprovalListResponse(BaseModel):
     next_cursor: str | None = None
 
 
+class ClarificationCopiedRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    expected_version: int = Field(ge=1)
+
+
+class ClarificationCopiedResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    recorded: bool
+
+
 class DiscardRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

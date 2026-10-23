@@ -273,6 +273,13 @@ export class HttpService implements Service {
   wake() {
     return this.request<AiStatus>("/ai/wake", "POST");
   }
+  async clarificationCopied(id: string, version: number) {
+    await this.request<{ recorded: boolean }>(
+      `/orders/drafts/${encodeURIComponent(id)}/clarification-copied`,
+      "POST",
+      { expected_version: version },
+    );
+  }
   async discard(id: string, version: number, note: string) {
     const result = await this.request<Gate0["OrderDraft"]>(
       `/orders/drafts/${encodeURIComponent(id)}/discard`,

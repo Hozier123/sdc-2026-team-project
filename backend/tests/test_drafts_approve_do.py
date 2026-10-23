@@ -837,3 +837,84 @@ def test_discard_is_blocked_after_approval(seeded_db):
         )
         assert blocked_approved.status_code == 409
         assert blocked_approved.json()["error_code"] == "ALREADY_APPROVED"
+
+
+def test_clarification_copy_event_binds_draft_line_and_issue(seeded_db):
+    with _client(seeded_db) as client:
+        saved = _put(client, lines=[_line(11)])
+        assert saved.status_code == 200
+        body = saved.json()
+        assert body["clarification_draft"] is not None
+        issue_ids = body["clarification_draft"]["unresolved_issue_ids"]
+        assert issue_ids
+
+        first = client.post(
+            "/api/v1/orders/drafts/DRF_T1/clarification-copied",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert first.status_code == 200, first.text
+        assert first.json() == {"recorded": True}
+
+        second = client.post(
+            "/api/v1/orders/drafts/DRF_T1/clarification-copied",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert second.status_code == 200, second.text
+
+        stale = client.post(
+            "/api/v1/orders/drafts/DRF_T1/clarification-copied",
+            headers=_headers(CLERK),
+            json={"expected_version": 1},
+        )
+        assert stale.status_code == 409
+        assert stale.json()["error_code"] == "STALE_VERSION"
+
+        denied = client.post(
+            "/api/v1/orders/drafts/DRF_T1/clarification-copied",
+            headers=_headers(WAREHOUSE),
+            json={"expected_version": 2},
+        )
+        assert denied.status_code == 403
+        assert denied.json()["error_code"] == "FORBIDDEN_ACTION"
+
+    with connect(seeded_db) as conn:
+        rows = conn.execute(
+            "SELECT event_type, payload, actor_user_id, draft_id FROM activity_log "
+            "WHERE tenant_id='T1' AND draft_id='DRF_T1' "
+            "AND event_type='CLARIFICATION_COPIED' ORDER BY activity_id"
+        ).fetchall()
+        audit = conn.execute(
+            "SELECT action, payload FROM audit_logs "
+            "WHERE tenant_id='T1' AND draft_id='DRF_T1' "
+            "AND action='COPY_CLARIFICATION' ORDER BY created_at"
+        ).fetchall()
+        order = conn.execute(
+            "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()
+    assert len(rows) == 2
+    assert len(audit) == 2
+    assert order == ("DISAMBIGUATION_REQUIRED", 2)
+    payload = rows[0][1]
+    assert rows[0][0] == "CLARIFICATION_COPIED"
+    assert rows[0][2] == "USR_T1_CLERK"
+    assert rows[0][3] == "DRF_T1"
+    assert payload["draft_version"] == 2
+    assert payload["issue_ids"] == issue_ids
+    assert payload["line_ids"]
+    assert payload["language"] in {"ms", "en", "zh"}
+    assert len(payload["message_sha256"]) == 64
+    assert "message" not in payload
+
+
+def test_clarification_copy_requires_available_clarification(seeded_db):
+    with _client(seeded_db) as client:
+        assert _put(client).status_code == 200
+        response = client.post(
+            "/api/v1/orders/drafts/DRF_T1/clarification-copied",
+            headers=_headers(CLERK),
+            json={"expected_version": 2},
+        )
+        assert response.status_code == 422
+        assert response.json()["error_code"] == "REQUEST_VALIDATION_FAILED"
