@@ -44,20 +44,18 @@ npm run build
 [ ] 公开站点可加载
 ```
 
-## 4. 静态托管方案
-
-README 计划由 FastAPI 托管前端构建产物，但当前尚未实现该静态托管路径。
-
-在实现/选择方案前，不要声称“单服务 Replit 部署已完成”。
-
-可选：
+## 4. 托管方案（已定）
 
 ```text
-A. 前端独立静态托管 + 后端 API
-B. FastAPI 挂载 dist/（需要代码和测试）
+前端：Replit Static Deployment
+后端：Replit Web Deployment（FastAPI）
+数据库：Neon
+不做 FastAPI 托管 dist
 ```
 
-无论哪种，都要记录实际 URL 和平台证明。
+决策记录见 [public-deployment-decision.md](public-deployment-decision.md)。
+
+部署时记录实际 URL 和平台证明。
 
 ## 5. 部署后冒烟
 
@@ -96,10 +94,11 @@ B. FastAPI 挂载 dist/（需要代码和测试）
 ## 8. 当前不能做
 
 ```text
-[✗] 没有部署账号/平台负责人
+[✗] 还没有确认 Replit 账号所有者
+[✗] 还没有确认前端负责人姓名
 [✗] 没有公开 URL
-[✗] FastAPI 静态托管未实现
+[✗] Stub 环境尚未部署
 [✗] RunPod 真实 AI 未验收
 ```
 
-因此公开部署仍是外部阻塞项，不是本地代码可以单独完成的部分。
+因此公开部署仍未执行；架构已定，剩下是账号、负责人和实际部署。

@@ -102,11 +102,12 @@ if (-not (Test-Path -LiteralPath .env)) {
 
 前端使用 Node.js 22 + npm，在 `frontend/` 内执行 `npm ci`、`npm run dev`（默认 http://127.0.0.1:5173/）。连接真实后端时在界面填入 API base `http://127.0.0.1:8000/api/v1` 与会话 Bearer token，或用 `.env.local` 的 `VITE_API_BASE_URL` 设置默认地址。前端测试与构建为 `npm test`、`npm run build`，CI 见 `.github/workflows/frontend.yml`；详细说明见 [frontend/README.md](frontend/README.md)。
 
-计划采用的开发与部署方式：
+已定开发与部署方式：
 - 开发：前端通过 `VITE_API_BASE_URL` 直接连接 FastAPI；当前 Vite 配置未启用 API 代理。
-- 部署：计划由 FastAPI 托管前端构建产物并合并到一个 Replit 部署。
-- 当前尚未完成代理、静态托管或 Replit 部署；不要把本地 `npm run dev` 当作已部署。
-- 部署前检查与责任人清单见 [docs/ops/public-deployment-checklist.md](docs/ops/public-deployment-checklist.md)。
+- 部署：Replit 前后端分离；前端 Static Deployment，后端 Web Deployment（FastAPI），数据库 Neon；不做 FastAPI 托管前端 `dist`。
+- AI：先用 `AI_PROVIDER=auto` → Stub；RunPod 验收后再切 `runpod_adapter`。
+- 当前尚未实际部署；不要把本地 `npm run dev` 当作已部署。
+- 决策见 [docs/ops/public-deployment-decision.md](docs/ops/public-deployment-decision.md)；检查清单见 [docs/ops/public-deployment-checklist.md](docs/ops/public-deployment-checklist.md)。
 
 ## 配置项
 
