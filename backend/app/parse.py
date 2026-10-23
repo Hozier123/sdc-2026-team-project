@@ -17,12 +17,13 @@ from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.auth import CurrentUser
+from app.checks import apply_checks
 from app.clarification import build_clarification
 from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
 from app.draft_store import persist_parse_draft
-from app.drafts import _stable_id
+from app.drafts import _stable_id, _tenant
 from app.errors import (
     AiAndFallbackUnavailableError,
     ForbiddenActionError,
@@ -74,6 +75,7 @@ def _customer(settings: Settings, user: CurrentUser, customer_id: str) -> dict[s
     if row is None:
         raise ResourceNotFoundError("customer not found")
     return {
+        "tenant_id": user.tenant_id,
         "customer_id": row[0],
         "name": row[1],
         "tier": row[2],
@@ -105,6 +107,8 @@ def _ai_draft(
     language_hint: str | None,
     catalog: Catalog | None = None,
     ai_mode: str = "LLM",
+    conn=None,
+    checks: dict[str, bool] | None = None,
 ) -> dict[str, Any]:
     catalog = catalog or Catalog(products=(), aliases=())
     lines: list[WorkingLine] = []
@@ -326,6 +330,18 @@ def _ai_draft(
             if kind == "PRICE":
                 blocking.add("CUSTOMER_CONDITION")
     conditions = list(condition_records.values())
+    if conn is not None and checks:
+        for check_issue in apply_checks(
+            conn,
+            tenant=customer.get("tenant_id", ""),
+            customer=customer,
+            lines=lines,
+            checks=checks,
+            draft_id=draft_id,
+        ):
+            issues.append(check_issue)
+            if check_issue.blocking:
+                blocking.add(check_issue.code)
 
     total: Decimal | None = None
     if lines and all(line.subtotal_rm is not None for line in lines):
@@ -378,7 +394,15 @@ def _ai_draft(
     }
 
 
-def _guard_families_and_units(raw, settings, user, customer_id, masked_text, catalog: Catalog):
+def _guard_families_and_units(
+    raw,
+    settings,
+    user,
+    customer_id,
+    masked_text,
+    catalog: Catalog,
+    condition_checks: bool = True,
+):
     """Only exact, tenant/customer-scoped evidence may support AI fields."""
     with connect(settings) as conn:
         families = conn.execute(
@@ -433,6 +457,11 @@ def _guard_families_and_units(raw, settings, user, customer_id, masked_text, cat
             if evidence is not None:
                 pack = evidence[0]
         guarded.append(replace(row, fam=family, uom=unit, pack_size=pack))
+    if not condition_checks:
+        return replace(
+            raw,
+            rows=tuple(replace(row, conds=()) for row in guarded),
+        )
     # H5 belongs to the backend. An omitted AI conds[] must not remove a price gate.
     for chunk in masked_text.splitlines():
         if not chunk.strip():
@@ -488,6 +517,8 @@ def parse_draft(
             customer_id=body.customer_id,
             tier=customer["tier"],
         )
+        tenant_rules = _tenant(conn, user.tenant_id)
+        checks = tenant_rules["checks"]
     memory, memory_covers = memory_rows(masked.masked_text, catalog)
     memory_used = bool(memory_covers)
     try:
@@ -507,7 +538,13 @@ def parse_draft(
     except (AiServiceError, ValueError, TypeError) as exc:
         raise AiAndFallbackUnavailableError() from exc
     raw = _guard_families_and_units(
-        raw, settings, user, body.customer_id, masked.masked_text, catalog
+        raw,
+        settings,
+        user,
+        body.customer_id,
+        masked.masked_text,
+        catalog,
+        condition_checks=checks["customer_condition"],
     )
     sources = {row.source for row in raw.rows if not row.invalid_reason}
     if memory_covers:
@@ -525,16 +562,19 @@ def parse_draft(
     now = datetime.now(timezone.utc).isoformat()
     draft_id = f"DRF_{uuid4().hex.upper()}"
     if raw.rows:
-        draft: dict[str, Any] = _ai_draft(
-            customer=customer,
-            masked_text=masked.masked_text,
-            raw=raw,
-            draft_id=draft_id,
-            now=now,
-            language_hint=body.language_hint,
-            catalog=catalog,
-            ai_mode=ai_mode,
-        )
+        with connect(settings) as check_conn:
+            draft: dict[str, Any] = _ai_draft(
+                customer=customer,
+                masked_text=masked.masked_text,
+                raw=raw,
+                draft_id=draft_id,
+                now=now,
+                language_hint=body.language_hint,
+                catalog=catalog,
+                ai_mode=ai_mode,
+                conn=check_conn,
+                checks=checks,
+            )
     else:
         issue = Issue(**_unresolved_issue())
         clarification, clarification_lang = build_clarification(

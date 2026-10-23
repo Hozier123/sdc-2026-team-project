@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends
 from psycopg.types.json import Jsonb
 
 from app.auth import CurrentUser
+from app.checks import apply_checks, normalize_checks
 from app.clarification import build_clarification
 from app.config import Settings
 from app.db import connect
@@ -135,7 +136,8 @@ def _customer(conn, tenant: str, customer_id: str, *, active_only: bool = True) 
 def _tenant(conn, tenant: str) -> dict[str, Any]:
     row = conn.execute(
         "SELECT amount_threshold_rm, below_tier_price_override_requires_owner, "
-        "credit_flag_requires_owner FROM tenants WHERE tenant_id=%s FOR SHARE",
+        "credit_flag_requires_owner, checks_enabled "
+        "FROM tenants WHERE tenant_id=%s FOR SHARE",
         (tenant,),
     ).fetchone()
     if row is None:
@@ -144,6 +146,7 @@ def _tenant(conn, tenant: str) -> dict[str, Any]:
         "threshold": Decimal(row[0]),
         "price_requires_owner": row[1],
         "credit_requires_owner": row[2],
+        "checks": normalize_checks(row[3]),
     }
 
 
@@ -888,6 +891,17 @@ def _apply_save_lines(conn, user, order, body):
                     )
                 )
 
+    issues.extend(
+        apply_checks(
+            conn,
+            tenant=user.tenant_id,
+            customer=customer,
+            lines=lines,
+            checks=tenant["checks"],
+            draft_id=draft_id,
+        )
+    )
+
     # Older application versions stored conditions only in immutable snapshots.
     # Recover them without altering the signed schema or historical snapshots.
     merged_issues = {
@@ -896,7 +910,11 @@ def _apply_save_lines(conn, user, order, body):
     }
     old_issues = [Issue.model_validate(issue) for issue in merged_issues.values()]
     line_ids = {line.line_id for line in lines}
-    conditions = [issue for issue in old_issues if issue.code == "CUSTOMER_CONDITION"]
+    conditions = (
+        [issue for issue in old_issues if issue.code == "CUSTOMER_CONDITION"]
+        if tenant["checks"]["customer_condition"]
+        else []
+    )
     by_id = {line.line_id: line for line in lines}
     for condition in conditions:
         if condition.line_id and condition.line_id not in line_ids:
