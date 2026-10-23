@@ -18,6 +18,7 @@ from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
 from app.drafts import (
+    _apply_save_lines,
     _audit,
     _canonical_uom,
     _customer,
@@ -55,6 +56,7 @@ from app.schemas import (
     DeliveryOrder,
     DeliveryOrderLine,
     FieldDiff,
+    SaveLinesRequest,
     StockCheckLine,
     StockCheckSummary,
     WorkingLine,
@@ -453,17 +455,6 @@ def approve(
 ) -> DeliveryOrder | ApprovalRequestResponse:
     if user.role not in {"CLERK", "OWNER"}:
         raise ForbiddenActionError()
-    if body.confirmed_items is not None:
-        raise RequestValidationFailedError(
-            details={
-                "fields": [
-                    {
-                        "path": "confirmed_items",
-                        "reason": "deprecated; save lines first with PUT /lines",
-                    }
-                ]
-            }
-        )
 
     with connect(settings) as conn:
         conn.execute("BEGIN")
@@ -476,6 +467,26 @@ def approve(
                         "current_version": order["version"],
                     }
                 )
+            if body.confirmed_items is not None:
+                # Deprecated compatibility path: save and approve in one
+                # transaction, so a failed approval never leaves a new version.
+                if order["status"] == "PENDING_OWNER_APPROVAL":
+                    raise PendingOwnerApprovalError()
+                if order["status"] == "DO_GENERATED":
+                    raise AlreadyApprovedError()
+                if order["status"] == "REJECTED":
+                    raise DraftRejectedError()
+                if order["status"] not in {
+                    "DISAMBIGUATION_REQUIRED",
+                    "READY_FOR_APPROVAL",
+                }:
+                    raise DraftRejectedError()
+                save_body = SaveLinesRequest(
+                    expected_version=body.expected_version,
+                    lines=body.confirmed_items,
+                )
+                _apply_save_lines(conn, user, order, save_body)
+                order = _order(conn, user.tenant_id, draft_id, lock=True)
             customer, _tenant_rules, lines, _total, reasons = _validate_for_approval(
                 conn, order, user.tenant_id
             )

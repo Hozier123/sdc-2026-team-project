@@ -162,21 +162,23 @@ GET  /api/v1/approvals
 GET  /api/v1/approvals/{approval_id}
 ```
 
-**P0 明确不支持 deprecated `confirmed_items`。** 新前端必须先：
+**`confirmed_items` 是 deprecated 兼容路径。** 新前端仍必须先：
 
 ```text
 PUT /api/v1/orders/drafts/{draft_id}/lines
 → POST /api/v1/orders/{draft_id}/approve
 ```
 
-携带 `confirmed_items` 的旧请求返回：
+如果旧客户端携带 `confirmed_items`，后端在同一个事务里：
 
 ```text
-422 REQUEST_VALIDATION_FAILED
-details.fields[0].path = confirmed_items
+1. 按 PUT lines 规则保存新版本
+2. 重新校验库存/升级/条件
+3. 批准这个新版本
+4. 任一步失败则整个事务回滚
 ```
 
-这是 P0 的明确弃用决定，不是完整兼容；后续如有旧客户端再实现同事务保存后批准。
+响应返回实际批准的版本；不会静默批准未保存明细。该兼容路径不再返回 422，OpenAPI 仍标记为 deprecated。
 
 ## 迁移执行规则
 

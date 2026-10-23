@@ -134,7 +134,7 @@ def test_parse_put_approve_and_get_do_end_to_end(seeded_db):
         ).fetchone() == (9,)
 
 
-def test_approve_rejects_confirmed_items_explicitly(seeded_db):
+def test_approve_confirmed_items_saves_new_version_and_approves(seeded_db):
     with _client(seeded_db) as client:
         response = client.post(
             "/api/v1/orders/DRF_T1/approve",
@@ -144,10 +144,69 @@ def test_approve_rejects_confirmed_items_explicitly(seeded_db):
                 "confirmed_items": [_line(1)],
             },
         )
-    assert response.status_code == 422
-    body = response.json()
-    assert body["error_code"] == "REQUEST_VALIDATION_FAILED"
-    assert body["details"]["fields"][0]["path"] == "confirmed_items"
+        assert response.status_code == 200, response.text
+        do = response.json()
+        assert do["lines"][0]["sku_id"] == "SKU_MILO_1KG"
+        assert do["lines"][0]["quantity"] == 1
+    with connect(seeded_db) as conn:
+        order = conn.execute(
+            "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()
+        versions = conn.execute(
+            "SELECT count(*) FROM draft_versions WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+        dos = conn.execute(
+            "SELECT count(*) FROM delivery_orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+    assert order == ("DO_GENERATED", 2)
+    assert versions == 2
+    assert dos == 1
+
+
+def test_approve_confirmed_items_failure_rolls_back_new_version(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 1, "confirmed_items": []},
+        )
+        assert response.status_code == 400
+    with connect(seeded_db) as conn:
+        order = conn.execute(
+            "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()
+        versions = conn.execute(
+            "SELECT count(*) FROM draft_versions WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+        dos = conn.execute(
+            "SELECT count(*) FROM delivery_orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+    assert order == ("DISAMBIGUATION_REQUIRED", 1)
+    assert versions == 1
+    assert dos == 0
+
+
+def test_approve_confirmed_items_failure_after_save_rolls_back(seeded_db):
+    with _client(seeded_db) as client:
+        response = client.post(
+            "/api/v1/orders/DRF_T1/approve",
+            headers=_headers(CLERK),
+            json={"expected_version": 1, "confirmed_items": [_line(11)]},
+        )
+        assert response.status_code == 422
+    with connect(seeded_db) as conn:
+        order = conn.execute(
+            "SELECT status, version FROM orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()
+        versions = conn.execute(
+            "SELECT count(*) FROM draft_versions WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+        dos = conn.execute(
+            "SELECT count(*) FROM delivery_orders WHERE tenant_id='T1' AND draft_id='DRF_T1'"
+        ).fetchone()[0]
+    assert order == ("DISAMBIGUATION_REQUIRED", 1)
+    assert versions == 1
+    assert dos == 0
 
 
 def test_parse_uses_ai_rows_instead_of_runtime_error(seeded_db):

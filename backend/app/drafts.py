@@ -833,220 +833,216 @@ def save_lines(
                         "current_version": order["version"],
                     }
                 )
+            draft = _apply_save_lines(conn, user, order, body)
+            conn.execute("COMMIT")
+        except BaseException:
+            conn.execute("ROLLBACK")
+            raise
+    return draft
 
-            old = _old_lines(order)
-            _coverage(old, body)
-            customer = _customer(conn, user.tenant_id, order["customer_id"])
-            tenant = _tenant(conn, user.tenant_id)
-            old_by_id = {line.line_id: line for line in old}
-            snapshot = _latest_snapshot(conn, user.tenant_id, draft_id)
-            ignored_spans = snapshot.get("ignored_spans", [])
 
-            lines: list[WorkingLine] = []
-            issues: list[Issue] = []
-            for item in body.lines:
-                old_line = old_by_id.get(item.line_id) if item.line_id else None
-                line, line_issues = _line(
-                    conn=conn,
-                    user=user,
-                    tenant=user.tenant_id,
-                    customer=customer,
-                    item=item,
-                    old=old_line,
+def _apply_save_lines(conn, user, order, body):
+    """Apply a lines save on an already locked connection, without committing."""
+    draft_id = order["draft_id"]
+    old = _old_lines(order)
+    _coverage(old, body)
+    customer = _customer(conn, user.tenant_id, order["customer_id"])
+    tenant = _tenant(conn, user.tenant_id)
+    old_by_id = {line.line_id: line for line in old}
+    snapshot = _latest_snapshot(conn, user.tenant_id, draft_id)
+    ignored_spans = snapshot.get("ignored_spans", [])
+
+    lines: list[WorkingLine] = []
+    issues: list[Issue] = []
+    for item in body.lines:
+        old_line = old_by_id.get(item.line_id) if item.line_id else None
+        line, line_issues = _line(
+            conn=conn,
+            user=user,
+            tenant=user.tenant_id,
+            customer=customer,
+            item=item,
+            old=old_line,
+        )
+        lines.append(line)
+        issues.extend(line_issues)
+
+    for line in lines:
+        if line.sku_id and line.available_qty is not None:
+            combined = sum(other.effective_qty for other in lines if other.sku_id == line.sku_id)
+            if combined > line.available_qty and not any(
+                issue.code == "INSUFFICIENT_STOCK" and issue.line_id == line.line_id
+                for issue in issues
+            ):
+                issues.append(
+                    Issue(
+                        issue_id=_stable_id("ISS", draft_id, line.line_id, "INSUFFICIENT_STOCK"),
+                        code="INSUFFICIENT_STOCK",
+                        line_id=line.line_id,
+                        data_used={
+                            "available_qty": line.available_qty,
+                            "combined_qty": combined,
+                        },
+                        blocking=True,
+                        resolved=False,
+                    )
                 )
-                lines.append(line)
-                issues.extend(line_issues)
 
-            for line in lines:
-                if line.sku_id and line.available_qty is not None:
-                    combined = sum(
-                        other.effective_qty for other in lines if other.sku_id == line.sku_id
-                    )
-                    if combined > line.available_qty and not any(
-                        issue.code == "INSUFFICIENT_STOCK" and issue.line_id == line.line_id
-                        for issue in issues
-                    ):
-                        issues.append(
-                            Issue(
-                                issue_id=_stable_id(
-                                    "ISS", draft_id, line.line_id, "INSUFFICIENT_STOCK"
-                                ),
-                                code="INSUFFICIENT_STOCK",
-                                line_id=line.line_id,
-                                data_used={
-                                    "available_qty": line.available_qty,
-                                    "combined_qty": combined,
-                                },
-                                blocking=True,
-                                resolved=False,
-                            )
-                        )
+    # Older application versions stored conditions only in immutable snapshots.
+    # Recover them without altering the signed schema or historical snapshots.
+    merged_issues = {
+        issue["issue_id"]: issue
+        for issue in [*snapshot.get("conditions", []), *(order["issues"] or [])]
+    }
+    old_issues = [Issue.model_validate(issue) for issue in merged_issues.values()]
+    line_ids = {line.line_id for line in lines}
+    conditions = [issue for issue in old_issues if issue.code == "CUSTOMER_CONDITION"]
+    by_id = {line.line_id: line for line in lines}
+    for condition in conditions:
+        if condition.line_id and condition.line_id not in line_ids:
+            condition.line_id = None
+            condition.condition_scope = "UNKNOWN"
+            condition.resolved = False
+        if condition.resolved and condition.resolution == "ACCEPT_REQUESTED_PRICE":
+            price = condition.data_used.get("confirmed_unit_price")
+            if not condition.target_line_ids or any(
+                target not in by_id
+                or by_id[target].unit_price_override != price
+                or target not in old_by_id
+                or by_id[target].sku_id != old_by_id[target].sku_id
+                for target in condition.target_line_ids
+            ):
+                condition.resolved = False
+                condition.resolution = None
+        if condition.condition_kind == "STOCK":
+            condition.blocking = False
+            condition.resolved = bool(lines) and all(
+                line.sku_id
+                and line.available_qty is not None
+                and line.available_qty
+                >= sum(other.effective_qty for other in lines if other.sku_id == line.sku_id)
+                for line in lines
+            )
+            condition.auto_resolved_by = "STOCK_CHECK" if condition.resolved else None
+    _validate_resolutions(body, list(merged_issues.values()), lines, issues, conditions)
 
-            # Older application versions stored conditions only in immutable snapshots.
-            # Recover them without altering the signed schema or historical snapshots.
-            merged_issues = {
-                issue["issue_id"]: issue
-                for issue in [*snapshot.get("conditions", []), *(order["issues"] or [])]
-            }
-            old_issues = [Issue.model_validate(issue) for issue in merged_issues.values()]
-            line_ids = {line.line_id for line in lines}
-            conditions = [issue for issue in old_issues if issue.code == "CUSTOMER_CONDITION"]
-            by_id = {line.line_id: line for line in lines}
-            for condition in conditions:
-                if condition.line_id and condition.line_id not in line_ids:
-                    condition.line_id = None
-                    condition.condition_scope = "UNKNOWN"
-                    condition.resolved = False
-                if condition.resolved and condition.resolution == "ACCEPT_REQUESTED_PRICE":
-                    price = condition.data_used.get("confirmed_unit_price")
-                    if not condition.target_line_ids or any(
-                        target not in by_id
-                        or by_id[target].unit_price_override != price
-                        or target not in old_by_id
-                        or by_id[target].sku_id != old_by_id[target].sku_id
-                        for target in condition.target_line_ids
-                    ):
-                        condition.resolved = False
-                        condition.resolution = None
-                if condition.condition_kind == "STOCK":
-                    condition.blocking = False
-                    condition.resolved = bool(lines) and all(
-                        line.sku_id
-                        and line.available_qty is not None
-                        and line.available_qty
-                        >= sum(
-                            other.effective_qty for other in lines if other.sku_id == line.sku_id
-                        )
-                        for line in lines
-                    )
-                    condition.auto_resolved_by = "STOCK_CHECK" if condition.resolved else None
-            _validate_resolutions(body, list(merged_issues.values()), lines, issues, conditions)
+    total: Decimal | None = None
+    if all(line.subtotal_rm is not None for line in lines):
+        total = sum(Decimal(line.subtotal_rm) for line in lines)
 
-            total: Decimal | None = None
-            if all(line.subtotal_rm is not None for line in lines):
-                total = sum(Decimal(line.subtotal_rm) for line in lines)
+    blocking = sorted(
+        {issue.code for issue in [*issues, *conditions] if issue.blocking and not issue.resolved}
+    )
+    status = "READY_FOR_APPROVAL" if not blocking and lines else "DISAMBIGUATION_REQUIRED"
+    old_clarification = order.get("clarification") or {}
+    masked_message = _masked_message(conn, user.tenant_id, order["message_id"])
+    clarification, clarification_lang = build_clarification(
+        issues,
+        conditions,
+        old_clarification.get("language") if isinstance(old_clarification, dict) else None,
+        lines=lines,
+        masked_text=masked_message,
+    )
+    escalation = _escalation(
+        tenant=tenant,
+        customer=customer,
+        lines=lines,
+        total=total,
+    )
+    allowed, blocked = _actions(
+        role=user.role,
+        status=status,
+        escalation=escalation,
+    )
+    if clarification is not None:
+        allowed.append("COPY_CLARIFICATION")
+    now = _now()
+    draft = OrderDraftResponse(
+        draft_id=draft_id,
+        version=order["version"] + 1,
+        status=status,
+        customer_id=customer["customer_id"],
+        customer={
+            "customer_id": customer["customer_id"],
+            "name": customer["name"],
+            "tier": customer["tier"],
+            "credit_flag": customer["credit_flag"],
+            "has_credit_notice": customer["credit_flag"] == "OVERDUE_NOTICE",
+            "phone_e164": customer["phone_e164"],
+        },
+        masked_message=masked_message,
+        ai_mode=order["ai_mode"],
+        lines=lines,
+        issues=[*issues, *conditions],
+        conditions=conditions,
+        blocking_issues=blocking,
+        escalation_preview=escalation,
+        totals=OrderTotals(
+            order_total=_money(total) if total is not None else None,
+            currency="MYR",
+            is_complete=total is not None,
+        ),
+        allowed_actions=allowed,
+        blocked_actions=blocked,
+        clarification_draft=clarification,
+        clarification_lang=clarification_lang,
+        ignored_spans=ignored_spans,
+        created_at=order["created_at"],
+        updated_at=now,
+    )
 
-            blocking = sorted(
-                {
-                    issue.code
-                    for issue in [*issues, *conditions]
-                    if issue.blocking and not issue.resolved
-                }
-            )
-            status = "READY_FOR_APPROVAL" if not blocking and lines else "DISAMBIGUATION_REQUIRED"
-            old_clarification = order.get("clarification") or {}
-            masked_message = _masked_message(conn, user.tenant_id, order["message_id"])
-            clarification, clarification_lang = build_clarification(
-                issues,
-                conditions,
-                old_clarification.get("language") if isinstance(old_clarification, dict) else None,
-                lines=lines,
-                masked_text=masked_message,
-            )
-            escalation = _escalation(
-                tenant=tenant,
-                customer=customer,
-                lines=lines,
-                total=total,
-            )
-            allowed, blocked = _actions(
-                role=user.role,
-                status=status,
-                escalation=escalation,
-            )
-            if clarification is not None:
-                allowed.append("COPY_CLARIFICATION")
-            now = _now()
-            draft = OrderDraftResponse(
-                draft_id=draft_id,
-                version=order["version"] + 1,
-                status=status,
-                customer_id=customer["customer_id"],
-                customer={
-                    "customer_id": customer["customer_id"],
-                    "name": customer["name"],
-                    "tier": customer["tier"],
-                    "credit_flag": customer["credit_flag"],
-                    "has_credit_notice": customer["credit_flag"] == "OVERDUE_NOTICE",
-                    "phone_e164": customer["phone_e164"],
-                },
-                masked_message=masked_message,
-                ai_mode=order["ai_mode"],
-                lines=lines,
-                issues=[*issues, *conditions],
-                conditions=conditions,
-                blocking_issues=blocking,
-                escalation_preview=escalation,
-                totals=OrderTotals(
-                    order_total=_money(total) if total is not None else None,
-                    currency="MYR",
-                    is_complete=total is not None,
-                ),
-                allowed_actions=allowed,
-                blocked_actions=blocked,
-                clarification_draft=clarification,
-                clarification_lang=clarification_lang,
-                ignored_spans=ignored_spans,
-                created_at=order["created_at"],
-                updated_at=now,
-            )
-
-            conn.execute(
-                "UPDATE orders SET status=%s, version=%s, working_lines=%s, issues=%s, "
-                "clarification=%s, escalation_preview=%s, updated_at=now() "
-                "WHERE tenant_id=%s AND draft_id=%s",
-                (
-                    draft.status,
-                    draft.version,
-                    Jsonb([line.model_dump(mode="json") for line in lines]),
-                    Jsonb([issue.model_dump(mode="json") for issue in draft.issues]),
-                    (
-                        Jsonb(draft.clarification_draft.model_dump(mode="json"))
-                        if draft.clarification_draft
-                        else None
-                    ),
-                    Jsonb(escalation),
-                    user.tenant_id,
-                    draft_id,
-                ),
-            )
-            conn.execute(
-                "INSERT INTO draft_versions (tenant_id, draft_id, version, snapshot, created_by) "
-                "VALUES (%s, %s, %s, %s, %s)",
-                (
-                    user.tenant_id,
-                    draft_id,
-                    draft.version,
-                    Jsonb(draft.model_dump(mode="json")),
-                    user.user_id,
-                ),
-            )
+    conn.execute(
+        "UPDATE orders SET status=%s, version=%s, working_lines=%s, issues=%s, "
+        "clarification=%s, escalation_preview=%s, updated_at=now() "
+        "WHERE tenant_id=%s AND draft_id=%s",
+        (
+            draft.status,
+            draft.version,
+            Jsonb([line.model_dump(mode="json") for line in lines]),
+            Jsonb([issue.model_dump(mode="json") for issue in draft.issues]),
+            (
+                Jsonb(draft.clarification_draft.model_dump(mode="json"))
+                if draft.clarification_draft
+                else None
+            ),
+            Jsonb(escalation),
+            user.tenant_id,
+            draft_id,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO draft_versions (tenant_id, draft_id, version, snapshot, created_by) "
+        "VALUES (%s, %s, %s, %s, %s)",
+        (
+            user.tenant_id,
+            draft_id,
+            draft.version,
+            Jsonb(draft.model_dump(mode="json")),
+            user.user_id,
+        ),
+    )
+    _audit(
+        conn,
+        tenant=user.tenant_id,
+        draft_id=draft_id,
+        version=draft.version,
+        action="SAVE_LINES",
+        event="DRAFT_VERSION_CREATED",
+        user=user,
+        payload={"version": draft.version, "line_count": len(lines)},
+        before={line.line_id: line.model_dump(mode="json") for line in old},
+        after={line.line_id: line.model_dump(mode="json") for line in lines},
+    )
+    for resolution in body.resolutions:
+        if resolution.choice == "NOT_A_CONDITION":
             _audit(
                 conn,
                 tenant=user.tenant_id,
                 draft_id=draft_id,
                 version=draft.version,
-                action="SAVE_LINES",
-                event="DRAFT_VERSION_CREATED",
+                action="CONDITION_DISMISSED",
+                event="CONDITION_DISMISSED",
                 user=user,
-                payload={"version": draft.version, "line_count": len(lines)},
-                before={line.line_id: line.model_dump(mode="json") for line in old},
-                after={line.line_id: line.model_dump(mode="json") for line in lines},
+                payload=resolution.model_dump(mode="json"),
             )
-            for resolution in body.resolutions:
-                if resolution.choice == "NOT_A_CONDITION":
-                    _audit(
-                        conn,
-                        tenant=user.tenant_id,
-                        draft_id=draft_id,
-                        version=draft.version,
-                        action="CONDITION_DISMISSED",
-                        event="CONDITION_DISMISSED",
-                        user=user,
-                        payload=resolution.model_dump(mode="json"),
-                    )
-            conn.execute("COMMIT")
-        except BaseException:
-            conn.execute("ROLLBACK")
-            raise
     return draft
