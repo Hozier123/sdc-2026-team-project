@@ -1,5 +1,7 @@
 # DO 行级导出（A1/B1/C1 + Zhou 补充）
 
+> 2026-10-23 审查修订：数据库导出优先使用批准版本的 `draft_versions.snapshot.lines` 中的 pack_size/grade，避免商品主档后改影响旧 DO；旧数据缺少这些字段时仍会回退主档，须单独核验。命令行传入的 products version/hash 只标注为 `OPERATOR_ASSERTED_NOT_VERIFIED`，不冒充已读取对应 CSV 并核验。空订单、非法数量、负数/非有限金额拒绝；CSV 公式型文本转义，JSON 保留原值。
+
 > 依据：Zhou r2 复核要求，测试侧确认 `A1 / B1 / C1`，并追加三项。
 > 工具：`backend/tools/export_trial_record.py`。
 > 范围：只做**记录侧导出**，不改契约、不改 OpenAPI、不动 Gate 0。

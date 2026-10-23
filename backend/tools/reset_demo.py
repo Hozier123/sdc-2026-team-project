@@ -32,6 +32,7 @@ Template creation (after Zhou re-freezes the canonical T1 seed):
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -41,7 +42,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
+from uuid import uuid4
 
 import psycopg
 from psycopg import sql as pgsql
@@ -49,6 +51,7 @@ from psycopg.conninfo import conninfo_to_dict
 
 from app.config import REPO_ROOT, Settings
 from app.migrations import HASH_LIST_SHA256, SQL_SHA256, VERSION, migrate, verify_schema
+from app.seed import SeedError, validate_data_only_sql
 
 DEFAULT_TEMPLATE = "kiraorder_t1_seed"
 DEFAULT_TARGET = "kiraorder_trial"
@@ -83,6 +86,7 @@ CREATE TABLE IF NOT EXISTS kiraorder_meta.seed_manifest (
     price_count     integer NOT NULL,
     price_total_a   numeric(12,2) NOT NULL,
     price_total_b   numeric(12,2) NOT NULL,
+    seed_content_sha256 text NOT NULL,
     applied_at      timestamptz NOT NULL DEFAULT now()
 )
 """
@@ -107,7 +111,7 @@ class Report:
 
 
 def utc_stamp() -> str:
-    return datetime.now().astimezone().strftime("%Y%m%dT%H%M%S%z")
+    return datetime.now().astimezone().strftime("%Y%m%dT%H%M%S%f%z")
 
 
 def connect_admin(url: str) -> psycopg.Connection:
@@ -133,7 +137,11 @@ def with_dbname(url: str, dbname: str) -> str:
     if ":" in host:  # IPv6 literal
         host = f"[{host}]"
     port = parts.get("port", "5432")
-    return f"postgresql://{credentials}@{host}:{port}/{quote(dbname, safe='')}"
+    options = {
+        k: v for k, v in parts.items() if k not in {"user", "password", "host", "port", "dbname"}
+    }
+    suffix = "?" + urlencode(options) if options else ""
+    return f"postgresql://{credentials}@{host}:{port}/{quote(dbname, safe='')}{suffix}"
 
 
 def database_exists(admin: psycopg.Connection, name: str) -> bool:
@@ -142,6 +150,8 @@ def database_exists(admin: psycopg.Connection, name: str) -> bool:
 
 
 def ensure_safe_names(target: str, template: str, allow_any_target: bool) -> None:
+    if not all(re.fullmatch(r"[a-z][a-z0-9_]{0,62}", value) for value in (target, template)):
+        raise ResetError("database names must be safe lowercase identifiers")
     if target == template:
         raise ResetError("target and template must differ")
     if target in FORBIDDEN_DATABASES or template in FORBIDDEN_DATABASES:
@@ -157,25 +167,46 @@ def read_seed_manifest(conn: psycopg.Connection, tenant: str) -> dict[str, Any] 
     if exists is None:
         return None
     row = conn.execute(
-        "SELECT seed_version, seed_sha256, product_count, inventory_total, family_count, "
-        "customer_count, price_count, price_total_a::text, price_total_b::text, applied_at "
-        "FROM kiraorder_meta.seed_manifest WHERE tenant_id = %s",
-        (tenant,),
+        "SELECT to_jsonb(m) FROM kiraorder_meta.seed_manifest m WHERE tenant_id=%s", (tenant,)
     ).fetchone()
     if row is None:
         return None
-    return {
-        "seed_version": row[0],
-        "seed_sha256": row[1],
-        "product_count": row[2],
-        "inventory_total": row[3],
-        "family_count": row[4],
-        "customer_count": row[5],
-        "price_count": row[6],
-        "price_total_a": row[7],
-        "price_total_b": row[8],
-        "applied_at": row[9].isoformat(),
-    }
+    manifest = row[0]
+    if not manifest.get("seed_content_sha256"):
+        raise ResetError("legacy template lacks row-level digest; create a new versioned template")
+    for key in ("price_total_a", "price_total_b"):
+        manifest[key] = f"{manifest[key]:.2f}"
+    return manifest
+
+
+def seed_content_hash(conn, tenant):
+    """Detect compensating changes that leave aggregate counts/sums unchanged."""
+    tables = (
+        "tenants",
+        "users",
+        "customers",
+        "product_families",
+        "family_aliases",
+        "products",
+        "uom_aliases",
+        "customer_tier_prices",
+        "inventory",
+        "alias_cache",
+    )
+    snapshot = {}
+    for table in tables:
+        rows = conn.execute(
+            pgsql.SQL(
+                "SELECT to_jsonb(t) - 'created_at' - 'updated_at' FROM {} t WHERE tenant_id=%s"
+            ).format(pgsql.Identifier(table)),
+            (tenant,),
+        ).fetchall()
+        snapshot[table] = sorted(
+            json.dumps(row[0], sort_keys=True, ensure_ascii=False) for row in rows
+        )
+    return hashlib.sha256(
+        json.dumps(snapshot, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    ).hexdigest()
 
 
 def seed_snapshot(conn: psycopg.Connection, tenant: str) -> dict[str, Any]:
@@ -258,6 +289,11 @@ def check_template(args: argparse.Namespace, admin: psycopg.Connection) -> dict[
             raise ResetError("template seed sha256 does not match --expect-seed-sha256")
         snapshot = seed_snapshot(conn, args.tenant)
 
+        if seed_content_hash(conn, args.tenant) != manifest["seed_content_sha256"]:
+            raise ResetError("template row-level seed content digest mismatch")
+        if conn.execute("SELECT count(*) FROM tenants").fetchone()[0] != 1:
+            raise ResetError("trial template must contain only the selected tenant")
+
     # The manifest is only a "file unchanged" witness; the expectations come
     # from products.csv, so a drifted value cannot certify itself.
     manifest_expected = {key: manifest[key] for key in snapshot if key in manifest}
@@ -269,6 +305,10 @@ def check_template(args: argparse.Namespace, admin: psycopg.Connection) -> dict[
     if differences:
         raise ResetError(f"template values do not match products.csv: {differences}")
 
+    # All checks must run BEFORE a destructive rebuild, not only afterwards.
+    template_args = argparse.Namespace(**vars(args))
+    template_args.target = args.template
+    verify_target(template_args)
     return {"manifest": manifest, "snapshot": snapshot}
 
 
@@ -372,20 +412,67 @@ def write_evidence(
 
 
 def rebuild(admin: psycopg.Connection, template: str, target: str) -> None:
-    admin.execute(
-        pgsql.SQL("DROP DATABASE IF EXISTS {} WITH (FORCE)").format(pgsql.Identifier(target))
-    )
+    # Build before touching the old database; preserve the old DB for recovery.
+    suffix = uuid4().hex[:8]
+    candidate = f"{target[:42]}_candidate_{suffix}"
+    backup = f"{target[:42]}_backup_{suffix}"
     admin.execute(
         pgsql.SQL("CREATE DATABASE {} TEMPLATE {}").format(
-            pgsql.Identifier(target), pgsql.Identifier(template)
+            pgsql.Identifier(candidate), pgsql.Identifier(template)
         )
     )
+    try:
+        if database_exists(admin, target):
+            # Active writers must be stopped explicitly by the operator. Do not
+            # kill sessions and discard an in-flight order/evidence transaction.
+            active = admin.execute(
+                "SELECT count(*) FROM pg_stat_activity WHERE datname=%s", (target,)
+            ).fetchone()[0]
+            if active:
+                raise ResetError("target has active connections; stop API/AI before reset")
+            admin.execute(
+                pgsql.SQL("ALTER DATABASE {} RENAME TO {}").format(
+                    pgsql.Identifier(target), pgsql.Identifier(backup)
+                )
+            )
+        admin.execute(
+            pgsql.SQL("ALTER DATABASE {} RENAME TO {}").format(
+                pgsql.Identifier(candidate), pgsql.Identifier(target)
+            )
+        )
+    except Exception:
+        # Restore the original name if installation failed after renaming it.
+        if not database_exists(admin, target) and database_exists(admin, backup):
+            admin.execute(
+                pgsql.SQL("ALTER DATABASE {} RENAME TO {}").format(
+                    pgsql.Identifier(backup), pgsql.Identifier(target)
+                )
+            )
+        raise ResetError(
+            "reset installation failed; original database preserved; inspect candidate databases"
+        ) from None
+
+
+def retained_backups(admin: psycopg.Connection, target: str) -> list[str]:
+    return [
+        row[0]
+        for row in admin.execute(
+            "SELECT datname FROM pg_database WHERE starts_with(datname, %s) ORDER BY datname",
+            (f"{target[:42]}_backup_",),
+        ).fetchall()
+    ]
 
 
 def verify_target(args: argparse.Namespace) -> dict[str, Any]:
     url = with_dbname(args.admin_url, args.target)
     with psycopg.connect(url, autocommit=True, connect_timeout=5) as conn:
         verify_schema(conn)
+        manifest = read_seed_manifest(conn, args.tenant)
+        if (
+            manifest is None
+            or seed_content_hash(conn, args.tenant) != manifest["seed_content_sha256"]
+        ):
+            raise ResetError("rebuilt database row-level content differs from pinned seed")
         ledger = conn.execute(
             "SELECT version, sql_sha256, baseline_hash_sha256 FROM kiraorder_meta.schema_migrations"
         ).fetchall()
@@ -430,9 +517,7 @@ def run_hook(command: str, timeout: int) -> int:
         cwd=str(REPO_ROOT),
     )
     if completed.returncode != 0:
-        detail = (completed.stderr or completed.stdout or "").strip().splitlines()
-        last = detail[-1] if detail else "no output"
-        raise ResetError(f"post-reset hook failed ({completed.returncode}): {last}")
+        raise ResetError(f"post-reset hook failed ({completed.returncode}); output suppressed")
     return completed.returncode
 
 
@@ -452,20 +537,25 @@ def init_template(args: argparse.Namespace, admin: psycopg.Connection) -> Report
         tenant=args.tenant,
         started_at=utc_stamp(),
     )
-    seed_text = seed_path.read_text(encoding="utf-8")
     if not args.seed_version or not args.seed_sha256:
         raise ResetError("--init-template requires --seed-version and --seed-sha256")
-
-    admin.execute(
-        pgsql.SQL("DROP DATABASE IF EXISTS {} WITH (FORCE)").format(pgsql.Identifier(args.template))
-    )
+    raw = seed_path.read_bytes()
+    if hashlib.sha256(raw).hexdigest().lower() != args.seed_sha256.lower():
+        raise ResetError("seed SQL checksum does not match --seed-sha256")
+    try:
+        seed_text = raw.decode("utf-8")
+        validate_data_only_sql(seed_text, args.tenant)
+    except (UnicodeDecodeError, SeedError):
+        raise ResetError("seed SQL must be UTF-8 literal tenant-scoped INSERTs") from None
+    if database_exists(admin, args.template):
+        raise ResetError("template already exists; choose a new versioned template name")
     admin.execute(
         pgsql.SQL("CREATE DATABASE {} TEMPLATE template0").format(pgsql.Identifier(args.template))
     )
     url = with_dbname(args.admin_url, args.template)
     migrate(Settings(_env_file=None, database_url=url))
 
-    with psycopg.connect(url, autocommit=True, cursor_factory=psycopg.ClientCursor) as conn:
+    with psycopg.connect(url, autocommit=False, cursor_factory=psycopg.ClientCursor) as conn:
         conn.execute(seed_text)
         conn.execute(SEED_MANIFEST_DDL)
         snapshot = seed_snapshot(conn, args.tenant)
@@ -475,8 +565,9 @@ def init_template(args: argparse.Namespace, admin: psycopg.Connection) -> Report
         conn.execute(
             "INSERT INTO kiraorder_meta.seed_manifest "
             "(tenant_id, seed_version, seed_sha256, product_count, inventory_total, "
-            "family_count, customer_count, price_count, price_total_a, price_total_b) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+            "family_count, customer_count, price_count, price_total_a, price_total_b, "
+            "seed_content_sha256) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
             "ON CONFLICT (tenant_id) DO UPDATE SET seed_version = EXCLUDED.seed_version, "
             "seed_sha256 = EXCLUDED.seed_sha256, product_count = EXCLUDED.product_count, "
             "inventory_total = EXCLUDED.inventory_total, family_count = EXCLUDED.family_count, "
@@ -494,6 +585,7 @@ def init_template(args: argparse.Namespace, admin: psycopg.Connection) -> Report
                 snapshot["price_count"],
                 snapshot["price_total_a"],
                 snapshot["price_total_b"],
+                seed_content_hash(conn, args.tenant),
             ),
         )
         verify_schema(conn)
@@ -538,6 +630,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", args.tenant):
+        print("reset failed: invalid tenant identifier", file=sys.stderr)
+        return 2
     if not args.admin_url:
         print(
             "reset failed: RESET_ADMIN_DATABASE_URL (or --admin-url) is required", file=sys.stderr
@@ -587,6 +682,9 @@ def main(argv: list[str] | None = None) -> int:
 
                 if args.apply:
                     rebuild(admin, args.template, args.target)
+                    report.checks["retained_backup_databases"] = retained_backups(
+                        admin, args.target
+                    )
                     report.checks["post_reset"] = verify_target(args)
                     if args.hook:
                         report.hook_exit_code = run_hook(args.hook, args.hook_timeout)
@@ -598,7 +696,7 @@ def main(argv: list[str] | None = None) -> int:
         report.error = str(exc)
     except Exception as exc:  # noqa: BLE001 - never leak a DSN or raw SQL
         report.status = "failed"
-        report.error = f"unexpected {type(exc).__name__}: {exc}"
+        report.error = f"unexpected {type(exc).__name__}; details suppressed"
 
     payload = {
         "action": report.action,

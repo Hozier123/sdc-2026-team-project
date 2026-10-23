@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import unicodedata
 from datetime import datetime, timezone
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from typing import Annotated, Any
@@ -49,6 +50,10 @@ def _now() -> datetime:
 
 
 def _money(value: Decimal) -> str:
+    if not value.is_finite() or value < 0 or value > Decimal("9999999999.99"):
+        raise RequestValidationFailedError(
+            details={"fields": [{"path": "amount", "reason": "outside numeric(12,2) range"}]}
+        )
     return format(value.quantize(MONEY, rounding=ROUND_HALF_UP), ".2f")
 
 
@@ -85,6 +90,10 @@ def _order(conn, tenant: str, draft_id: str, *, lock: bool = False) -> dict[str,
     ).fetchone()
     if row is None:
         raise ResourceNotFoundError()
+    snapshot = _latest_snapshot(conn, tenant, draft_id)
+    complete_issues = {
+        issue["issue_id"]: issue for issue in [*snapshot.get("conditions", []), *(row[6] or [])]
+    }
     return {
         "draft_id": draft_id,
         "status": row[0],
@@ -93,7 +102,7 @@ def _order(conn, tenant: str, draft_id: str, *, lock: bool = False) -> dict[str,
         "message_id": row[3],
         "ai_mode": row[4],
         "working_lines": row[5] or [],
-        "issues": row[6] or [],
+        "issues": list(complete_issues.values()),
         "clarification": row[7],
         "escalation_preview": row[8] or [],
         "created_at": row[9],
@@ -104,10 +113,12 @@ def _order(conn, tenant: str, draft_id: str, *, lock: bool = False) -> dict[str,
     }
 
 
-def _customer(conn, tenant: str, customer_id: str) -> dict[str, Any]:
+def _customer(conn, tenant: str, customer_id: str, *, active_only: bool = True) -> dict[str, Any]:
     row = conn.execute(
         "SELECT customer_id, name, tier, credit_flag, phone_e164 "
-        "FROM customers WHERE tenant_id=%s AND customer_id=%s AND active=true",
+        "FROM customers WHERE tenant_id=%s AND customer_id=%s"
+        + (" AND active=true" if active_only else "")
+        + " FOR SHARE",
         (tenant, customer_id),
     ).fetchone()
     if row is None:
@@ -124,7 +135,7 @@ def _customer(conn, tenant: str, customer_id: str) -> dict[str, Any]:
 def _tenant(conn, tenant: str) -> dict[str, Any]:
     row = conn.execute(
         "SELECT amount_threshold_rm, below_tier_price_override_requires_owner, "
-        "credit_flag_requires_owner FROM tenants WHERE tenant_id=%s",
+        "credit_flag_requires_owner FROM tenants WHERE tenant_id=%s FOR SHARE",
         (tenant,),
     ).fetchone()
     if row is None:
@@ -141,7 +152,8 @@ def _product(conn, tenant: str, sku_id: str) -> dict[str, Any]:
         "SELECT p.product_id, p.family_id, p.name, p.pack_size, p.grade, p.base_unit "
         "FROM products p JOIN product_families f "
         "ON f.tenant_id=p.tenant_id AND f.family_id=p.family_id "
-        "WHERE p.tenant_id=%s AND p.product_id=%s AND p.active=true AND f.active=true",
+        "WHERE p.tenant_id=%s AND p.product_id=%s AND p.active=true AND f.active=true "
+        "FOR SHARE OF p, f",
         (tenant, sku_id),
     ).fetchone()
     if row is None:
@@ -161,10 +173,33 @@ def _product(conn, tenant: str, sku_id: str) -> dict[str, Any]:
 def _tier_price(conn, tenant: str, tier: str, sku_id: str) -> Decimal | None:
     row = conn.execute(
         "SELECT unit_price_rm FROM customer_tier_prices "
-        "WHERE tenant_id=%s AND product_id=%s AND tier=%s",
+        "WHERE tenant_id=%s AND product_id=%s AND tier=%s FOR SHARE",
         (tenant, sku_id, tier),
     ).fetchone()
     return Decimal(row[0]) if row is not None else None
+
+
+def _canonical_uom(conn, tenant: str, value: str | None, base_unit: str) -> str:
+    if value is None:
+        return base_unit
+    normalized = unicodedata.normalize("NFKC", value).strip().casefold()
+    row = conn.execute(
+        "SELECT canonical_unit FROM uom_aliases WHERE tenant_id=%s AND alias_norm=%s",
+        (tenant, normalized),
+    ).fetchone()
+    canonical = row[0] if row else normalized
+    if canonical != base_unit:
+        raise RequestValidationFailedError(
+            details={
+                "fields": [
+                    {
+                        "path": "lines.uom",
+                        "reason": "must match selected SKU base unit; no implicit conversion",
+                    }
+                ]
+            }
+        )
+    return canonical
 
 
 def _available(conn, tenant: str, sku_id: str) -> int:
@@ -213,6 +248,8 @@ def _coverage(old: list[WorkingLine], body: SaveLinesRequest) -> dict[str, Any]:
             new_refs.append(line.client_line_ref)
 
     deleted = body.deleted_line_ids
+    if len(deleted) != len(set(deleted)):
+        raise InvalidLineOperationError(details={"duplicate_line_ids": deleted})
     duplicate_line_ids = sorted({line for line in submitted_ids if submitted_ids.count(line) > 1})
     overlap = sorted(set(submitted_ids) & set(deleted))
     unknown_deleted = sorted(set(deleted) - old_ids)
@@ -269,6 +306,10 @@ def _save_alias(
     phrase = old.source_span
     phrase_norm = phrase.strip().casefold()
     customer_id = customer["customer_id"] if item.alias_scope == "CUSTOMER" else None
+    conn.execute(
+        "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
+        (f"alias|{tenant}|{customer_id or ''}|{phrase_norm}",),
+    )
     existing = conn.execute(
         "SELECT alias_id, phrase, target_type, family_id, product_id, active, created_at "
         "FROM alias_cache WHERE tenant_id=%s AND COALESCE(customer_id, '')=%s "
@@ -298,6 +339,8 @@ def _save_alias(
             (alias_id,),
         ).fetchone()
     else:
+        if existing[2] != "SKU" or existing[4] != item.sku_id:
+            raise RequestValidationFailedError("alias already maps to a different target")
         row = existing
     return {
         "alias_id": row[0],
@@ -350,9 +393,13 @@ def _line(
         product = _product(conn, tenant, item.sku_id)
         family_id = product["family_id"]
         description = product["name"]
-        uom = uom or product["base_unit"]
-        pack_size = pack_size or product["pack_size"]
-        grade = grade or product["grade"]
+        uom = _canonical_uom(conn, tenant, uom, product["base_unit"])
+        for field in ("pack_size", "grade"):
+            provided = getattr(item, field)
+            if provided is not None and provided != product[field]:
+                raise RequestValidationFailedError(f"{field} must match selected SKU")
+        pack_size = product["pack_size"]
+        grade = product["grade"]
         tier_price = _tier_price(conn, tenant, customer["tier"], item.sku_id)
         if tier_price is None:
             raise MissingTierPriceError(
@@ -375,7 +422,7 @@ def _line(
                         ]
                     }
                 )
-            if not item.override_reason:
+            if not (item.override_reason or "").strip():
                 raise OverrideRequiredError()
             effective_price = override
         else:
@@ -530,9 +577,9 @@ def _actions(
         }
     if escalation:
         if role == "OWNER":
-            return ["APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
-        return ["SUBMIT_FOR_OWNER", "VIEW_ACTIVITY"], {}
-    return ["APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
+            return ["EDIT_DRAFT", "APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
+        return ["EDIT_DRAFT", "SUBMIT_FOR_OWNER", "VIEW_ACTIVITY"], {}
+    return ["EDIT_DRAFT", "APPROVE_AND_GENERATE_DO", "VIEW_ACTIVITY"], {}
 
 
 def _audit(
@@ -552,15 +599,33 @@ def _audit(
     conn.execute(
         "INSERT INTO audit_logs "
         "(audit_id, tenant_id, draft_id, draft_version, actor_user_id, "
-        " actor_role, action, payload) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-        (audit_id, tenant, draft_id, version, user.user_id, user.role, action, Jsonb(payload)),
+        " actor_role, action, payload, do_number) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (
+            audit_id,
+            tenant,
+            draft_id,
+            version,
+            user.user_id,
+            user.role,
+            action,
+            Jsonb(payload),
+            payload.get("do_number"),
+        ),
     )
     conn.execute(
         "INSERT INTO activity_log "
-        "(tenant_id, draft_id, event_type, payload, actor_user_id, actor_role) "
-        "VALUES (%s, %s, %s, %s, %s, %s)",
-        (tenant, draft_id, event, Jsonb(payload), user.user_id, user.role),
+        "(tenant_id, draft_id, event_type, payload, actor_user_id, actor_role, do_number) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+        (
+            tenant,
+            draft_id,
+            event,
+            Jsonb(payload),
+            user.user_id,
+            user.role,
+            payload.get("do_number"),
+        ),
     )
     if before is not None and after is not None:
         tracked_fields = (
@@ -625,6 +690,8 @@ def _validate_resolutions(
     old_ids = {issue["issue_id"] for issue in old_issues}
     line_ids = {line.line_id for line in lines}
     issue_by_id = {issue.issue_id: issue for issue in [*issues, *(conditions or [])]}
+    if len({r.issue_id for r in body.resolutions}) != len(body.resolutions):
+        raise RequestValidationFailedError("duplicate issue resolutions")
     for resolution in body.resolutions:
         if resolution.issue_id not in old_ids:
             raise RequestValidationFailedError(
@@ -639,9 +706,31 @@ def _validate_resolutions(
             )
         if any(target not in line_ids for target in resolution.target_line_ids):
             raise TargetLineRequiredError(details={"issue_id": resolution.issue_id})
+        if len(set(resolution.target_line_ids)) != len(resolution.target_line_ids):
+            raise TargetLineRequiredError(details={"issue_id": resolution.issue_id})
+        target_issue = issue_by_id.get(resolution.issue_id)
+        if target_issue is None or target_issue.code != "CUSTOMER_CONDITION":
+            raise RequestValidationFailedError("resolve line checks by correcting the line")
+        if target_issue.condition_kind == "STOCK":
+            raise RequestValidationFailedError("stock conditions are resolved by stock checks")
+        if resolution.choice not in {
+            "ACCEPT_REQUESTED_PRICE",
+            "NOT_A_CONDITION",
+            "CONFIRMED_WITH_CUSTOMER",
+        }:
+            raise RequestValidationFailedError("choice is not valid for a customer condition")
+        if (
+            target_issue.condition_kind == "PRICE"
+            and resolution.choice == "CONFIRMED_WITH_CUSTOMER"
+        ):
+            raise RequestValidationFailedError("price requires explicit UNIT price acceptance")
+        if resolution.choice == "ACCEPT_REQUESTED_PRICE" and target_issue.condition_kind != "PRICE":
+            raise RequestValidationFailedError("price acceptance requires a PRICE condition")
         if resolution.choice == "NOT_A_CONDITION" and not (resolution.note or "").strip():
             raise NoteRequiredError()
         if resolution.choice == "ACCEPT_REQUESTED_PRICE":
+            if not (resolution.note or "").strip():
+                raise NoteRequiredError()
             if not resolution.target_line_ids:
                 raise TargetLineRequiredError(details={"issue_id": resolution.issue_id})
             if resolution.confirmed_unit_price is None:
@@ -666,6 +755,8 @@ def _validate_resolutions(
                         ]
                     }
                 )
+            if Decimal(resolution.confirmed_unit_price) <= 0:
+                raise RequestValidationFailedError("confirmed unit price must be positive")
             if resolution.confirmed_unit_price is not None:
                 for line in lines:
                     if (
@@ -683,8 +774,20 @@ def _validate_resolutions(
                                 ]
                             }
                         )
-        target_issue = issue_by_id.get(resolution.issue_id)
+                for line in lines:
+                    if line.line_id in resolution.target_line_ids:
+                        if not line.sku_id or line.tier_unit_price is None:
+                            raise RequestValidationFailedError("price target requires selected SKU")
+                        line.unit_price_override = resolution.confirmed_unit_price
+                        line.effective_unit_price = resolution.confirmed_unit_price
+                        line.override_reason = resolution.note.strip()
+                        line.subtotal_rm = _money(
+                            Decimal(resolution.confirmed_unit_price) * line.effective_qty
+                        )
+            target_issue.price_basis = "UNIT"
+            target_issue.data_used["confirmed_unit_price"] = resolution.confirmed_unit_price
         if target_issue is not None:
+            target_issue.target_line_ids = resolution.target_line_ids
             target_issue.resolution = resolution.choice
             target_issue.resolution_note = resolution.note
             target_issue.resolved = True
@@ -754,16 +857,70 @@ def save_lines(
                 lines.append(line)
                 issues.extend(line_issues)
 
-            old_issues = [Issue.model_validate(issue) for issue in (order["issues"] or [])]
+            for line in lines:
+                if line.sku_id and line.available_qty is not None:
+                    combined = sum(
+                        other.effective_qty for other in lines if other.sku_id == line.sku_id
+                    )
+                    if combined > line.available_qty and not any(
+                        issue.code == "INSUFFICIENT_STOCK" and issue.line_id == line.line_id
+                        for issue in issues
+                    ):
+                        issues.append(
+                            Issue(
+                                issue_id=_stable_id(
+                                    "ISS", draft_id, line.line_id, "INSUFFICIENT_STOCK"
+                                ),
+                                code="INSUFFICIENT_STOCK",
+                                line_id=line.line_id,
+                                data_used={
+                                    "available_qty": line.available_qty,
+                                    "combined_qty": combined,
+                                },
+                                blocking=True,
+                                resolved=False,
+                            )
+                        )
+
+            # Older application versions stored conditions only in immutable snapshots.
+            # Recover them without altering the signed schema or historical snapshots.
+            merged_issues = {
+                issue["issue_id"]: issue
+                for issue in [*snapshot.get("conditions", []), *(order["issues"] or [])]
+            }
+            old_issues = [Issue.model_validate(issue) for issue in merged_issues.values()]
             line_ids = {line.line_id for line in lines}
-            conditions = [
-                issue
-                for issue in old_issues
-                if issue.code == "CUSTOMER_CONDITION"
-                and not issue.resolved
-                and (issue.line_id is None or issue.line_id in line_ids)
-            ]
-            _validate_resolutions(body, order["issues"], lines, issues, conditions)
+            conditions = [issue for issue in old_issues if issue.code == "CUSTOMER_CONDITION"]
+            by_id = {line.line_id: line for line in lines}
+            for condition in conditions:
+                if condition.line_id and condition.line_id not in line_ids:
+                    condition.line_id = None
+                    condition.condition_scope = "UNKNOWN"
+                    condition.resolved = False
+                if condition.resolved and condition.resolution == "ACCEPT_REQUESTED_PRICE":
+                    price = condition.data_used.get("confirmed_unit_price")
+                    if not condition.target_line_ids or any(
+                        target not in by_id
+                        or by_id[target].unit_price_override != price
+                        or target not in old_by_id
+                        or by_id[target].sku_id != old_by_id[target].sku_id
+                        for target in condition.target_line_ids
+                    ):
+                        condition.resolved = False
+                        condition.resolution = None
+                if condition.condition_kind == "STOCK":
+                    condition.blocking = False
+                    condition.resolved = bool(lines) and all(
+                        line.sku_id
+                        and line.available_qty is not None
+                        and line.available_qty
+                        >= sum(
+                            other.effective_qty for other in lines if other.sku_id == line.sku_id
+                        )
+                        for line in lines
+                    )
+                    condition.auto_resolved_by = "STOCK_CHECK" if condition.resolved else None
+            _validate_resolutions(body, list(merged_issues.values()), lines, issues, conditions)
 
             total: Decimal | None = None
             if all(line.subtotal_rm is not None for line in lines):
@@ -813,7 +970,7 @@ def save_lines(
                 masked_message=_masked_message(conn, user.tenant_id, order["message_id"]),
                 ai_mode=order["ai_mode"],
                 lines=lines,
-                issues=issues,
+                issues=[*issues, *conditions],
                 conditions=conditions,
                 blocking_issues=blocking,
                 escalation_preview=escalation,
@@ -839,7 +996,7 @@ def save_lines(
                     draft.status,
                     draft.version,
                     Jsonb([line.model_dump(mode="json") for line in lines]),
-                    Jsonb([issue.model_dump(mode="json") for issue in issues]),
+                    Jsonb([issue.model_dump(mode="json") for issue in draft.issues]),
                     (
                         Jsonb(draft.clarification_draft.model_dump(mode="json"))
                         if draft.clarification_draft
@@ -873,6 +1030,18 @@ def save_lines(
                 before={line.line_id: line.model_dump(mode="json") for line in old},
                 after={line.line_id: line.model_dump(mode="json") for line in lines},
             )
+            for resolution in body.resolutions:
+                if resolution.choice == "NOT_A_CONDITION":
+                    _audit(
+                        conn,
+                        tenant=user.tenant_id,
+                        draft_id=draft_id,
+                        version=draft.version,
+                        action="CONDITION_DISMISSED",
+                        event="CONDITION_DISMISSED",
+                        user=user,
+                        payload=resolution.model_dump(mode="json"),
+                    )
             conn.execute("COMMIT")
         except BaseException:
             conn.execute("ROLLBACK")

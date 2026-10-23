@@ -1,5 +1,7 @@
 """Application factory; startup never changes the database schema."""
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -29,7 +31,16 @@ def _extractor(settings: Settings):
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
-    app = FastAPI(title="KiraOrder backend foundation", version="0.1.0")
+    @asynccontextmanager
+    async def lifespan(app):
+        try:
+            yield
+        finally:
+            close = getattr(owned_provider, "close", None)
+            if close:
+                close()
+
+    app = FastAPI(title="KiraOrder backend foundation", version="0.1.0", lifespan=lifespan)
     app.state.settings = settings if settings is not None else Settings()
     origins = [
         origin.strip()
@@ -45,7 +56,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             allow_headers=["*"],
             expose_headers=[REQUEST_ID_HEADER],
         )
-    app.state.extraction_provider = _extractor(app.state.settings)
+    owned_provider = _extractor(app.state.settings)
+    app.state.extraction_provider = owned_provider
     register_error_handlers(app)
     app.include_router(health_router)
     app.include_router(me_router)

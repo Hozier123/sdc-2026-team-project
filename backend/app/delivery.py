@@ -10,7 +10,8 @@ from app.auth import CurrentUser
 from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
-from app.errors import ForbiddenActionError, ResourceNotFoundError
+from app.errors import ForbiddenActionError
+from app.read_models import _delivery_order
 from app.schemas import DeliveryOrder
 
 router = APIRouter(prefix="/api/v1", tags=["DeliveryOrders"])
@@ -33,34 +34,5 @@ def get_delivery_order(
     if user.role not in {"CLERK", "OWNER"}:
         raise ForbiddenActionError()
     with connect(settings) as conn:
-        row = conn.execute(
-            "SELECT d.do_number, d.draft_id, d.draft_version, d.customer_id, "
-            "COALESCE(dv.snapshot->'customer'->>'name', c.name), "
-            "d.lines, d.final_total_rm, d.prepared_by, d.approved_by, d.escalation_reasons, "
-            "d.approval_mode, d.reply_draft, d.related_do_number, d.approved_at "
-            "FROM delivery_orders d "
-            "LEFT JOIN draft_versions dv "
-            "  ON dv.tenant_id=d.tenant_id AND dv.draft_id=d.draft_id "
-            " AND dv.version=d.draft_version "
-            "JOIN customers c ON c.tenant_id=d.tenant_id AND c.customer_id=d.customer_id "
-            "WHERE d.tenant_id=%s AND d.do_number=%s",
-            (user.tenant_id, do_number),
-        ).fetchone()
-    if row is None:
-        raise ResourceNotFoundError()
-    return DeliveryOrder(
-        do_number=row[0],
-        draft_id=row[1],
-        draft_version=row[2],
-        customer_id=row[3],
-        customer_name=row[4],
-        lines=row[5],
-        final_total_rm=format(row[6], ".2f"),
-        prepared_by=row[7],
-        approved_by=row[8],
-        escalation_reasons=row[9] or [],
-        approval_mode=row[10],
-        reply_draft=row[11],
-        related_do_number=row[12],
-        approved_at=row[13],
-    )
+        delivery_order, _ = _delivery_order(conn, user.tenant_id, do_number)
+    return delivery_order

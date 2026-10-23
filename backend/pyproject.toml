@@ -13,10 +13,11 @@ dependencies = [
     "psycopg[binary]==3.3.6",
     "uvicorn==0.54.0",
     "pglast==7.21",
+    "httpx==0.28.1",
 ]
 
 [project.optional-dependencies]
-test = ["pytest==9.1.1", "httpx==0.28.1", "ruff==0.17.1"]
+test = ["pytest==9.1.1", "ruff==0.17.1", "jsonschema==4.26.0", "PyYAML==6.0.3"]
 
 [project.scripts]
 kiraorder-migrate = "app.migrations:main"

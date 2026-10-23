@@ -84,7 +84,11 @@ def build_clarification(
     language_hint: str | None = None,
 ) -> tuple[ClarificationDraft | None, str | None]:
     """Return a clarification for unresolved issues, or (None, None)."""
-    unresolved = [issue for issue in [*issues, *conditions] if not issue.resolved]
+    unresolved = [
+        issue
+        for issue in [*issues, *conditions]
+        if not issue.resolved and issue.condition_kind != "STOCK"
+    ]
     if not unresolved:
         return None, None
     language = _language(language_hint)

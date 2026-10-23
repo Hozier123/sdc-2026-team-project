@@ -1,6 +1,9 @@
 * text=auto
 *.pdf binary
 
+# Seed manifests sign LF bytes. Windows checkout must not change them.
+data/seed/*.sql text eol=lf
+
 # Preserve the signed Gate 0 baseline byte-for-byte across platforms.
 gate0/** -text
 evidence/gate0/确认书.md -text

@@ -44,7 +44,7 @@ def test_ai_samples_convert_to_backend_extraction(name):
         assert row.uom == expected_row["uom"]
         assert row.pack_size == expected_row["pack_size"]
     for ignored, expected_ignored in zip(raw.ignored_spans, expected["ignored_spans"], strict=True):
-        assert ignored["span"] == expected_ignored
+        assert ignored["text"] == expected_ignored
         assert masked_text[ignored["start"] : ignored["end"]] == expected_ignored
 
 

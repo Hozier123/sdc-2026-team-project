@@ -189,6 +189,9 @@ async def request_id_middleware(request: Request, call_next):
             content={"detail": "Internal Server Error"},
         )
     response.headers[REQUEST_ID_HEADER] = request_id
+    response.headers["Cache-Control"] = "no-store"
+    if response.status_code == 503:
+        response.headers["Retry-After"] = "5"
     return response
 
 

@@ -7,6 +7,7 @@ accuracy and order-line resolution come later.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Annotated, Any
@@ -21,14 +22,16 @@ from app.config import Settings
 from app.db import connect
 from app.deps import get_current_user, get_settings
 from app.draft_store import persist_parse_draft
+from app.drafts import _stable_id
 from app.errors import (
     AiAndFallbackUnavailableError,
     ForbiddenActionError,
     MessageTooLongError,
     ResourceNotFoundError,
 )
-from app.extraction.ai import AiServiceError
-from app.extraction.base import ExtractionProvider, validate_raw_extraction
+from app.extraction.ai import AiServiceError, classify_condition
+from app.extraction.base import ExtractionProvider, RawRow, validate_raw_extraction
+from app.extraction.evidence import exact_phrase, quantity_evidence
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
 from app.schemas import Issue, OrderDraftResponse, WorkingLine
@@ -125,17 +128,30 @@ def _ai_draft(
         )
         blocking.add(code)
 
+    cursor = 0
+    consumed_rows = set()
+    condition_records = {}
     for index, row in enumerate(raw.rows):
-        start = masked_text.find(row.span)
+        start = masked_text.find(row.span, cursor)
         end = start + len(row.span) if start >= 0 else None
-        if row.qty is None:
+        line_id = None
+        qty, qty_reason, qty_start, qty_end = quantity_evidence(row.span)
+        if start < 0:
+            key = (row.span, row.qty, row.fam, row.uom, row.pack_size)
+            qty_reason = "DUPLICATE_SPAN" if key in consumed_rows else "OVERLAPPING_SPAN"
+        elif row.qty != qty:
+            qty_reason = qty_reason or "FIELD_NOT_EVIDENCED"
+        if start >= 0:
+            cursor = end
+            consumed_rows.add((row.span, row.qty, row.fam, row.uom, row.pack_size))
+        if qty_reason or qty is None:
             add_issue(
                 code="LOW_CONFIDENCE_MATCH",
                 line_id=None,
                 span=row.span,
                 start=start if start >= 0 else None,
                 end=end,
-                reason_code="INVALID_QUANTITY",
+                reason_code=qty_reason or "INVALID_QUANTITY",
             )
         else:
             line_id = f"LNE_{uuid4().hex.upper()}"
@@ -145,15 +161,24 @@ def _ai_draft(
                 client_line_ref=f"ai-{index + 1}",
                 family_id=family_id,
                 description=row.span,
-                requested_qty=row.qty,
-                confirmed_qty=row.qty,
-                effective_qty=row.qty,
+                requested_qty=qty,
+                confirmed_qty=None,
+                effective_qty=qty,
                 uom=row.uom,
                 pack_size=row.pack_size,
                 match_source="LLM_EXTRACTED",
                 source_span=row.span,
                 span_start=start if start >= 0 else None,
                 span_end=end,
+                field_evidence=[
+                    {
+                        "field": "requested_qty",
+                        "raw_text": row.span[qty_start:qty_end],
+                        "start": start + qty_start,
+                        "end": start + qty_end,
+                        "normalizer_version": "field-evidence-v2",
+                    }
+                ],
             )
             lines.append(line)
             if family_id == "UNKNOWN":
@@ -182,41 +207,50 @@ def _ai_draft(
                 end=end,
                 reason_code="NO_CANDIDATE",
             )
-            for cond in row.conds:
-                kind = cond.get("kind", "OTHER")
-                if kind == "TIME":
-                    kind = "TIME"
-                requested_amount = cond.get("requested_amount")
-                requested_unit_price = None
-                if cond.get("price_basis") == "UNIT" and requested_amount:
-                    requested_unit_price = f"{Decimal(requested_amount):.2f}"
-                conditions.append(
-                    Issue(
-                        issue_id=f"ISS_{uuid4().hex.upper()}",
-                        code="CUSTOMER_CONDITION",
-                        condition_id=f"CND_{uuid4().hex.upper()}",
-                        line_id=line_id,
-                        condition_kind=kind
-                        if kind in {"STOCK", "PRICE", "TIME", "OTHER"}
-                        else "OTHER",
-                        condition_scope="SINGLE_LINE",
-                        span=cond.get("span"),
-                        source_span=cond.get("span"),
-                        span_start=cond.get("start"),
-                        span_end=cond.get("end"),
-                        requested_unit_price=requested_unit_price,
-                        price_basis=cond.get("price_basis"),
-                        ask="CLERK",
-                        data_used={
-                            "trigger_ids": cond.get("trigger_ids", []),
-                            "lexicon_version": cond.get("lexicon_version"),
-                        },
-                        blocking=bool(cond.get("blocking")),
-                        resolved=False,
-                    )
-                )
-                if cond.get("blocking"):
-                    blocking.add("CUSTOMER_CONDITION")
+        # Conditions survive even when their item's quantity is unusable.
+        for cond in row.conds:
+            kind = cond.get("kind", "OTHER")
+            amount = cond.get("requested_amount")
+            price = (
+                f"{Decimal(amount):.2f}" if cond.get("price_basis") == "UNIT" and amount else None
+            )
+            condition_id = _stable_id(
+                "CND", draft_id, kind, str(cond.get("start")), str(cond.get("end"))
+            )
+            unique_target = (
+                line_id if len(raw.rows) == 1 or cond.get("span", "") in row.span else None
+            )
+            condition_records.setdefault(
+                condition_id,
+                Issue(
+                    issue_id=_stable_id(
+                        "ISS", draft_id, unique_target, "CUSTOMER_CONDITION", condition_id
+                    ),
+                    code="CUSTOMER_CONDITION",
+                    condition_id=condition_id,
+                    line_id=unique_target,
+                    condition_kind=kind if kind in {"STOCK", "PRICE", "OTHER"} else "OTHER",
+                    condition_scope="SINGLE_LINE" if unique_target else "UNKNOWN",
+                    candidate_line_ids=[unique_target] if unique_target else [],
+                    span=cond.get("span"),
+                    source_span=cond.get("span"),
+                    span_start=cond.get("start"),
+                    span_end=cond.get("end"),
+                    requested_unit_price=price,
+                    price_basis=cond.get("price_basis"),
+                    ask="CLERK",
+                    data_used={
+                        "trigger_ids": cond.get("trigger_ids", []),
+                        "lexicon_version": cond.get("lexicon_version"),
+                        "amount_text": amount,
+                    },
+                    blocking=kind == "PRICE",
+                    resolved=False,
+                ),
+            )
+            if kind == "PRICE":
+                blocking.add("CUSTOMER_CONDITION")
+    conditions = list(condition_records.values())
 
     status = "READY_FOR_APPROVAL" if lines and not blocking else "DISAMBIGUATION_REQUIRED"
     clarification, clarification_lang = build_clarification(issues, conditions, language_hint)
@@ -239,7 +273,7 @@ def _ai_draft(
         "masked_message": masked_text,
         "ai_mode": "LLM",
         "lines": [line.model_dump(mode="json") for line in lines],
-        "issues": [issue.model_dump(mode="json") for issue in issues],
+        "issues": [issue.model_dump(mode="json") for issue in [*issues, *conditions]],
         "conditions": [condition.model_dump(mode="json") for condition in conditions],
         "blocking_issues": sorted(blocking),
         "escalation_preview": [],
@@ -252,6 +286,69 @@ def _ai_draft(
         "created_at": now,
         "updated_at": now,
     }
+
+
+def _guard_families_and_units(raw, settings, user, customer_id, masked_text):
+    """Only exact, tenant/customer-scoped evidence may support AI fields."""
+    with connect(settings) as conn:
+        families = conn.execute(
+            "SELECT family_id, family_name FROM product_families "
+            "WHERE tenant_id=%s AND active=true",
+            (user.tenant_id,),
+        ).fetchall()
+        aliases = conn.execute(
+            "SELECT family_id, phrase_norm FROM family_aliases WHERE tenant_id=%s",
+            (user.tenant_id,),
+        ).fetchall()
+        aliases += conn.execute(
+            "SELECT COALESCE(a.family_id, p.family_id), a.phrase_norm FROM alias_cache a "
+            "LEFT JOIN products p ON p.tenant_id=a.tenant_id AND p.product_id=a.product_id "
+            "WHERE a.tenant_id=%s AND a.active=true "
+            "AND (a.customer_id=%s OR a.customer_id IS NULL)",
+            (user.tenant_id, customer_id),
+        ).fetchall()
+        units = conn.execute(
+            "SELECT canonical_unit, alias_norm FROM uom_aliases WHERE tenant_id=%s",
+            (user.tenant_id,),
+        ).fetchall()
+    from app.extraction.evidence import lexicon
+
+    units += [
+        (unit, alias) for unit, values in lexicon()["uom_aliases"].items() for alias in values
+    ]
+    active = {family_id for family_id, _ in families}
+    guarded = []
+    for row in raw.rows:
+        hits = {
+            family_id
+            for family_id, phrase in [*families, *aliases]
+            if family_id in active and exact_phrase(phrase, row.span)
+        }
+        family = row.fam if hits == {row.fam} else "UNKNOWN"
+        unit = (
+            row.uom
+            if any(unit == row.uom and exact_phrase(alias, row.span) for unit, alias in units)
+            else None
+        )
+        pack = row.pack_size if row.pack_size and exact_phrase(row.pack_size, row.span) else None
+        guarded.append(replace(row, fam=family, uom=unit, pack_size=pack))
+    # H5 belongs to the backend. An omitted AI conds[] must not remove a price gate.
+    for chunk in masked_text.splitlines():
+        if not chunk.strip():
+            continue
+        for condition in classify_condition(chunk, masked_text):
+            if any(
+                c.get("kind") == condition["kind"] and c.get("span", "") in chunk
+                for row in guarded
+                for c in row.conds
+            ):
+                continue
+            index = next((i for i, row in enumerate(guarded) if row.span in chunk), None)
+            if index is None:
+                guarded.append(RawRow(span=chunk, conds=(condition,)))
+            else:
+                guarded[index] = replace(guarded[index], conds=(*guarded[index].conds, condition))
+    return replace(raw, rows=tuple(guarded))
 
 
 @router.post(
@@ -289,9 +386,10 @@ def parse_draft(
             body.language_hint,
             request.state.request_id,
         )
-    except AiServiceError as exc:
+        validate_raw_extraction(raw, masked.masked_text)
+    except (AiServiceError, ValueError, TypeError) as exc:
         raise AiAndFallbackUnavailableError() from exc
-    validate_raw_extraction(raw, masked.masked_text)
+    raw = _guard_families_and_units(raw, settings, user, body.customer_id, masked.masked_text)
     now = datetime.now(timezone.utc).isoformat()
     draft_id = f"DRF_{uuid4().hex.upper()}"
     if raw.rows:
@@ -323,7 +421,7 @@ def parse_draft(
                 "phone_e164": customer["phone_e164"],
             },
             "masked_message": masked.masked_text,
-            "ai_mode": "FALLBACK",
+            "ai_mode": "FALLBACK" if isinstance(extractor, StubExtractor) else "LLM",
             "lines": [],
             "issues": [issue.model_dump(mode="json")],
             "conditions": [],
@@ -336,11 +434,13 @@ def parse_draft(
                 clarification.model_dump(mode="json") if clarification else None
             ),
             "clarification_lang": clarification_lang,
-            "ignored_spans": [],
+            "ignored_spans": [dict(span) for span in raw.ignored_spans],
             "created_at": now,
             "updated_at": now,
         }
 
+    if isinstance(extractor, StubExtractor):
+        draft["ai_mode"] = "FALLBACK"
     response_draft = OrderDraftResponse(**draft)
     persist_parse_draft(
         settings,

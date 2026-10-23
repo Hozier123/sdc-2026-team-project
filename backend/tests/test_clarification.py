@@ -89,7 +89,7 @@ def test_multiple_issues_are_deduplicated_and_ids_are_stable():
 def test_condition_resolution_marks_condition_resolved_and_clears_clarification():
     from app.drafts import _validate_resolutions
 
-    condition = _issue("CUSTOMER_CONDITION", kind="PRICE")
+    condition = _issue("CUSTOMER_CONDITION", kind="OTHER")
     line = WorkingLine(
         line_id="LNE_1",
         family_id="FAM_MILO",

@@ -1,6 +1,8 @@
-# KiraOrder 后端基础、身份、seed 与 parse 骨架
+# KiraOrder 后端：当前实现与验收边界
 
-当前实现 FastAPI 进程、数据库探针、Gate 0 迁移执行器、Bearer `/api/v1/me`、版本钉住的 seed loader，以及 PII + parse-draft 骨架。草稿编辑、审批和 DO 仍未实现。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`。
+当前已实现身份/租户权限、显式迁移与 seed、PII 掩码、AI HTTP 边界、字段证据防护、草稿整批保存、条件处理、价格升级、老板审批、DO/库存事务、查询/审计和试次工具。开发依据为 `gate0-baseline-v1`（内部 `gate0-v4 / draft revision 5`），原始 SQL 位于仓库 `gate0/migrations/0001_baseline.sql`，本轮未修改。
+
+2026-10-23 审查说明见 `docs/audit/backend-audit-2026-10-23.md`。路由齐全不代表完整业务/真实部署验收通过：自动 SKU Resolver、完整 H1/H2/H3/H4 回放、真实 AI/唤醒/本地提取兜底和独立 UAT 仍有边界；未配置 AI 时仅提供人工录单占位路径，不应宣传为完成了 fallback 识别。
 
 ## 安装和启动（Windows）
 
@@ -30,7 +32,7 @@ backend/.venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 800
 
 ## Bearer 与 `/api/v1/me`
 
-本阶段实现身份读取；seed 使用显式命令，parse-draft 目前只是 PII + 骨架。
+身份读取和业务路由已实现；seed 仍须显式运行，应用启动不会自动改库。
 
 ```http
 GET /api/v1/me
@@ -50,7 +52,7 @@ SHA-256(token UTF-8) 的小写 hex
 失败统一返回 401 `INVALID_TOKEN`，带 `WWW-Authenticate: Bearer`；成功和失败响应都带
 `X-Request-ID`。数据库或其它未知服务端错误走统一 500，不映射成业务错误，也不返回连接串。
 在正式 seed 导入前，真实环境没有用户，`/me` 返回 401 是预期行为；
-测试使用临时数据库和 fixture 用户，不提交 canonical seed。
+测试使用隔离临时库；仓库已有经过哈希校验的 T1/T2 canonical seed。
 
 ## Seed loader
 
@@ -76,7 +78,7 @@ backend/.venv/Scripts/python -m app.seed `
 - 计数不符或 SQL 失败时回滚，不留下半成品；
 - 不创建/修改 Gate 0 的 `public` 业务表结构。
 
-正式的 T1/T2 seed、40/795 计数和 SHA-256 由数据负责人定稿；本仓库测试只使用临时 fixture。
+正式 T1/T2 SQL 与 SHA-256 见 `data/seed/SEED_MANIFEST.json`；测试同时覆盖 canonical seed 与临时 fixture。SQL 的 LF 字节由 `.gitattributes` 保持，禁止为绕过失败而重新签署哈希。
 
 ## PII 与 parse-draft 骨架
 

@@ -158,10 +158,10 @@ def get_draft(
         raise ForbiddenActionError()
     with connect(settings) as conn:
         order = _order(conn, user.tenant_id, draft_id)
-        customer = _customer(conn, user.tenant_id, order["customer_id"])
+        customer = _customer(conn, user.tenant_id, order["customer_id"], active_only=False)
         lines = _old_lines(order)
         stored_issues = [Issue.model_validate(issue) for issue in (order["issues"] or [])]
-        issues = [issue for issue in stored_issues if issue.code != "CUSTOMER_CONDITION"]
+        issues = stored_issues
         conditions = [issue for issue in stored_issues if issue.code == "CUSTOMER_CONDITION"]
         blocking = sorted(
             {
@@ -229,6 +229,9 @@ def get_draft(
         created_at=order["created_at"],
         updated_at=order["updated_at"],
         do_number=do_row[0] if do_row else None,
+        termination_reason=order["termination_reason"],
+        terminated_by_user_id=order["terminated_by_user_id"],
+        termination_note=order["termination_note"],
     )
 
 
@@ -278,6 +281,8 @@ def list_activity(
     limit: int = Query(default=50, ge=1, le=100),
     cursor: str | None = None,
 ) -> ActivityListResponse:
+    if user.role not in {"CLERK", "OWNER"}:
+        raise ForbiddenActionError()
     sql = (
         "SELECT activity_id, draft_id, do_number, event_type, payload, actor_user_id, "
         "actor_role, created_at FROM activity_log WHERE tenant_id=%s"
@@ -318,7 +323,11 @@ def list_activity(
 def _delivery_order(conn, tenant: str, do_number: str) -> tuple[DeliveryOrder, dict[str, Any]]:
     row = conn.execute(
         "SELECT d.do_number, d.draft_id, d.draft_version, d.customer_id, "
-        "COALESCE(dv.snapshot->'customer'->>'name', c.name), d.lines, d.final_total_rm, "
+        "COALESCE((SELECT a.payload->>'customer_name' FROM audit_logs a "
+        "WHERE a.tenant_id=d.tenant_id AND a.do_number=d.do_number "
+        "AND a.action IN ('APPROVE','DECIDE_APPROVE') "
+        "AND a.payload ? 'customer_name' LIMIT 1), "
+        "dv.snapshot->'customer'->>'name', c.name), d.lines, d.final_total_rm, "
         "d.prepared_by, d.approved_by, d.escalation_reasons, d.approval_mode, "
         "d.reply_draft, d.related_do_number, d.approved_at, "
         "o.ai_initial_snapshot "
@@ -368,13 +377,13 @@ def get_audit_detail(
             "SELECT fd.draft_version, fd.line_id, fd.field_path, fd.before_value, "
             "fd.after_value, fd.source, fd.reason_code "
             "FROM field_diffs fd JOIN audit_logs al ON al.audit_id=fd.audit_id "
-            "WHERE al.tenant_id=%s AND al.draft_id=%s AND al.draft_version=%s "
+            "WHERE al.tenant_id=%s AND al.draft_id=%s AND al.draft_version<=%s "
             "ORDER BY fd.field_diff_id",
             (user.tenant_id, final.draft_id, final.draft_version),
         ).fetchall()
         event_rows = conn.execute(
             "SELECT action, actor_user_id, actor_role, created_at, payload "
-            "FROM audit_logs WHERE tenant_id=%s AND draft_id=%s AND draft_version=%s "
+            "FROM audit_logs WHERE tenant_id=%s AND draft_id=%s AND draft_version<=%s "
             "ORDER BY created_at, audit_id",
             (user.tenant_id, final.draft_id, final.draft_version),
         ).fetchall()
@@ -443,14 +452,14 @@ def get_ai_status(
 ) -> AiStatus:
     configured = bool(settings.ai_service_url)
     return AiStatus(
-        state="READY" if configured else "OFFLINE",
-        available_modes=["LLM", "FALLBACK"] if configured else ["FALLBACK"],
-        fallback_available=True,
+        state="DEGRADED" if configured else "OFFLINE",
+        available_modes=[],
+        fallback_available=False,
         last_checked_at=datetime.now(timezone.utc),
         message=(
-            "AI endpoint is configured."
+            "AI endpoint configured; readiness has not been verified."
             if configured
-            else "AI endpoint is not configured; local fallback only."
+            else "AI endpoint not configured; manual-entry stub only, no extraction fallback."
         ),
     )
 
@@ -464,13 +473,13 @@ def wake_ai(
         raise ForbiddenActionError()
     configured = bool(settings.ai_service_url)
     return AiWakeResult(
-        state="READY" if configured else "OFFLINE",
-        accepted=configured,
-        fallback_available=True,
+        state="DEGRADED" if configured else "OFFLINE",
+        accepted=False,
+        fallback_available=False,
         last_checked_at=datetime.now(timezone.utc),
         message=(
-            "AI endpoint is ready."
+            "Wake transport not integrated; no wake request was sent."
             if configured
-            else "AI endpoint is not configured; local fallback remains available."
+            else "AI endpoint not configured; no wake request was sent."
         ),
     )

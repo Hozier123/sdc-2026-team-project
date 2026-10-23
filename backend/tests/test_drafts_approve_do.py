@@ -41,7 +41,7 @@ def seeded_db(db_settings):
         conn.execute(
             "INSERT INTO products "
             "(product_id, tenant_id, family_id, sku_code, name, base_unit) "
-            "VALUES ('SKU_MILO_1KG', 'T1', 'FAM_MILO', 'SKU_MILO_1KG', 'Milo 1kg', 'bag')"
+            "VALUES ('SKU_MILO_1KG', 'T1', 'FAM_MILO', 'SKU_MILO_1KG', 'Milo 1kg', 'ctn')"
         )
         conn.execute(
             "INSERT INTO customer_tier_prices "
