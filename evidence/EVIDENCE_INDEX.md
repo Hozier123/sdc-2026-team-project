@@ -47,6 +47,11 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 
 ## 2. Supporting Benchmarks & He's 6 Cases
 
+> **Canonical six source of truth**：`docs/ai_contract/samples/`。
+> 本仓库不复制第二份样例；6 个源文件 blob SHA 见
+> `evidence/samples/canonical-6/SHA256.txt`，口径为
+> `family_scored=false / GENERIC_CONTRACT_SAMPLE`。
+
 * **He's 6 Cases Acceptance (Final)**: `he_6cases_final_2026-10-24.txt` | `app/ai@db6f0ce` | 6 次真机  
   CURRENT_FINAL_6CASES；5 PASS / 1 KNOWN_LIMITATION (normal.json = MODEL_SPAN_TRUNCATED)  
   Git Blob SHA-256: `8223C89E15F12046CAFA1E13C0E66BB605E3053C4E1CEC30A6382519204EE2EE`
