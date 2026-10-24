@@ -5,7 +5,7 @@ Domain 2 (Orbyte Smart SME Challenge) · SDG 8 (targets 8.2, 8.3)
 
 ## Completed deliverables
 
-Both documents follow the official SDC templates, are signed by the team leader and dated 2026/10/25.
+The proposal and Technical & Tools Declaration follow the official SDC templates, are signed by the team leader and dated 2026/10/25.
 
 | File | Contents | SHA-256 |
 | --- | --- | --- |
@@ -20,7 +20,18 @@ The pitch deck PDF is provided for convenient viewing. The original PowerPoint i
 
 ## Platform-use evidence
 
-Genuine Replit and RunPod evidence is reproduced inside `SDC2026_Falcons_TechDeclaration.pdf` (Appendices B–D) and archived under [`../evidence/`](../evidence/).
+Existing Replit deployment and RunPod screenshots remain reproduced inside `SDC2026_Falcons_TechDeclaration.pdf` (Appendices B–D); related evidence records are archived under [`../evidence/`](../evidence/).
+
+The following standalone usage-proof PDFs were added on 2026/10/25. They are byte-for-byte copies of the supplied Revision 2 files, with only the `(1)` filename suffix removed. SHA-256 values below were calculated from the uploaded files.
+
+| Attachment | Coverage | SHA-256 |
+| --- | --- | --- |
+| [RunPod_Usage_Proof_Falcons.pdf](RunPod_Usage_Proof_Falcons.pdf) | 8 pages; endpoint configuration, zero-worker snapshot, shutdown logs, evaluation references and explicit evidence limitations | `598f31865fbbcf954ce9efebcd12946bb2ccf64b03646ec8832a101ed94a93a1` |
+| [Replit_Usage_Proof_Falcons.pdf](Replit_Usage_Proof_Falcons.pdf) | 6 pages; He Minghao's self-funded Core subscription and backend deployment, with account and evidence boundaries | `bc2f683a1581bb8ddb191e240c58160c4998bfe34cef8728ebd6311b6d265249` |
+
+Scope matters: the Replit attachment does **not** contain Ye Lianghui's separate US$6.31 sponsored Agent Usage screenshot; its Section 5.2 explicitly records that gap. Neither attachment proves a complete live-AI end-to-end demonstration.
+
+The signed Technical & Tools Declaration was **not modified or re-signed** in this upload. These are separate supporting attachments, not replacements for its pages; pending member confirmations and outdated wording in that declaration are not resolved by adding these files. Repository publication also does not establish that the new attachments were uploaded to the official portal.
 
 ## Pitch video
 
