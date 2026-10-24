@@ -1,0 +1,171 @@
+{
+  "me": {
+    "status": 200,
+    "body": {
+      "user_id": "USR_T2_CLERK",
+      "tenant": {
+        "id": "T2",
+        "name": "Kilat Hardware & Cleaning Supplies"
+      },
+      "display_name": "Siti",
+      "role": "CLERK",
+      "permissions": [
+        "EDIT_DRAFT",
+        "RESOLVE_ISSUE",
+        "COPY_CLARIFICATION",
+        "APPROVE_AND_GENERATE_DO",
+        "SUBMIT_FOR_OWNER",
+        "VIEW_ACTIVITY",
+        "WAKE_AI"
+      ],
+      "permission_summary": "Can create and edit drafts, resolve issues, and submit for approval."
+    }
+  },
+  "parse": {
+    "status": 200,
+    "request_id": "t2-e2e-active-20261024",
+    "body": {
+      "draft_id": "DRF_D45EF47048974C9B85BD6DE4B6D381A6",
+      "version": 1,
+      "status": "DISAMBIGUATION_REQUIRED",
+      "customer_id": "CUS_KILAT_01",
+      "customer": {
+        "customer_id": "CUS_KILAT_01",
+        "name": "Kedai Kilat 01",
+        "tier": "A",
+        "credit_flag": "NONE",
+        "has_credit_notice": false,
+        "phone_e164": "+60120001001"
+      },
+      "masked_message": "Tepung 5 ctn",
+      "ai_mode": "LLM",
+      "lines": [
+        {
+          "line_id": "LNE_3223550628F845A9ACC815A4B19AD00D",
+          "client_line_ref": "ai-1",
+          "sku_id": null,
+          "family_id": "UNKNOWN",
+          "description": "Tepung 5 ctn",
+          "requested_qty": 5,
+          "confirmed_qty": null,
+          "effective_qty": 5,
+          "uom": "ctn",
+          "pack_size": null,
+          "grade": null,
+          "tier_unit_price": null,
+          "unit_price_override": null,
+          "override_reason": null,
+          "effective_unit_price": null,
+          "subtotal_rm": null,
+          "match_source": "LLM_EXTRACTED",
+          "source_span": "Tepung 5 ctn",
+          "span_start": 0,
+          "span_end": 12,
+          "field_evidence": [
+            {
+              "field": "requested_qty",
+              "raw_text": "5",
+              "start": 7,
+              "end": 8,
+              "normalizer_version": "field-evidence-v2"
+            }
+          ],
+          "candidate_skus": [],
+          "saved_alias": null,
+          "available_qty": null
+        }
+      ],
+      "issues": [
+        {
+          "issue_id": "ISS_89BCB57FE40A4DAFB25A49D6523CDD62",
+          "code": "LOW_CONFIDENCE_MATCH",
+          "condition_id": null,
+          "line_id": "LNE_3223550628F845A9ACC815A4B19AD00D",
+          "span": "Tepung 5 ctn",
+          "source_span": "Tepung 5 ctn",
+          "span_start": 0,
+          "span_end": 12,
+          "condition_kind": null,
+          "condition_scope": null,
+          "candidate_line_ids": [],
+          "target_line_ids": [],
+          "requested_unit_price": null,
+          "price_basis": null,
+          "reason_code": "FAMILY_NOT_EVIDENCED",
+          "ask": "CLERK",
+          "data_used": {
+            "extractor": "AI"
+          },
+          "blocking": true,
+          "resolved": false,
+          "resolution": null,
+          "resolution_note": null,
+          "auto_resolved_by": null
+        },
+        {
+          "issue_id": "ISS_83AD6F6B832A4B3EA356A82CD5FC48B8",
+          "code": "LOW_CONFIDENCE_MATCH",
+          "condition_id": null,
+          "line_id": "LNE_3223550628F845A9ACC815A4B19AD00D",
+          "span": "Tepung 5 ctn",
+          "source_span": "Tepung 5 ctn",
+          "span_start": 0,
+          "span_end": 12,
+          "condition_kind": null,
+          "condition_scope": null,
+          "candidate_line_ids": [],
+          "target_line_ids": [],
+          "requested_unit_price": null,
+          "price_basis": null,
+          "reason_code": "NO_CANDIDATE",
+          "ask": "CLERK",
+          "data_used": {
+            "extractor": "AI"
+          },
+          "blocking": true,
+          "resolved": false,
+          "resolution": null,
+          "resolution_note": null,
+          "auto_resolved_by": null
+        }
+      ],
+      "conditions": [],
+      "blocking_issues": [
+        "LOW_CONFIDENCE_MATCH"
+      ],
+      "escalation_preview": [],
+      "totals": {
+        "order_total": null,
+        "currency": "MYR",
+        "is_complete": false
+      },
+      "allowed_actions": [
+        "EDIT_DRAFT",
+        "RESOLVE_ISSUE",
+        "COPY_CLARIFICATION"
+      ],
+      "blocked_actions": {
+        "APPROVE_AND_GENERATE_DO": [
+          "LOW_CONFIDENCE_MATCH"
+        ]
+      },
+      "clarification_draft": {
+        "language": "en",
+        "message": "Please confirm this order: Which item do you mean by \"Tepung 5 ctn\"? Thank you!",
+        "unresolved_issue_ids": [
+          "ISS_89BCB57FE40A4DAFB25A49D6523CDD62",
+          "ISS_83AD6F6B832A4B3EA356A82CD5FC48B8"
+        ]
+      },
+      "clarification_lang": "en",
+      "ignored_spans": [],
+      "disambiguations": [],
+      "termination_reason": null,
+      "terminated_by_user_id": null,
+      "termination_note": null,
+      "created_at": "2026-10-24T07:51:46.637017Z",
+      "updated_at": "2026-10-24T07:51:46.637017Z",
+      "do_number": null
+    }
+  }
+}

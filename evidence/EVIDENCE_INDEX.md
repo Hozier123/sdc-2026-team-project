@@ -93,5 +93,14 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 | Run | File | Code Base | Result | Original SHA-256 |
 | :--- | :--- | :--- | :--- | :--- |
 | T1 E2E post-PR55 | `e2e/post55/t1_e2e_23_2026-10-24_post55.json` | `c93d6d0` | `E2E_POST55`；23/23 HTTP+LLM, fallback 0；7 READY / 16 DISAMBIGUATION_REQUIRED；DEV-01 已修复为 MISSING_UOM + 候选；UOM None 仍 9 处。不是 23/23 E2E 通过。 | `DCA16B6E5DBC54AB712C1FD1133DFA13CF5083A397B56CCA99CBE41363DAC4C0` |
+| T2 E2E | `e2e/t2/t2-e2e-active-20261024.json` | `c93d6d0` | `T2_E2E_PASS`；/me 200 T2/CLERK；parse 200，ai_mode=LLM，request-id `t2-e2e-active-20261024`，lines=1，uom=ctn。 | `70A1BF9B9ACADECF8764C0CF1B748CB9D9B9DC85BE1444C3F92CA1E5E19ACDB8` |
 
 > 该文件保留 Zhou 的原始 CRLF 字节；独立于 AI-only 索引，不覆盖旧 97FEE blocker。
+
+---
+
+## 6. RunPod Platform Proof
+
+| Proof | Files | Status |
+| :--- | :--- | :--- |
+| RunPod 2026-10-24 | `runpod/2026-10-24/runpod-overview-2026-10-24.png`、`runpod-workers-zero-2026-10-24.png`、`runpod-logs-shutdown-2026-10-24.png` | Usage proof only；Active=0、0 running、$0.00000/s、balance $13.38、shutdown complete 20:25:10 +08:00；不是 AI 全量验收。 |
