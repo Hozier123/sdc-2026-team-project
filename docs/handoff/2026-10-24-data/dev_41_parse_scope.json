@@ -1,0 +1,189 @@
+{
+  "schema_status": "DRAFT_SCOPE_ONLY",
+  "purpose": "AI-only extraction scope for dev_41_draft.json. Not an answer key.",
+  "source_file": "dev_41_draft.json",
+  "source_sha256": "5529443897C7B718DF1D8064A3C668AFEAA0755E9DD032B4596AF96180F8AD40",
+  "source_case_count": 41,
+  "probe_case_ids": [
+    "DEV-01",
+    "DEV-02",
+    "DEV-03",
+    "DEV-04",
+    "DEV-05"
+  ],
+  "parse_eligible_case_ids": [
+    "DEV-01",
+    "DEV-03",
+    "DEV-04",
+    "DEV-05",
+    "DEV-06",
+    "DEV-07",
+    "DEV-11",
+    "DEV-13",
+    "DEV-14",
+    "DEV-15",
+    "DEV-21",
+    "DEV-22",
+    "DEV-24",
+    "DEV-25",
+    "DEV-27",
+    "DEV-29",
+    "DEV-33",
+    "DEV-35",
+    "DEV-37",
+    "DEV-38",
+    "DEV-39",
+    "DEV-40",
+    "DEV-41"
+  ],
+  "excluded_cases": [
+    {
+      "case_id": "DEV-09",
+      "category": "DUPLICATE_OF_DEV_03",
+      "reason": "workflow approve rejection uses the same message as DEV-03"
+    },
+    {
+      "case_id": "DEV-10",
+      "category": "DUPLICATE_OF_DEV_01",
+      "reason": "workflow stock deduction uses the same message as DEV-01"
+    },
+    {
+      "case_id": "DEV-12",
+      "category": "FORCED_OFFLINE_FALLBACK",
+      "reason": "message is a fallback test, not AI extraction quality"
+    },
+    {
+      "case_id": "DEV-16",
+      "category": "MESSAGE_CONTAINS_TEST_INSTRUCTION",
+      "reason": "message includes a test instruction in parentheses"
+    },
+    {
+      "case_id": "DEV-17",
+      "category": "MESSAGE_CONTAINS_TEST_INSTRUCTION",
+      "reason": "message includes a test instruction in parentheses"
+    },
+    {
+      "case_id": "DEV-18",
+      "category": "MESSAGE_CONTAINS_TEST_INSTRUCTION",
+      "reason": "message includes a test instruction in parentheses"
+    },
+    {
+      "case_id": "DEV-19",
+      "category": "NOT_AN_ORDER_MESSAGE",
+      "reason": "message is an approved-DO workflow probe, not a customer order"
+    },
+    {
+      "case_id": "DEV-20",
+      "category": "MESSAGE_CONTAINS_TEST_INSTRUCTION",
+      "reason": "message includes a test instruction in parentheses"
+    },
+    {
+      "case_id": "DEV-26",
+      "category": "MESSAGE_CONTAINS_TEST_INSTRUCTION",
+      "reason": "message includes a fixture instruction in parentheses"
+    },
+    {
+      "case_id": "DEV-28",
+      "category": "DUPLICATE_OF_DEV_27",
+      "reason": "workflow price acceptance uses the same message as DEV-27"
+    },
+    {
+      "case_id": "DEV-30",
+      "category": "DUPLICATE_OF_DEV_06_15",
+      "reason": "customer variant of the same message"
+    },
+    {
+      "case_id": "DEV-31",
+      "category": "REQUIRES_SPLIT",
+      "reason": "three language variants are joined by ||"
+    },
+    {
+      "case_id": "DEV-32",
+      "category": "CONTEXT_REQUIRED",
+      "reason": "tambah depends on same-day order context"
+    },
+    {
+      "case_id": "DEV-34",
+      "category": "DUPLICATE_OF_DEV_33",
+      "reason": "workflow stock change uses the same message as DEV-33"
+    },
+    {
+      "case_id": "DEV-36",
+      "category": "DUPLICATE_OF_DEV_35",
+      "reason": "wrong-line workflow uses the same message as DEV-35"
+    }
+  ],
+  "e2e_case_ids": [
+    "DEV-01",
+    "DEV-02",
+    "DEV-03",
+    "DEV-04",
+    "DEV-05",
+    "DEV-06",
+    "DEV-07",
+    "DEV-08",
+    "DEV-09",
+    "DEV-10",
+    "DEV-11",
+    "DEV-12",
+    "DEV-13",
+    "DEV-14",
+    "DEV-15",
+    "DEV-16",
+    "DEV-17",
+    "DEV-18",
+    "DEV-19",
+    "DEV-20",
+    "DEV-21",
+    "DEV-22",
+    "DEV-23",
+    "DEV-24",
+    "DEV-25",
+    "DEV-26",
+    "DEV-27",
+    "DEV-28",
+    "DEV-29",
+    "DEV-30",
+    "DEV-31",
+    "DEV-32",
+    "DEV-33",
+    "DEV-34",
+    "DEV-35",
+    "DEV-36",
+    "DEV-37",
+    "DEV-38",
+    "DEV-39",
+    "DEV-40",
+    "DEV-41"
+  ],
+  "notes": [
+    "AI-only metrics must use parse_eligible_case_ids only.",
+    "E2E and workflow tests still use all 41 cases.",
+    "DEV-02/08/23 are resolver-only; do not count them as AI extraction.",
+    "DEV-31 may be added back only after splitting into three language subcases.",
+    "Every case must carry tenant_id and customer_id; message-only input is insufficient.",
+    "2026-10-24: Bwg -> Bawang in P0 messages; DEV-02/23 use exact alias order and botol; seed/Neon unchanged."
+  ],
+  "resolver_only_case_ids": [
+    "DEV-02",
+    "DEV-08",
+    "DEV-23"
+  ],
+  "resolver_only_cases": [
+    {
+      "case_id": "DEV-02",
+      "category": "CUSTOMER_ALIAS_EXACT",
+      "reason": "production memory_rows bypasses AI when exact customer alias + qty covers the line"
+    },
+    {
+      "case_id": "DEV-08",
+      "category": "CUSTOMER_ALIAS_EXACT",
+      "reason": "seed alias_cache has exact 生抽王 -> SKU_KICAP_CTN; draft uncertainty is stale; verify in E2E"
+    },
+    {
+      "case_id": "DEV-23",
+      "category": "ALIAS_ONLY",
+      "reason": "all lines are covered by confirmed customer aliases; no AI extraction"
+    }
+  ]
+}
