@@ -6,7 +6,7 @@
 - **Observed Behavior**:
   Gate 0 v4 reference oracle extracts `qty=1` from `1,5kg` because `_ARABIC` parses the leading integer `1` before pack_size and decimal guards execute.
 - **Production Implementation Fix**:
-  `backend/ai/fallback.py` adds strict no-space comma guard (`(?<![\d.,])\d+,\d+(?![\d.,])`) and moves comma unit guard BEFORE pack_size masking.
+  `backend/app/ai/fallback.py` adds strict no-space comma guard (`(?<![\d.,])\d+,\d+(?![\d.,])`) and moves comma unit guard BEFORE pack_size masking.
   Result: `1,5kg` and `0,5 ctn` correctly block with `qty=None` and `issue_reason="INVALID_QUANTITY"`.
 - **Side-effect note**:
   The strict comma decimal guard will also block un-spaced numbers without units like `12,3` as decimal. Per B2B wholesale order safety, this is an intentional fail-safe bias towards disambiguation.
@@ -36,7 +36,7 @@
   3. `ConditionScope` 的 `MULTI_LINE` / `ORDER_LEVEL` 判定规则在契约中
      未定义，P0 实现只能按行数简化为 `SINGLE_LINE` / `UNKNOWN`。
 - **Production Implementation Fix**:
-  `backend/ai/adapter.py` 复制上述三个正则（注释标注来源行号）并附
+  `backend/app/ai/adapter.py` 复制上述三个正则（注释标注来源行号）并附
   16 行真值表 parity 单测；逗号金额扩展默认关闭待契约确认；
   `condition_scope` 简化逻辑在代码与交付说明中显式标注为 P0 简化。
 - **Target Release**: `gate0-v5` 应将三个正则下沉到
@@ -51,3 +51,9 @@
 - **Production Implementation Note**:
   4. 当数量因小数被阻断（INVALID_QUANTITY）时强制 pack_size=None：与 Gate 0 oracle 对 'Beras 1.5kg' 仍输出 pack_size='1.5kg' 存在已知偏离（生产侧偏向安全侧保守，避免将非法小数数量当作规格入库），gate0-v5 需确认是否应保留规格。
 
+## 5. DEV-37 'kalau ada' 纯条件短语被抽成商品行
+- **Discovery Date**: 2026-10-24
+- **Observed Behavior**:
+  DEV-37 中的短语 'kalau ada' 被模型同时抽取为一条商品行（qty/family/uom 全空）并同时保留为 STOCK condition。
+- **Limitation & Recommendation**:
+  DEV-37 'kalau ada' 被模型同时抽成商品行（qty/family/uom 全空）并保留为 STOCK condition；属 KNOWN_MODEL_LIMITATION。建议 adapter 增加规则：纯条件短语不得成为商品行。

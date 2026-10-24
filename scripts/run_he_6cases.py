@@ -37,9 +37,12 @@ import unicodedata
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+_backend_dir = PROJECT_ROOT / "backend"
+if str(_backend_dir) not in sys.path:
+    sys.path.insert(0, str(_backend_dir))
 
-from backend.ai.adapter import AdapterOutput, OrderAiAdapter
-from backend.ai.extractor import RunPodExtractor
+from app.ai.adapter import AdapterOutput, OrderAiAdapter
+from app.ai.extractor import RunPodExtractor
 from scripts.build_catalog import build_catalog
 
 
@@ -381,7 +384,7 @@ CACHED_CASE_OUTPUTS: Dict[str, Dict[str, Any]] = {
 
 def build_adapter_output_from_cache(cached: Dict[str, Any]) -> AdapterOutput:
     """Reconstruct AdapterOutput from previous verified run."""
-    from backend.ai.adapter import AdapterLine, ExtractedCondition
+    from app.ai.adapter import AdapterLine, ExtractedCondition
     lines = [
         AdapterLine(
             line_id=l["line_id"],

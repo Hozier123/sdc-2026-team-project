@@ -15,11 +15,14 @@ import time
 from typing import List, Optional
 
 # Ensure project root is in sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+_root = Path(__file__).resolve().parents[1]
+for _p in (_root, _root / "backend"):
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 
 import numpy as np
 
-from backend.ai.extractor import RunPodExtractor
+from app.ai.extractor import RunPodExtractor
 
 BENCHMARK_SAMPLES = [
     "Tepung 5 ctn, kalau RM95 boleh?",
