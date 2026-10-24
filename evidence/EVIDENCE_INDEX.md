@@ -75,3 +75,13 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 3. `>4.1s` 超时条数完全一致；
 4. 各案 span 坐标与切分完全一致。
 *注：若差异超过 1 条必须立即停下向负责人汇报，严禁直接覆盖。*
+
+---
+
+## 4. Blocker Evidence
+
+| Run | File | Status | Known defect | Original SHA-256 |
+| :--- | :--- | :--- | :--- | :--- |
+| T1 E2E 23 (pre-PR55) | `e2e/blocker/t1_e2e_23_2026-10-24.json` | `BLOCKER_EVIDENCE`；不是 current E2E / READY / 通过 | DEV-01 `10kg Bawang` 误选 `SKU_BAWANG_10KG`（bag），10×32=320；应为 bulk KG，10×3.50=35。PR #55 `c93d6d0` 已阻断自动选 SKU。 | `97FEE66743809D748E4C571749777D69D0CF2B01F6AAA8770C16289AB8F390D8` |
+
+> 该文件保留 Zhou 的原始 CRLF 字节；`git blob` 与工作区 SHA 一致，仅作 blocker 归档，不进入 current 结果。

@@ -13,3 +13,6 @@ evidence/gate0/确认书.md -text
 # fresh clone. Keep frontend fixtures and the frozen contract snapshot byte-identical.
 frontend/tests/fixtures/** -text
 frontend/contracts/** -text
+
+# Blocker evidence must keep Zhou's original bytes and SHA.
+evidence/e2e/blocker/** -text
