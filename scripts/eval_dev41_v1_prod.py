@@ -256,7 +256,7 @@ async def evaluate_dev41_v1_prod(
         "adapter_mode": "RUNPOD_REAL",
         "accuracy": "NOT_COMPUTED",
         "eligible_for_quality_claim": False,
-        "code_base": "app/ai@657ad5d",
+        "code_base": "app/ai@db6f0ce",
         "eval_timestamp": datetime.now(timezone.utc).isoformat(),
         "summary": {
             "total_cases_in_file": len(cases_by_id),
