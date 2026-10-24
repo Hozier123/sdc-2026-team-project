@@ -11,9 +11,12 @@ Both documents follow the official SDC templates, are signed by the team leader 
 | --- | --- | --- |
 | `SDC2026_Falcons_Preliminary.pdf` | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `3caf30504d5e5d572b69c157ff0c3354c9916af11a077bdf83518d0d52fe5b7e` |
 | `SDC2026_Falcons_TechDeclaration.pdf` | Technical & Tools Declaration, incl. Appendices A–F (architecture, Replit and RunPod deployment evidence, third-party notices, visual asset boundaries) | `de0795064d215adfc92439fc5a050121a7a463cbba2458c1323e05c56aedead3` |
+| [KiraOrder_Falcons_PitchDeck_SDC2026.pdf](KiraOrder_Falcons_PitchDeck_SDC2026.pdf) | 15-page PDF export of the pitch deck for review | `89fd9b1b45920cc01782f9ee2a82ab381a03474503b08b59046b37a6a7c21ebb` |
 | [KiraOrder_Falcons_PitchDeck_SDC2026.pptx](KiraOrder_Falcons_PitchDeck_SDC2026.pptx) | 15-slide pitch deck | `690fd3c9912bc8ed8ddce3a69838fae886b4439e5715e14e178813450c08f988` |
 
-These two PDFs are also the documents to be uploaded to the official submission portal (`sdchack.my`). Publishing them in this repository is **not** a substitute for submitting through the portal.
+The proposal and Technical & Tools Declaration PDFs are also the documents to be uploaded to the official submission portal (`sdchack.my`). Publishing them in this repository is **not** a substitute for submitting through the portal.
+
+The pitch deck PDF is provided for convenient viewing. The original PowerPoint is retained as the editable presentation source.
 
 ## Platform-use evidence
 

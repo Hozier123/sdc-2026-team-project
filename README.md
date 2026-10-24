@@ -8,7 +8,7 @@ SDC Hackathon 2026 - Domain 2 - Orbyte Smart SME Challenge
 - Backend API: https://kiraorder-api.replit.app/api/v1
 - Backend Health Check: https://kiraorder-api.replit.app/readyz
 - Pitch Video & Prototype Demonstration: https://youtu.be/TyrASSJDIpM
-- Pitch Deck: [KiraOrder Falcons Pitch Deck](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx)
+- Pitch Deck: [View PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) · [Download editable PowerPoint](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx)
 
 ## Judge's quick-start guide
 
@@ -75,7 +75,7 @@ Warehouse checkboxes are temporary on-page checks. They do not submit shipment, 
 - Saved demo orders and stock changes remain in the current browser; they do not sync to other devices. Unsaved edits may be lost on refresh. Use a new private/incognito session for a fresh demo, and allow site storage.
 - Use **A specification to clarify** to inspect an ambiguous product, or **Check before promising** to inspect insufficient stock. Follow the displayed issues before approving.
 - Messages are pasted manually. Clarifications and customer replies are copied drafts, not automatic WhatsApp messages. Use synthetic data only.
-- If the prototype cannot be reached, the [pitch and demonstration video](https://youtu.be/TyrASSJDIpM) and [pitch deck](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) provide supporting material; they do not replace an interactive review.
+- If the prototype cannot be reached, the [pitch and demonstration video](https://youtu.be/TyrASSJDIpM) and [pitch deck PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) provide supporting material; they do not replace an interactive review.
 
 ### Controlled access to the real API
 
@@ -155,7 +155,8 @@ sdc-2026-team-project/
 |   |-- README.md
 |   |-- SDC2026_Falcons_Preliminary.pdf  # Signed preliminary proposal
 |   |-- SDC2026_Falcons_TechDeclaration.pdf  # Signed tools declaration and platform evidence
-|   `-- KiraOrder_Falcons_PitchDeck_SDC2026.pptx  # Pitch deck
+|   |-- KiraOrder_Falcons_PitchDeck_SDC2026.pdf   # Pitch deck for review
+|   `-- KiraOrder_Falcons_PitchDeck_SDC2026.pptx  # Editable pitch deck
 |-- tests/                      # Test code, test data, and frozen-set records
 |   `-- .gitkeep
 |-- .env.example                # Configuration variable names with empty values
@@ -251,7 +252,7 @@ The v1.3 working documents 01-04 are under `docs/rules/` and are updated with th
 | Prototype / accessible build | https://hozier123.github.io/sdc-2026-team-project/ |
 | Replit project / deployment | Backend https://kiraorder-api.replit.app; legacy frontend https://kiraorder-web.replit.app |
 | RunPod endpoint | https://lx22t9308hc10c.api.runpod.ai; currently `Active=0`; see `evidence/runpod/2026-10-24/` |
-| Slide deck | [KiraOrder Falcons Pitch Deck](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) |
+| Slide deck | [PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) · [Editable PowerPoint](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) |
 | YouTube pitch and prototype demo | https://youtu.be/TyrASSJDIpM |
 | Official proposal | [`submission/SDC2026_Falcons_Preliminary.pdf`](submission/SDC2026_Falcons_Preliminary.pdf) — signed 2026/10/25 |
 | Technical and tools declaration | [`submission/SDC2026_Falcons_TechDeclaration.pdf`](submission/SDC2026_Falcons_TechDeclaration.pdf) — signed 2026/10/25 |
@@ -277,3 +278,7 @@ See [docs/competition-checklist.md](docs/competition-checklist.md). A completed 
 ## License and provenance
 
 [Apache License 2.0](LICENSE) is retained. Initial materials came from the official SDC GitHub submission template; this directory follows Appendix B of the team's final execution plan. The final submission must declare the template, third-party resources, and actual use of AI-assisted tools.
+
+Design prompt source:
+
+- [MotionSites — signal-id](https://motionsites.ai/?prompt=signal-id): the design prompt was used with an AI tool to generate the project's frontend page.
