@@ -1,5 +1,11 @@
 # Evidence Archive & Evaluation Index
 
+> [!NOTE]
+> **Hash Convention（哈希计算口径）**：  
+> 所有 SHA-256 均按 git blob（LF 归一化后）计算：  
+> `git cat-file blob <rev>:evidence/<file> | sha256sum`  
+> Windows 工作区因 `core.autocrlf` 显示 CRLF，直接对文件哈希会得到不同值。
+
 > [!WARNING]
 > **历史基线与质量引用声明**：  
 > 本索引中 code_base 为 657ad5d 及更早的所有结果均为 HISTORICAL。  
@@ -12,12 +18,16 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 
 ## 1. Core Evaluation Runs
 
-| Run Identifier | File | Code Base | Calls | Description / Status | SHA-256 |
+| Run Identifier | File | Code Base | Calls | Description / Status | Git Blob SHA-256 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **standalone v1** | `dev41_ai_only_v1_2026-10-24.json` | `backend/ai@c66d6f5` | 46 次 (每案2次) | 原独立模块评测（含 extractor 探针 + adapter 校验）。已对外交付。 | `6B1400090CE23D47834A2E849E988012BBC0AD58DBE8CE645737DFDE3C839FC6` |
-| **v2 comparison** | `dev41_ai_only_v2_2026-10-24.json` | `standalone-only` | 46 次 | Closed-set whitelist prompt 对照实验。因引入 2 处 span 回归已作废归档，不与 v1_prod 同代码基数比较。 | `A6529A4D3403649D0E55ABCC785CC636BFDCD7E3E2AF609D06A08958E2BBD119` |
-| **v1_prod manual** | `dev41_ai_only_v1_prod_2026-10-24_manual.json` | `app/ai@657ad5d` | 23 次 (每案1次) | HISTORICAL（657ad5d，11 处 UOM 错误，已由 #46 修复），不得作为当前质量引用 | `60A28A7CDC3D5E90F0BCFD584F79136BBEB4347942B105187548ECD717350B46` |
-| **v1_prod official** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | PENDING：db6f0ce 上 official 窗口重跑待补；完成后本行替换为当前质量 | *(待生成)* |
+| **standalone v1** | `dev41_ai_only_v1_2026-10-24.json` | `backend/ai@c66d6f5` | 46 次 (每案2次) | 原独立模块评测（含 extractor 探针 + adapter 校验）。已对外交付。 | `A0E72CA7EE03323AAC61D7119A3B866471B1BDE8ECE67CE1C7953917734B080D` |
+| **v2 comparison** | `dev41_ai_only_v2_2026-10-24.json` | `standalone-only` | 46 次 | standalone-only，归档不进准确率。归档理由：未在生产代码 db6f0ce 复跑 + 答案键未完全对齐。DEV-21 拆两行→合并一行 = IMPROVEMENT_CANDIDATE；DEV-37 删除 'kalau ada' 商品行、保留 STOCK condition = IMPROVEMENT_CANDIDATE；DEV-37 的 '2kg 的' 仍单独成行 = STRUCTURAL_CHANGE_UNJUDGED。 | `1C161DD563689481035F71FEAFA3D8C96EB44ADDE77829878448ACF8A938A72E` |
+| **v1_prod manual** | `dev41_ai_only_v1_prod_2026-10-24_manual.json` | `app/ai@657ad5d` | 23 次 (每案1次) | HISTORICAL（657ad5d，11 处 UOM 错误，已由 #46 修复），不得作为当前质量引用 | `97C40A701A5385B50C38A27795CF099FC1DA15FCB5E6792B7862D8F1C797823D` |
+| **v1_prod official** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | CURRENT（23/23 LLM, fallback 0, >4.1s 0, UNKNOWN 9, UOM 11→1） | `17F44B9B83CF0039FA3C5FE6410AC2C68152D2D96C54CA9E849899F4061A87CD` |
+
+> [!NOTE]
+> **耗时诊断特别标注**：  
+> 旧 657ad5d v1_prod 的 DEV-37 = WALL_CLOCK_EXCEEDS_4.1，不是 timeout、不是 fallback。
 
 ---
 
@@ -25,14 +35,18 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 
 * **He's 6 Cases Acceptance (v1)**: `he_6cases_2026-10-24.txt`  
   HISTORICAL：5 PASS / 1 KNOWN_LIMITATION，prompt 未改，不作为验收通过  
-  SHA-256: `645E568F80B9156DF3CEB6BFB83BCBCEBEED128AF06F4EE3967882FEBE002FFB`
+  Git Blob SHA-256: `E2CB3F57D4B81FD5A2691045211B8A54691EFB76D81403FAF67B1AD625B4D3D5`
 * **He's 6 Cases Acceptance (v2)**: `he_6cases_v2_2026-10-24.txt`  
   HISTORICAL：5 PASS / 1 KNOWN_LIMITATION，prompt 未改，不作为验收通过  
-  SHA-256: `81B09112AAA9855B2CDEE82BE7787C126512C81250606A636365D7F8B3B92DA6`
+  Git Blob SHA-256: `F0A5DA58F23BAB8B4C034A68402E39698D604F93EF026F06E38BFA58B74A7ACA`
 * **RunPod Latency Benchmark**: `runpod_benchmark_2026-10-23.txt`  
-  SHA-256: `7F6E726D68EC53215D39FEA6DC76B55146D89FF1E6F364E9DAA34A60E21AE69C`
+  Git Blob SHA-256: `007BC0EFF020CB6F3F33D44D63399C1E60F900124AD853252BD2D203F278F8BC`
 * **Smoke 6 Cases Acceptance**: `smoke_6cases_2026-10-23.txt`  
-  SHA-256: `044D2551A07E442FE39F241DC1E83F992E3FA7114A53AC7768A78FBF294DA6D7`
+  Git Blob SHA-256: `B3DBEF00E09DE2AD79A6791E7970E99702A8EE95DDADF68A6399A37B657AF95C`
+* **dev_probe5 Probe Run**: `dev_probe5_2026-10-24.json`  
+  Git Blob SHA-256: `9989AE2416183A2880700DC8541C210BF6CD601F2B21E19DBBEAE3DD667B7EC7`
+* **eval_dev Preliminary Run**: `eval_dev_2026-10-23.json`  
+  Git Blob SHA-256: `806B77BAC3BBD68D919609914608E3CA4A6DDBC5FE58A0D9EA2067743ED92337`
 
 ---
 

@@ -113,9 +113,9 @@ async def run_warmup_call(endpoint_id: str, api_key: str) -> None:
     t0 = time.perf_counter()
     resp = await extractor.extract("Beras 5 bag, Minyak 2 ctn")
     elapsed_ms = int((time.perf_counter() - t0) * 1000)
-    print(f"Warmup completed in {elapsed_ms}ms (status={resp.status}, rows={len(resp.rows)})")
-    if resp.status != "SUCCESS":
-        print(f"WARNING: Warmup status={resp.status}, raw_error={resp.raw_error}")
+    print(f"Warmup completed in {elapsed_ms}ms (ai_mode={resp.ai_mode}, rows={len(resp.result.rows)})")
+    if resp.ai_mode != "LLM":
+        print(f"WARNING: Warmup degraded ai_mode={resp.ai_mode}, raw_error={resp.raw_error}")
 
 
 async def evaluate_dev41_v1_prod(
@@ -130,13 +130,20 @@ async def evaluate_dev41_v1_prod(
 
     parse_eligible_ids: Set[str] = set(scope_data.get("parse_eligible_case_ids", []))
     resolver_only_ids: Set[str] = set(scope_data.get("resolver_only_case_ids", []))
-    excluded_map: Dict[str, str] = scope_data.get("excluded_cases", {})
+    excluded_raw = scope_data.get("excluded_cases", [])
+    if isinstance(excluded_raw, dict):
+        excluded_map: Dict[str, str] = dict(excluded_raw)
+    else:
+        excluded_map = {
+            c.get("case_id"): c.get("reason") or c.get("category") or "EXCLUDED"
+            for c in excluded_raw if isinstance(c, dict)
+        }
 
     cases_by_id: Dict[str, Dict[str, Any]] = {c["case_id"]: c for c in draft_data.get("cases", [])}
 
     # Build canonical catalogs directly from seed JSON files
-    catalog_t1 = build_catalog(tenant="T1", inputs_dir=inputs_dir)
-    catalog_t2 = build_catalog(tenant="T2", inputs_dir=inputs_dir)
+    catalog_t1 = build_catalog(tenant_id="T1", inputs_dir=inputs_dir)
+    catalog_t2 = build_catalog(tenant_id="T2", inputs_dir=inputs_dir)
 
     api_key = os.getenv("RUNPOD_API_KEY", "")
     endpoint_id = os.getenv("RUNPOD_ENDPOINT_ID", "")
@@ -147,11 +154,12 @@ async def evaluate_dev41_v1_prod(
     await run_warmup_call(endpoint_id=endpoint_id, api_key=api_key)
 
     # Step 2: Production adapter with 4.1s timeout
-    prod_adapter = OrderAiAdapter(
+    prod_extractor = RunPodExtractor(
         api_key=api_key,
         endpoint_id=endpoint_id,
         timeout_s=4.1,
     )
+    prod_adapter = OrderAiAdapter(extractor=prod_extractor)
 
     evaluated_cases: List[Dict[str, Any]] = []
     production_timeout_violations = 0
@@ -165,7 +173,7 @@ async def evaluate_dev41_v1_prod(
     for idx, case_id in enumerate(sorted_case_ids, start=1):
         case_info = cases_by_id[case_id]
         tenant_id = case_info["tenant_id"]
-        masked_text = case_info["masked_text"]
+        masked_text = case_info.get("masked_text") or case_info.get("message", "")
         catalog = catalog_t1 if tenant_id == "T1" else catalog_t2
 
         t_start = time.perf_counter()
@@ -208,17 +216,15 @@ async def evaluate_dev41_v1_prod(
             ],
             "conditions": [
                 {
-                    "condition_type": cond.condition_type,
-                    "raw_text": cond.raw_text,
-                    "requested_amount": cond.requested_amount,
-                    "confidence": cond.confidence,
+                    "kind": getattr(cond, "kind", None),
+                    "span": getattr(cond, "span", None),
+                    "condition_scope": getattr(cond, "condition_scope", None),
+                    "price_basis": getattr(cond, "price_basis", None),
+                    "requested_amount": getattr(cond, "requested_amount", None),
                 }
                 for cond in out.conditions
             ],
-            "ignored_spans": [
-                {"start": ig.start, "end": ig.end, "raw_text": ig.raw_text}
-                for ig in out.ignored_spans
-            ],
+            "ignored_spans": list(out.ignored_spans or []),
         }
         evaluated_cases.append(record)
         print(
@@ -233,7 +239,7 @@ async def evaluate_dev41_v1_prod(
             "case_id": cid,
             "scope": "RESOLVER_ONLY",
             "reason": "Requires customer alias_cache resolution (target_type=SKU/product_id). Excluded from AI-only denominator.",
-            "masked_text": cases_by_id[cid]["masked_text"],
+            "masked_text": (cases_by_id[cid].get("masked_text") or cases_by_id[cid].get("message","")),
         }
         for cid in sorted(resolver_only_ids)
         if cid in cases_by_id
@@ -245,7 +251,7 @@ async def evaluate_dev41_v1_prod(
             "case_id": cid,
             "status": "NOT_PARSE_ELIGIBLE",
             "reason": reason,
-            "masked_text": cases_by_id[cid]["masked_text"] if cid in cases_by_id else "",
+            "masked_text": (cases_by_id[cid].get("masked_text") or cases_by_id[cid].get("message","")) if cid in cases_by_id else "",
         }
         for cid, reason in sorted(excluded_map.items())
     ]
