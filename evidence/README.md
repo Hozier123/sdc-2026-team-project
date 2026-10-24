@@ -15,12 +15,18 @@
 
 Gate 0 的四方确认材料保存在 `gate0/` 子目录；冻结的规格与机器契约本体保存在仓库根目录 `gate0/`。证据目录可以继续追加材料，但不得借此修改已经冻结的基线。
 
-## AI official UOM 已知缺口
+## AI official UOM 已知缺口（7 处 / 31 行）
 
-db6f0ce official 23 条 AI-only 共 31 行，UOM 为 30/31。剩余 1 行为
-`KNOWN_UOM_INJECTION_GAP`：`4 botol minyak 5kg` 的 `botol` 未识别为 UOM。
-T1 seed 已有 `ALS_UOM_007`（botol→btl），但 adapter 只读 H1 词表 /
-`tenant_uom_extensions`，不读 DB `uom_aliases`。
+db6f0ce official 23 条 AI-only 共 31 行，UOM 为 24/31，状态是
+`CURRENT_WITH_KNOWN_UOM_GAPS`，不是“UOM 全通过”。
 
-这不是数据缺口，不能写成“UOM 全通过”；本期不改 seed、不升 Gate0。
-未来由代码侧注入 tenant UOM aliases 后再重跑 23 条。
+- `KNOWN_UOM_INJECTION_GAP`（3 处）：DEV-07 `botol`、DEV-13/27 `pail`。
+  T1 seed 已有 botol/pail alias，但 adapter 只读 H1 词表 /
+  `tenant_uom_extensions`，不读 DB `uom_aliases`。
+- `BULK_KG_REGRESSION`（4 处）：DEV-01/05/11/33 的散装 `kg` 被 PR #46
+  的 pack-size 排除误伤，`kg→None`；这是新回归，不是数据错误。
+
+本期不改 seed、不升 Gate0，不能写“UOM 全通过”。未来代码分两层修：
+1) 注入 tenant `uom_aliases`（botol/pail）；
+2) 区分 bulk product 的 `kg` 与 pack-size `kg`（4 处 bulk-kg）。
+修完必须重跑 23 条并替换 official evidence。
