@@ -12,6 +12,14 @@
 > 657ad5d 存在 11 处 UOM 错误（把 pack 单位当 uom），已由 PR #46（076ddf1 prefer quantity UOM over pack-size unit）修复。  
 > 当前质量一律以 db6f0ce 上的 official 重跑为准；在 official 生成前，旧 23 条与旧 5/6 均不得作为当前质量或验收通过引用。
 
+> [!NOTE]
+> **Official UOM known gap**：db6f0ce official 共 31 行，其中 1 行为
+> `KNOWN_UOM_INJECTION_GAP`：`4 botol minyak 5kg` 的 `botol` 未识别为 UOM。
+> T1 seed 已有 `ALS_UOM_007`（botol→btl），但 H1 adapter 只读
+> `tenant_uom_extensions` / H1 lexicon，不读 DB `uom_aliases`。
+> 这不是数据缺口，也不能写“UOM 全通过”；本期不改 seed、不升 Gate0。
+> 未来清零方案：由代码侧把 tenant `uom_aliases` 注入 adapter，再重跑 23 条。
+
 This document tracks all AI extraction and evaluation runs against canonical inputs (`dev_41_draft.json`, `dev_41_parse_scope.json`, `dev_format_probe_5.json`).
 
 ---
@@ -23,7 +31,7 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 | **standalone v1** | `dev41_ai_only_v1_2026-10-24.json` | `backend/ai@c66d6f5` | 46 次 (每案2次) | 原独立模块评测（含 extractor 探针 + adapter 校验）。已对外交付。 | `A0E72CA7EE03323AAC61D7119A3B866471B1BDE8ECE67CE1C7953917734B080D` |
 | **v2 comparison** | `dev41_ai_only_v2_2026-10-24.json` | `standalone-only` | 46 次 | standalone-only，归档不进准确率。归档理由：未在生产代码 db6f0ce 复跑 + 答案键未完全对齐。DEV-21 拆两行→合并一行 = IMPROVEMENT_CANDIDATE；DEV-37 删除 'kalau ada' 商品行、保留 STOCK condition = IMPROVEMENT_CANDIDATE；DEV-37 的 '2kg 的' 仍单独成行 = STRUCTURAL_CHANGE_UNJUDGED。 | `1C161DD563689481035F71FEAFA3D8C96EB44ADDE77829878448ACF8A938A72E` |
 | **v1_prod manual** | `dev41_ai_only_v1_prod_2026-10-24_manual.json` | `app/ai@657ad5d` | 23 次 (每案1次) | HISTORICAL（657ad5d，11 处 UOM 错误，已由 #46 修复），不得作为当前质量引用 | `97C40A701A5385B50C38A27795CF099FC1DA15FCB5E6792B7862D8F1C797823D` |
-| **v1_prod official** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | CURRENT（23/23 LLM, fallback 0, >4.1s 0, UNKNOWN 9, UOM 11→1） | `17F44B9B83CF0039FA3C5FE6410AC2C68152D2D96C54CA9E849899F4061A87CD` |
+| **v1_prod official** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | CURRENT（23/23 LLM, fallback 0, >4.1s 0, UNKNOWN 9；UOM 30/31，1 处 KNOWN_UOM_INJECTION_GAP=`botol`） | `17F44B9B83CF0039FA3C5FE6410AC2C68152D2D96C54CA9E849899F4061A87CD` |
 
 > [!NOTE]
 > **耗时诊断特别标注**：  
