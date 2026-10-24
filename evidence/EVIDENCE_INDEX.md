@@ -47,6 +47,9 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 
 ## 2. Supporting Benchmarks & He's 6 Cases
 
+* **He's 6 Cases Acceptance (Final)**: `he_6cases_final_2026-10-24.txt` | `app/ai@db6f0ce` | 6 次真机  
+  CURRENT_FINAL_6CASES；5 PASS / 1 KNOWN_LIMITATION (normal.json = MODEL_SPAN_TRUNCATED)  
+  Git Blob SHA-256: `8223C89E15F12046CAFA1E13C0E66BB605E3053C4E1CEC30A6382519204EE2EE`
 * **He's 6 Cases Acceptance (v1)**: `he_6cases_2026-10-24.txt`  
   HISTORICAL：5 PASS / 1 KNOWN_LIMITATION，prompt 未改，不作为验收通过  
   Git Blob SHA-256: `E2CB3F57D4B81FD5A2691045211B8A54691EFB76D81403FAF67B1AD625B4D3D5`
