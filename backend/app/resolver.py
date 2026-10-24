@@ -139,6 +139,17 @@ def resolve_row(row: RawRow, catalog: Catalog) -> Resolution:
     if not products:
         return Resolution(product=None, candidates=())
 
+    # A missing UOM is not safe when the family spans multiple base units.
+    # DEV-01 ("10kg Bawang") must not silently select the 10kg bag SKU when
+    # the bulk KG SKU is also valid; require explicit UOM/candidate choice.
+    if row.uom is None and len({product.base_unit for product in products}) > 1:
+        candidates = tuple(product for product in products if product.tier_price is not None)
+        return Resolution(
+            product=None,
+            candidates=candidates,
+            issue_code="MISSING_UOM",
+        )
+
     if row.uom:
         wanted = normalize(row.uom)
         products = [product for product in products if product.base_unit == wanted]
