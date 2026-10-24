@@ -2,7 +2,7 @@
 
 - 文件：`t1_e2e_23_2026-10-24.json`
 - 原始 SHA-256：`97FEE66743809D748E4C571749777D69D0CF2B01F6AAA8770C16289AB8F390D8`
-- 模式：`REAL`，23 条 T1 AI-only parse-draft
+- 模式：`REAL`，23 条 T1 E2E parse-draft
 - 状态：`BLOCKER_EVIDENCE`
 - 不用于：current E2E、READY、通过、准确率
 
