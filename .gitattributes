@@ -19,3 +19,6 @@ evidence/e2e/blocker/** -text
 
 # Post55 E2E evidence must keep Zhou's original bytes and SHA.
 evidence/e2e/post55/** -text
+
+# T2 E2E evidence must keep its original bytes and SHA.
+evidence/e2e/t2/** -text
