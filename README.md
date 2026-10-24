@@ -10,6 +10,87 @@ SDC Hackathon 2026 - Domain 2 - Orbyte Smart SME Challenge
 - Pitch Video & Prototype Demonstration: https://youtu.be/TyrASSJDIpM
 - Pitch Deck: [KiraOrder Falcons Pitch Deck](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx)
 
+## Judge's quick-start guide
+
+### Open the current prototype
+
+Open the [current frontend](https://hozier123.github.io/sdc-2026-team-project/), then click or tap the introduction, or press **Enter / Space**, to enter. To skip the introduction, [open the workspace directly](https://hozier123.github.io/sdc-2026-team-project/#/workspace). On a phone, use the top-left menu to open the sidebar.
+
+Start with **LOCAL DEMO**. It requires no account, password, token, installation, backend connection, or running GPU. The Replit backend URL is an API, and the legacy Replit frontend is an older UI; use GitHub Pages for this walkthrough.
+
+### Switch roles and workspaces
+
+Select **Bintang Wholesale** in the workspace selector. Open the role selector in the top-right header (it displays a label such as **Order clerk · demo**) and choose a role:
+
+| Demo role | What to review |
+| --- | --- |
+| **Order clerk** | Create and check drafts, resolve issues, approve routine orders, and send exceptions to the owner. |
+| **Owner** | Review saved approval requests, approve an order, or reject it with a reason. |
+| **Warehouse** | Find a delivery order by its DO number and check picking information without prices or customer contact details. |
+
+Save or discard edits before switching roles or workspaces. Keep the same workspace while following one order. Role switching is a Local Demo feature; connected API permissions come from the authenticated backend session.
+
+### Walkthrough A: create a routine order
+
+1. Choose **Bintang Wholesale** and **Order clerk · demo**.
+2. Open **New order** and select **Restoran Ali** as the customer.
+3. Choose **The everyday order** sample, or paste the following synthetic message:
+
+   ```text
+   Tepung 4 ctn
+   Minyak 2 ctn
+   ```
+
+4. Click **Create order draft**. Check products, specifications, quantities, units, prices, stock, and total.
+5. Resolve any highlighted issues. If you edit anything, click **Save changes** and recheck the saved result.
+6. Click **Approve & generate DO** when available. If the page instead offers **Send to owner**, follow the approval steps below.
+7. Record the generated DO number. Try **Print / save as PDF**, **Copy customer reply**, and **View change record**. Copying a reply does not send it to a customer.
+
+If approval is unavailable, check unsaved edits, unresolved issues, stock, and the selected role. Owner approval does not bypass stock or unresolved blocking issues.
+
+### Walkthrough B: review an owner exception
+
+In a fresh Local Demo, switch to **Owner · demo**, open **Owner approvals**, and select a seeded pending request. Review its saved snapshot and escalation reason. Use **Approve & generate DO**, or **Reject with reason** followed by **Reject order**.
+
+To create a new price exception yourself:
+
+1. Switch to **Order clerk · demo**, choose **Restoran Ali**, and create a draft from the **A price to decide** sample: `Tepung 5 ctn, kalau RM95 boleh?`.
+2. In **Customer conditions**, choose **Accept a requested discount**. Select the flour line, enter **95.00** as the price per catalogue unit, and give a synthetic test reason.
+3. Click **Record decision**, then **Save changes**. Check the saved price and total, then click **Send to owner**.
+4. Switch to **Owner · demo**, open **Owner approvals**, and select the request you just submitted. Approve it or reject it with a reason.
+
+Requests awaiting owner approval cannot be edited directly. A rejected order is closed; create a new draft if a revised order is needed.
+
+### Walkthrough C: check warehouse picking
+
+1. Switch to **Warehouse · demo** in the same workspace.
+2. Enter the DO number generated above, or use the seeded **DO-T1-0001** in Bintang Wholesale.
+3. Click **Find picking list** and check the product, quantity, unit, and picking requirements. Use **Print picking list** if needed.
+
+Warehouse checkboxes are temporary on-page checks. They do not submit shipment, deduct stock again, or persist picking progress after refresh.
+
+### Local Demo boundaries and recovery
+
+- **LOCAL DEMO / Offline match · non-AI** uses browser-side catalogue rules and synthetic data. It does not call the backend or an LLM and does not establish live AI accuracy, database persistence, tenant isolation, or production authentication.
+- Saved demo orders and stock changes remain in the current browser; they do not sync to other devices. Unsaved edits may be lost on refresh. Use a new private/incognito session for a fresh demo, and allow site storage.
+- Use **A specification to clarify** to inspect an ambiguous product, or **Check before promising** to inspect insufficient stock. Follow the displayed issues before approving.
+- Messages are pasted manually. Clarifications and customer replies are copied drafts, not automatic WhatsApp messages. Use synthetic data only.
+- If the prototype cannot be reached, the [pitch and demonstration video](https://youtu.be/TyrASSJDIpM) and [pitch deck](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) provide supporting material; they do not replace an interactive review.
+
+### Controlled access to the real API
+
+API review is **by arrangement with the team**. This README does not publish or provision a judge token, and no authenticated review window is guaranteed by these instructions alone.
+
+1. Contact the team leader through the competition portal's existing team contact or an organizer-mediated private channel. Request an API review session; the team leader coordinates access with the backend maintainer. Do not exchange credentials in a public GitHub issue.
+2. Before review, the team should privately provide the designated synthetic tenant, the permitted role, a working role-specific session token, the agreed review window, and a private support contact. If comparing **CLERK**, **OWNER**, and **WAREHOUSE**, request separate role-bound sessions. Do not use database credentials or a RunPod key as a frontend session token.
+3. Open GitHub Pages, save or discard demo edits, and choose **Connect API**. Enter API base **https://kiraorder-api.replit.app/api/v1** and the privately supplied token in **Session token**, then click **Connect API**. The frontend verifies the session through `/me`; confirm the returned workspace and role before creating synthetic records.
+4. In API mode, the backend determines identity and permissions. To review another role, reconnect using that role's supplied session; the demo role selector cannot grant API privileges. Tokens remain in the current tab's memory. Refreshing returns to Local Demo; **API connection → Return to demo** also exits the connection.
+5. If the token is missing, rejected, inactive, or not supplied, use Local Demo and contact the team privately. The [backend readiness check](https://kiraorder-api.replit.app/readyz) tests service readiness, not identity, model readiness, or end-to-end order completion.
+
+The recorded public configuration uses `runpod_adapter` with RunPod **Active=0**, so public parsing falls back. Do not assume an LLM was used or a complete live workflow passed because a page or health check loaded. A live-AI review requires the team to arrange an active model window and verify the path first; no such new verification was performed when writing this guide. Review the displayed mode and errors, and stop for team assistance if required catalogue data or model services are unavailable.
+
+For implementation details and historical evidence, see the [AI sample runbook](docs/ops/ai-sample-runbook.md) and [RunPod evidence](evidence/runpod/2026-10-24/README.md). The detailed [operator guide (Chinese)](frontend/docs/KiraOrder_使用说明.md) explains individual controls; its dated deployment notes are historical, so use this root README for the current recorded deployment status.
+
 **Current status: Gate 0 is frozen (`1.3.0-gate0-v4`). The frontend is deployed on GitHub Pages, the backend on Replit, and PostgreSQL on Neon. Official AI-only evidence records 23/23 LLM calls with 0 fallback; the final six-case set records 5 PASS / 1 KNOWN_LIMITATION. UOM remains 24/31 with 7 known gaps. The TEST32 v5 freeze manifest was reviewed by He and Zhan and merged, but 12 workflow cases remain `NOT_RUN`. RunPod is currently `Active=0`, so public parse falls back and is not an integrated live-AI demonstration. The signed official proposal and tools declaration are in [`submission/`](submission/); the supplied slide deck and pitch video are linked below; UAT and the portal upload remain outstanding. Local tests and a public deployment do not equal full acceptance, and they do not mean the competition submission is complete.**
 
 The data-side seed-count sign-off is dated 2026-10-23 and was signed by Zhou Jingxi. Its scope is limited to seed counts and import evidence; business-field acceptance, AI accuracy, and UAT remain separate. See [evidence/data-signoff/2026-10-23.md](evidence/data-signoff/2026-10-23.md). AI evaluation boundaries are documented in [docs/ops/ai-evaluation-intake.md](docs/ops/ai-evaluation-intake.md).
