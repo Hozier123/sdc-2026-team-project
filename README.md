@@ -2,7 +2,7 @@
 
 SDC Hackathon 2026 - Domain 2 - Orbyte Smart SME Challenge
 
-**Current status: Gate 0 is frozen (`1.3.0-gate0-v4`). The frontend is deployed on GitHub Pages, the backend on Replit, and PostgreSQL on Neon. Official AI-only evidence records 23/23 LLM calls with 0 fallback; the final six-case set records 5 PASS / 1 KNOWN_LIMITATION. UOM remains 24/31 with 7 known gaps. The TEST32 v5 freeze manifest was reviewed by He and Zhan and merged, but 12 workflow cases remain `NOT_RUN`. RunPod is currently `Active=0`, so public parse falls back and is not an integrated live-AI demonstration. UAT, final recording, the official proposal/tools-declaration PDFs, and the final submission package are still incomplete. Local tests and a public deployment do not equal full acceptance, and they do not mean the competition submission is complete.**
+**Current status: Gate 0 is frozen (`1.3.0-gate0-v4`). The frontend is deployed on GitHub Pages, the backend on Replit, and PostgreSQL on Neon. Official AI-only evidence records 23/23 LLM calls with 0 fallback; the final six-case set records 5 PASS / 1 KNOWN_LIMITATION. UOM remains 24/31 with 7 known gaps. The TEST32 v5 freeze manifest was reviewed by He and Zhan and merged, but 12 workflow cases remain `NOT_RUN`. RunPod is currently `Active=0`, so public parse falls back and is not an integrated live-AI demonstration. The signed official proposal and tools declaration are in [`submission/`](submission/); UAT, the slide deck, the final recording and the portal upload remain outstanding. Local tests and a public deployment do not equal full acceptance, and they do not mean the competition submission is complete.**
 
 The data-side seed-count sign-off is dated 2026-10-23 and was signed by Zhou Jingxi. Its scope is limited to seed counts and import evidence; business-field acceptance, AI accuracy, and UAT remain separate. See [evidence/data-signoff/2026-10-23.md](evidence/data-signoff/2026-10-23.md). AI evaluation boundaries are documented in [docs/ops/ai-evaluation-intake.md](docs/ops/ai-evaluation-intake.md).
 
@@ -151,7 +151,7 @@ CI (Backend foundation + Frontend) passes on the current `main`; the latest loca
 - AI-only evidence completed 23/23 LLM calls, but accuracy remains `NOT_COMPUTED`; UOM is 24/31 with 7 known gaps.
 - The 12 TEST32 workflow cases remain `NOT_RUN`; complete E2E is not available.
 - Independent UAT and real-user trial records from the frontend and data owners are still incomplete.
-- The official proposal, tools declaration, slide deck, and pitch video still require final confirmation.
+- The slide deck and pitch video still require final confirmation; the signed proposal and tools declaration are now in `submission/`.
 
 The v1.3 working documents 01-04 are under `docs/rules/` and are updated with the implementation; frozen originals are not rewritten.
 
@@ -164,11 +164,11 @@ The v1.3 working documents 01-04 are under `docs/rules/` and are updated with th
 | RunPod endpoint | https://lx22t9308hc10c.api.runpod.ai; currently `Active=0`; see `evidence/runpod/2026-10-24/` |
 | Slide deck | Pending final material confirmation |
 | 5-7 minute YouTube pitch and prototype demo | Pending final recording |
-| Official proposal | Final PDF pending in `submission/`; currently the official blank/sample form |
-| Technical and tools declaration | Final PDF pending in `submission/`; currently the official blank/sample form |
-| Platform-use proof | Real Replit/RunPod screenshots are archived; `submission/` still contains EXAMPLE ONLY pages and must be replaced before submission |
+| Official proposal | [`submission/SDC2026_Falcons_Preliminary.pdf`](submission/SDC2026_Falcons_Preliminary.pdf) — signed 2026/10/25 |
+| Technical and tools declaration | [`submission/SDC2026_Falcons_TechDeclaration.pdf`](submission/SDC2026_Falcons_TechDeclaration.pdf) — signed 2026/10/25 |
+| Platform-use proof | Reproduced in `submission/SDC2026_Falcons_TechDeclaration.pdf` Appendices B–D; screenshots archived under `evidence/runpod/2026-10-24/`. The `EXAMPLE ONLY` sample pages are retained only as starter references |
 
-Official file names must use the actual team name:
+Official file names use the actual team name:
 
 - `SDC2026_TeamName_Preliminary.pdf`
 - `SDC2026_TeamName_TechDeclaration.pdf`
