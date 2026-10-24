@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -8,12 +10,16 @@ from app.migrations import migrate
 
 pytestmark = pytest.mark.integration
 
+# CI uses the test-database token; local T2 verification can inject the real
+# seed token via T2_DEMO_TOKEN without committing any secret.
+T2_TOKEN = os.environ.get("T2_DEMO_TOKEN", "tok_t2_clerk")
+
 TOKENS = {
     "clerk": "tok_t1_clerk",
     "owner": "tok_t1_owner",
     "warehouse": "tok_t1_warehouse",
     "inactive": "tok_t1_inactive",
-    "t2": "tok_t2_clerk",
+    "t2": T2_TOKEN,
 }
 
 
