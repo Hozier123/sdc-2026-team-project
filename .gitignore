@@ -26,3 +26,7 @@ coverage/
 # Trial reset artifacts
 logs/
 evidence/reset/
+
+# Local scratch / private review artifacts
+.tmp/
+evidence/ai-samples/
