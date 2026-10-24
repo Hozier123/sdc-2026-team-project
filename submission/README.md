@@ -26,7 +26,16 @@ Genuine Replit and RunPod evidence is reproduced inside `SDC2026_Falcons_TechDec
 
 - [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
 
-The supplied slide deck and video are linked here. Final portal submission remains to be confirmed.
+The supplied slide deck and video are linked here. The official portal entry is registered via `sdchack.my` (GitHub link accepted; API integration confirmed); see [`PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png`](PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png).
+
+## Portal submission confirmation
+
+![Portal submission confirmation](PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png)
+
+- GitHub link: https://github.com/Hozier123/sdc-2026-team-project
+- Portal status: `API integration confirmed`
+- Snapshot date: 2026-10-25
+- SHA-256: `4cdc6b5d88d7b9807569a1380edcf23bb4df80876426d9ca22b8834ae5975dc9`
 
 Never include keys, passwords, unrelated CVs or real personal/customer/company records.
 
