@@ -1,8 +1,8 @@
-﻿# KiraOrder for Orbyte
+# KiraOrder for Orbyte
 
 SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 
-**当前状态：已冻结 Gate 0（`1.3.0-gate0-v4`）；后端已实现身份、parse、草稿/客户/审批/DO 读取、活动与审计、仓库裁剪、AI 状态/唤醒、自动目录解析与客户记忆、条件/澄清/回复、作废草稿、澄清复制事件、同日三选一、`confirmed_items` 兼容路径、`checks_enabled` 软检查和导出证据绑定；前端工作台已交付。AI handoff 的 Pre-Resolver 已作为进程内 provider 接入，默认 `AI_PROVIDER=auto` 仍走 Stub，真实 RunPod 端点尚未完成验收。当前 main 的完整测试为 407 passed。真实 AI 模型质量、公开部署、前端/数据独立 UAT 和正式赛事材料仍是外部验收边界；本地测试通过不等于生产验收完成，也不代表赛事提交已完成。**
+**当前状态：Gate 0 已冻结（`1.3.0-gate0-v4`）；前端 GitHub Pages、后端 Replit、Neon PostgreSQL 已公开部署；官方 AI-only 证据为 23/23 LLM、0 fallback，final 6 为 5 PASS / 1 KNOWN_LIMITATION；UOM 仍为 24/31（7 处 known gaps）；TEST32 v5 freeze manifest 已由 He/Zhan review 并 merge，但 12 条 workflow 仍为 `NOT_RUN`。RunPod 当前 Active=0，公网 parse 走 fallback，不是 integrated live-AI demonstration。UAT、正式录制、官方提案/工具声明 PDF 与最终提交包仍未完成；本地测试和公开部署不等于完整验收，也不代表赛事提交已完成。**
 
 数据侧 seed 计数签字：2026-10-23，签字人 Zhou Jingxi，范围仅 seed 计数与导入证据；业务字段级验收、AI 准确率和 UAT 另行确认。记录见 [evidence/data-signoff/2026-10-23.md](evidence/data-signoff/2026-10-23.md)。AI 评测草案边界见 [docs/ops/ai-evaluation-intake.md](docs/ops/ai-evaluation-intake.md)。
 
@@ -11,14 +11,17 @@ SDC Hackathon 2026 · Domain 2 · Orbyte Smart SME Challenge
 | 项目 | 内容 |
 | --- | --- |
 | 产品名 | KiraOrder for Orbyte |
-| 注册队名 | TODO：填写报名队名 |
-| 赛道 | Domain 2（按最终分配确认） |
+| 注册队名 | Falcons |
+| 赛道 | Domain 2 — Orbyte Smart SME Challenge |
 | SDG | SDG 8，重点为 8.2、8.3 |
-| 队长、学校 | TODO：按报名信息填写 |
-| 成员及分工 | TODO：按团队最终分工填写 |
+| 队长、学校 | Zhou Jingxi，Xiamen University Malaysia |
+| 成员及分工 | He Minghao（后端、规则、部署）；Xiong Peicheng（AI、RunPod、部署）；Ye Lianghui（前端）；Zhou Jingxi（数据、质量、评估）；Zhan Zhengrong（手工基线、材料与提交整合） |
 | 仓库 | https://github.com/Hozier123/sdc-2026-team-project |
+| 前端 | https://hozier123.github.io/sdc-2026-team-project/ |
+| 后端 API | https://kiraorder-api.replit.app/api/v1 |
+| 后端健康检查 | https://kiraorder-api.replit.app/readyz |
 
-计划解决的问题：将马来西亚批发商收到的 WhatsApp 混语订单，转为经核对、经人工批准、可追溯的送货单。不确定的信息交给适当的人处理。当前已形成可本地运行的原型；真实部署与真人试用验收尚未完成。
+计划解决的问题：将马来西亚批发商收到的 WhatsApp 混语订单，转为经核对、经人工批准、可追溯的送货单。不确定的信息交给适当的人处理。当前已有公开 Pages/后端部署、Local Demo 和 AI-only 证据；完整 E2E、独立 UAT 与真人试用仍未完成。
 
 ## 仓库根目录
 
@@ -104,9 +107,10 @@ if (-not (Test-Path -LiteralPath .env)) {
 
 已定开发与部署方式：
 - 开发：前端通过 `VITE_API_BASE_URL` 直接连接 FastAPI；当前 Vite 配置未启用 API 代理。
-- 部署：Replit 前后端分离；前端 Static Deployment，后端 Web Deployment（FastAPI），数据库 Neon；不做 FastAPI 托管前端 `dist`。
-- AI：先用 `AI_PROVIDER=auto` → Stub；RunPod 验收后再切 `runpod_adapter`。
-- 当前尚未实际部署；不要把本地 `npm run dev` 当作已部署。
+- 前端部署：GitHub Pages，主地址 `https://hozier123.github.io/sdc-2026-team-project/`；Replit 前端为旧版/legacy。
+- 后端部署：Replit Core，Autoscale，public `https://kiraorder-api.replit.app`；数据库 Neon PostgreSQL 17.11。
+- AI：代码默认 `AI_PROVIDER=auto`；当前公网配置为 `runpod_adapter`，RunPod Active=0，public parse 走 fallback，不是 integrated live-AI demonstration。
+- 公开部署已存在；不要把本地 `npm run dev` 当作已部署。
 - 决策见 [docs/ops/public-deployment-decision.md](docs/ops/public-deployment-decision.md)；检查清单见 [docs/ops/public-deployment-checklist.md](docs/ops/public-deployment-checklist.md)。
 
 ## 配置项
@@ -124,9 +128,9 @@ CORS_ALLOW_ORIGINS
 ```
 
 `AI_PROVIDER=runpod_adapter` 才会启用进程内 `OrderAiAdapter`；需要
-`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`。默认 `auto` 不启用 RunPod key，
-仍走 Stub（有 `AI_SERVICE_URL` 时走现有 HTTP 路径）。不存在
-`/api/v1/extract`，AI 由 `parse-draft` 进程内调用。
+`RUNPOD_API_KEY`、`RUNPOD_ENDPOINT_ID`。代码默认 `auto`（无 `AI_SERVICE_URL` 时为
+Stub）；当前公网部署配置为 `runpod_adapter`，RunPod `Active=0` 时 public parse
+走 fallback。不存在 `/api/v1/extract`，AI 由 `parse-draft` 进程内调用。
 
 真实密钥只放本地环境或 Replit Secrets，不写入代码、文档或截图。业务演示只使用团队自建合成数据。
 六样例证据运行器见 [docs/ops/ai-sample-runbook.md](docs/ops/ai-sample-runbook.md)。
@@ -142,12 +146,13 @@ CORS_ALLOW_ORIGINS
 checks_enabled 三个软检查、并发/回滚、导出证据绑定、契约 fixture 回归。
 ```
 
-当前 main 完整测试：**407 passed**。外部边界仍未完成：
+当前 main 的 CI（Backend foundation + Frontend）通过；后端 non-integration 本地套件最近一次为 **307 passed**。完整集成测试需要 `TEST_DATABASE_ADMIN_URL`，不能把 307 当作完整集成结果。外部边界仍未完成：
 
-- 真实 RunPod endpoint 的预检、模型质量与独立准确率评测；当前公开端点带 Bearer 请求超时，已记录证据；
-- 公开部署、Replit/RunPod 实际使用证明；
-- 前端与数据负责人的独立 UAT、真人试用记录；
-- 正式提案、工具声明、幻灯片与路演视频。
+- RunPod 当前 `Active=0`，public parse 走 fallback；真实模型质量/延迟需重新开窗口才能做 online verification；
+- AI-only 23/23 LLM 已完成，但 accuracy 仍为 `NOT_COMPUTED`；UOM 24/31，7 处 known gaps；
+- TEST32 12 条 workflow 仍为 `NOT_RUN`，没有完整 E2E；
+- 前端与数据负责人的独立 UAT、真人试用记录仍未完成；
+- 正式提案、工具声明、幻灯片与路演视频仍待最终确认。
 
 01—04 的 v1.3 工作文档放在 `docs/rules/`，以独立提交随实现更新；不回写冻结原件。
 
@@ -155,14 +160,14 @@ checks_enabled 三个软检查、并发/回滚、导出证据绑定、契约 fix
 
 | 内容 | 链接或状态 |
 | --- | --- |
-| 原型 / 可访问构建 | 本地可运行；公开部署与可访问链接待完成 |
-| Replit 项目 / 部署 | TODO：实际使用后填写 |
-| RunPod 端点 | TODO：实际接入后填写，不含密钥 |
-| 幻灯片 | TODO |
-| 5–7 分钟 YouTube 路演及原型演示 | TODO |
-| 正式提案 | TODO：完成后放入 `submission/`，并在此添加链接 |
-| 技术与工具声明 | TODO：完成后放入 `submission/`，并在此添加链接 |
-| 平台使用证明 | 目前仅有示例页，必须替换并纳入工具声明 |
+| 原型 / 可访问构建 | https://hozier123.github.io/sdc-2026-team-project/ |
+| Replit 项目 / 部署 | 后端 https://kiraorder-api.replit.app；前端旧版 https://kiraorder-web.replit.app（legacy） |
+| RunPod 端点 | https://lx22t9308hc10c.api.runpod.ai；当前 Active=0，见 evidence/runpod/2026-10-24/ |
+| 幻灯片 | 待最终材料确认 |
+| 5–7 分钟 YouTube 路演及原型演示 | 待正式录制 |
+| 正式提案 | `submission/` 最终 PDF 待放入；当前为官方空白/示例表单 |
+| 技术与工具声明 | `submission/` 最终 PDF 待放入；当前为官方空白/示例表单 |
+| 平台使用证明 | Replit/RunPod 实际截图已归档；submission 内仍是 EXAMPLE ONLY，提交前必须替换 |
 
 正式文件命名按官方模板填写实际队名：
 - `SDC2026_TeamName_Preliminary.pdf`
@@ -170,11 +175,18 @@ checks_enabled 三个软检查、并发/回滚、导出证据绑定、契约 fix
 
 ## Replit 使用说明
 
-**待实际使用后填写。** 说明开发、测试或托管了哪些模块，提供团队自己的项目/部署链接及证明，并纳入技术与工具声明。当前表单中的证明为 EXAMPLE ONLY，不代表已使用平台。
+后端使用 Replit Core，Autoscale（2 vCPU / 4 GiB），region Asia，public 域名
+`https://kiraorder-api.replit.app`。前端主部署已迁移到 GitHub Pages；
+`https://kiraorder-web.replit.app` 保留为 legacy/old UI，不作为最终评审入口。
+Replit Core 为 He Minghao 自费；Ye Lianghui 的 Replit Agent 使用由平台
+sponsor/credit 覆盖，具体见 Technical & Tools Declaration。
 
 ## RunPod 使用说明
 
-**待实际使用后填写。** 说明 GPU 工作负载、模型、Pod / Serverless 连接方式及团队自己的证明。原官方回声处理器已移除，不把示例代码当作平台使用证据。若最终不使用 GPU，需如实说明并向组委会确认要求。
+RunPod Serverless Load Balancer endpoint `lx22t9308hc10c`，vLLM + Qwen2.5-7B-Instruct-AWQ，
+GPU 24 GB；当前 `Active=0`、0 workers，public parse 走 fallback。使用证明见
+`evidence/runpod/2026-10-24/`，包括 overview、workers-zero 和 shutdown logs。
+RunPod 约 US$25 sponsor credit；不得把 0 workers 写成持续可用。
 
 ## 提交检查
 
