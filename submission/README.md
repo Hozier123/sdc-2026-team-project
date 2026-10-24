@@ -11,23 +11,19 @@ Both documents follow the official SDC templates, are signed by the team leader 
 | --- | --- | --- |
 | `SDC2026_Falcons_Preliminary.pdf` | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `3caf30504d5e5d572b69c157ff0c3354c9916af11a077bdf83518d0d52fe5b7e` |
 | `SDC2026_Falcons_TechDeclaration.pdf` | Technical & Tools Declaration, incl. Appendices A–F (architecture, Replit and RunPod deployment evidence, third-party notices, visual asset boundaries) | `de0795064d215adfc92439fc5a050121a7a463cbba2458c1323e05c56aedead3` |
+| [KiraOrder_Falcons_PitchDeck_SDC2026.pptx](KiraOrder_Falcons_PitchDeck_SDC2026.pptx) | 15-slide pitch deck | `690fd3c9912bc8ed8ddce3a69838fae886b4439e5715e14e178813450c08f988` |
 
 These two PDFs are also the documents to be uploaded to the official submission portal (`sdchack.my`). Publishing them in this repository is **not** a substitute for submitting through the portal.
 
-## Reference-only starter files (not submitted)
-
-Retained from the official starter package for provenance. They are blank or illustrative and are **not** team evidence:
-
-- `Submission Template SDC Hackathon.pdf` — blank preliminary proposal form.
-- `REPLIT PROOF OF USE.pdf` — EXAMPLE ONLY sample, not our evidence.
-- `RUNPOD PROOF OF USE.pdf` — EXAMPLE ONLY sample, not our evidence.
+## Platform-use evidence
 
 Genuine Replit and RunPod evidence is reproduced inside `SDC2026_Falcons_TechDeclaration.pdf` (Appendices B–D) and archived under [`../evidence/`](../evidence/).
 
-## Still outstanding for the portal
+## Pitch video
 
-- Pitch deck (slides) file.
-- 5–7 minute pitching video including prototype demonstration (YouTube link).
+- [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
+
+The supplied slide deck and video are linked here. Final portal submission remains to be confirmed.
 
 Never include keys, passwords, unrelated CVs or real personal/customer/company records.
 

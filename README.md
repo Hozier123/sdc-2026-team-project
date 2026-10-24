@@ -2,7 +2,15 @@
 
 SDC Hackathon 2026 - Domain 2 - Orbyte Smart SME Challenge
 
-**Current status: Gate 0 is frozen (`1.3.0-gate0-v4`). The frontend is deployed on GitHub Pages, the backend on Replit, and PostgreSQL on Neon. Official AI-only evidence records 23/23 LLM calls with 0 fallback; the final six-case set records 5 PASS / 1 KNOWN_LIMITATION. UOM remains 24/31 with 7 known gaps. The TEST32 v5 freeze manifest was reviewed by He and Zhan and merged, but 12 workflow cases remain `NOT_RUN`. RunPod is currently `Active=0`, so public parse falls back and is not an integrated live-AI demonstration. The signed official proposal and tools declaration are in [`submission/`](submission/); UAT, the slide deck, the final recording and the portal upload remain outstanding. Local tests and a public deployment do not equal full acceptance, and they do not mean the competition submission is complete.**
+## Project Links
+
+- Live Prototype: https://hozier123.github.io/sdc-2026-team-project/
+- Backend API: https://kiraorder-api.replit.app/api/v1
+- Backend Health Check: https://kiraorder-api.replit.app/readyz
+- Pitch Video & Prototype Demonstration: https://youtu.be/TyrASSJDIpM
+- Pitch Deck: [KiraOrder Falcons Pitch Deck](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx)
+
+**Current status: Gate 0 is frozen (`1.3.0-gate0-v4`). The frontend is deployed on GitHub Pages, the backend on Replit, and PostgreSQL on Neon. Official AI-only evidence records 23/23 LLM calls with 0 fallback; the final six-case set records 5 PASS / 1 KNOWN_LIMITATION. UOM remains 24/31 with 7 known gaps. The TEST32 v5 freeze manifest was reviewed by He and Zhan and merged, but 12 workflow cases remain `NOT_RUN`. RunPod is currently `Active=0`, so public parse falls back and is not an integrated live-AI demonstration. The signed official proposal and tools declaration are in [`submission/`](submission/); the supplied slide deck and pitch video are linked below; UAT and the portal upload remain outstanding. Local tests and a public deployment do not equal full acceptance, and they do not mean the competition submission is complete.**
 
 The data-side seed-count sign-off is dated 2026-10-23 and was signed by Zhou Jingxi. Its scope is limited to seed counts and import evidence; business-field acceptance, AI accuracy, and UAT remain separate. See [evidence/data-signoff/2026-10-23.md](evidence/data-signoff/2026-10-23.md). AI evaluation boundaries are documented in [docs/ops/ai-evaluation-intake.md](docs/ops/ai-evaluation-intake.md).
 
@@ -64,9 +72,9 @@ sdc-2026-team-project/
 |   `-- .gitkeep
 |-- submission/                 # Official competition submission materials
 |   |-- README.md
-|   |-- REPLIT PROOF OF USE.pdf  # EXAMPLE ONLY; must be replaced
-|   |-- RUNPOD PROOF OF USE.pdf  # EXAMPLE ONLY; must be replaced
-|   `-- Submission Template SDC Hackathon.pdf  # Blank form; must be completed
+|   |-- SDC2026_Falcons_Preliminary.pdf  # Signed preliminary proposal
+|   |-- SDC2026_Falcons_TechDeclaration.pdf  # Signed tools declaration and platform evidence
+|   `-- KiraOrder_Falcons_PitchDeck_SDC2026.pptx  # Pitch deck
 |-- tests/                      # Test code, test data, and frozen-set records
 |   `-- .gitkeep
 |-- .env.example                # Configuration variable names with empty values
@@ -151,7 +159,7 @@ CI (Backend foundation + Frontend) passes on the current `main`; the latest loca
 - AI-only evidence completed 23/23 LLM calls, but accuracy remains `NOT_COMPUTED`; UOM is 24/31 with 7 known gaps.
 - The 12 TEST32 workflow cases remain `NOT_RUN`; complete E2E is not available.
 - Independent UAT and real-user trial records from the frontend and data owners are still incomplete.
-- The slide deck and pitch video still require final confirmation; the signed proposal and tools declaration are now in `submission/`.
+- The supplied slide deck and pitch video are linked below; the signed proposal and tools declaration are in `submission/`. Portal submission remains to be confirmed.
 
 The v1.3 working documents 01-04 are under `docs/rules/` and are updated with the implementation; frozen originals are not rewritten.
 
@@ -162,11 +170,11 @@ The v1.3 working documents 01-04 are under `docs/rules/` and are updated with th
 | Prototype / accessible build | https://hozier123.github.io/sdc-2026-team-project/ |
 | Replit project / deployment | Backend https://kiraorder-api.replit.app; legacy frontend https://kiraorder-web.replit.app |
 | RunPod endpoint | https://lx22t9308hc10c.api.runpod.ai; currently `Active=0`; see `evidence/runpod/2026-10-24/` |
-| Slide deck | Pending final material confirmation |
-| 5-7 minute YouTube pitch and prototype demo | Pending final recording |
+| Slide deck | [KiraOrder Falcons Pitch Deck](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) |
+| YouTube pitch and prototype demo | https://youtu.be/TyrASSJDIpM |
 | Official proposal | [`submission/SDC2026_Falcons_Preliminary.pdf`](submission/SDC2026_Falcons_Preliminary.pdf) — signed 2026/10/25 |
 | Technical and tools declaration | [`submission/SDC2026_Falcons_TechDeclaration.pdf`](submission/SDC2026_Falcons_TechDeclaration.pdf) — signed 2026/10/25 |
-| Platform-use proof | Reproduced in `submission/SDC2026_Falcons_TechDeclaration.pdf` Appendices B–D; screenshots archived under `evidence/runpod/2026-10-24/`. The `EXAMPLE ONLY` sample pages are retained only as starter references |
+| Platform-use proof | Reproduced in `submission/SDC2026_Falcons_TechDeclaration.pdf` Appendices B–D; screenshots archived under `evidence/runpod/2026-10-24/` |
 
 Official file names use the actual team name:
 
@@ -183,7 +191,7 @@ The RunPod Serverless Load Balancer endpoint is `lx22t9308hc10c`, serving Qwen2.
 
 ## Submission check
 
-See [docs/competition-checklist.md](docs/competition-checklist.md). A completed directory template does not mean the competition materials are complete, and uploading to GitHub does not mean the official entry has been submitted. The runnable prototype, documentation, platform proof, slides, and video must still be completed; review access must be opened as required, and the entry must be submitted on the official site.
+See [docs/competition-checklist.md](docs/competition-checklist.md). A completed directory template does not mean the competition materials are complete, and uploading to GitHub does not mean the official entry has been submitted. Verify the runnable prototype and supplied documentation, platform proof, slides, and video; open review access as required, and submit the entry on the official site.
 
 ## License and provenance
 
