@@ -4,7 +4,7 @@
 > **Hash Convention（哈希计算口径）**：  
 > 所有 SHA-256 均按 git blob（LF 归一化后）计算：  
 > `git cat-file blob <rev>:evidence/<file> | sha256sum`  
-> Windows 工作区因 `core.autocrlf` 显示 CRLF，直接对文件哈希会得到不同值。
+> Windows 工作区因 `core.autocrlf` 显示 CRLF，直接对文件哈希会得到不同值。校验清单见 `evidence/SHA256.txt`。
 
 > [!WARNING]
 > **历史基线与质量引用声明**：  
@@ -36,7 +36,8 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 | **standalone v1** | `dev41_ai_only_v1_2026-10-24.json` | `backend/ai@c66d6f5` | 46 次 (每案2次) | 原独立模块评测（含 extractor 探针 + adapter 校验）。已对外交付。 | `A0E72CA7EE03323AAC61D7119A3B866471B1BDE8ECE67CE1C7953917734B080D` |
 | **v2 comparison** | `dev41_ai_only_v2_2026-10-24.json` | `standalone-only` | 46 次 | standalone-only，归档不进准确率。归档理由：未在生产代码 db6f0ce 复跑 + 答案键未完全对齐。DEV-21 拆两行→合并一行 = IMPROVEMENT_CANDIDATE；DEV-37 删除 'kalau ada' 商品行、保留 STOCK condition = IMPROVEMENT_CANDIDATE；DEV-37 的 '2kg 的' 仍单独成行 = STRUCTURAL_CHANGE_UNJUDGED。 | `1C161DD563689481035F71FEAFA3D8C96EB44ADDE77829878448ACF8A938A72E` |
 | **v1_prod manual** | `dev41_ai_only_v1_prod_2026-10-24_manual.json` | `app/ai@657ad5d` | 23 次 (每案1次) | HISTORICAL（657ad5d，11 处 UOM 错误，已由 #46 修复），不得作为当前质量引用 | `97C40A701A5385B50C38A27795CF099FC1DA15FCB5E6792B7862D8F1C797823D` |
-| **v1_prod official** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | CURRENT_WITH_KNOWN_UOM_GAPS（23/23 LLM, fallback 0, >4.1s 0, UNKNOWN 9；UOM 24/31，7 处 known：botol/pail 注入缺口 3 处 + bulk-kg 回归 4 处） | `17F44B9B83CF0039FA3C5FE6410AC2C68152D2D96C54CA9E849899F4061A87CD` |
+| **v1_prod official (raw)** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | CURRENT_RAW_ARTIFACT（官方运行产出的原始评测结果，未追加顶层元数据字段；指标 23/23 LLM, fallback 0, >4.1s 0, UNKNOWN 9） | `17F44B9B83CF0039FA3C5FE6410AC2C68152D2D96C54CA9E849899F4061A87CD` |
+| **v1_prod official (annotated)** | `dev41_ai_only_v1_prod_2026-10-24.annotated.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | CURRENT_WITH_KNOWN_UOM_GAPS (7)（追加 5 项顶层元数据；UOM 24/31，含 7 处已知缺口：botol/pail 注入缺口 3 处 + bulk-kg 回归 4 处） | `05959A4EE85D01C6BBD17E0ABC65ACE893DECE9FD005294CF2B202471B961E87` |
 
 > [!NOTE]
 > **耗时诊断特别标注**：  
