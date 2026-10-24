@@ -1,9 +1,9 @@
-# Canonical seed（T1 / T2）
+# Canonical seed (T1 / T2)
 
-来源：`seed_he_2026-10-22.zip`  
-包 SHA-256：`865049BFA7BA0170CB02316C42679EC7A3EB1D224E5C00DBE934A0591AFF47ED`
+Source: `seed_he_2026-10-22.zip`<br>
+Package SHA-256: `865049BFA7BA0170CB02316C42679EC7A3EB1D224E5C00DBE934A0591AFF47ED`
 
-## 文件
+## Files
 
 ```text
 T1_seed.sql
@@ -11,23 +11,23 @@ T2_seed.sql
 SEED_MANIFEST.json
 ```
 
-- `T1_seed.sql` / `T2_seed.sql`：data-only SQL，只含 `INSERT`，不含 DDL，不含事务控制。
-- 原始包 SQL 带外层 `BEGIN/COMMIT`；本目录副本只移除了这两个外层事务语句，数据行未改。
-- 原始 SQL 的 SHA-256 保留在 `SEED_MANIFEST.json` 的 `source_sql_sha256`。
-- 明文 demo token 不在仓库；SQL 只含 `demo_token_hash`。
+- `T1_seed.sql` / `T2_seed.sql` are data-only SQL containing only `INSERT` statements, without DDL or transaction-control statements.
+- The original package SQL has outer `BEGIN/COMMIT` statements. The copies in this directory remove only those two outer statements; data rows are unchanged.
+- Original SQL SHA-256 values are retained in `SEED_MANIFEST.json` under `source_sql_sha256`.
+- Plaintext demo tokens are not in the repository. The SQL contains only `demo_token_hash`.
 
-## 版本与计数
+## Versions and counts
 
 | Tenant | seed_version | products | inventory sum | users | customers | aliases |
 |---|---|---|---:|---:|---:|---:|
 | T1 | `KB-T1-20261022-r1` | 40 | 795 | 3 | 8 | 50 family / 26 uom |
 | T2 | `KB-T2-20261022-r1` | 16 | 450 | 3 | 5 | 30 family / 30 uom |
 
-T2 `alias_cache` 2 条；T1 `alias_cache` 2 条（`CUS_RASA` 的两条别名）。
+T2 has 2 `alias_cache` entries; T1 also has 2 entries (the two aliases for `CUS_RASA`).
 
-## 导入
+## Import
 
-先迁移，再按 tenant 分别导入：
+Run migrations first, then import each tenant separately:
 
 ```powershell
 Set-Location backend
@@ -36,7 +36,7 @@ Set-Location backend
   --tenant T1 `
   --seed-sql ..\data\seed\T1_seed.sql `
   --seed-version KB-T1-20261022-r1 `
-  --expect-sha256 <见 SEED_MANIFEST.json> `
+  --expect-sha256 <see SEED_MANIFEST.json> `
   --expect-products 40 `
   --expect-inventory 795
 
@@ -44,20 +44,20 @@ Set-Location backend
   --tenant T2 `
   --seed-sql ..\data\seed\T2_seed.sql `
   --seed-version KB-T2-20261022-r1 `
-  --expect-sha256 <见 SEED_MANIFEST.json> `
+  --expect-sha256 <see SEED_MANIFEST.json> `
   --expect-products 16 `
   --expect-inventory 450
 ```
 
-不要使用 `seed_all.sql` 做逐 tenant 导入；它会把 T1/T2 一起插入，但 manifest 只登记当前 tenant。
+Do not use `seed_all.sql` for per-tenant imports: it inserts T1/T2 together while the manifest registers only the current tenant.
 
-## 验收
+## Acceptance checks
 
 ```text
-kiraorder_meta.seed_manifest 两行
+kiraorder_meta.seed_manifest contains two rows
 T1 products=40, inventory=795
 T2 products=16, inventory=450
-重复导入返回 already_loaded
+A repeated import returns already_loaded
 ```
 
-`/me` 200 需要私发的明文 token；本目录没有明文 token。
+A 200 response from `/me` requires the privately supplied plaintext token. This directory contains no plaintext tokens.

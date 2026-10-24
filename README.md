@@ -113,7 +113,7 @@ API review is **by arrangement with the team**. This README does not publish or 
 
 See the [deployment snapshot](#deployment-snapshot) for the recorded model configuration and fallback status. A live-AI review requires an agreed model window and a freshly verified end-to-end path. Use Local Demo if API access has not been arranged.
 
-For implementation details and historical evidence, see the [AI sample runbook](docs/ops/ai-sample-runbook.md) and [RunPod evidence](evidence/runpod/2026-10-24/README.md). The detailed [operator guide (Chinese)](frontend/docs/KiraOrder_使用说明.md) explains individual controls; its dated deployment notes are historical, so use this root README for the current recorded deployment status.
+For implementation details and historical evidence, see the [AI sample runbook](docs/ops/ai-sample-runbook.md) and [RunPod evidence](evidence/runpod/2026-10-24/README.md). The detailed [operator guide (Chinese)](frontend/docs/KiraOrder_%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md) explains individual controls; its dated deployment notes are historical, so use this root README for the current recorded deployment status.
 
 ## Architecture and deployment
 

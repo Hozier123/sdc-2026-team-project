@@ -1,23 +1,21 @@
 # Canonical six samples — source of truth
 
-Canonical 六条样例唯一来源：
+The single source of truth for the six canonical samples is:
 
 ```text
 docs/ai_contract/samples/{normal,ambiguous,condition,empty,multi_candidate,multi_line}.json
 ```
 
-本目录只保存 **blob SHA-256 清单**，不复制第二份 JSON，避免出现两套版本。
+This directory stores only the **blob SHA-256 manifest**. It does not duplicate the JSON files, avoiding two competing versions.
 
-口径：
+Scoring scope:
 
 ```text
 family_scored=false
 GENERIC_CONTRACT_SAMPLE
-只评 span / qty / uom / pack_size / conditions
+Score only span / qty / uom / pack_size / conditions
 ```
 
-复现时使用 `SHA256.txt` 中的 blob 哈希校验源文件；如需运行六样例，
-直接使用 `docs/ai_contract/samples/`，不要从本目录另取一份。
+For reproduction, verify the source files against the blob hashes in `SHA256.txt`. Run the six samples directly from `docs/ai_contract/samples/`; do not obtain a second copy from this directory.
 
-最终 6 条 evidence 为 `evidence/he_6cases_final_2026-10-24.txt`，
-其头部引用同一组 source path 和 SHA。
+Final six-case evidence is `evidence/he_6cases_final_2026-10-24.txt`. Its header references the same source paths and SHA values.

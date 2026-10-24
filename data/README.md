@@ -1,22 +1,22 @@
-# 数据目录
+# Data directory
 
-`seed/` 存放团队自建的合成 canonical seed，供初始化、测试和演示使用。
+`seed/` contains the team's synthetic canonical seed for initialization, testing, and demonstrations.
 
-当前已包含：
+Included:
 
 ```text
 T1 / T2 data-only SQL
 SEED_MANIFEST.json
-canonical seed 说明
+Canonical seed documentation
 ```
 
-不包含：
+Not included:
 
 ```text
-真实客户资料
-真实 WhatsApp 聊天记录
-明文 demo token
-数据库凭据
+Real customer records
+Real WhatsApp conversation logs
+Plaintext demo tokens
+Database credentials
 ```
 
-初始化方法见 `seed/README.md`。所有数据均为合成数据。
+See [seed/README.md](seed/README.md) for initialization instructions. All data is synthetic.
