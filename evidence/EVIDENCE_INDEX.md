@@ -15,9 +15,13 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 | Run Identifier | File | Code Base | Calls | Description / Status | SHA-256 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **standalone v1** | `dev41_ai_only_v1_2026-10-24.json` | `backend/ai@c66d6f5` | 46 次 (每案2次) | 原独立模块评测（含 extractor 探针 + adapter 校验）。已对外交付。 | `6B1400090CE23D47834A2E849E988012BBC0AD58DBE8CE645737DFDE3C839FC6` |
-| **v2 comparison** | `dev41_ai_only_v2_2026-10-24.json` | `standalone-only` | 46 次 | Closed-set whitelist prompt 对照实验。因引入 2 处 span 回归已作废归档，不与 v1_prod 同代码基数比较。 | `A6529A4D3403649D0E55ABCC785CC636BFDCD7E3E2AF609D06A08958E2BBD119` |
+| **v2 comparison** | `dev41_ai_only_v2_2026-10-24.json` | `standalone-only` | 46 次 | standalone-only，归档不进准确率。归档理由：未在生产代码 db6f0ce 复跑 + 答案键未完全对齐。DEV-21 拆两行→合并一行 = IMPROVEMENT_CANDIDATE；DEV-37 删除 'kalau ada' 商品行、保留 STOCK condition = IMPROVEMENT_CANDIDATE；DEV-37 的 '2kg 的' 仍单独成行 = STRUCTURAL_CHANGE_UNJUDGED。 | `A6529A4D3403649D0E55ABCC785CC636BFDCD7E3E2AF609D06A08958E2BBD119` |
 | **v1_prod manual** | `dev41_ai_only_v1_prod_2026-10-24_manual.json` | `app/ai@657ad5d` | 23 次 (每案1次) | HISTORICAL（657ad5d，11 处 UOM 错误，已由 #46 修复），不得作为当前质量引用 | `60A28A7CDC3D5E90F0BCFD584F79136BBEB4347942B105187548ECD717350B46` |
-| **v1_prod official** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | PENDING：db6f0ce 上 official 窗口重跑待补；完成后本行替换为当前质量 | *(待生成)* |
+| **v1_prod official** | `dev41_ai_only_v1_prod_2026-10-24.json` | `app/ai@db6f0ce` | 23 次 (每案1次) | CURRENT（23/23 LLM, fallback 0, >4.1s 0, UNKNOWN 9, UOM 11→1） | `BDC444DB8D753311D751EF0FC03151496BE16E4C2BC5746E908C8FF33947942E` |
+
+> [!NOTE]
+> **耗时诊断特别标注**：  
+> 旧 657ad5d v1_prod 的 DEV-37 = WALL_CLOCK_EXCEEDS_4.1，不是 timeout、不是 fallback。
 
 ---
 
