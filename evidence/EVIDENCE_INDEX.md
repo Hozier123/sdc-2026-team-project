@@ -85,3 +85,13 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 | T1 E2E 23 (pre-PR55) | `e2e/blocker/t1_e2e_23_2026-10-24.json` | `BLOCKER_EVIDENCE`；不是 current E2E / READY / 通过 | DEV-01 `10kg Bawang` 误选 `SKU_BAWANG_10KG`（bag），10×32=320；应为 bulk KG，10×3.50=35。PR #55 `c93d6d0` 已阻断自动选 SKU。 | `97FEE66743809D748E4C571749777D69D0CF2B01F6AAA8770C16289AB8F390D8` |
 
 > 该文件保留 Zhou 的原始 CRLF 字节；`git blob` 与工作区 SHA 一致，仅作 blocker 归档，不进入 current 结果。
+
+---
+
+## 5. E2E Evidence (separate from AI-only index)
+
+| Run | File | Code Base | Result | Original SHA-256 |
+| :--- | :--- | :--- | :--- | :--- |
+| T1 E2E post-PR55 | `e2e/post55/t1_e2e_23_2026-10-24_post55.json` | `c93d6d0` | `E2E_POST55`；23/23 HTTP+LLM, fallback 0；7 READY / 16 DISAMBIGUATION_REQUIRED；DEV-01 已修复为 MISSING_UOM + 候选；UOM None 仍 9 处。不是 23/23 E2E 通过。 | `DCA16B6E5DBC54AB712C1FD1133DFA13CF5083A397B56CCA99CBE41363DAC4C0` |
+
+> 该文件保留 Zhou 的原始 CRLF 字节；独立于 AI-only 索引，不覆盖旧 97FEE blocker。
