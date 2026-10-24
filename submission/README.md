@@ -20,7 +20,7 @@ The pitch deck PDF is provided for convenient viewing. The original PowerPoint i
 
 ## Platform-use evidence
 
-Existing Replit deployment and RunPod screenshots remain reproduced inside `SDC2026_Falcons_TechDeclaration.pdf` (Appendices B–D); related evidence records are archived under [`../evidence/`](../evidence/).
+Existing Replit deployment and RunPod screenshots remain reproduced inside `SDC2026_Falcons_TechDeclaration.pdf` (Appendices B–D); related evidence records are archived under [`../evidence/`](../evidence/), with Replit screenshots in [`../evidence/replit/2026-10-24/`](../evidence/replit/2026-10-24/) and RunPod screenshots in [`../evidence/runpod/2026-10-24/`](../evidence/runpod/2026-10-24/).
 
 The following standalone usage-proof PDFs were added on 2026/10/25. They are byte-for-byte copies of the supplied Revision 2 files, with only the `(1)` filename suffix removed. SHA-256 values below were calculated from the uploaded files.
 

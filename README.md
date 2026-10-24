@@ -196,7 +196,7 @@ The [evidence index](evidence/EVIDENCE_INDEX.md) links the evaluation records. T
 | Signed technical and tools declaration | [SDC2026_Falcons_TechDeclaration.pdf](submission/SDC2026_Falcons_TechDeclaration.pdf) |
 | Pitch deck | [PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) · [Editable PowerPoint](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) |
 | Pitch and prototype video | [YouTube](https://youtu.be/TyrASSJDIpM) |
-| Replit usage proof | [Replit_Usage_Proof_Falcons.pdf](submission/Replit_Usage_Proof_Falcons.pdf) |
+| Replit usage proof | [Replit_Usage_Proof_Falcons.pdf](submission/Replit_Usage_Proof_Falcons.pdf) · [screenshots](evidence/replit/2026-10-24/README.md) |
 | RunPod usage proof | [RunPod_Usage_Proof_Falcons.pdf](submission/RunPod_Usage_Proof_Falcons.pdf) |
 | Final file inventory and SHA-256 hashes | [submission/README.md](submission/README.md) |
 
@@ -206,7 +206,7 @@ Use the [competition checklist](docs/competition-checklist.md) to verify that th
 
 ## Platform usage
 
-**Replit:** the backend deployment uses a self-funded Core account with Autoscale (2 vCPU / 4 GiB), region Asia. A separate member account used sponsored Replit Agent assistance for frontend development. The primary UI is on GitHub Pages. Account boundaries and the missing sponsored-account Usage screenshot are recorded in the [Replit proof](submission/Replit_Usage_Proof_Falcons.pdf) and [technical declaration](submission/SDC2026_Falcons_TechDeclaration.pdf).
+**Replit:** the backend deployment uses a self-funded Core account with Autoscale (2 vCPU / 4 GiB), region Asia. A separate member account used sponsored Replit Agent assistance for frontend development. The primary UI is on GitHub Pages. Account boundaries and the missing sponsored-account Usage screenshot are recorded in the [Replit proof](submission/Replit_Usage_Proof_Falcons.pdf), the [original console evidence](evidence/replit/2026-10-24/README.md), and the [technical declaration](submission/SDC2026_Falcons_TechDeclaration.pdf).
 
 **RunPod:** the Serverless Load Balancer endpoint `lx22t9308hc10c` was used to serve Qwen2.5-7B-Instruct-AWQ through vLLM on a 24 GB GPU, with approximately US$25 in sponsor credit allocated. The [usage proof](submission/RunPod_Usage_Proof_Falcons.pdf) and [original console evidence](evidence/runpod/2026-10-24/README.md) document the evaluation and shutdown snapshots. Refer to the dated [deployment snapshot](#deployment-snapshot) when interpreting availability.
 
