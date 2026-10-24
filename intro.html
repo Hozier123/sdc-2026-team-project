@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#05070b"><title>KiraOrder · Introduction</title>
+<style>
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#05070b}
+/* A 1/0.7 viewport scaled to 0.7 is equivalent to 70% browser zoom.
+   The scene's canvas and viewport units use the expanded logical viewport. */
+.intro-scene{position:absolute;inset:0;width:calc(100% / .7);height:calc(100% / .7);border:0;display:block;transform:scale(.7);transform-origin:0 0}
+</style></head><body data-intro-scale="0.7">
+<iframe class="intro-scene" title="KiraOrder — Mixed languages. Clear orders." src="/intro-scene.html"></iframe>
+<script>
+const scene=document.querySelector('.intro-scene');
+addEventListener('message',event=>{
+  if(event.origin!==location.origin||event.source!==scene.contentWindow||event.data?.type!=='kiraorder:enter')return;
+  if(parent===window)location.assign('/#/workspace');
+  else parent.postMessage({type:'kiraorder:enter'},location.origin);
+});
+</script></body></html>

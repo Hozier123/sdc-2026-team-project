@@ -1,0 +1,253 @@
+/* Uses the original embedded font; the outer introduction stays at 70%. */
+:root {
+  --intro-font: "Cormorant Garamond", Georgia, serif;
+  --intro-ink: #e2ebe9;
+  --intro-muted: #b4c5cf;
+  --intro-accent: #a5e6c7;
+}
+
+.experience,
+.entry-screen h1,
+.entry-screen p,
+.entry-button,
+.topline,
+.story-note .number,
+.closing span,
+.greetings-heading small,
+.quick-enter {
+  font-family: var(--intro-font);
+}
+
+.scroll-hint {
+  display: none;
+}
+.word-field {
+  opacity: 0.55;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 24%,
+    #000 36%,
+    #000 64%,
+    transparent 76%
+  );
+}
+.story-note {
+  width: min(340px, 27vw);
+  text-shadow: 0 2px 16px #03070c;
+}
+.story-note h2 {
+  margin: 13px 0 13px;
+  font-size: clamp(34px, 3vw, 46px);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.1;
+}
+.story-note p {
+  color: var(--intro-muted);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.story-note .number {
+  font-size: 16px;
+  letter-spacing: 0.16em;
+}
+.story-note::after {
+  margin-top: 22px;
+  opacity: 0.5;
+}
+.story-note.left {
+  left: 5vw;
+}
+.story-note.right {
+  right: 5vw;
+}
+
+/* A solid final surface prevents the previous scene from bleeding through. */
+.entry-screen {
+  justify-content: center;
+  gap: 0;
+  padding: 100px 40px 80px;
+  overflow-y: auto;
+  background: radial-gradient(ellipse at 50% 36%, #101e2a, #05090f 74%);
+}
+.entry-screen > * {
+  flex-shrink: 0;
+}
+.entry-screen h1 {
+  margin: auto 0 22px;
+  font-size: clamp(68px, 7vw, 112px);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--intro-ink);
+}
+.intro-brief {
+  width: min(880px, 100%);
+  margin: 0;
+}
+.intro-brief h2 {
+  margin: 0 0 24px;
+  font-size: clamp(34px, 3vw, 46px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--intro-ink);
+  text-wrap: balance;
+}
+.entry-screen .intro-summary {
+  max-width: 620px;
+  margin: 0 auto;
+  color: var(--intro-muted);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+.entry-screen .entry-button {
+  min-height: 64px;
+  padding: 17px 38px;
+  margin: 44px 0 auto;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.035em;
+  text-transform: none;
+}
+.experience.entry-active .story-stage,
+.experience.entry-active .greetings-section,
+.experience.entry-active .closing,
+.experience.entry-active .topline {
+  visibility: hidden;
+}
+.quick-enter {
+  position: fixed;
+  right: 38px;
+  top: 28px;
+  z-index: 90;
+  min-height: 64px;
+  padding: 12px 25px;
+  border: 1px solid #5ef0b04d;
+  border-radius: 999px;
+  background: #0e191de6;
+  color: #c8f8e2;
+  font-size: 22px;
+  cursor: pointer;
+}
+.quick-enter:hover {
+  background: #172c2c;
+}
+.quick-enter:focus-visible {
+  outline: 2px solid var(--intro-accent);
+  outline-offset: 4px;
+}
+body:has(.entry-active) .quick-enter {
+  visibility: hidden;
+}
+
+@media (max-width: 1100px) {
+  .story-note {
+    width: 29vw;
+  }
+  .story-note.left {
+    left: 4vw;
+  }
+  .story-note.right {
+    right: 4vw;
+  }
+  .story-note p {
+    font-size: 23px;
+  }
+}
+
+/* At 70% scale this breakpoint covers physical viewports up to 490px. */
+@media (max-width: 700px), (max-height: 700px) and (max-width: 1400px) {
+  .globe-wrap {
+    top: 35%;
+    width: min(74vw, 360px);
+  }
+  .word-field {
+    opacity: 0.32;
+    mask-image: linear-gradient(#000 45%, transparent 65%);
+  }
+  .story-note.left,
+  .story-note.right {
+    top: auto !important;
+    bottom: 7vh;
+    left: 7vw;
+    right: auto;
+    width: 86vw;
+    text-align: left;
+    opacity: var(--note-current) !important;
+    transform: none !important;
+  }
+  .story-note h2 {
+    font-size: 39px;
+    margin: 12px 0;
+  }
+  .story-note p {
+    max-width: 480px;
+    font-size: 25px;
+    line-height: 1.5;
+  }
+  .story-note.right::after {
+    margin-left: 0;
+  }
+  .story-note.right .number {
+    color: #75dcb2;
+  }
+  .entry-screen {
+    padding: 96px 35px 72px;
+  }
+  .entry-screen h1 {
+    font-size: 79px;
+    margin-bottom: 22px;
+  }
+  .intro-brief h2 {
+    font-size: 38px;
+    margin-bottom: 23px;
+  }
+  .entry-screen .intro-summary {
+    font-size: 25px;
+    line-height: 1.5;
+  }
+  .entry-screen .entry-button {
+    margin-top: 36px;
+    font-size: 23px;
+  }
+  .quick-enter {
+    right: 24px;
+    top: 24px;
+    padding-inline: 22px;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 701px) and (max-width: 1400px) {
+  .globe-wrap {
+    top: 29%;
+    width: 210px;
+  }
+  .story-note.left,
+  .story-note.right {
+    bottom: 5vh;
+  }
+  .story-note p {
+    max-width: 780px;
+  }
+  .word-field {
+    mask-image: linear-gradient(#000 30%, transparent 53%);
+  }
+}
+
+@media (max-height: 650px) {
+  .entry-screen {
+    padding-top: 50px;
+    padding-bottom: 45px;
+  }
+  .entry-screen h1 {
+    font-size: 70px;
+  }
+  .entry-screen .entry-button {
+    margin-top: 28px;
+  }
+}
