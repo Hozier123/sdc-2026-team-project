@@ -1,0 +1,637 @@
+{
+  "timestamp": "2026-10-23T16:20:37.560232+00:00",
+  "total_cases": 17,
+  "total_expected_lines": 20,
+  "total_extracted_lines": 20,
+  "metrics": {
+    "family_accuracy": 1.0,
+    "qty_accuracy": 1.0,
+    "pack_size_accuracy": 1.0,
+    "blocking_accuracy": 1.0,
+    "false_blocking_rate": 0.0
+  },
+  "all_cases_pure_llm": true,
+  "results": [
+    {
+      "case_id": "case_01_single_line_flour",
+      "text": "Tepung 5 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 2310.6303215026855,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_02_multi_line_rice_oil",
+      "text": "Beras 10 bag\nMinyak 2 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 2380.4824352264404,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_RICE",
+            "qty": 10,
+            "uom": "bag",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_RICE",
+            "qty": 10,
+            "uom": "bag",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        },
+        {
+          "expected": {
+            "family_id": "FAM_OIL",
+            "qty": 2,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_1",
+            "family_id": "FAM_OIL",
+            "qty": 2,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_03_comma_decimal_blocking",
+      "text": "Gula 1,5kg",
+      "ai_mode": "LLM",
+      "latency_ms": 1708.0926895141602,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_SUGAR",
+            "qty": null,
+            "uom": "kg",
+            "pack_size": null,
+            "blocked": true,
+            "reason_code": "INVALID_QUANTITY"
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_SUGAR",
+            "qty": null,
+            "uom": "kg",
+            "pack_size": null,
+            "reason_code": "INVALID_QUANTITY"
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": true,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_04_dot_decimal_blocking",
+      "text": "Tepung 5.5 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 1760.7710361480713,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": null,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": true,
+            "reason_code": "INVALID_QUANTITY"
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": null,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": "INVALID_QUANTITY"
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": true,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_05_fuzzy_alias_oil",
+      "text": "minyak masak 3 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 1744.415044784546,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_OIL",
+            "qty": 3,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_OIL",
+            "qty": 3,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_06_compound_pack_size_flour",
+      "text": "Flour 10 ctn 1kg",
+      "ai_mode": "LLM",
+      "latency_ms": 1798.5217571258545,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": 10,
+            "uom": "ctn",
+            "pack_size": "1kg",
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": 10,
+            "uom": "ctn",
+            "pack_size": "1kg",
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_07_chinese_order_flour_rice",
+      "text": "5 箱面粉\n2 袋大米",
+      "ai_mode": "LLM",
+      "latency_ms": 2319.157838821411,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "箱",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        },
+        {
+          "expected": {
+            "family_id": "FAM_RICE",
+            "qty": 2,
+            "uom": "袋",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_1",
+            "family_id": "FAM_RICE",
+            "qty": 2,
+            "uom": "bag",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_08_mixed_notes_rice",
+      "text": "Beras Wangi 10 ctn, send tomorrow",
+      "ai_mode": "LLM",
+      "latency_ms": 2239.459991455078,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_RICE",
+            "qty": 10,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_RICE",
+            "qty": 10,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_09_h5_price_condition_flour",
+      "text": "Tepung 5 ctn, kalau RM95 boleh?",
+      "ai_mode": "LLM",
+      "latency_ms": 1812.2329711914062,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "PRICE",
+          "span": "kalau RM95",
+          "requested_amount": "95"
+        }
+      ]
+    },
+    {
+      "case_id": "case_10_compound_pack_spec_flour",
+      "text": "Tepung 5kg x 2",
+      "ai_mode": "LLM",
+      "latency_ms": 1743.591547012329,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": 2,
+            "uom": "kg",
+            "pack_size": "5kg",
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": 2,
+            "uom": "kg",
+            "pack_size": "5kg",
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_11_zero_qty_blocking",
+      "text": "Gula 0 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 1678.873062133789,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_SUGAR",
+            "qty": null,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": true,
+            "reason_code": "FIELD_NOT_EVIDENCED"
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_SUGAR",
+            "qty": null,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": "FIELD_NOT_EVIDENCED"
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": true,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_12_word_numeral_flour",
+      "text": "Tepung lima ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 1764.6756172180176,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_13_chinese_sugar",
+      "text": "白糖 3 箱",
+      "ai_mode": "LLM",
+      "latency_ms": 1696.6655254364014,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_SUGAR",
+            "qty": 3,
+            "uom": "箱",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_SUGAR",
+            "qty": 3,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_14_numbered_list_flour_sugar",
+      "text": "1. Tepung 5kg Grade A, 2 ctn\n2. Gula 5 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 2581.571578979492,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_FLOUR",
+            "qty": 2,
+            "uom": "ctn",
+            "pack_size": "5kg",
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_FLOUR",
+            "qty": 2,
+            "uom": "ctn",
+            "pack_size": "5kg",
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        },
+        {
+          "expected": {
+            "family_id": "FAM_SUGAR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_1",
+            "family_id": "FAM_SUGAR",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_15_allocation_condition_sugar",
+      "text": "Gula pasir 3 ctn, RM50 untuk semua",
+      "ai_mode": "LLM",
+      "latency_ms": 1682.7375888824463,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_SUGAR",
+            "qty": 3,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_SUGAR",
+            "qty": 3,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_16_dot_decimal_rice_blocking",
+      "text": "Beras 5.5 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 1799.5014190673828,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_RICE",
+            "qty": null,
+            "uom": "ctn",
+            "pack_size": null,
+            "blocked": true,
+            "reason_code": "INVALID_QUANTITY"
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_RICE",
+            "qty": null,
+            "uom": "ctn",
+            "pack_size": null,
+            "reason_code": "INVALID_QUANTITY"
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": true,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    },
+    {
+      "case_id": "case_17_decimal_pack_size_oil",
+      "text": "Minyak 12 x 1.5L, 5 ctn",
+      "ai_mode": "LLM",
+      "latency_ms": 1854.067087173462,
+      "status": "PASS",
+      "lines": [
+        {
+          "expected": {
+            "family_id": "FAM_OIL",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": "12 x 1.5L",
+            "blocked": false
+          },
+          "extracted": {
+            "line_id": "LINE_0",
+            "family_id": "FAM_OIL",
+            "qty": 5,
+            "uom": "ctn",
+            "pack_size": "12 x 1.5L",
+            "reason_code": null
+          },
+          "family_match": true,
+          "qty_match": true,
+          "pack_size_match": true,
+          "block_match": false,
+          "false_blocked": false
+        }
+      ],
+      "conditions": []
+    }
+  ],
+  "dataset_source": "builtin_dev_17 (non-canonical, regression only)"
+}

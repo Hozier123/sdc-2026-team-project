@@ -1,0 +1,39 @@
+======================================================================
+       KiraOrder RunPod Serverless Production Benchmark Suite
+======================================================================
+Target Endpoint ID : lx22t9308hc10c
+Total Iterations   : 20 (Hot State)
+----------------------------------------------------------------------
+Phase 1: Warming up endpoint / detecting cold start (timeout: 180s)...
+Phase 1 Complete: Cold start took 1872.2 ms (1.87 s)
+----------------------------------------------------------------------
+Phase 2: Executing 20 warm-state iterations (timeout: 15s)...
+Warm Call 01/20 | Status: [LLM]    | Latency: 1784.2 ms | Text: 'Tepung 5 ctn, kalau RM95 boleh...'
+Warm Call 02/20 | Status: [LLM]    | Latency: 2363.9 ms | Text: 'Minyak 2 ctn, Beras 10 bag...'
+Warm Call 03/20 | Status: [LLM]    | Latency: 2918.4 ms | Text: '1. Tepung 5kg Grade A, 2 ctn; ...'
+Warm Call 04/20 | Status: [LLM]    | Latency: 2942.3 ms | Text: 'Air 500g x 12, 3 pack dan Telu...'
+Warm Call 05/20 | Status: [LLM]    | Latency: 1660.1 ms | Text: 'Beras Wangi 10 ctn, send tomor...'
+Warm Call 06/20 | Status: [LLM]    | Latency: 1886.2 ms | Text: 'Can less? Kalau RM12.50 boleh,...'
+Warm Call 07/20 | Status: [LLM]    | Latency: 2276.5 ms | Text: '10kg bawang merah dan 5 ctn ki...'
+Warm Call 08/20 | Status: [LLM]    | Latency: 2444.6 ms | Text: 'Tepung lima belas ctn, Minyak ...'
+Warm Call 09/20 | Status: [LLM]    | Latency: 1741.9 ms | Text: 'Harga lama boleh follow? Milo ...'
+Warm Call 10/20 | Status: [LLM]    | Latency: 3088.9 ms | Text: 'Garam 2 ctn, Gula 3 ctn, Telur...'
+Warm Call 11/20 | Status: [LLM]    | Latency: 1758.2 ms | Text: 'Tepung 5 ctn, kalau RM95 boleh...'
+Warm Call 12/20 | Status: [LLM]    | Latency: 2354.4 ms | Text: 'Minyak 2 ctn, Beras 10 bag...'
+Warm Call 13/20 | Status: [LLM]    | Latency: 2463.2 ms | Text: '1. Tepung 5kg Grade A, 2 ctn; ...'
+Warm Call 14/20 | Status: [LLM]    | Latency: 2961.3 ms | Text: 'Air 500g x 12, 3 pack dan Telu...'
+Warm Call 15/20 | Status: [LLM]    | Latency: 1714.9 ms | Text: 'Beras Wangi 10 ctn, send tomor...'
+Warm Call 16/20 | Status: [LLM]    | Latency: 1932.5 ms | Text: 'Can less? Kalau RM12.50 boleh,...'
+Warm Call 17/20 | Status: [LLM]    | Latency: 2257.1 ms | Text: '10kg bawang merah dan 5 ctn ki...'
+Warm Call 18/20 | Status: [LLM]    | Latency: 2439.1 ms | Text: 'Tepung lima belas ctn, Minyak ...'
+Warm Call 19/20 | Status: [LLM]    | Latency: 1699.5 ms | Text: 'Harga lama boleh follow? Milo ...'
+Warm Call 20/20 | Status: [LLM]    | Latency: 3080.6 ms | Text: 'Garam 2 ctn, Gula 3 ctn, Telur...'
+----------------------------------------------------------------------
+Cold Start Latency (Phase 1) : 1872.2 ms (1.87 s)
+Warm State p50               : 2315.4 ms
+Warm State p90               : 2973.2 ms
+Warm State p95               : 3081.0 ms (3.08 s)
+======================================================================
+RECOMMENDED LLM_TIMEOUT_S    : 4.1 s
+(Formula: min(round(p95 + 1.0s, 1), 8.0s) per Gate 0 Model Gate)
+======================================================================
