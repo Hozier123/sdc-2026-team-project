@@ -9,8 +9,8 @@ The proposal and Technical & Tools Declaration follow the official SDC templates
 
 | File | Contents | SHA-256 |
 | --- | --- | --- |
-| `SDC2026_Falcons_Preliminary.pdf` | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `3caf30504d5e5d572b69c157ff0c3354c9916af11a077bdf83518d0d52fe5b7e` |
-| `SDC2026_Falcons_TechDeclaration.pdf` | Technical & Tools Declaration, incl. Appendices A–F (architecture, Replit and RunPod deployment evidence, third-party notices, visual asset boundaries) | `de0795064d215adfc92439fc5a050121a7a463cbba2458c1323e05c56aedead3` |
+| [SDC2026_Falcons_Preliminary.pdf](SDC2026_Falcons_Preliminary.pdf) | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `5cb6985f9b7868c2253d2ffde99d5fff84ba2e0c98d298c56486ab0bf1baf66d` |
+| [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | 17-page Technical & Tools Declaration, supplied ChecklistConfirmed_Final edition, incl. Appendices A–F | `14c46ddce9619cb7786de29f3a185ae7aed9d206bcf2ff7a010428f7eb4a2a51` |
 | [KiraOrder_Falcons_PitchDeck_SDC2026.pdf](KiraOrder_Falcons_PitchDeck_SDC2026.pdf) | 15-page PDF export of the pitch deck for review | `89fd9b1b45920cc01782f9ee2a82ab381a03474503b08b59046b37a6a7c21ebb` |
 | [KiraOrder_Falcons_PitchDeck_SDC2026.pptx](KiraOrder_Falcons_PitchDeck_SDC2026.pptx) | 15-slide pitch deck | `690fd3c9912bc8ed8ddce3a69838fae886b4439e5715e14e178813450c08f988` |
 
@@ -31,7 +31,9 @@ The following standalone usage-proof PDFs were added on 2026/10/25. They are byt
 
 Scope matters: the Replit attachment does **not** contain Ye Lianghui's separate US$6.31 sponsored Agent Usage screenshot; its Section 5.2 explicitly records that gap. Neither attachment proves a complete live-AI end-to-end demonstration.
 
-The signed Technical & Tools Declaration was **not modified or re-signed** in this upload. These are separate supporting attachments, not replacements for its pages; pending member confirmations and outdated wording in that declaration are not resolved by adding these files. Repository publication also does not establish that the new attachments were uploaded to the official portal.
+On 2026/10/25, the declaration was replaced with the supplied `SDC2026_Falcons_TechDeclaration_ChecklistConfirmed_Final.pdf`, published under the required `SDC2026_Falcons_TechDeclaration.pdf` filename. Its bytes match the supplied file; no PDF content or signatures were altered during this upload. The previous edition remains recoverable from Git history. The proposal hash above was also refreshed to match the proposal already on `main`; the proposal itself was not changed in this update.
+
+The usage proofs remain separate supporting attachments, not replacements for declaration pages, and retain the evidence boundaries stated above. Publication of this declaration revision and these attachments in GitHub does not by itself establish that the same files were uploaded to the official portal.
 
 ## Pitch video
 
