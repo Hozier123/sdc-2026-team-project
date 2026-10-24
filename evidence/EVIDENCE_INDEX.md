@@ -51,6 +51,12 @@ This document tracks all AI extraction and evaluation runs against canonical inp
 > 本仓库不复制第二份样例；6 个源文件 blob SHA 见
 > `evidence/samples/canonical-6/SHA256.txt`，口径为
 > `family_scored=false / GENERIC_CONTRACT_SAMPLE`。
+>
+> **Byte-level variant notice**：final 6-case 报告 header 记录的是运行时使用的
+> byte-level 变体 SHA（normal=`7E479ABB…`），不是 canonical-6 的文件 SHA
+> （normal=`FD4CD18E…`）。Xiong 已逐文件比对：6 个文件的
+> `input.masked_text` 与 `expected_response` 全部 deep-equal，结果可复现；
+> 审计时不是样例不一致。Canonical source 仍是 `docs/ai_contract/samples/`。
 
 * **He's 6 Cases Acceptance (Final)**: `he_6cases_final_2026-10-24.txt` | `app/ai@db6f0ce` | 6 次真机  
   CURRENT_FINAL_6CASES；5 PASS / 1 KNOWN_LIMITATION (normal.json = MODEL_SPAN_TRUNCATED)  
