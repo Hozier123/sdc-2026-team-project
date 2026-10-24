@@ -1,4 +1,5 @@
-import type { RefObject } from "react";
+import { memo, type RefObject } from "react";
+import { useIntroPhone } from "./useIntroPhone";
 import type { IntroChapter } from "../lib/intro-depth";
 import DepthText from "./reactbits/DepthText";
 
@@ -7,6 +8,16 @@ const stories = [
   { title: "Rules check.", body: "Catalogue, customer tier prices and stock are checked. A quoted price is never applied automatically.", side: "right" },
   { title: "People approve.", body: "Routine orders go to the clerk. Discounts, large orders and credit notices go to the owner. Stock limits always apply.", side: "left" },
 ] as const;
+
+const OpeningTitle = memo(function OpeningTitle({ active, phone }: { active: boolean; phone: boolean }) {
+  // The mobile title stays mounted across chapters instead of rebuilding depth layers on reverse scroll.
+  return phone || active ? <DepthText
+    text="KiraOrder" layers={phone ? 3 : 8} depth={phone ? 1.8 : 0.85} tilt={3} fontWeight={400}
+    faceColor="var(--intro-ink)" depthColor="var(--intro-depth-ink)" fontSize="inherit"
+    autoOrbit={false} pointerTracking={!phone} shadow={false} intro={false} hoverPush={0}
+    className="intro-depth-title"
+  /> : <span>KiraOrder</span>;
+});
 
 export function IntroDepthForeground({ foreground, opening, notes, closing, chapter, paused, reduced }: {
   foreground: RefObject<HTMLDivElement | null>;
@@ -17,17 +28,15 @@ export function IntroDepthForeground({ foreground, opening, notes, closing, chap
   paused: boolean;
   reduced: boolean;
 }) {
+  const phone = useIntroPhone();
   return <div ref={foreground} className="intro-depth-foreground" data-depth-layer="foreground">
     <div className="intro-reading-scrim" aria-hidden="true" />
+    <div className="intro-reading-scrim intro-reading-scrim-reverse" aria-hidden="true" />
+    <div className="intro-closing-scrim" aria-hidden="true" />
     <div className="intro-depth-shade" data-intro-story-shade="" aria-hidden="true" />
     <section ref={opening} className="intro-opening intro-reading-plane" aria-label="KiraOrder">
       <h1>
-        {chapter === "welcome" && !paused && !reduced ? <DepthText
-          text="KiraOrder" layers={8} depth={0.85} tilt={3} fontWeight={400}
-          faceColor="#e2ebe9" depthColor="#88ab9b" fontSize="inherit"
-          autoOrbit={false} shadow={false} intro={false} hoverPush={0}
-          className="intro-depth-title"
-        /> : <span>KiraOrder</span>}
+        <OpeningTitle phone={phone} active={phone || (chapter === "welcome" && !paused && !reduced)} />
       </h1>
       <p>From a WhatsApp message to a checked delivery order.</p>
     </section>

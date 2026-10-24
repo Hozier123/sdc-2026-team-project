@@ -13,7 +13,7 @@
   padding: 8px 4px;
   border: 0;
   background: transparent;
-  color: #c3cbbd;
+  color: var(--tone-c3cbbd);
   font-size: var(--type-meta);
 }
 .ai-indicator:disabled {
@@ -22,9 +22,9 @@
 }
 .ai-indicator small {
   padding: 2px 4px;
-  border: 1px solid #3d4937;
+  border: 1px solid var(--tone-3d4937);
   border-radius: 3px;
-  color: #a9b8a3;
+  color: var(--tone-a9b8a3);
   font-size: var(--type-meta);
 }
 .top-divider {
@@ -32,6 +32,7 @@
   width: 1px;
   background: var(--border);
 }
+.app-shell .breadcrumb strong { font-size: 13px; line-height: 1.4; }
 .identity {
   display: flex;
   align-items: center;
@@ -44,16 +45,16 @@
   width: var(--target-touch);
   height: var(--target-touch);
   padding: 0;
-  border: 1px solid #3f524d;
+  border: 1px solid var(--tone-3f524d);
   border-radius: 50%;
-  background: #233333;
-  color: #d1e5dd;
+  background: var(--tone-233333);
+  color: var(--tone-d1e5dd);
   font-size: var(--type-meta);
 }
 .user-avatar.owner {
-  background: #27364c;
-  border-color: #425575;
-  color: #c0d2f0;
+  background: var(--tone-27364c);
+  border-color: var(--tone-425575);
+  color: var(--tone-c0d2f0);
 }
 .identity-meta {
   position: relative;
@@ -96,7 +97,24 @@
 .role-trigger:hover,
 .role-trigger[aria-expanded="true"] {
   color: var(--mint);
-  background: #94e3bd0d;
+  background: var(--tone-94e3bd0d);
+}
+/* The tablet uses the same labelled drawer as the phone: keep text readable
+   instead of shrinking a permanent sidebar into the working canvas. */
+@media screen and (max-width: 1100px) {
+  .app-shell .sidebar {
+    width: min(300px, calc(100vw - 48px));
+    padding: 24px 20px;
+    transform: translateX(-100%);
+    transition: transform var(--motion-standard) var(--ease-response);
+  }
+  .app-shell .sidebar:not(.open) { visibility: hidden; }
+  .app-shell .sidebar.open { visibility: visible; transform: translateX(0); }
+  .app-shell .sidebar-scrim { display: block; position: fixed; inset: 0; background: var(--tone-000000aa); border: 0; z-index: 34; }
+  .app-shell .app-main { margin-left: 0; }
+  .app-shell .mobile-menu { display: flex; min-width: 44px; min-height: 44px; }
+  .app-shell .breadcrumb > span { display: none; }
+  .app-shell .breadcrumb { font-size: 13px; }
 }
 .role-trigger > svg {
   transition: transform var(--motion-fast);
@@ -121,4 +139,8 @@
     margin-top: -18px;
     padding-top: 18px;
   }
+}
+@media screen and (max-width: 380px) {
+  /* The page h1 already names this view; keep the task and identity controls. */
+  .app-shell .breadcrumb strong { display: none; }
 }

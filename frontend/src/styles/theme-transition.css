@@ -1,0 +1,55 @@
+/* A slow, soft-edged handoff: the incoming theme grows out of the switch itself. */
+@property --theme-reveal-r { syntax: "<length>"; inherits: false; initial-value: 0px; }
+/* One rhythm for the reveal, the colour fallback and the surrounding swaps. */
+:root { --theme-reveal-ease: cubic-bezier(.42, .16, .58, .88); }
+
+::view-transition { pointer-events: none; }
+::view-transition-group(root) { animation-duration: var(--theme-reveal-ms, 900ms); }
+/* The outgoing frame stays whole, so both themes keep readable ink while they swap. */
+::view-transition-old(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) {
+  --theme-reveal-r: 0px;
+  animation: theme-frame-reveal var(--theme-reveal-ms, 900ms) var(--theme-reveal-ease) both;
+  mix-blend-mode: normal;
+  /* Solid to 80%, feathered after it: the edge keeps travelling while it clears. */
+  mask-image: radial-gradient(circle var(--theme-reveal-r) at var(--theme-reveal-x, 50%) var(--theme-reveal-y, 50%), #000 0 80%, transparent 100%); /* taste-skill-ignore: functional soft edge for a theme handoff, not a decorative fill. */
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+/* Past the corner reach by 1/0.8: the solid core lands on the far corner as the handoff ends. */
+@keyframes theme-frame-reveal {
+  from { --theme-reveal-r: 0px; }
+  to { --theme-reveal-r: calc(var(--theme-reveal-extent, 150vmax) / .8); }
+}
+:root[data-theme-transition="native"] *,
+:root[data-theme-transition="native"] *::before,
+:root[data-theme-transition="native"] *::after { transition: none !important; }
+
+/* Browsers without frame transitions keep the same gradual rhythm in colour. */
+:root[data-theme-transition="fallback"],
+:root[data-theme-transition="fallback"] body,
+:root[data-theme-transition="fallback"] .app-shell,
+:root[data-theme-transition="fallback"] .app-shell *,
+:root[data-theme-transition="fallback"] .intro-root,
+:root[data-theme-transition="fallback"] .intro-reading-plane,
+:root[data-theme-transition="fallback"] .intro-reading-plane p,
+:root[data-theme-transition="fallback"] .intro-masthead,
+:root[data-theme-transition="fallback"] .theme-toggle,
+:root[data-theme-transition="fallback"] .intro-enter-label {
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-duration: var(--theme-reveal-ms, 900ms);
+  transition-timing-function: var(--theme-reveal-ease);
+}
+.theme-toggle-icon { display: grid; place-items: center; width: 17px; height: 17px; flex-shrink: 0; }
+.theme-toggle-icon > svg { grid-area: 1 / 1; transition: opacity 420ms var(--theme-reveal-ease), transform 420ms var(--theme-reveal-ease); }
+.theme-toggle-moon { opacity: 0; transform: rotate(-60deg) scale(.7); }
+.theme-toggle-icon[data-light="true"] .theme-toggle-sun { opacity: 0; transform: rotate(60deg) scale(.7); }
+.theme-toggle-icon[data-light="true"] .theme-toggle-moon { opacity: 1; transform: none; }
+@media (min-width: 1021px) {
+  .theme-toggle { min-width: 114px; }
+  .theme-toggle-label { min-width: 66px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root), ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+  .theme-toggle-icon > svg { transition: none; }
+}

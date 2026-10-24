@@ -1,25 +1,36 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Stars } from "@react-three/drei";
 import type { PerspectiveCamera } from "three";
 import { SeamlessBackdrop } from "./SeamlessBackdrop";
+import { useTheme, useThemeHold } from "../lib/theme";
+import { useIntroPhone } from "./useIntroPhone";
 import { useIntroMotion } from "./useIntroMotion";
 import { usePageVisibility } from "./usePageVisibility";
 import { advanceSpring } from "../lib/spring";
 import { useIntroChoreography } from "./useIntroChoreography";
 import { IntroDepthForeground } from "./IntroDepthForeground";
 import "../styles/intro-depth.css";
+import "../styles/intro-theme.css";
 
 const VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_133255_956f653f-5d80-4b06-abd5-0f46c98b60fa.mp4";
 const POSTER_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_132328_5f9029c8-218f-4489-82b6-29ff2849920e.png";
 
+const MOBILE_NIGHT_VIDEO = `${import.meta.env.BASE_URL}assets/night-background-mobile.mp4`;
+const MOBILE_NIGHT_POSTER = `${import.meta.env.BASE_URL}assets/night-background-mobile.jpg`;
+
 const RING_RADIUS = 3.4;
 const BASE_Z = 8.2;
 const BASE_FOV = 46;
 const IDLE_SPIN = 0.2;
+const INTRO_CAMERA = { position: [0, 0, BASE_Z] as [number, number, number], fov: BASE_FOV };
+const INTRO_PHONE_RESIZE = { scroll: false, offsetSize: true };
+const INTRO_DESKTOP_DPR: [number, number] = [1, 1.5];
+const INTRO_DESKTOP_GL = { antialias: true, alpha: true };
+const INTRO_PHONE_GL = { antialias: false, alpha: true };
 const RING_COUNT = 3;
 const PER_RING = 10;
 const STAGES = 5;
@@ -98,7 +109,7 @@ type SceneProps = {
   setHovered: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-function Scene({
+const Scene = memo(function Scene({
   htmlPortal,
   rings,
   orbit,
@@ -113,7 +124,11 @@ function Scene({
   setHovered,
   motionPaused,
   pointer,
+  daylight,
+  phone,
 }: SceneProps & {
+  phone: boolean;
+  daylight: boolean;
   motionPaused: boolean;
   pointer: React.RefObject<{ x: number; y: number }>;
 }) {
@@ -169,8 +184,10 @@ function Scene({
         a.getWorldPosition(worldPos);
         const t = clamp((worldPos.z / RING_RADIUS + 1) / 2, 0, 1);
         const op = 0.14 + 0.86 * t;
-        el.style.opacity = String(op);
-        el.style.pointerEvents = op < 0.4 ? "none" : "auto";
+        const opacity = String(Math.round(op * 100) / 100);
+        const events = op < 0.4 ? "none" : "auto";
+        if (el.style.opacity !== opacity) el.style.opacity = opacity;
+        if (el.style.pointerEvents !== events) el.style.pointerEvents = events;
         const face = el.firstElementChild as HTMLElement | null;
         const scale = advanceSpring(
           hoverSprings[i],
@@ -179,7 +196,10 @@ function Scene({
           240,
           17,
         );
-        if (face) face.style.transform = `scale(${scale})`;
+        if (face) {
+          const transform = `scale(${Math.round(scale * 1000) / 1000})`;
+          if (face.style.transform !== transform) face.style.transform = transform;
+        }
       }
     }
   });
@@ -187,24 +207,24 @@ function Scene({
   let flat = -1;
   return (
     <>
-      <Stars
+      {!daylight && <Stars
         radius={70}
         depth={40}
-        count={2600}
+        count={phone ? 900 : 2600}
         factor={3}
         saturation={0}
         fade
         speed={motionPaused ? 0 : 1.5}
-      />
+      />}
       <group ref={orbit} rotation={[0.18, 0, 0]}>
         {rings.map((ring, r) => (
           <group key={r} rotation={RING_TILTS[r]}>
             <mesh rotation={[Math.PI / 2, 0, 0]}>
-              <torusGeometry args={[RING_RADIUS, 0.004, 6, 160]} />
+              <torusGeometry args={[RING_RADIUS, 0.004, 6, phone ? 96 : 160]} />
               <meshBasicMaterial
-                color="#7fe9c0"
+                color={daylight ? "#24553f" : "#7fe9c0"}
                 transparent
-                opacity={0.08}
+                opacity={daylight ? 0.34 : 0.08}
                 toneMapped={false}
               />
             </mesh>
@@ -222,6 +242,7 @@ function Scene({
                   }}
                 >
                   <Html
+                    eps={phone ? 0.5 : 0.001}
                     portal={htmlPortal as React.RefObject<HTMLElement>}
                     center
                     distanceFactor={6.5}
@@ -233,10 +254,12 @@ function Scene({
                       ref={(el) => {
                         labelRefs.current![i] = el;
                       }}
-                      onPointerEnter={() => setHovered(i)}
-                      onPointerLeave={() =>
-                        setHovered((h) => (h === i ? null : h))
-                      }
+                      onPointerEnter={(event) => {
+                        if (event.pointerType === "mouse") setHovered(i);
+                      }}
+                      onPointerLeave={(event) => {
+                        if (event.pointerType === "mouse") setHovered((h) => (h === i ? null : h));
+                      }}
                       style={{
                         pointerEvents: "auto",
                       }}
@@ -246,10 +269,8 @@ function Scene({
                         style={{
                           transform: "scale(1)",
                           transition: "color .3s ease, text-shadow .3s ease",
-                          color: active ? "#ffffff" : "rgba(226,235,233,0.9)",
-                          textShadow: active
-                            ? "0 0 22px rgba(165,230,199,0.85)"
-                            : "0 2px 14px rgba(3,7,12,0.9)",
+                          color: active ? "var(--intro-orbit-active)" : "var(--intro-orbit-ink)",
+                          textShadow: active ? "var(--intro-orbit-glow)" : "var(--intro-orbit-shadow)",
                           fontSize: "21px",
                           fontWeight: 400,
                           lineHeight: 1.1,
@@ -269,12 +290,12 @@ function Scene({
                           overflow: "hidden",
                           fontFamily: SERIF,
                         }}
-                        className="text-[12px] tracking-[0.18em] whitespace-nowrap uppercase"
+                        className="intro-greeting-detail whitespace-nowrap"
                       >
-                        <span style={{ color: "#a5e6c7" }}>
+                        <span style={{ color: "var(--intro-accent)" }}>
                           {node.greeting.lang}
                         </span>
-                        <span style={{ color: "rgba(180,197,207,0.75)" }}>
+                        <span style={{ color: "var(--intro-muted)" }}>
                           {" "}
                           · {node.greeting.region}
                         </span>
@@ -289,11 +310,15 @@ function Scene({
       </group>
     </>
   );
-}
+});
 
 export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
   // Keep the visible experience continuous; pause work only while the page is hidden.
   const motionPaused = !usePageVisibility();
+  // The day/night handoff captures both frames, so the picture holds still while it runs.
+  const scenePaused = motionPaused || useThemeHold();
+  const daylight = useTheme() === "light";
+  const phone = useIntroPhone();
   const introRef = useRef<HTMLDivElement | null>(null);
   const atmosphereRef = useRef<HTMLDivElement | null>(null);
   const enterHintRef = useRef<HTMLButtonElement | null>(null);
@@ -430,16 +455,16 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
     <>
       <div
         ref={introRef}
-        data-motion-paused={motionPaused}
+        data-motion-paused={scenePaused}
         data-motion-policy="full"
-        data-intro-chapter={chapter}
+        data-intro-chapter="welcome"
         data-reduced-motion={reduced}
         role="main"
         tabIndex={-1}
         aria-label="KiraOrder introduction"
         aria-describedby="intro-enter-hint"
         className="intro-root group relative cursor-pointer text-[#e2ebe9] outline-none"
-        style={{ background: "#05090f" }}
+        style={{ background: "var(--intro-ground)", color: "var(--intro-ink)" }}
       >
         <div className="intro-depth-viewport">
         <div className="intro-depth-stage">
@@ -447,26 +472,15 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
         <div ref={backgroundRef} className="intro-depth-background" data-depth-layer="background">
           <div ref={atmosphereRef} className="intro-atmosphere">
             <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(ellipse at 50% 40%, #16283a, #05090f 75%)",
-              }}
+              className="intro-sky-base absolute inset-0"
             />
-            <SeamlessBackdrop
-              src={VIDEO_URL}
-              poster={POSTER_URL}
-              paused={motionPaused}
-            />
+            {/* One nebula plate carries both themes; daylight is a colour treatment in CSS. */}
+            <SeamlessBackdrop src={phone ? MOBILE_NIGHT_VIDEO : VIDEO_URL} poster={phone ? MOBILE_NIGHT_POSTER : POSTER_URL} paused={scenePaused} />
             <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(ellipse at 50% 45%, rgba(5,9,15,0) 0%, rgba(5,9,15,0.18) 55%, rgba(5,9,15,0.62) 100%)",
-              }}
+              className="intro-sky-vignette absolute inset-0"
             />
-            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#05090f]/80 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#05090f]/80 to-transparent" />
+            <div className="intro-sky-edge intro-sky-edge-top absolute inset-x-0 top-0 h-32" />
+            <div className="intro-sky-edge intro-sky-edge-bottom absolute inset-x-0 bottom-0 h-32" />
           </div>
         </div>
 
@@ -478,13 +492,16 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
             className="pointer-events-none absolute inset-0 z-20"
           />
           <Canvas
-            dpr={[1, 1.5]}
+            dpr={phone ? 1 : INTRO_DESKTOP_DPR}
+            resize={phone ? INTRO_PHONE_RESIZE : undefined}
             frameloop={motionPaused ? "demand" : "always"}
-            gl={{ antialias: true, alpha: true }}
-            camera={{ position: [0, 0, BASE_Z], fov: BASE_FOV }}
+            gl={phone ? INTRO_PHONE_GL : INTRO_DESKTOP_GL}
+            camera={INTRO_CAMERA}
           >
             <Suspense fallback={null}>
               <Scene
+                phone={phone}
+                daylight={daylight}
                 htmlPortal={htmlPortal}
                 rings={rings}
                 orbit={orbit}
@@ -497,7 +514,7 @@ export default function PlanetGreeting({ onEnter }: { onEnter: () => void }) {
                 anchorRefs={anchorRefs}
                 hovered={hovered}
                 setHovered={setHovered}
-                motionPaused={motionPaused}
+                motionPaused={scenePaused}
                 pointer={pointer}
               />
             </Suspense>

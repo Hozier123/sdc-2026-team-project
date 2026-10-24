@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
 /** Alternate two decoders so the opening frames blend over the ending frames. */
-export function SeamlessBackdrop({
+export const SeamlessBackdrop = memo(function SeamlessBackdrop({
   src,
   poster,
   paused,
@@ -11,6 +11,7 @@ export function SeamlessBackdrop({
   paused: boolean;
 }) {
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
+  const previousSrc = useRef(src);
   const cycle = useRef<{ active: number; incoming: number | null }>({
     active: 0,
     incoming: null,
@@ -18,6 +19,15 @@ export function SeamlessBackdrop({
 
   useEffect(() => {
     const layers = videos.current;
+    if (previousSrc.current !== src) {
+      previousSrc.current = src;
+      cycle.current = { active: 0, incoming: null };
+      layers.forEach((video, index) => {
+        if (!video) return;
+        video.style.opacity = index === 0 ? "1" : "0";
+        video.style.zIndex = index === 0 ? "1" : "0";
+      });
+    }
     layers.forEach((video) => {
       if (video) video.playbackRate = 1.2;
     });
@@ -114,4 +124,4 @@ export function SeamlessBackdrop({
       <div className="nebula-haze nebula-haze-blue" />
     </div>
   );
-}
+});
