@@ -2,10 +2,10 @@
 @media screen {
   .app-shell :is(.page-heading, .detail-heading, .success-heading, .desk-heading) h1 {
     font-family: var(--serif);
-    font-size: clamp(38px, 3.4vw, 52px);
+    font-size: clamp(32px, 2.6vw, 40px);
     font-weight: 400;
     line-height: 1.15;
-    letter-spacing: -0.9px;
+    letter-spacing: -0.02em;
     margin: 0;
   }
   .app-shell :is(.page-heading, .desk-heading) p {
@@ -38,7 +38,51 @@
     line-height: 1.6;
   }
   .app-shell .pill { font-size: var(--type-caption); }
-  .app-shell .stat-card > div { font-size: var(--type-caption); line-height: 1.5; }
+  .app-shell .pending-checks {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--status-amber-border);
+    border-radius: var(--radius-action);
+    color: var(--amber);
+    background: var(--status-amber-bg);
+    font-size: var(--type-caption);
+    line-height: 1.5;
+  }
+  .app-shell .pending-checks > strong {
+    font-family: var(--font-ui);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .app-shell .pending-checks > span { display: inline; margin: 0; font-size: inherit; line-height: inherit; color: inherit; }
+  .app-shell .check-summary > .pending-checks { margin: 0; }
+  .app-shell .pending-checks > svg { display: block; }
+  .app-shell .checks-panel:focus { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .app-shell .resolve-checks-button { color: var(--amber); }
+  .app-shell .review-actions > .save-state { font-size: 13px; color: var(--muted); }
+  .app-shell .save-state > svg { color: var(--mint); }
+  .app-shell .save-state.amber-text > svg { color: var(--amber); }
+  .app-shell .stat-card > div { font-size: 13px; line-height: 1.5; }
+  .app-shell .nav-caption { font-size: var(--type-meta); letter-spacing: 0; }
+  .app-shell .nav-item { font-size: var(--type-body); }
+  .app-shell .nav-item em { font-size: var(--type-meta); min-width: 20px; min-height: 20px; display: grid; place-items: center; }
+  .app-shell .brand > span:last-child > small { font-size: 11px; letter-spacing: 0.08em; }
+  .app-shell .sidebar-footer { font-size: 11px; letter-spacing: 0; color: var(--muted); }
+  .app-shell .check-owner { letter-spacing: 0; }
+  .app-shell .check-item strong { font-size: var(--type-body); line-height: 1.5; color: var(--text); }
+  .app-shell .inline-heading h2 { font-size: var(--type-body); line-height: 1.5; }
+  .app-shell .detail-meta { font-size: 13px; }
+  .app-shell .line-fields .readonly-field { font-size: var(--type-body); }
+  .app-shell .approval-card-main h3 { font-size: 18px; }
+  .app-shell .sample-instruction { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+  .app-shell :is(.button, .icon-button, .numbered-icon, .check-item-icon, .radio-dot) > svg { display: block; }
+  .app-shell .stat-card > div > svg { width: 17px; height: 17px; }
+  .app-shell .mini-activity strong { font-size: 13px; }
+  .app-shell .mini-activity small { font-size: var(--type-meta); line-height: 1.6; }
   .app-shell .tabs button > span,
   .app-shell .approval-total > span,
   .app-shell .customer-avatar,
@@ -87,6 +131,7 @@
   .app-shell .activity-event p,
   .app-shell .delivery-list p { font-size: var(--type-body); line-height: 1.6; }
   .app-shell .delivery-list small { font-size: var(--type-meta); }
+  .app-shell .delivery-list > button > div > span { font-size: var(--type-body); }
   .app-shell .recent-activity > .text-button { font-size: var(--type-caption); }
   .app-shell :is(.check-item p, .reason p, .modal-copy) { text-wrap: pretty; }
 }

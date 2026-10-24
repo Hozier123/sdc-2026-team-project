@@ -1,0 +1,108 @@
+/* The existing language orbit becomes an ink drawing in daylight. */
+.intro-root {
+  --intro-ground: #05090f;
+  --intro-ink: #e2ebe9;
+  --intro-depth-ink: #88ab9b;
+  --intro-muted: #b4c5cf;
+  --intro-accent: #a5e6c7;
+  --intro-orbit-ink: rgba(226,235,233,.9);
+  --intro-orbit-active: #fff;
+  --intro-orbit-glow: 0 0 22px rgba(165,230,199,.85);
+  --intro-orbit-shadow: 0 2px 14px rgba(3,7,12,.9);
+}
+.intro-sky-base { background: radial-gradient(ellipse at 50% 40%, #16283a, #05090f 75%); } /* taste-skill-ignore: retained dark artwork or neutral reading scrim over the existing moving video. */
+.intro-sky-vignette { background: radial-gradient(ellipse at 50% 45%, transparent 0%, #05090f2e 55%, #05090f9e 100%); } /* taste-skill-ignore: retained dark artwork or neutral reading scrim over the existing moving video. */
+.intro-sky-edge-top { background: linear-gradient(#05090fcc, transparent); } /* taste-skill-ignore: retained dark artwork or neutral reading scrim over the existing moving video. */
+.intro-sky-edge-bottom { background: linear-gradient(0deg, #05090fcc, transparent); } /* taste-skill-ignore: retained dark artwork or neutral reading scrim over the existing moving video. */
+:root[data-theme="light"] .intro-root {
+  --intro-ground: #f4f6f5;
+  --intro-ink: #203e34;
+  --intro-depth-ink: #a4b7ad;
+  --intro-muted: #52675d;
+  --intro-accent: #216b4c;
+  --intro-orbit-ink: #305b48;
+  --intro-orbit-active: #123f2c;
+  --intro-orbit-glow: none;
+  --intro-orbit-shadow: none;
+}
+:root[data-theme="light"] .intro-sky-base { background: var(--intro-ground); }
+:root[data-theme="light"] .intro-sky-vignette,
+:root[data-theme="light"] .intro-sky-edge,
+:root[data-theme="light"] .nebula-haze { display: none; }
+
+:root[data-theme="light"] .nebula-video-drift { mix-blend-mode: multiply; opacity: .84; filter: grayscale(1) invert(1); }
+:root[data-theme="light"] .intro-reading-plane,
+:root[data-theme="light"] .intro-reading-plane p { color: var(--intro-ink); }
+:root[data-theme="light"] .intro-masthead,
+:root[data-theme="light"] .intro-entry-dock > span { color: var(--intro-muted); }
+/* Neutral scrims keep the retained moving video clear of the reading plane. */
+:root[data-theme="light"] .intro-reading-scrim { background: linear-gradient(90deg, #f4f6f5fa, #f4f6f5d9 44%, #f4f6f500 76%); } /* taste-skill-ignore: retained dark artwork or neutral reading scrim over the existing moving video. */
+:root[data-theme="light"] .intro-depth-shade { background: var(--intro-ground); }
+
+:root[data-theme="light"] .intro-entry-dock { background: linear-gradient(0deg, #f4f6f5f2, #f4f6f500); } /* taste-skill-ignore: retained dark artwork or neutral reading scrim over the existing moving video. */
+:root[data-theme="light"] .intro-entry-dock .intro-enter-label { background: #216b4c; color: #fff; }
+:root[data-theme="light"] .intro-entry-dock .intro-enter-label:hover { background: #19543c; color: #fff; }
+:root[data-theme="light"] .intro-root[data-intro-chapter="close"] .intro-enter-label { background: #216b4c; color: #fff; }
+:root[data-theme="light"] .intro-root[data-intro-chapter="close"] .intro-enter-label:hover { background: #19543c; }
+:root[data-theme="light"] .intro-cursor-ring > span { border-color: #39735b80; box-shadow: none; } /* taste-skill-ignore: removes the inherited cursor glow. */
+:root[data-theme="light"] .intro-cursor-dot::after { background: #216b4c; }
+:root[data-theme="light"] .theme-toggle-intro { background: #fff; color: #203e34; border-color: #d5ddda; }
+:root[data-theme="light"] .theme-toggle-intro:hover { background: #e8eeea; }
+@media (max-width: 760px) {
+  :root[data-theme="light"] .intro-reading-scrim { background: #f4f6f5bf; }
+}
+
+.intro-greeting-detail { font-size: 13px; line-height: 1.4; }
+:root[data-theme="light"] .intro-entry-dock > span { font-size: 13px; }
+
+/* Crossfade the two reading planes instead of flipping the scrim in one frame. */
+.intro-reading-scrim-reverse, .intro-closing-scrim { display: none; }
+:root[data-theme="light"] .intro-root .intro-reading-scrim {
+  transform: none;
+  opacity: 1;
+  transition: opacity 700ms cubic-bezier(.22, 1, .36, 1);
+}
+:root[data-theme="light"] .intro-root .intro-reading-scrim-reverse {
+  display: block;
+  transform: scaleX(-1);
+  opacity: 0;
+}
+:root[data-theme="light"] .intro-root[data-intro-chapter="check"] .intro-reading-scrim { opacity: 0; }
+:root[data-theme="light"] .intro-root[data-intro-chapter="check"] .intro-reading-scrim-reverse { opacity: 1; }
+:root[data-theme="light"] .intro-closing-scrim {
+  display: block;
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  background: var(--intro-ground);
+  opacity: 0;
+  transition: opacity 800ms cubic-bezier(.22, 1, .36, 1);
+}
+:root[data-theme="light"] .intro-root[data-intro-chapter="close"] .intro-closing-scrim { opacity: .78; }
+:root[data-theme="light"] .intro-root .intro-depth-middle [data-intro-welcome] {
+  mask-image: none;
+  opacity: 1;
+  transition: opacity 800ms cubic-bezier(.22, 1, .36, 1);
+}
+:root[data-theme="light"] .intro-root[data-intro-chapter="close"] .intro-depth-middle [data-intro-welcome] { opacity: .15; }
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="light"] .intro-root:not([data-motion-policy="full"]) :is(.intro-reading-scrim, .intro-closing-scrim, [data-intro-welcome]) { transition: none; }
+}
+
+@media (max-width: 760px) {
+  /* Keep the same projected sizes with compositor-friendly planes on touch screens. */
+  .intro-depth-stage { perspective: none; transform-style: flat; }
+  .intro-depth-middle, .intro-depth-foreground, .intro-reading-plane { transform-style: flat; }
+  .intro-depth-background, .intro-depth-middle { will-change: transform; }
+  .intro-root [data-greeting] { will-change: auto; }
+  .intro-root .intro-depth-middle [data-intro-welcome] { mask-image: none; transition: opacity 600ms ease; }
+  .intro-root[data-intro-chapter="close"] .intro-depth-middle [data-intro-welcome] { opacity: .15; }
+}
+
+@media (max-width: 760px) {
+  .intro-depth-middle { height: 100svh; bottom: auto; }
+  /* Follow toolbar height changes without measuring/rebuilding the scroll scene. */
+  .intro-root[data-intro-chapter="close"] .intro-entry-anchor {
+    transform: translateY(calc((var(--intro-dock-measured-height, 100dvh) - 100dvh) / 2));
+  }
+}

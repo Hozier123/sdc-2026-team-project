@@ -325,10 +325,10 @@ export interface Service {
   clarificationCopied?(id: string, version: number): Promise<void>;
 }
 export const STATUS: Record<DraftStatus, { label: string; tone: string }> = {
-  DISAMBIGUATION_REQUIRED: { label: "Needs your decision", tone: "amber" },
+  DISAMBIGUATION_REQUIRED: { label: "Needs review", tone: "amber" },
   READY_FOR_APPROVAL: { label: "Ready to approve", tone: "mint" },
-  PENDING_OWNER_APPROVAL: { label: "With owner", tone: "blue" },
-  DO_GENERATED: { label: "DO generated", tone: "mint" },
+  PENDING_OWNER_APPROVAL: { label: "Awaiting owner", tone: "blue" },
+  DO_GENERATED: { label: "Delivery order ready", tone: "mint" },
   REJECTED: { label: "Closed", tone: "rose" },
 };
 export const toInput = (l: Line): LineInput => ({

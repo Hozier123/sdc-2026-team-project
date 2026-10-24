@@ -329,8 +329,8 @@
   flex: 0 0 54px;
   height: 54px;
   color: var(--mint);
-  background: #a5e6c70c;
-  border: 1px solid #a5e6c726;
+  background: var(--tone-a5e6c70c);
+  border: 1px solid var(--tone-a5e6c726);
   border-radius: 16px;
 }
 .privacy-page h2 {
@@ -339,12 +339,12 @@
   font-size: 28px;
   font-weight: 400;
   line-height: 1.2;
-  color: #e2ebe9;
+  color: var(--tone-e2ebe9);
 }
 .privacy-page p {
   font-size: 14px;
   line-height: 1.85;
-  color: #a9bbc4;
+  color: var(--tone-a9bbc4);
 }
 .privacy-page p + p {
   margin-top: 14px;
@@ -403,7 +403,7 @@
   }
   .app-shell :is(.stat-card, .order-row):hover {
     background: var(--panel2);
-    border-color: #51677b;
+    border-color: var(--tone-51677b);
   }
   .app-shell :is(.stat-card, .order-row):focus-visible {
     outline-offset: -3px;
@@ -453,15 +453,6 @@
     font-size: 13px;
     line-height: 1.6;
   }
-  .app-shell .customer-cell > div {
-    min-width: 0;
-  }
-  .app-shell .customer-cell strong {
-    overflow-wrap: anywhere;
-  }
-  .app-shell .row-time {
-    font-variant-numeric: tabular-nums;
-  }
   .app-shell .mini-activity strong {
     font-size: 13px;
   }
@@ -480,32 +471,6 @@
   }
 }
 @media screen and (max-width: 760px) {
-  .app-shell .customer-cell p {
-    font-size: 12px;
-    line-height: 1.6;
-  }
-  .app-shell .customer-cell strong {
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  .app-shell .customer-cell p {
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
-  .app-shell .order-row {
-    align-items: center;
-  }
-  .app-shell .row-state .pill {
-    max-width: 100%;
-    white-space: normal;
-    text-align: left;
-  }
-  .app-shell .row-time {
-    font-size: 12px;
-  }
-  .app-shell .row-state > small {
-    font-size: 12px;
-  }
   .app-shell .queue-toolbar .tabs {
     gap: 8px;
   }
@@ -519,9 +484,6 @@
   }
   .app-shell .queue-results {
     padding-inline: 18px;
-  }
-  .app-shell .order-table-head {
-    letter-spacing: 0.02em;
   }
   .app-shell .page-content {
     padding-bottom: max(28px, env(safe-area-inset-bottom));
@@ -571,11 +533,11 @@
   will-change: transform, opacity;
 }
 .nebula-haze-mint {
-  background: radial-gradient(ellipse at 34% 45%, #67cfae48, transparent 48%);
+  background: radial-gradient(ellipse at 34% 45%, var(--tone-67cfae48), transparent 48%);
   animation: nebula-tide 10s ease-in-out infinite;
 }
 .nebula-haze-blue {
-  background: radial-gradient(ellipse at 67% 58%, #568fdc52, transparent 45%);
+  background: radial-gradient(ellipse at 67% 58%, var(--tone-568fdc52), transparent 45%);
   animation: nebula-tide 14s ease-in-out -5s infinite reverse;
 }
 .nebula-backdrop[data-paused="true"] :is(.nebula-video-drift, .nebula-haze) {
@@ -630,9 +592,9 @@
   height: 40px;
   left: -20px;
   top: -20px;
-  border: 1px solid #a5e6c799;
+  border: 1px solid var(--tone-a5e6c799);
   border-radius: 50%;
-  box-shadow: 0 0 18px #a5e6c71a;
+  box-shadow: 0 0 18px var(--tone-a5e6c71a);
 }
 .intro-cursor-dot::after {
   content: "";
@@ -642,7 +604,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #d8ffeb;
+  background: var(--tone-d8ffeb);
 }
 @media (hover: hover) and (pointer: fine) {
   .intro-root[data-cursor-visible="true"],
@@ -680,8 +642,8 @@
 }
 .company-trigger:hover:not(:disabled),
 .company-trigger[aria-expanded="true"] {
-  border-color: #5b8274;
-  background: #15221f;
+  border-color: var(--tone-5b8274);
+  background: var(--tone-15221f);
 }
 .company-trigger:disabled {
   opacity: 1;
@@ -693,18 +655,18 @@
   flex: 0 0 36px;
   width: 36px;
   height: 36px;
-  background: #213b32;
+  background: var(--tone-213b32);
   color: var(--mint);
-  border: 1px solid #3b584b;
+  border: 1px solid var(--tone-3b584b);
   border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 .company-avatar.hardware {
-  background: #243347;
+  background: var(--tone-243347);
   color: var(--blue);
-  border-color: #40546c;
+  border-color: var(--tone-40546c);
 }
 .company-summary {
   display: flex;
@@ -745,10 +707,10 @@
   max-height: calc(100dvh - 24px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: #111c26;
-  border: 1px solid #3b4d5b;
+  background: var(--tone-111c26);
+  border: 1px solid var(--tone-3b4d5b);
   border-radius: 16px;
-  box-shadow: 0 18px 60px #0009;
+  box-shadow: 0 18px 60px var(--tone-00000099);
 }
 .company-menu-heading {
   display: flex;
@@ -760,10 +722,10 @@
 }
 .company-demo-tag {
   padding: 3px 7px;
-  border: 1px solid #3c4f45;
+  border: 1px solid var(--tone-3c4f45);
   border-radius: 6px;
   color: var(--mint);
-  background: #1e3028;
+  background: var(--tone-1e3028);
 }
 .company-option {
   display: flex;
@@ -778,11 +740,11 @@
   text-align: left;
 }
 .company-option[aria-checked="true"] {
-  background: #1c3029;
-  border-color: #314d40;
+  background: var(--tone-1c3029);
+  border-color: var(--tone-314d40);
 }
 .company-option:hover {
-  background: #253744;
+  background: var(--tone-253744);
 }
 .company-option:focus-visible {
   outline: 2px solid var(--mint);
@@ -820,20 +782,20 @@
   place-items: center;
   flex: 0 0 36px;
   height: 36px;
-  border: 1px solid #3b584b;
+  border: 1px solid var(--tone-3b584b);
   border-radius: 10px;
   color: var(--mint);
-  background: #213b32;
+  background: var(--tone-213b32);
 }
 .role-option-icon.owner {
   color: var(--blue);
-  background: #243347;
-  border-color: #40546c;
+  background: var(--tone-243347);
+  border-color: var(--tone-40546c);
 }
 .role-option-icon.warehouse {
   color: var(--amber);
-  background: #382f22;
-  border-color: #594b35;
+  background: var(--tone-382f22);
+  border-color: var(--tone-594b35);
 }
 @media (max-width: 760px) {
   .role-trigger-demo {
@@ -852,7 +814,7 @@
   margin-bottom: 22px;
 }
 .app-shell .new-order-page .page-heading h1 {
-  font-size: 42px;
+  font-size: 40px;
   line-height: 1.15;
   letter-spacing: -0.6px;
 }
@@ -897,15 +859,6 @@
   line-height: 1.5;
   flex-wrap: wrap;
 }
-.app-shell .new-order-page .privacy-line {
-  line-height: 1.6;
-  margin: 12px 0 20px;
-  align-items: flex-start;
-}
-.app-shell .new-order-page .privacy-line > svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
 .app-shell .new-order-page .form-bottom {
   padding-top: 20px;
   flex-wrap: wrap;
@@ -920,7 +873,7 @@
 .app-shell .new-order-page .sample-panel > h3 {
   font-size: 24px;
   line-height: 1.2;
-  margin: 8px 0 16px;
+  margin: 0 0 8px;
 }
 .app-shell .new-order-page .sample-card {
   margin-top: 10px;

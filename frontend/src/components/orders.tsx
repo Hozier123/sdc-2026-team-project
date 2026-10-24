@@ -11,6 +11,7 @@ import {
   Copy,
   FileCheck2,
   LockKeyhole,
+  ListChecks,
   MessageSquareText,
   Plus,
   RefreshCw,
@@ -47,6 +48,7 @@ import {
   Loading,
   Modal,
   Pill,
+  PendingChecks,
   Reasons,
   shortId,
   Spinner,
@@ -211,13 +213,6 @@ export function NewOrder({
               <span>{text.length.toLocaleString()} / 4,000</span>
             </div>
           </div>
-          <div className="privacy-line">
-            <ShieldCheck size={14} />
-            <span>
-              Phone numbers, emails and identity numbers are masked before
-              saving.
-            </span>
-          </div>
           {!!error && <ErrorNotice error={error} />}
           <div className="form-bottom">
             <span>
@@ -246,8 +241,8 @@ export function NewOrder({
         <aside className="new-order-aside">
           {samples.length > 0 ? (
             <section className="panel sample-panel">
-              <span className="section-kicker">DEMO MESSAGES</span>
-              <h3>Examples</h3>
+              <h3>Demo messages</h3>
+              <p className="sample-instruction">Choose an example to fill the message.</p>
               {samples.map((s) => (
                 <button
                   key={s.title}
@@ -273,7 +268,6 @@ export function NewOrder({
             </section>
           ) : (
             <section className="panel sample-panel">
-              <span className="section-kicker">BEFORE YOU START</span>
               <h3>Message format</h3>
               <p>Include product, quantity, unit and conditions.</p>
             </section>
@@ -286,19 +280,19 @@ export function NewOrder({
 const ISSUE_COPY: Record<string, { title: string; body: string }> = {
   MULTIPLE_PACK_SIZES: {
     title: "Which pack size?",
-    body: "More than one specification matches. Confirm the size with the customer, then choose a product.",
+    body: "Ask the customer for the pack size, then select the matching product.",
   },
   MULTIPLE_GRADES: {
     title: "Which grade?",
-    body: "The message doesn’t identify a grade. Ask the customer and choose the correct item.",
+    body: "Ask the customer for the grade, then select the matching product.",
   },
   MISSING_UOM: {
     title: "Confirm the order unit",
     body: "The unit is missing. Confirm how the quantity should be supplied.",
   },
   LOW_CONFIDENCE_MATCH: {
-    title: "This item needs a closer look",
-    body: "The message could not be matched confidently. Confirm the product, quantity and unit.",
+    title: "Confirm the product",
+    body: "No confident match. Confirm the product, quantity and unit with the customer.",
   },
   INSUFFICIENT_STOCK: {
     title: "There isn’t enough stock",
@@ -523,7 +517,7 @@ export function OrderDetail({
         <div className="info-banner blue">
           <ShieldCheck size={19} />
           <div>
-            <strong>The owner has the next move.</strong>
+            <strong>Awaiting the owner’s decision</strong>
             <p>
               Version {draft.version} is submitted and locked. View the approval
               queue for its decision.
@@ -579,20 +573,14 @@ export function OrderDetail({
               <div className="panel-heading">
                 <div className="inline-heading">
                   <MessageSquareText size={17} />
-                  <h2>The customer’s words</h2>
+                  <h2>Original message</h2>
                 </div>
-                <Pill>Masked original</Pill>
               </div>
               <MessageEvidence draft={draft} />
-              <div className="message-caption">
-                <ShieldCheck size={12} /> Original wording preserved. Private
-                contact details masked.
-              </div>
             </section>
             <section className="panel products-panel">
               <div className="panel-heading">
                 <div>
-                  <span className="section-kicker">CHECK THE DETAILS</span>
                   <h2>
                     Products & quantities{" "}
                     <span className="count-bubble">{savedCount}</span>
@@ -911,13 +899,13 @@ export function OrderDetail({
               )}
               <div className="order-total">
                 <span>
-                  Order total{" "}
+                  {draft.totals.is_complete ? "Order total" : "Matched subtotal"}{" "}
                   <small>
                     {edit
                       ? "Save your changes to refresh the total."
                       : draft.totals.is_complete
                         ? "Catalogue prices · MYR"
-                        : "Awaiting a complete product selection"}
+                        : "Excludes products awaiting selection"}
                   </small>
                 </span>
                 <strong>
@@ -941,9 +929,6 @@ export function OrderDetail({
                 <section className="panel conditions-panel">
                   <div className="panel-heading">
                     <div>
-                      <span className="section-kicker">
-                        THE CUSTOMER’S CONDITIONS
-                      </span>
                       <h2>Customer conditions</h2>
                     </div>
                   </div>
@@ -975,25 +960,21 @@ export function OrderDetail({
               )}
           </div>
           <aside className="review-rail">
-            <section className="panel checks-panel">
+            <section className="panel checks-panel" id="approval-checks" tabIndex={-1}>
               <div className="rail-title">
-                THE RIGHT NEXT STEP <ShieldCheck size={15} />
+                Approval checks <ShieldCheck size={15} />
               </div>
               <div
                 className={`check-summary ${unresolved.length ? "amber-text" : "mint-text"}`}
               >
                 {unresolved.length ? (
-                  <AlertCircle size={22} />
+                  <PendingChecks count={unresolved.length} />
                 ) : (
-                  <CircleCheck size={22} />
+                  <>
+                    <CircleCheck size={22} aria-hidden="true" />
+                    <div><strong>Blocking checks clear</strong></div>
+                  </>
                 )}
-                <div>
-                  <strong>
-                    {unresolved.length
-                      ? `${unresolved.length} ${unresolved.length === 1 ? "check needs" : "checks need"} you`
-                      : "The blocking checks are clear"}
-                  </strong>
-                </div>
               </div>
               {draft.issues.map((issue) => (
                 <div
@@ -1012,14 +993,14 @@ export function OrderDetail({
                   <div>
                     <span className="check-owner">
                       {issue.condition_kind === "STOCK"
-                        ? "SYSTEM CHECK"
+                        ? "Stock check"
                         : issue.resolved
-                          ? "RESOLVED"
+                          ? "Resolved"
                           : issue.ask === "CUSTOMER"
-                            ? "ASK THE CUSTOMER"
+                            ? "Ask the customer"
                             : issue.ask === "OWNER"
-                              ? "ASK THE OWNER"
-                              : "YOUR DECISION"}
+                              ? "Ask the owner"
+                              : "Your decision"}
                     </span>
                     <strong>
                       {issue.condition_kind === "STOCK"
@@ -1078,10 +1059,7 @@ export function OrderDetail({
             </section>
             {draft.clarification_draft && (
               <section className="panel clarification-card">
-                <div className="rail-title">
-                  <MessageSquareText size={15} /> CLARIFICATION
-                </div>
-                <h3>Clarification</h3>
+                <h3>Ask the customer</h3>
                 <span className="language-label">
                   {(
                     {
@@ -1100,17 +1078,14 @@ export function OrderDetail({
                   onCopied={() =>
                     service.clarificationCopied?.(id, draft.version)
                   }
-                  label="Copy clarification"
+                  label="Copy question"
                 />
-                <p className="micro-copy">
-                  Send manually; record the customer’s answer.
-                </p>
               </section>
             )}
             {draft.escalation_preview.length > 0 && (
               <section className="panel escalation-card">
                 <div className="rail-title">
-                  <ShieldCheck size={14} /> OWNER’S DECISION
+                  <ShieldCheck size={14} /> Owner review
                 </div>
                 <Reasons reasons={draft.escalation_preview} />
               </section>
@@ -1135,21 +1110,9 @@ export function OrderDetail({
       )}
       {editable && (
         <div className="review-actions">
-          <div>
-            <ShieldCheck size={17} />
-            <span>
-              {edit
-                ? "Save your changes before approving."
-                : unresolved.length
-                  ? `${unresolved.length} ${unresolved.length === 1 ? "check" : "checks"} to resolve before approval.`
-                  : ownerAction
-                    ? "This saved version will go to the owner."
-                    : "You’re approving the current saved version."}
-              <small>
-                Version {draft.version} ·{" "}
-                {edit ? "Unsaved changes" : "Saved and checked"}
-              </small>
-            </span>
+          <div className={`save-state ${edit ? "amber-text" : ""}`} role="status" aria-live="polite">
+            {edit ? <AlertCircle size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
+            <span>{edit ? "Unsaved changes" : "Saved"}</span>
           </div>
           <div className="action-buttons">
             {service.discard &&
@@ -1178,28 +1141,49 @@ export function OrderDetail({
                 Reset edits
               </button>
             )}
-            <button
-              className="button secondary"
-              disabled={busy || !edit || !!invalid.length}
-              onClick={save}
-            >
-              {busy ? <Spinner /> : <Save size={15} />}Save changes
-            </button>
-            <button
-              className="button primary"
-              disabled={busy || !canApprove}
-              onClick={approve}
-            >
-              {busy ? (
-                <Spinner />
-              ) : ownerAction ? (
-                <ShieldCheck size={15} />
-              ) : (
-                <FileCheck2 size={15} />
-              )}{" "}
-              {ownerAction ? "Send to owner" : "Approve & generate DO"}{" "}
-              <ArrowRight size={15} />
-            </button>
+            {edit && (
+              <button
+                className="button primary"
+                disabled={busy || !!invalid.length}
+                onClick={save}
+              >
+                {busy ? <Spinner /> : <Save size={15} />}Save changes
+              </button>
+            )}
+            {unresolved.length > 0 && !edit ? (
+              <button
+                className="button secondary resolve-checks-button"
+                disabled={busy}
+                onClick={() => {
+                  const checks = document.getElementById("approval-checks");
+                  checks?.focus({ preventScroll: true });
+                  checks?.scrollIntoView({
+                    block: "center",
+                    behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+                  });
+                }}
+              >
+                <ListChecks size={16} aria-hidden="true" />
+                Resolve checks <ArrowRight size={15} aria-hidden="true" />
+              </button>
+            ) : (
+              <button
+                className={`button ${edit ? "secondary" : "primary"}`}
+                disabled={busy || !canApprove}
+                title={edit ? "Save changes before approval" : undefined}
+                onClick={approve}
+              >
+                {busy ? (
+                  <Spinner />
+                ) : ownerAction ? (
+                  <ShieldCheck size={15} />
+                ) : (
+                  <FileCheck2 size={15} />
+                )}{" "}
+                {ownerAction ? "Send to owner" : "Approve & generate DO"}{" "}
+                <ArrowRight size={15} />
+              </button>
+            )}
           </div>
         </div>
       )}

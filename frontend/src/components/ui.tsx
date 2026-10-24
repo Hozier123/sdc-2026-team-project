@@ -58,6 +58,15 @@ export function Status({ status }: { status: DraftStatus }) {
     </Pill>
   );
 }
+export function PendingChecks({ count }: { count: number }) {
+  return (
+    <span className="pending-checks">
+      <AlertCircle size={14} aria-hidden="true" />
+      <strong>{count}</strong>
+      <span>{count === 1 ? "pending check" : "pending checks"}</span>
+    </span>
+  );
+}
 export function Spinner() {
   return <LoaderCircle size={16} className="spin" aria-hidden="true" />;
 }
@@ -247,7 +256,7 @@ export function CopyButton({
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(text);
-          onCopy("Copied to clipboard. Send it when you’re ready.");
+          onCopy("Copied to clipboard.");
           void Promise.resolve()
             .then(() => onCopied?.())
             .catch(() => undefined);

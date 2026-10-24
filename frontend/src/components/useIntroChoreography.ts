@@ -39,9 +39,9 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
       const duration = stages - 1;
       const at = (progress: number) => progress * duration;
       // Separate planes keep GSAP away from the spring and WebGL local transforms.
-      gsap.set(background.current, { z: reduce ? 0 : -360, scale: reduce ? 1 : 1.3, y: 0, rotation: 0 });
-      gsap.set(scene.current, { z: reduce ? 0 : -100, scale: reduce ? 1 : 1.09, y: 0, x: reduce ? 0 : innerWidth * (phone ? 0.05 : 0.18), rotationY: 0, opacity: phone ? 0.6 : 1 });
-      gsap.set(foreground.current, { z: reduce ? 0 : 120, scale: reduce ? 1 : 0.9 });
+      gsap.set(background.current, { z: reduce || phone ? 0 : -360, scale: reduce || phone ? 1 : 1.3, y: 0, rotation: 0 });
+      gsap.set(scene.current, { z: reduce || phone ? 0 : -100, scale: reduce ? 1 : phone ? 1.005 : 1.09, y: 0, x: reduce ? 0 : innerWidth * (phone ? 0.05 : 0.18), rotationY: 0, opacity: phone ? 0.6 : 1 });
+      gsap.set(foreground.current, { z: reduce || phone ? 0 : 120, scale: reduce || phone ? 1 : 0.9 });
       gsap.set(entry.current, { y: 0 });
       const planes: Record<IntroChapter, HTMLElement | null> = {
         welcome: opening.current, read: notes.current[0], check: notes.current[1],
@@ -53,6 +53,9 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
         const origin = entry.current!.offsetTop + entryAnchor.offsetTop + entryAnchor.offsetHeight / 2;
         return target - origin;
       };
+      // The dock geometry only changes at a viewport refresh, not at every chapter.
+      let closeDockY = closeEntryY();
+      element.style.setProperty("--intro-dock-measured-height", `${innerHeight}px`);
       let active: IntroChapter | undefined;
       let chapterMotion: gsap.core.Timeline | undefined;
       let stopChapterMotion = () => {};
@@ -65,10 +68,16 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
         chapterMotion?.kill();
         element.dataset.introChapter = next;
         setChapter(next);
-        gsap.set(allPlanes, { autoAlpha: 0, x: 0, y: 0, z: 0, rotationY: 0 });
         const target = planes[next];
         if (!target) return;
-        const dockY = next === "close" ? closeEntryY() : 0;
+        const daylight = document.documentElement.dataset.theme === "light";
+        const outgoing = allPlanes.filter(plane => plane !== target && Number(gsap.getProperty(plane, "opacity")) > 0.01);
+        if (!daylight || !animate || document.hidden) {
+          gsap.set(allPlanes, { autoAlpha: 0, x: 0, y: 0, z: 0, rotationY: 0 });
+        } else {
+          gsap.set(allPlanes.filter(plane => plane !== target && !outgoing.includes(plane)), { autoAlpha: 0, x: 0, y: 0, z: 0, rotationY: 0 });
+        }
+        const dockY = next === "close" ? closeDockY : 0;
         if (!animate || document.hidden) {
           gsap.set(target, { autoAlpha: 1 });
           gsap.set(entry.current, { y: dockY });
@@ -80,12 +89,21 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
         // Text and the action run on time, never on the scrubbed background clock.
         // A fast reversal kills the old arrival and fully resolves the latest one.
         const x = next === "check" && !reduce ? (phone ? 12 : 20) : 0;
-        chapterMotion = gsap.timeline({ onComplete: () => { element.dataset.chapterMotion = "settled"; } })
-          .fromTo(target, { autoAlpha: 0.55, x, y: reduce ? 0 : next === "welcome" ? -12 : 20, z: reduce ? 0 : -32 },
-            { autoAlpha: 1, x: 0, y: 0, z: 0, duration: reduce ? 0.12 : 0.36, ease: "power3.out" }, 0)
-          // The pointer spring owns the button; this tween only moves its dock.
-          .to(entry.current, { y: dockY, duration: reduce ? 0.12 : 0.44, ease: "power3.out" }, 0)
-          .to(select("[data-intro-scroll-hint]"), { autoAlpha: next === "close" ? 0 : 1, duration: 0.16 }, 0);
+        chapterMotion = gsap.timeline({ onComplete: () => { element.dataset.chapterMotion = "settled"; } });
+        if (daylight) {
+          // Preserve current opacity on fast reversals; never blank every reading plane.
+          if (Number(gsap.getProperty(target, "opacity")) <= 0.01) {
+            gsap.set(target, { autoAlpha: 0, x: x * 0.5, y: reduce ? 0 : 10, z: 0 });
+          }
+          chapterMotion.to(outgoing, { autoAlpha: 0, y: reduce ? 0 : -8, duration: reduce ? 0.1 : 0.28, ease: "power2.out" }, 0)
+            .to(target, { autoAlpha: 1, x: 0, y: 0, z: 0, duration: reduce ? 0.12 : 0.56, ease: "power2.out" }, 0);
+        } else {
+          chapterMotion.fromTo(target, { autoAlpha: 0.55, x, y: reduce ? 0 : next === "welcome" ? -12 : 20, z: reduce || phone ? 0 : -32 },
+            { autoAlpha: 1, x: 0, y: 0, z: 0, duration: reduce ? 0.12 : 0.36, ease: "power3.out" }, 0);
+        }
+        // The pointer spring owns the button; this tween only moves its dock.
+        chapterMotion.to(entry.current, { y: dockY, duration: reduce ? 0.12 : daylight ? 0.66 : 0.44, ease: daylight ? "power2.inOut" : "power3.out" }, 0)
+          .to(select("[data-intro-scroll-hint]"), { autoAlpha: next === "close" ? 0 : 1, duration: daylight ? 0.3 : 0.16 }, 0);
         stopChapterMotion = finishWhenHidden(chapterMotion);
       });
       let welcome: gsap.core.Timeline | undefined;
@@ -102,27 +120,31 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
       const story = gsap.timeline({
         defaults: { ease: "none" },
         onUpdate: () => {
-          const progress = story.progress();
-          element.dataset.storyProgress = progress.toFixed(3);
+          // Touch flings must change text on the same clock as the moving planes.
+          if (phone) presentChapter(introChapterAt(story.progress()));
         },
         scrollTrigger: {
           id: "intro-depth", trigger: element, start: "top top",
           end: () => `+=${Math.max(1, element.offsetHeight - innerHeight)}`,
-          scrub: reduce ? true : 0.55, invalidateOnRefresh: true,
-          onUpdate: trigger => presentChapter(introChapterAt(trigger.progress)),
-          onRefresh: trigger => presentChapter(introChapterAt(trigger.progress), false),
+          scrub: reduce ? true : phone ? 0.22 : 0.55, invalidateOnRefresh: true,
+          onUpdate: trigger => { if (!phone) presentChapter(introChapterAt(trigger.progress)); },
+          onRefresh: trigger => {
+            closeDockY = closeEntryY();
+            element.style.setProperty("--intro-dock-measured-height", `${innerHeight}px`);
+            presentChapter(introChapterAt(trigger.progress), false);
+          },
         },
       });
-      story.to(background.current, { z: reduce ? 0 : -240, scale: reduce ? 1 : 1.26, y: reduce ? 0 : -(phone ? 30 : 80), rotation: reduce ? 0 : 2.4, duration }, 0)
-        .to(scene.current, { z: reduce ? 0 : 87.2, scale: reduce ? 1 : 1.02, y: reduce ? 0 : -(phone ? 74 : 164), duration: at(0.78) }, 0)
-        .to(scene.current, { z: reduce ? 0 : -220, scale: reduce ? 1 : 1.25, y: reduce ? 0 : -(phone ? 80 : 180), duration: at(0.14), ease: "power2.inOut" }, at(0.78));
+      story.to(background.current, { z: reduce || phone ? 0 : -240, scale: reduce ? 1 : phone ? 1.05 : 1.26, y: reduce ? 0 : -(phone ? 30 : 80), rotation: reduce || phone ? 0 : 2.4, duration }, 0)
+        .to(scene.current, { z: reduce || phone ? 0 : 87.2, scale: reduce ? 1 : phone ? 1.10 : 1.02, y: reduce ? 0 : -(phone ? 74 : 164), duration: at(0.78) }, 0)
+        .to(scene.current, { z: reduce || phone ? 0 : -220, scale: reduce ? 1 : phone ? 1.055 : 1.25, y: reduce ? 0 : -(phone ? 80 : 180), duration: at(0.14), ease: "power2.inOut" }, at(0.78));
       // The language field yields to the current reading side.
       [
         { start: 0.32, end: 0.43, x: -0.2, rotate: 7 },
         { start: 0.54, end: 0.65, x: 0.2, rotate: -5 },
         { start: 0.76, end: 0.88, x: 0, rotate: 0 },
       ].forEach(pose => story.to(scene.current, {
-        x: () => reduce ? 0 : innerWidth * pose.x * (phone ? 0.35 : 1), rotationY: reduce ? 0 : pose.rotate,
+        x: () => reduce ? 0 : innerWidth * pose.x * (phone ? 0.35 : 1), rotationY: reduce || phone ? 0 : pose.rotate,
         duration: at(pose.end - pose.start), ease: "power2.inOut",
       }, at(pose.start)));
       story.to(select("[data-intro-story-shade]"), { opacity: 0.36, duration: at(0.1) }, at(0.1))
@@ -137,6 +159,7 @@ export function useIntroChoreography(root: RefObject<HTMLDivElement | null>, lay
       return () => {
         disposed = true;
         stopWelcome(); stopVisibility(); stopChapterMotion(); chapterMotion?.kill();
+        element.style.removeProperty("--intro-dock-measured-height");
         delete element.dataset.motionPhase;
         delete element.dataset.storyProgress;
         delete element.dataset.chapterMotion;

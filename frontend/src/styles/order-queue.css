@@ -1,0 +1,109 @@
+/* One grid owns both the column headings and every order row.
+   At 1440: canvas 1114 = queue 836 + gap 20 + rail 258.
+   Queue inner width 786 = identity 458 + state 220 + time 56 + arrow 16 + 3 × 12. */
+@media screen {
+  .app-shell .order-table {
+    --queue-state-width: 220px;
+    --queue-pad: var(--space-panel);
+  }
+  .app-shell .order-table-head,
+  .app-shell .order-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--queue-state-width) 56px 16px;
+    align-items: center;
+    gap: 12px;
+    padding-inline: var(--queue-pad);
+  }
+  .app-shell .order-table-head {
+    padding-block: 12px;
+    border-block: 1px solid var(--border-soft);
+    color: var(--muted);
+    font-size: var(--type-caption);
+    letter-spacing: 0;
+  }
+  .app-shell .order-table-head > span:nth-child(3) { text-align: right; }
+  .app-shell .order-row {
+    width: 100%;
+    min-height: 88px;
+    padding-block: 16px;
+    border: 0;
+    border-bottom: 1px solid var(--border-soft);
+    background: transparent;
+    text-align: left;
+    transition: background var(--motion-fast) var(--ease-response);
+  }
+  .app-shell .order-row:last-child { border-bottom: 0; }
+  .app-shell .order-row:hover { background: var(--panel2); box-shadow: none; }
+  .app-shell .order-row:focus-visible { outline-offset: -3px; }
+  .app-shell .customer-cell { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .app-shell .customer-avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--muted);
+    font-size: var(--type-meta);
+  }
+  .app-shell .customer-cell > div { min-width: 0; }
+  .app-shell .customer-cell strong {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    color: var(--text);
+    font-size: var(--type-body);
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .app-shell .customer-cell strong small { color: var(--muted); font-size: var(--type-meta); }
+  .app-shell .compact .customer-cell strong small { display: none; }
+  .app-shell .customer-cell p {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .app-shell .row-state { min-width: 0; }
+  .app-shell .row-state .pill { max-width: 100%; white-space: normal; text-align: left; }
+  .app-shell .row-state > small { display: block; margin-top: 5px; color: var(--muted); font-size: var(--type-meta); line-height: 1.5; }
+  .app-shell .row-time { color: var(--muted); font-size: var(--type-meta); font-variant-numeric: tabular-nums; text-align: right; }
+  .app-shell .row-arrow { display: block; width: 16px; height: 16px; color: var(--muted); stroke-width: 1.5; justify-self: end; }
+}
+@media screen and (min-width: 1101px) and (max-width: 1250px) {
+  .app-shell .compact { --queue-state-width: 160px; --queue-pad: 20px; }
+  .app-shell .compact .order-table-head,
+  .app-shell .compact .order-row { grid-template-columns: minmax(0, 1fr) var(--queue-state-width) 16px; }
+  .app-shell .compact .row-time,
+  .app-shell .compact .order-table-head > span:nth-child(3) { display: none; }
+}
+@media screen and (max-width: 760px) {
+  .app-shell .order-table { --queue-pad: 18px; }
+  .app-shell .order-table-head { display: none; }
+  .app-shell .order-row {
+    grid-template-columns: minmax(0, 1fr) 56px;
+    grid-template-areas: "customer arrow" "state time";
+    gap: 12px;
+    padding-block: 18px;
+  }
+  .app-shell .customer-cell { grid-area: customer; }
+  .app-shell .customer-avatar { display: none; }
+  .app-shell .customer-cell p {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .app-shell .row-state { grid-area: state; }
+  .app-shell .row-time { grid-area: time; display: block; align-self: start; padding-top: 6px; }
+  .app-shell .row-arrow { grid-area: arrow; align-self: start; margin-top: 3px; }
+  .app-shell .row-state > small { display: inline; margin: 0 0 0 8px; }
+}

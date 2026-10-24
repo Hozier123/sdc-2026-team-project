@@ -26,7 +26,9 @@
   border: 1px solid var(--border);
   border-radius: 50%;
   font-size: var(--type-meta);
+  line-height: 1;
 }
+.stepper svg { display: block; }
 .stepper small {
   font-size: var(--type-meta);
   line-height: 1.5;
@@ -44,7 +46,7 @@
 .stepper .current > span {
   color: var(--mint);
   background: var(--status-mint-bg);
-  border-color: #659a7f;
+  border-color: var(--tone-659a7f);
 }
 .stepper .complete {
   color: var(--mint);
