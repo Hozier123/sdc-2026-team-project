@@ -646,9 +646,15 @@ def test_ai_status_probe_wake_transition_and_rate_limit(seeded_db):
 
     def handler(request):
         calls.append((request.method, str(request.url)))
-        if request.method == "GET":
+        if request.method == "GET" or request.url.path == "/wake":
             return httpx.Response(200, json={"status": "ok"})
-        return httpx.Response(200, json={"status": "warming"})
+        return httpx.Response(
+            200,
+            json={
+                "rows": [{"span": "Milo 1 ctn", "fam": "FAM_MILO", "qty": 1, "uom": "ctn"}],
+                "ignored_spans": [],
+            },
+        )
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
     app = create_app(seeded_db)
@@ -657,8 +663,8 @@ def test_ai_status_probe_wake_transition_and_rate_limit(seeded_db):
         with TestClient(app) as api:
             status = api.get("/api/v1/ai/status", headers=_headers(CLERK))
             assert status.status_code == 200
-            assert status.json()["state"] == "READY"
-            assert status.json()["available_modes"] == ["LLM", "FALLBACK", "ALIAS_ONLY"]
+            assert status.json()["state"] == "DEGRADED"
+            assert status.json()["available_modes"] == ["FALLBACK", "ALIAS_ONLY"]
             assert status.json()["fallback_available"] is True
 
             wake = api.post("/api/v1/ai/wake", headers=_headers(CLERK))
@@ -666,6 +672,7 @@ def test_ai_status_probe_wake_transition_and_rate_limit(seeded_db):
             assert wake.json()["accepted"] is True
             assert wake.json()["state"] == "WARMING"
 
+            app.state.ai_orchestrator._warmup.result(timeout=3)
             after = api.get("/api/v1/ai/status", headers=_headers(CLERK))
             assert after.json()["state"] == "READY"
 
@@ -675,6 +682,7 @@ def test_ai_status_probe_wake_transition_and_rate_limit(seeded_db):
             assert limited.json()["details"]["scope"] == "AI_WAKE"
             assert limited.headers["Retry-After"]
     finally:
+        app.state.ai_orchestrator.close()
         client.close()
     assert ("GET", "https://ai.test/health") in calls
     assert ("POST", "https://ai.test/wake") in calls
@@ -697,10 +705,14 @@ def test_ai_wake_failure_returns_degraded_not_ready(seeded_db):
         with TestClient(app) as api:
             wake = api.post("/api/v1/ai/wake", headers=_headers(CLERK))
             assert wake.status_code == 200
-            assert wake.json()["accepted"] is False
-            assert wake.json()["state"] == "DEGRADED"
+            assert wake.json()["accepted"] is True
+            assert wake.json()["state"] == "WARMING"
             assert wake.json()["fallback_available"] is True
+            app.state.ai_orchestrator._warmup.result(timeout=3)
+            after = api.get("/api/v1/ai/status", headers=_headers(CLERK))
+            assert after.json()["state"] == "DEGRADED"
     finally:
+        app.state.ai_orchestrator.close()
         client.close()
 
 

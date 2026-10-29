@@ -28,7 +28,8 @@ const output =
   "// Generated from the frozen Gate 0 contract. Run npm run types:generate.\n" +
   astToString(await openapiTS(document, { defaultNonNullable: false }));
 if (process.argv.includes("--check")) {
-  if ((await fs.readFile(target, "utf8")) !== output) {
+  // Git may check generated text out with CRLF on Windows; compare its content.
+  if ((await fs.readFile(target, "utf8")).replaceAll("\r\n", "\n") !== output) {
     throw new Error(
       `Contract types drifted: regenerate ${fileURLToPath(target)}.`,
     );

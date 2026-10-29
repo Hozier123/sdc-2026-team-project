@@ -176,12 +176,16 @@ def test_configured_url_does_not_claim_proven_ai_readiness(seeded_db):
         with TestClient(app) as client:
             status = client.get("/api/v1/ai/status", headers=_headers(CLERK)).json()
             wake = client.post("/api/v1/ai/wake", headers=_headers(CLERK)).json()
+            app.state.ai_orchestrator._warmup.result(timeout=3)
+            after = client.get("/api/v1/ai/status", headers=_headers(CLERK)).json()
     finally:
+        app.state.ai_orchestrator.close()
         client_transport.close()
     assert status["state"] != "READY"
     assert status["fallback_available"] is True
-    assert wake["state"] != "READY" and wake["accepted"] is False
+    assert wake["state"] == "WARMING" and wake["accepted"] is True
     assert wake["fallback_available"] is True
+    assert after["state"] == "DEGRADED"
 
 
 @pytest.mark.integration

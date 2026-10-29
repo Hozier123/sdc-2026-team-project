@@ -191,9 +191,8 @@ class RunPodExtractor:
 
                 if resp.status_code != 200:
                     logger.warning(
-                        "RunPod returned non-200 status %d: %s. Degrading to fallback.",
+                        "RunPod returned HTTP %d. Degrading to fallback.",
                         resp.status_code,
-                        resp.text,
                     )
                     return self._execute_fallback(
                         masked_text,
@@ -203,6 +202,13 @@ class RunPodExtractor:
                     )
 
                 data = resp.json()
+                if data.get("model", self.model_name) != self.model_name:
+                    return self._execute_fallback(
+                        masked_text,
+                        catalog,
+                        reason="RunPod returned a different model",
+                        latency_ms=elapsed_ms,
+                    )
                 raw_content = data["choices"][0]["message"]["content"]
                 parsed_json = json.loads(raw_content)
 
@@ -219,7 +225,7 @@ class RunPodExtractor:
             logger.warning(
                 "RunPod request failed/timed out after %.1fms (%s). Gracefully degrading to fallback.",
                 elapsed_ms,
-                str(net_err),
+                type(net_err).__name__,
             )
             return self._execute_fallback(
                 masked_text,
@@ -229,11 +235,14 @@ class RunPodExtractor:
             )
         except Exception as exc:
             elapsed_ms = (time.time() - start_time) * 1000.0
-            logger.error("Unexpected error in LLM extraction: %s. Degrading to fallback.", str(exc))
+            logger.error(
+                "Unexpected error in LLM extraction: %s. Degrading to fallback.",
+                type(exc).__name__,
+            )
             return self._execute_fallback(
                 masked_text,
                 catalog,
-                reason=f"Extraction exception: {str(exc)}",
+                reason=f"Extraction exception: {type(exc).__name__}",
                 latency_ms=elapsed_ms,
             )
 

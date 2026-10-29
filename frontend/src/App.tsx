@@ -304,6 +304,18 @@ function Workspace() {
   );
   const aiResource = useResource(() => service.aiStatus(), [service], !!me);
   const ai = aiResource.value;
+  useEffect(() => {
+    if (
+      service.mode !== "live" ||
+      !me ||
+      ai?.state !== "WARMING" ||
+      aiResource.loading ||
+      aiResource.error
+    )
+      return;
+    const timer = setTimeout(aiResource.refresh, 3000);
+    return () => clearTimeout(timer);
+  }, [service, !!me, ai, aiResource.loading, aiResource.error, aiResource.refresh]);
   const wakeEnabled =
     !!me?.permissions.includes("WAKE_AI") &&
     route !== "intro" &&

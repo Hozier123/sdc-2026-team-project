@@ -1,16 +1,25 @@
-"""AI status probe, wake orchestration, and rate limiting."""
+"""Provider-aware readiness and single-flight background inference warmup."""
 
 from __future__ import annotations
 
+import json
 import threading
 import time
+from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import datetime, timezone
+from uuid import uuid4
 
 import httpx
 
+from app.ai.prompt import build_system_prompt
+from app.ai_runtime import AiRuntimeConfig, resolve_ai_runtime
 from app.config import Settings
 from app.errors import RateLimitedError
+from app.extraction.ai import AiExtraction
 from app.schemas import AiState, AiStatus, AiWakeResult
+
+_PROBE_TEXT = "Milo 1 ctn"
+_FALLBACK = " Local fallback/manual handling remains available."
 
 
 def _now() -> datetime:
@@ -18,175 +27,256 @@ def _now() -> datetime:
 
 
 def available_modes(state: AiState) -> list[str]:
-    if state == "READY":
-        return ["LLM", "FALLBACK", "ALIAS_ONLY"]
-    return ["FALLBACK", "ALIAS_ONLY"]
+    return ["LLM", "FALLBACK", "ALIAS_ONLY"] if state == "READY" else ["FALLBACK", "ALIAS_ONLY"]
+
+
+class _ProbeFailure(Exception):
+    def __init__(self, state: AiState, message: str):
+        self.state = state
+        self.message = message + _FALLBACK
 
 
 class AiOrchestrator:
-    """Small state machine around health and wake HTTP calls.
+    """Health is reachability; READY additionally requires recent valid inference.
 
-    The transport is injectable so tests can prove transitions without a real
-    AI endpoint. The API key is sent only in the server-side Authorization
-    header and never appears in a response.
+    Wake accepts one background job per process and never controls GPU workers.
+    Inject an httpx MockTransport for GPU-free tests. The warmup_grace_s argument
+    remains accepted for compatibility; job completion now determines WARMING.
     """
 
     def __init__(
         self,
         settings: Settings,
         *,
+        runtime: AiRuntimeConfig | None = None,
         client: httpx.Client | None = None,
         wake_rate_limit_s: int | None = None,
         warmup_grace_s: int | None = None,
     ) -> None:
-        self.settings = settings
-        self.health_url = settings.ai_health_url or settings.ai_service_url
-        self.wake_url = settings.ai_wake_url or settings.ai_service_url
-        self.api_key = (
-            settings.ai_api_key.get_secret_value() if settings.ai_api_key is not None else None
-        )
-        self.timeout_s = min(settings.ai_timeout_s, 2.5)
-        self.wake_rate_limit_s = (
-            wake_rate_limit_s if wake_rate_limit_s is not None else settings.ai_wake_rate_limit_s
-        )
-        self.warmup_grace_s = (
-            warmup_grace_s if warmup_grace_s is not None else settings.ai_warmup_grace_s
-        )
-        self._client = client or httpx.Client(timeout=self.timeout_s)
+        self.runtime = runtime or resolve_ai_runtime(settings)
+        self._client = client or httpx.Client(timeout=self.runtime.probe_timeout_s)
         self._owns_client = client is None
-        self._lock = threading.Lock()
-        self._state: AiState = "DEGRADED" if self.health_url else "OFFLINE"
-        self._message = (
-            "AI endpoint configured; readiness has not been verified."
-            if self.health_url
-            else "AI endpoint not configured; local fallback/manual path only."
+        self._wake_rate_limit_s = (
+            settings.ai_wake_rate_limit_s if wake_rate_limit_s is None else wake_rate_limit_s
         )
-        self._last_checked = time.monotonic()
-        self._last_wake_at: float | None = None
-        self._last_wake_user: str | None = None
+        self._readiness_ttl_s = settings.ai_readiness_ttl_s
+        self._lock = threading.Lock()
+        self._executor: ThreadPoolExecutor | None = None
+        self._warmup: Future | None = None
+        self._closed = False
+        self._wake_users: dict[str, float] = {}
+        self._last_inference_at: float | None = None
+        self._revision = 0
+        self._state: AiState = "OFFLINE" if self.runtime.provider == "stub" else "DEGRADED"
+        self._message = (
+            "Local provider selected; no model inference or wake is configured."
+            if self.runtime.provider == "stub"
+            else "AI provider configured; model inference has not been verified."
+        ) + _FALLBACK
 
     def close(self) -> None:
+        with self._lock:
+            self._closed = True
+            executor = self._executor
+        if executor is not None:
+            executor.shutdown(wait=True, cancel_futures=True)
         if self._owns_client:
             self._client.close()
 
     def _headers(self) -> dict[str, str]:
         headers = {"Accept": "application/json"}
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
+        if self.runtime.api_key is not None:
+            headers["Authorization"] = f"Bearer {self.runtime.api_key.get_secret_value()}"
         return headers
 
-    def _status(self, state: AiState, message: str) -> AiStatus:
-        return AiStatus(
-            state=state,
-            available_modes=available_modes(state),  # type: ignore[arg-type]
-            fallback_available=True,
-            last_checked_at=_now(),
-            message=message,
-        )
-
-    def _probe(self) -> tuple[AiState, str]:
-        if not self.health_url:
-            return "OFFLINE", "AI endpoint not configured; local fallback/manual path only."
+    def _request(
+        self, method: str, url: str, *, deadline: float | None = None, **kwargs
+    ) -> httpx.Response:
+        timeout = self.runtime.probe_timeout_s
+        if deadline is not None:
+            timeout = deadline - time.monotonic()
+            if timeout <= 0:
+                raise _ProbeFailure("OFFLINE", "AI warmup timed out.")
         try:
-            response = self._client.get(
-                self.health_url,
-                headers=self._headers(),
-                timeout=self.timeout_s,
+            response = self._client.request(
+                method, url, headers=self._headers(), timeout=timeout, **kwargs
             )
+        except httpx.TimeoutException:
+            raise _ProbeFailure("OFFLINE", "AI request timed out.") from None
         except httpx.HTTPError:
-            return "OFFLINE", "AI health check could not connect; local fallback remains available."
-        if 200 <= response.status_code < 300:
-            return "READY", "AI health check passed; LLM inference may be available."
-        if response.status_code in {401, 403}:
-            return "DEGRADED", "AI endpoint rejected credentials; local fallback remains available."
-        if response.status_code == 429:
-            return "DEGRADED", "AI endpoint is rate limited; local fallback remains available."
-        if response.status_code >= 500:
-            return "DEGRADED", "AI endpoint is unhealthy; local fallback remains available."
-        return "OFFLINE", "AI endpoint rejected the health probe; local fallback remains available."
+            raise _ProbeFailure("OFFLINE", "AI endpoint could not connect.") from None
+        if not 200 <= response.status_code < 300:
+            code = response.status_code
+            if code in {401, 403}:
+                raise _ProbeFailure("DEGRADED", "AI endpoint rejected credentials.")
+            if code == 429:
+                raise _ProbeFailure("DEGRADED", "AI endpoint is rate limited.")
+            state: AiState = "DEGRADED" if code >= 500 else "OFFLINE"
+            raise _ProbeFailure(state, f"AI endpoint returned HTTP {code}.")
+        return response
 
-    def status(self) -> AiStatus:
-        with self._lock:
-            if not self.health_url:
-                self._state = "OFFLINE"
-                self._message = "AI endpoint not configured; local fallback/manual path only."
-                return self._status(self._state, self._message)
-            now = time.monotonic()
-            if (
-                self._state == "WARMING"
-                and self._last_wake_at is not None
-                and now - self._last_wake_at < self.warmup_grace_s
-            ):
-                return self._status(
-                    "WARMING",
-                    "AI is warming up; local fallback remains available.",
-                )
-            state, message = self._probe()
-            self._state = state
-            self._message = message
-            self._last_checked = now
-            return self._status(state, message)
-
-    def wake(self, user_id: str) -> AiWakeResult:
-        if not self.wake_url:
-            return AiWakeResult(
-                state="OFFLINE",
-                accepted=False,
-                fallback_available=True,
-                last_checked_at=_now(),
-                message="AI endpoint not configured; no wake request was sent.",
-            )
-        with self._lock:
-            now = time.monotonic()
-            if (
-                self._last_wake_user == user_id
-                and self._last_wake_at is not None
-                and now - self._last_wake_at < self.wake_rate_limit_s
-            ):
-                retry_after = max(
-                    1,
-                    int(self.wake_rate_limit_s - (now - self._last_wake_at)),
-                )
-                raise RateLimitedError(
-                    details={
-                        "scope": "AI_WAKE",
-                        "retry_after_seconds": retry_after,
-                    }
-                )
-            self._last_wake_at = now
-            self._last_wake_user = user_id
-            self._state = "WARMING"
-            self._last_checked = now
-            self._message = "AI wake request sent; waiting for readiness."
+    def _check_service(self, deadline: float | None = None) -> None:
+        if self.runtime.health_url:
+            self._request("GET", self.runtime.health_url, deadline=deadline)
+        if self.runtime.models_url:
+            response = self._request("GET", self.runtime.models_url, deadline=deadline)
             try:
-                response = self._client.post(
-                    self.wake_url,
-                    headers=self._headers(),
-                    json={"wake": True},
-                    timeout=self.timeout_s,
-                )
-            except httpx.HTTPError:
-                self._state = "OFFLINE"
-                self._message = (
-                    "AI wake request could not connect; local fallback remains available."
-                )
-                return self._wake_result(False)
-            if not 200 <= response.status_code < 300:
-                self._state = "DEGRADED"
-                self._message = (
-                    f"AI wake request returned HTTP {response.status_code}; "
-                    "local fallback remains available."
-                )
-                return self._wake_result(False)
-            self._state = "WARMING"
-            self._message = "AI wake request accepted; readiness is still warming."
-            return self._wake_result(True)
+                models = response.json()["data"]
+                matched = any(model["id"] == self.runtime.model_name for model in models)
+            except (ValueError, KeyError, TypeError):
+                raise _ProbeFailure("DEGRADED", "AI model listing is invalid.") from None
+            if not matched:
+                raise _ProbeFailure("DEGRADED", "Configured AI model is not served.")
 
-    def _wake_result(self, accepted: bool) -> AiWakeResult:
-        return AiWakeResult(
+    def _verify_inference(self, deadline: float) -> None:
+        if self.runtime.provider == "runpod_adapter":
+            payload = {
+                "model": self.runtime.model_name,
+                "messages": [
+                    {"role": "system", "content": build_system_prompt(["FAM_MILO"])},
+                    {"role": "user", "content": _PROBE_TEXT},
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.0,
+                "max_tokens": 256,
+            }
+        else:
+            payload = {
+                "masked_text": _PROBE_TEXT,
+                "language_hint": "en",
+                "request_id": f"ai-warmup-{uuid4().hex}",
+            }
+        response = self._request(
+            "POST", self.runtime.inference_url, deadline=deadline, json=payload
+        )
+        try:
+            data = response.json()
+            if self.runtime.provider == "runpod_adapter":
+                if data.get("model", self.runtime.model_name) != self.runtime.model_name:
+                    raise ValueError("model mismatch")
+                data = json.loads(data["choices"][0]["message"]["content"])
+            result = AiExtraction.model_validate(data)
+            if len(result.rows) != 1 or result.ignored_spans:
+                raise ValueError("invalid probe result")
+            row = result.rows[0]
+            if (
+                row.span != _PROBE_TEXT
+                or row.fam != "FAM_MILO"
+                or row.qty != 1
+                or row.uom != "ctn"
+                or row.pack_size is not None
+                or row.conds
+            ):
+                raise ValueError("unexpected probe extraction")
+        except (ValueError, KeyError, IndexError, TypeError, AttributeError):
+            raise _ProbeFailure(
+                "DEGRADED", "AI returned an invalid inference probe result."
+            ) from None
+
+    def _run_warmup(self, revision: int) -> None:
+        try:
+            deadline = time.monotonic() + self.runtime.warmup_timeout_s
+            # An explicit legacy wake hook may be what starts its HTTP service.
+            if self.runtime.provider == "http" and self.runtime.wake_url:
+                self._request("POST", self.runtime.wake_url, deadline=deadline, json={"wake": True})
+            self._check_service(deadline)
+            self._verify_inference(deadline)
+            state: AiState = "READY"
+            message = "AI model verified by a valid synthetic extraction."
+        except _ProbeFailure as exc:
+            state, message = exc.state, exc.message
+        except Exception:
+            state, message = "DEGRADED", "AI warmup verification failed." + _FALLBACK
+        with self._lock:
+            # A newer real parse result takes precedence over an older warmup.
+            if self._closed or revision != self._revision:
+                return
+            self._state, self._message = state, message
+            self._last_inference_at = time.monotonic() if state == "READY" else None
+
+    def observe_inference(self, mode: str | None) -> None:
+        """Record only actual provider calls, never customer-memory bypasses."""
+        with self._lock:
+            if self.runtime.provider == "stub" or self._closed or mode == "ALIAS_ONLY":
+                return
+            self._revision += 1
+            if mode == "LLM":
+                self._last_inference_at = time.monotonic()
+                self._state = "READY"
+                self._message = "The latest provider extraction succeeded."
+            else:
+                self._last_inference_at = None
+                self._state = "DEGRADED"
+                self._message = "The latest extraction did not verify LLM inference." + _FALLBACK
+
+    def _status(self) -> AiStatus:
+        return AiStatus(
             state=self._state,
-            accepted=accepted,
+            available_modes=available_modes(self._state),  # type: ignore[arg-type]
             fallback_available=True,
             last_checked_at=_now(),
             message=self._message,
         )
+
+    def status(self) -> AiStatus:
+        with self._lock:
+            if self.runtime.provider == "stub" or self._closed:
+                return self._status()
+            if self._warmup is not None and not self._warmup.done():
+                return self._status()
+            try:
+                self._check_service()
+            except _ProbeFailure as exc:
+                self._last_inference_at = None
+                self._state, self._message = exc.state, exc.message
+                return self._status()
+            if (
+                self._last_inference_at is not None
+                and time.monotonic() - self._last_inference_at < self._readiness_ttl_s
+            ):
+                self._state = "READY"
+            else:
+                expired = self._last_inference_at is not None or self._state == "OFFLINE"
+                self._state = "DEGRADED"
+                if expired:
+                    self._message = (
+                        "AI inference is unverified or expired; use Wake AI "
+                        "or ask the team to warm up." + _FALLBACK
+                    )
+            return self._status()
+
+    def _wake_result(self, accepted: bool) -> AiWakeResult:
+        return AiWakeResult(
+            **self._status().model_dump(exclude={"available_modes"}), accepted=accepted
+        )
+
+    def wake(self, user_id: str) -> AiWakeResult:
+        with self._lock:
+            if self.runtime.provider == "stub" or self._closed:
+                return self._wake_result(False)
+            now = time.monotonic()
+            self._wake_users = {
+                user: at
+                for user, at in self._wake_users.items()
+                if now - at < self._wake_rate_limit_s
+            }
+            if user_id in self._wake_users:
+                raise RateLimitedError(
+                    details={
+                        "scope": "AI_WAKE",
+                        "retry_after_seconds": max(
+                            1, int(self._wake_rate_limit_s - (now - self._wake_users[user_id]))
+                        ),
+                    }
+                )
+            self._wake_users[user_id] = now
+            if self._warmup is not None and not self._warmup.done():
+                return self._wake_result(True)
+            self._revision += 1
+            self._last_inference_at = None
+            self._state = "WARMING"
+            self._message = "Background inference verification accepted; readiness is pending."
+            if self._executor is None:
+                self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ai-warmup")
+            self._warmup = self._executor.submit(self._run_warmup, self._revision)
+            return self._wake_result(True)

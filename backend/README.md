@@ -102,7 +102,7 @@ RUNPOD_MODEL_NAME=Qwen/Qwen2.5-7B-Instruct-AWQ
 LLM_TIMEOUT_S=4.1
 ```
 
-The AI adapter is called only in-process by `parse-draft`; it adds no `/api/v1/extract` endpoint. After the public RunPod endpoint recovers, run the three-stage preflight in `docs/ops/ai-sample-runbook.md` before the six-sample runner.
+The AI adapter is called only in-process by `parse-draft`; it adds no `/api/v1/extract` endpoint. Extraction, status and warmup share the provider configuration resolved by `app/ai_runtime.py`. After the public RunPod endpoint recovers, run the three-stage preflight in `docs/ops/ai-sample-runbook.md` before the six-sample runner.
 
 Retained HTTP-boundary configuration:
 
@@ -113,10 +113,15 @@ AI_WAKE_URL=https://.../wake
 AI_API_KEY=...
 AI_TIMEOUT_S=8.0
 AI_WAKE_RATE_LIMIT_S=60
-AI_WARMUP_GRACE_S=15
+AI_WARMUP_TIMEOUT_S=180
+AI_READINESS_TTL_S=60
 ```
 
-`GET /api/v1/ai/status` probes the health URL and returns `OFFLINE/WARMING/READY/DEGRADED` with fixed `available_modes`. `POST /api/v1/ai/wake` sends `{"wake": true}` to the wake URL. The default per-user rate limit is 60 seconds; exceeding it returns 429 `RATE_LIMITED` with `Retry-After`. Without a configured endpoint, status is `OFFLINE`. Fallback means the manual/alias path, not fabricated LLM readiness. The API key is sent only to the AI endpoint and appears in no response.
+`GET /api/v1/ai/status` returns `OFFLINE/WARMING/READY/DEGRADED`. RunPod mode derives `/health` and `/v1/models` from the extraction endpoint and checks the exact model name. Health 200 alone cannot establish READY: a valid inference within the last 60 seconds is also required. A real LLM parse refreshes this evidence; fallback clears it; customer-memory bypasses do not establish inference readiness. Status polling does not create inference tasks.
+
+`POST /api/v1/ai/wake` immediately accepts a background verification job with `accepted=true/state=WARMING`; read status for the final result. RunPod warmup uses the configured model and production extraction prompt with a synthetic order, never `{"wake":true}` at chat-completions. Legacy HTTP mode calls only an explicitly configured wake URL, then verifies extraction. Warmup has a separate default 180-second budget; business parsing retains `LLM_TIMEOUT_S=4.1`. The process runs one warmup at a time, with a default 60-second per-user limit and the existing 429 `RATE_LIMITED/Retry-After` response. `AI_WARMUP_GRACE_S` is accepted for old configurations but no longer controls state transitions. Stub stays OFFLINE with `accepted=false`; API keys never appear in responses.
+
+See [B01 provider readiness and acceptance](../docs/ops/b01-provider-readiness.md) for configuration and GPU-free regressions. Local mock success is not real RunPod acceptance. GPU worker lifecycle remains under Xiong's control.
 
 Flow:
 
