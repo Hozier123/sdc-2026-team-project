@@ -1,0 +1,11 @@
+parse_draft request_id：ca57c454-bf64-4868-941a-a3797858b392
+approve request_id：1ff33119-afa7-4d04-bf33-33f9f880e9a1
+ai_mode：FALLBACK
+DO 号：DO_20261029_453C4BC2
+库存数字：Tepung 31 Minyak 23
+商品名正常✔
+单位是ctn❌（单位是bag和btl）
+单价是等级价✔
+总价✔
+没有黄色阻断提示✔
+总额数字是：70.80

@@ -29,3 +29,7 @@ For this iteration, do not change the seed or advance Gate 0, and do not claim t
 2. Distinguish bulk-product `kg` from pack-size `kg` for the 4 bulk-kg cases.
 
 Rerun all 23 cases and replace the official evidence after the fixes.
+
+## 2026-10-29 C01 最终验收归档
+
+[C01：PASS（FALLBACK 降级业务验收）](e2e/c01/2026-10-29/README.md)：业务、CLERK／OWNER／WAREHOUSE 网页角色证据与材料完整性已由 Zhou 复核通过，完整原始 HAR 为实物级绑定；公开副本、源哈希和逐文件映射均可追溯。C07、LLM 及其他任务不并入该结论。

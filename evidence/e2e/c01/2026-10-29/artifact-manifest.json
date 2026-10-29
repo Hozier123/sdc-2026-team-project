@@ -1,0 +1,337 @@
+{
+  "hash_algorithm": "SHA-256",
+  "original_hashes": "Private retained source bytes",
+  "public_hashes": "Exact committed bytes; directory .gitattributes disables newline conversion",
+  "files": [
+    {
+      "original_file": "c01_session.har",
+      "original_size_bytes": 1273472,
+      "original_sha256": "24d15f599373eac4591276c414abf148f6de67f8ce1b006220ea5db8bd5bfca3",
+      "private_archive_path": "originals/network/c01_session.har",
+      "public_path": "network/clerk.redacted.har",
+      "public_size_bytes": 644310,
+      "public_sha256": "f3bdc3dc6a2c75d21009ed8fa6c1eeccc3493d91aff3080acafaea58efde7dd7",
+      "transformation": "har"
+    },
+    {
+      "original_file": "Records.txt",
+      "original_size_bytes": 356,
+      "original_sha256": "4643feb939093c6fd38be14a8de7a281e52465b84bfff92752fc3dd976905e9c",
+      "private_archive_path": "originals/records/clerk.txt",
+      "public_path": "records/clerk.txt",
+      "public_size_bytes": 356,
+      "public_sha256": "4643feb939093c6fd38be14a8de7a281e52465b84bfff92752fc3dd976905e9c",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "owner_session.har",
+      "original_size_bytes": 173953,
+      "original_sha256": "7c1acb658c377d253e1ab95583fb8a8f52073c486491264115f4fbc11680d6d2",
+      "private_archive_path": "originals/network/owner_session.har",
+      "public_path": "network/owner.redacted.har",
+      "public_size_bytes": 77865,
+      "public_sha256": "b9334c3613e7dc05f9c713b8c477eb13bf79a9cbc59fff4c16f7acfb36b873f6",
+      "transformation": "har"
+    },
+    {
+      "original_file": "owner.txt",
+      "original_size_bytes": 478,
+      "original_sha256": "098fed7b548170b1cbd7cd39a05e3db39195f5b77d83e0b10e87b6dad06972c8",
+      "private_archive_path": "originals/records/owner.txt",
+      "public_path": "records/owner.txt",
+      "public_size_bytes": 478,
+      "public_sha256": "098fed7b548170b1cbd7cd39a05e3db39195f5b77d83e0b10e87b6dad06972c8",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "warehouse_session.har",
+      "original_size_bytes": 60281,
+      "original_sha256": "5ca83bd39efa5ddc500b4dca1a3380b607466bf5f139d28d15be92efb3f0a4a1",
+      "private_archive_path": "originals/network/warehouse_session.har",
+      "public_path": "network/warehouse.redacted.har",
+      "public_size_bytes": 22392,
+      "public_sha256": "5f3280f50c2a47d8d75a15c9cbac9989a649d408b86c92fed1b0ab5dcbe379ca",
+      "transformation": "har"
+    },
+    {
+      "original_file": "warehouse.txt",
+      "original_size_bytes": 889,
+      "original_sha256": "89a9165621c272050dc07c9edde4addf4cd15f1d32d53111104588664c720242",
+      "private_archive_path": "originals/records/warehouse.txt",
+      "public_path": "records/warehouse.txt",
+      "public_size_bytes": 889,
+      "public_sha256": "89a9165621c272050dc07c9edde4addf4cd15f1d32d53111104588664c720242",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "selected-network-evidence.json",
+      "original_size_bytes": 62165,
+      "original_sha256": "cfc743cb8f4394005e583b191acd830c767d8ec5d60505320517a923a33a253a",
+      "private_archive_path": "originals/network/selected-network-evidence.json",
+      "public_path": "network/selected-network-evidence.redacted.json",
+      "public_size_bytes": 64121,
+      "public_sha256": "7768b6ca9aec6dc0de850405cfc556136f569d52513b66328ead101fcc598db7",
+      "transformation": "json"
+    },
+    {
+      "original_file": "source-manifest.json",
+      "original_size_bytes": 2294,
+      "original_sha256": "b5c1003b745c628cb657efab69d4cff9e7f69500cc6e0d634a5b602a23403e8a",
+      "private_archive_path": "originals/provenance/source-manifest.original.json",
+      "public_path": "provenance/original-source-manifest.json",
+      "public_size_bytes": 2724,
+      "public_sha256": "e9756320c82a8c294bfa22d982a99b784888b2bd6879d0da78134dd770322706",
+      "transformation": "source_manifest"
+    },
+    {
+      "original_file": "REVIEW.md",
+      "original_size_bytes": 4308,
+      "original_sha256": "08062a871c3c80010b291dbecf20b352a71eda4c9236ea7d1ffa4812e796e272",
+      "private_archive_path": "originals/records/initial-evidence-review.historical.md",
+      "public_path": "records/initial-evidence-review.historical.md",
+      "public_size_bytes": 4308,
+      "public_sha256": "08062a871c3c80010b291dbecf20b352a71eda4c9236ea7d1ffa4812e796e272",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "c01_01_baseline.png",
+      "original_size_bytes": 708443,
+      "original_sha256": "5bdbeafd987e5a8eb5a044a1191dae3000e8377c41d5523f95b71b3ef792790a",
+      "private_archive_path": "originals/screenshots/clerk/c01_01_baseline.png",
+      "public_path": "screenshots/clerk/c01_01_baseline.png",
+      "public_size_bytes": 708443,
+      "public_sha256": "5bdbeafd987e5a8eb5a044a1191dae3000e8377c41d5523f95b71b3ef792790a",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "c01_02_approved.png",
+      "original_size_bytes": 786326,
+      "original_sha256": "aabbdc555b25a503b40f1719f89d66565279eac199dabb2ab6017d4d692c4243",
+      "private_archive_path": "originals/screenshots/clerk/c01_02_approved.png",
+      "public_path": "screenshots/clerk/c01_02_approved.png",
+      "public_size_bytes": 786326,
+      "public_sha256": "aabbdc555b25a503b40f1719f89d66565279eac199dabb2ab6017d4d692c4243",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "c01_03_do.png",
+      "original_size_bytes": 73673,
+      "original_sha256": "42b91856ef42caeeaea5da0258384fe54de722a61b521e80ab9145fb83fd2ebd",
+      "private_archive_path": "originals/screenshots/clerk/c01_03_do.png",
+      "public_path": "screenshots/clerk/c01_03_do.png",
+      "public_size_bytes": 73673,
+      "public_sha256": "42b91856ef42caeeaea5da0258384fe54de722a61b521e80ab9145fb83fd2ebd",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "c01_04_stock_after.png",
+      "original_size_bytes": 714673,
+      "original_sha256": "2f349998917849dd5fffca626df91a78fdb9771a82dc2f7df17a4ac78f50c99c",
+      "private_archive_path": "originals/screenshots/clerk/c01_04_stock_after.png",
+      "public_path": "screenshots/clerk/c01_04_stock_after.png",
+      "public_size_bytes": 714673,
+      "public_sha256": "2f349998917849dd5fffca626df91a78fdb9771a82dc2f7df17a4ac78f50c99c",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "c01_05_log.png",
+      "original_size_bytes": 46551,
+      "original_sha256": "195cddc46133571d9dd89387cd742717628544cd299473acfa5981dbd061405f",
+      "private_archive_path": "originals/screenshots/clerk/c01_05_log.png",
+      "public_path": "screenshots/clerk/c01_05_log.png",
+      "public_size_bytes": 46551,
+      "public_sha256": "195cddc46133571d9dd89387cd742717628544cd299473acfa5981dbd061405f",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "ai-offline.png",
+      "original_size_bytes": 17720,
+      "original_sha256": "a4ea41c85add2a837b4bcf33220954ad1f11e5fa4ce1d38d62472021cc23d789",
+      "private_archive_path": "originals/screenshots/supporting/ai-offline.png",
+      "public_path": "screenshots/supporting/ai-offline.png",
+      "public_size_bytes": 17720,
+      "public_sha256": "a4ea41c85add2a837b4bcf33220954ad1f11e5fa4ce1d38d62472021cc23d789",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "c07-console-409.png",
+      "original_size_bytes": 11718,
+      "original_sha256": "02877fed3f18e30eb09b05d40c294dcec7ca4db46bc596ad9b5bf8bcbb77df2e",
+      "private_archive_path": "originals/screenshots/supporting/c07-console-409.png",
+      "public_path": "screenshots/supporting/c07-console-409.png",
+      "public_size_bytes": 11718,
+      "public_sha256": "02877fed3f18e30eb09b05d40c294dcec7ca4db46bc596ad9b5bf8bcbb77df2e",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "c07-status-409.png",
+      "original_size_bytes": 4976,
+      "original_sha256": "3b7d67c20beff7dd820bb82d91a76a2fcc008ac7079deb9aec62e5696c953937",
+      "private_archive_path": "originals/screenshots/supporting/c07-status-409.png",
+      "public_path": "screenshots/supporting/c07-status-409.png",
+      "public_size_bytes": 4976,
+      "public_sha256": "3b7d67c20beff7dd820bb82d91a76a2fcc008ac7079deb9aec62e5696c953937",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "owner_01_me - 1.png",
+      "original_size_bytes": 290429,
+      "original_sha256": "cf8df83e02b955537a98efb1e43373e3abdec094808fdae9497c45b09187831d",
+      "private_archive_path": "originals/screenshots/owner/owner_01_me_1.png",
+      "public_path": "screenshots/owner/owner_01_me_1.png",
+      "public_size_bytes": 290429,
+      "public_sha256": "cf8df83e02b955537a98efb1e43373e3abdec094808fdae9497c45b09187831d",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "owner_01_me - 2.png",
+      "original_size_bytes": 307251,
+      "original_sha256": "4363a2c9bda11abb191c3fb6fc880d17d27f16d5d8c1958b07a50e195fdc9616",
+      "private_archive_path": "originals/screenshots/owner/owner_01_me_2.png",
+      "public_path": "screenshots/owner/owner_01_me_2.png",
+      "public_size_bytes": 307251,
+      "public_sha256": "4363a2c9bda11abb191c3fb6fc880d17d27f16d5d8c1958b07a50e195fdc9616",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "owner_02_do.png",
+      "original_size_bytes": 383530,
+      "original_sha256": "c41f7168cb32ed65e253dff3216d7e3e0fc524b2037421baefc090dca426cd58",
+      "private_archive_path": "originals/screenshots/owner/owner_02_do.png",
+      "public_path": "screenshots/owner/owner_02_do.png",
+      "public_size_bytes": 383530,
+      "public_sha256": "c41f7168cb32ed65e253dff3216d7e3e0fc524b2037421baefc090dca426cd58",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "owner_03_audit_page.png",
+      "original_size_bytes": 57889,
+      "original_sha256": "18eef161f01a0b1cff7efe38b57756693bf06417d99f40e91692e2d03d4ded4e",
+      "private_archive_path": "originals/screenshots/owner/owner_03_audit_page.png",
+      "public_path": "screenshots/owner/owner_03_audit_page.png",
+      "public_size_bytes": 57889,
+      "public_sha256": "18eef161f01a0b1cff7efe38b57756693bf06417d99f40e91692e2d03d4ded4e",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "owner_04_audit_response - 1.png",
+      "original_size_bytes": 392251,
+      "original_sha256": "997caff9b77c277bce6d787777c0c55e24077e95d283419ee800933c17f17386",
+      "private_archive_path": "originals/screenshots/owner/owner_04_audit_response_1.png",
+      "public_path": "screenshots/owner/owner_04_audit_response_1.png",
+      "public_size_bytes": 392251,
+      "public_sha256": "997caff9b77c277bce6d787777c0c55e24077e95d283419ee800933c17f17386",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "owner_04_audit_response - 2.png",
+      "original_size_bytes": 414835,
+      "original_sha256": "ae718753896e88dfb6465ec0f19e5dd045d41f73eeb6454b24d6d20f4f2b9734",
+      "private_archive_path": "originals/screenshots/owner/owner_04_audit_response_2.png",
+      "public_path": "screenshots/owner/owner_04_audit_response_2.png",
+      "public_size_bytes": 414835,
+      "public_sha256": "ae718753896e88dfb6465ec0f19e5dd045d41f73eeb6454b24d6d20f4f2b9734",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "warehouse_01_me - 1.png",
+      "original_size_bytes": 272002,
+      "original_sha256": "55ac2dbaf89bda1a628af13a1b2ac5514b89ab6769e9d5009ce46532c49d3a71",
+      "private_archive_path": "originals/screenshots/warehouse/warehouse_01_me_1.png",
+      "public_path": "screenshots/warehouse/warehouse_01_me_1.png",
+      "public_size_bytes": 272002,
+      "public_sha256": "55ac2dbaf89bda1a628af13a1b2ac5514b89ab6769e9d5009ce46532c49d3a71",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "warehouse_01_me - 2.png",
+      "original_size_bytes": 260852,
+      "original_sha256": "e971639e1f3d4807a338472158aa20433d86781a783680e1f791bd031c021cf7",
+      "private_archive_path": "originals/screenshots/warehouse/warehouse_01_me_2.png",
+      "public_path": "screenshots/warehouse/warehouse_01_me_2.png",
+      "public_size_bytes": 260852,
+      "public_sha256": "e971639e1f3d4807a338472158aa20433d86781a783680e1f791bd031c021cf7",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "warehouse_02_picking_page.png",
+      "original_size_bytes": 234617,
+      "original_sha256": "7c4d58b20d93fccc5e257a33823fc0af47b3ff783f806e79793c7ba875dde5ff",
+      "private_archive_path": "originals/screenshots/warehouse/warehouse_02_picking_page.png",
+      "public_path": "screenshots/warehouse/warehouse_02_picking_page.png",
+      "public_size_bytes": 234617,
+      "public_sha256": "7c4d58b20d93fccc5e257a33823fc0af47b3ff783f806e79793c7ba875dde5ff",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "warehouse_03_response.png",
+      "original_size_bytes": 314610,
+      "original_sha256": "e8ae9aa2a9730f8d503bb66039e271de4fd47eea9f46887f1d979a49e5e500ad",
+      "private_archive_path": "originals/screenshots/warehouse/warehouse_03_response.png",
+      "public_path": "screenshots/warehouse/warehouse_03_response.png",
+      "public_size_bytes": 314610,
+      "public_sha256": "e8ae9aa2a9730f8d503bb66039e271de4fd47eea9f46887f1d979a49e5e500ad",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "warehouse_04_headers.png",
+      "original_size_bytes": 267478,
+      "original_sha256": "ad4ce2f01f2c3bc705e7893c48864d7ccdf7209f473164fcad6d3837d762ce58",
+      "private_archive_path": "originals/screenshots/warehouse/warehouse_04_headers.png",
+      "public_path": "screenshots/warehouse/warehouse_04_headers.png",
+      "public_size_bytes": 267478,
+      "public_sha256": "ad4ce2f01f2c3bc705e7893c48864d7ccdf7209f473164fcad6d3837d762ce58",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "01_Zhou_C01复核结论_2026-10-29(2).md",
+      "original_size_bytes": 5835,
+      "original_sha256": "4847ba720eda55eac43f5d700235cc0d3efb55c4f14998a2ccc92f995c80465f",
+      "private_archive_path": "originals/reviews/01-Zhou-C01-review.md",
+      "public_path": "reviews/01-Zhou-C01-review.md",
+      "public_size_bytes": 5835,
+      "public_sha256": "4847ba720eda55eac43f5d700235cc0d3efb55c4f14998a2ccc92f995c80465f",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "02_待补证据清单_2026-10-29(2).md",
+      "original_size_bytes": 3573,
+      "original_sha256": "d5544104122ee33ea5571bd5bfcb29fe6a50acda56c385d5e98eccd7a11440e1",
+      "private_archive_path": "originals/reviews/02-Zhou-evidence-checklist.md",
+      "public_path": "reviews/02-Zhou-evidence-checklist.md",
+      "public_size_bytes": 3573,
+      "public_sha256": "d5544104122ee33ea5571bd5bfcb29fe6a50acda56c385d5e98eccd7a11440e1",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "03_附件哈希清单_2026-10-29(3).txt",
+      "original_size_bytes": 6919,
+      "original_sha256": "72744f763ad2881d44aae4462530c3bc64603cc63206a0445e984ad6f2f1d5f0",
+      "private_archive_path": "originals/reviews/03-Zhou-attachment-hashes.txt",
+      "public_path": "reviews/03-Zhou-attachment-hashes.txt",
+      "public_size_bytes": 6919,
+      "public_sha256": "72744f763ad2881d44aae4462530c3bc64603cc63206a0445e984ad6f2f1d5f0",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "04_Zhou_C01角色证据补判_2026-10-29(1).md",
+      "original_size_bytes": 4333,
+      "original_sha256": "fc2ac621b788b80895d2f0211eafd249704de5bf50cdf7e96d0c7fe147d15c40",
+      "private_archive_path": "originals/reviews/04-Zhou-role-review.md",
+      "public_path": "reviews/04-Zhou-role-review.md",
+      "public_size_bytes": 4333,
+      "public_sha256": "fc2ac621b788b80895d2f0211eafd249704de5bf50cdf7e96d0c7fe147d15c40",
+      "transformation": "copy"
+    },
+    {
+      "original_file": "05_Zhou_C01补充材料复核_2026-10-29(1).md",
+      "original_size_bytes": 4717,
+      "original_sha256": "4adf36e1756605a561fc49b74ee6a2b1d6483549db844e47707f3c6d8d9506c0",
+      "private_archive_path": "originals/reviews/05-Zhou-complete-HAR-review.md",
+      "public_path": "reviews/05-Zhou-complete-HAR-review.md",
+      "public_size_bytes": 4717,
+      "public_sha256": "4adf36e1756605a561fc49b74ee6a2b1d6483549db844e47707f3c6d8d9506c0",
+      "transformation": "copy"
+    }
+  ]
+}
