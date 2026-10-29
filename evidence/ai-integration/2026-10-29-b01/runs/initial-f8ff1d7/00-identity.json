@@ -1,0 +1,37 @@
+{
+  "label": "identity",
+  "method": "GET",
+  "path": "/api/v1/me",
+  "started_at_utc": "2026-10-29T14:51:37.980023+00:00",
+  "started_at_utc8": "2026-10-29T22:51:37.980023+08:00",
+  "completed_at_utc": "2026-10-29T14:51:39.387794+00:00",
+  "elapsed_ms": 1407.8,
+  "sent_request_id": "b01-9c9018fc0c964e1899528eb3c1ae2ca8",
+  "request_id": "b01-9c9018fc0c964e1899528eb3c1ae2ca8",
+  "request_body": null,
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-9c9018fc0c964e1899528eb3c1ae2ca8"
+  },
+  "response_body": {
+    "user_id": "USR_T1_CLERK",
+    "tenant": {
+      "id": "T1",
+      "name": "Sinaran Food Supply"
+    },
+    "display_name": "Siti",
+    "role": "CLERK",
+    "permissions": [
+      "EDIT_DRAFT",
+      "RESOLVE_ISSUE",
+      "COPY_CLARIFICATION",
+      "APPROVE_AND_GENERATE_DO",
+      "SUBMIT_FOR_OWNER",
+      "VIEW_ACTIVITY",
+      "WAKE_AI"
+    ],
+    "permission_summary": "Can create and edit drafts, resolve issues, and submit for approval."
+  }
+}

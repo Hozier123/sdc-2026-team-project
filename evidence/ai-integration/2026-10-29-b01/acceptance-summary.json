@@ -1,0 +1,77 @@
+{
+  "scope": "B01 real warmup/readiness and C01 original-input public API parse",
+  "status": "PASS",
+  "recorded_at_utc": "2026-10-29T15:07:38.946687+00:00",
+  "window_utc8": "2026-10-29 22:45-23:15",
+  "application_source_sha": "555f0fa669ac40e2d7b9d9ceacdbfb6d24301127",
+  "implementation_pr": "https://github.com/Hozier123/sdc-2026-team-project/pull/68",
+  "probe_compatibility_fix_pr": "https://github.com/Hozier123/sdc-2026-team-project/pull/70",
+  "replit_deployment_id_prefix": "7c492845",
+  "api_origin": "https://kiraorder-api.replit.app",
+  "frontend_source_sha": "f8ff1d754d492a251353e45c7c6cdc00c538346c",
+  "runtime_model": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+  "business_parse_timeout_s": 4.1,
+  "final_warmup_verified": true,
+  "final_parses": [
+    {
+      "case": "b01-parse",
+      "request_id": "b01-4a6d8686d3d34821956f9e02efb5f2ec",
+      "time_utc8": "2026-10-29T23:03:58.558684+08:00",
+      "elapsed_ms": 2176.5,
+      "http_status": 200,
+      "ai_mode": "LLM",
+      "draft_id": "DRF_343BD76306924746892526DBB3C40C89",
+      "lines": 1
+    },
+    {
+      "case": "c01-parse",
+      "request_id": "b01-ccd64e68d2c04b60a6bae111e9b522b7",
+      "time_utc8": "2026-10-29T23:04:01.399482+08:00",
+      "elapsed_ms": 2363.1,
+      "http_status": 200,
+      "ai_mode": "LLM",
+      "draft_id": "DRF_88933E94713E4B4E9368F82377DDB442",
+      "lines": 2
+    }
+  ],
+  "all_parse_count": 6,
+  "all_parse_modes": {
+    "LLM": 6,
+    "FALLBACK": 0
+  },
+  "side_effects": {
+    "synthetic_drafts_created": 6,
+    "draft_ids": [
+      "DRF_B4B3E916CF914FAB9F6BF5E2FBA7066E",
+      "DRF_5F0AE9B60D404D2BB40B036DEAA63D08",
+      "DRF_8E7B628B587B4EF0A5F06A844B8EF8D2",
+      "DRF_99530D72351844CAA70170D325F40EBF",
+      "DRF_343BD76306924746892526DBB3C40C89",
+      "DRF_88933E94713E4B4E9368F82377DDB442"
+    ],
+    "approvals": 0,
+    "delivery_orders": 0,
+    "inventory_deductions": 0
+  },
+  "checks": {
+    "exact_model_listing": true,
+    "synthetic_inference": true,
+    "warmup_ready_before_parse": true,
+    "status_ready_after_each_final_parse": true,
+    "parse_business_fields": true,
+    "same_day_and_ambiguity_gates": true
+  },
+  "ci": {
+    "backend_tests": 470,
+    "frontend_tests": 59,
+    "status_regressions": 39,
+    "backend_run": "https://github.com/Hozier123/sdc-2026-team-project/actions/runs/40896532012",
+    "frontend_run": "https://github.com/Hozier123/sdc-2026-team-project/actions/runs/40896532089"
+  },
+  "limitations": [
+    "Hot-worker acceptance only; no cold-start fault injection in this window.",
+    "No new approval/DO/inventory workflow; historical C01 FALLBACK evidence remains unchanged.",
+    "This is not TEST32 or model-quality accuracy scoring."
+  ],
+  "gpu_lifecycle": "Xiong retains worker lifecycle control; all inference calls ended by 23:04:04 UTC+8."
+}

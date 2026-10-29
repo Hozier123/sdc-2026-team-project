@@ -1,0 +1,24 @@
+{
+  "scope": "LIVE_RUNPOD_FROM_PATCHED_LOCAL_ORCHESTRATOR",
+  "source_sha": "555f0fa669ac40e2d7b9d9ceacdbfb6d24301127",
+  "started_at_utc": "2026-10-29T14:59:18.670987+00:00",
+  "completed_at_utc": "2026-10-29T14:59:22.121800+00:00",
+  "wake": {
+    "state": "WARMING",
+    "accepted": true,
+    "fallback_available": true,
+    "last_checked_at": "2026-10-29T14:59:18.672322Z",
+    "message": "Background inference verification accepted; readiness is pending."
+  },
+  "status": {
+    "state": "READY",
+    "available_modes": [
+      "LLM",
+      "FALLBACK",
+      "ALIAS_ONLY"
+    ],
+    "fallback_available": true,
+    "last_checked_at": "2026-10-29T14:59:22.121766Z",
+    "message": "AI model verified by a valid synthetic extraction."
+  }
+}

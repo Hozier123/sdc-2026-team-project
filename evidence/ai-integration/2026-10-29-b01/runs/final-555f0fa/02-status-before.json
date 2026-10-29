@@ -1,0 +1,28 @@
+{
+  "label": "status-before",
+  "method": "GET",
+  "path": "/api/v1/ai/status",
+  "started_at_utc": "2026-10-29T15:03:55.024469+00:00",
+  "started_at_utc8": "2026-10-29T23:03:55.024469+08:00",
+  "completed_at_utc": "2026-10-29T15:03:55.771518+00:00",
+  "elapsed_ms": 747.1,
+  "sent_request_id": "b01-0ff6e29d987a4d0b9282be082900d7b7",
+  "request_id": "b01-0ff6e29d987a4d0b9282be082900d7b7",
+  "request_body": null,
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-0ff6e29d987a4d0b9282be082900d7b7"
+  },
+  "response_body": {
+    "state": "DEGRADED",
+    "available_modes": [
+      "FALLBACK",
+      "ALIAS_ONLY"
+    ],
+    "fallback_available": true,
+    "last_checked_at": "2026-10-29T15:03:55.783048Z",
+    "message": "AI inference is unverified or expired; use Wake AI or ask the team to warm up. Local fallback/manual handling remains available."
+  }
+}

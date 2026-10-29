@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "checks": {
+    "b01_sku_qty_unit_price": true,
+    "c01_flour_quantity_and_unit": true,
+    "c01_flour_ambiguity": true,
+    "c01_oil_sku_qty_unit_subtotal": true,
+    "same_day_gates_preserved": true
+  }
+}

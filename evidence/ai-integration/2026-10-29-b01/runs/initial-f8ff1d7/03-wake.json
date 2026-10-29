@@ -1,0 +1,25 @@
+{
+  "label": "wake",
+  "method": "POST",
+  "path": "/api/v1/ai/wake",
+  "started_at_utc": "2026-10-29T14:51:41.149663+00:00",
+  "started_at_utc8": "2026-10-29T22:51:41.149663+08:00",
+  "completed_at_utc": "2026-10-29T14:51:41.284985+00:00",
+  "elapsed_ms": 135.3,
+  "sent_request_id": "b01-84031aeac2614476a6ff2c88392a2934",
+  "request_id": "b01-84031aeac2614476a6ff2c88392a2934",
+  "request_body": null,
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-84031aeac2614476a6ff2c88392a2934"
+  },
+  "response_body": {
+    "state": "WARMING",
+    "accepted": true,
+    "fallback_available": true,
+    "last_checked_at": "2026-10-29T14:51:41.290814Z",
+    "message": "Background inference verification accepted; readiness is pending."
+  }
+}

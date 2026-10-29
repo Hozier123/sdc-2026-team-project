@@ -1,0 +1,38 @@
+{
+  "run_id": "live-20261029T150212Z-155f1c",
+  "scope": "REAL_PUBLIC_API_B01_AND_C01_PARSE_ONLY",
+  "api_origin": "https://kiraorder-api.replit.app",
+  "source_sha": "555f0fa669ac40e2d7b9d9ceacdbfb6d24301127",
+  "replit_deployment_id_prefix": "7c492845",
+  "window_utc8": "2026-10-29 22:45-23:15",
+  "worker_report": "Xiong: ready=1, idle=1, running=0; Active=1, Max=1",
+  "approvals": 0,
+  "inventory_deductions": 0,
+  "started_at_utc": "2026-10-29T15:02:12.021204+00:00",
+  "parses": [
+    {
+      "case": "b01-parse",
+      "request_id": "b01-3132418c3bf841699aa7bfdadda847de",
+      "time_utc8": "2026-10-29T23:02:13.669935+08:00",
+      "elapsed_ms": 2221.7,
+      "http_status": 200,
+      "ai_mode": "LLM",
+      "draft_id": "DRF_8E7B628B587B4EF0A5F06A844B8EF8D2",
+      "lines": 1
+    },
+    {
+      "case": "c01-parse",
+      "request_id": "b01-7d3642028c144584b7b141a46e99da7c",
+      "time_utc8": "2026-10-29T23:02:16.560884+08:00",
+      "elapsed_ms": 2864.4,
+      "http_status": 200,
+      "ai_mode": "LLM",
+      "draft_id": "DRF_99530D72351844CAA70170D325F40EBF",
+      "lines": 2
+    }
+  ],
+  "warmup_verified": false,
+  "status": "NEEDS_INVESTIGATION",
+  "completed_at_utc": "2026-10-29T15:02:20.138288+00:00",
+  "request_count": 8
+}

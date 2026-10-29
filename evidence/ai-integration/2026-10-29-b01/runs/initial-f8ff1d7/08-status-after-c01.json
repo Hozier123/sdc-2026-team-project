@@ -1,0 +1,29 @@
+{
+  "label": "status-after-c01",
+  "method": "GET",
+  "path": "/api/v1/ai/status",
+  "started_at_utc": "2026-10-29T14:51:55.439210+00:00",
+  "started_at_utc8": "2026-10-29T22:51:55.439210+08:00",
+  "completed_at_utc": "2026-10-29T14:51:56.161405+00:00",
+  "elapsed_ms": 722.2,
+  "sent_request_id": "b01-8d64fc0623c5476fb90972a77f72edab",
+  "request_id": "b01-8d64fc0623c5476fb90972a77f72edab",
+  "request_body": null,
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-8d64fc0623c5476fb90972a77f72edab"
+  },
+  "response_body": {
+    "state": "READY",
+    "available_modes": [
+      "LLM",
+      "FALLBACK",
+      "ALIAS_ONLY"
+    ],
+    "fallback_available": true,
+    "last_checked_at": "2026-10-29T14:51:56.168429Z",
+    "message": "The latest provider extraction succeeded."
+  }
+}
