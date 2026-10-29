@@ -1,0 +1,16 @@
+{
+  "policy": "Remove credential/cookie headers, nonessential HTTP/browser connection metadata, local filesystem paths and structured contact phone fields. Retain method, URL, status, business result, entry indexes and X-Request-ID.",
+  "redactions": {
+    "removed_browser_connection_metadata": 410,
+    "removed_nonessential_headers": 3348,
+    "removed_cookies": 0,
+    "removed_phone_e164": 36
+  },
+  "raw_HAR_entry_counts": {
+    "CLERK": 118,
+    "OWNER": 11,
+    "WAREHOUSE": 8
+  },
+  "screenshots": "Supplied screenshots preserved byte-for-byte. Business data is team-created synthetic data; no credential fields are visible.",
+  "public_HARs_are_derivatives": true
+}

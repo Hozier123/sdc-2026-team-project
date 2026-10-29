@@ -1,0 +1,70 @@
+{
+  "case_id": "C01",
+  "status": "PASS",
+  "acceptance_scope": "Real-browser fallback business acceptance, including role read-only access",
+  "historical_ai_mode": "FALLBACK",
+  "reviewer": "Zhou Jingxi",
+  "review_date": "2026-10-29",
+  "do_number": "DO_20261029_453C4BC2",
+  "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+  "draft_version": 3,
+  "total_rm": "70.80",
+  "original_HAR_binding": "PHYSICAL_FILE_VERIFIED",
+  "original_HAR_size_bytes": 1273472,
+  "original_HAR_sha256": "24d15f599373eac4591276c414abf148f6de67f8ce1b006220ea5db8bd5bfca3",
+  "roles": {
+    "CLERK": "PASS",
+    "OWNER": "PASS",
+    "WAREHOUSE": "PASS_READ_ONLY_VIEW_AND_RESPONSE_FIELD_MINIMIZATION"
+  },
+  "stock_changes": [
+    {
+      "sku_id": "SKU_TEPUNG_1KG",
+      "unit": "bag",
+      "before": 31,
+      "after": 27,
+      "deducted": 4
+    },
+    {
+      "sku_id": "SKU_MINYAK_5KG",
+      "unit": "btl",
+      "before": 23,
+      "after": 21,
+      "deducted": 2
+    }
+  ],
+  "audit_event_counts": {
+    "SAVE_LINES": 2,
+    "APPROVE": 1,
+    "INVENTORY_DEDUCT": 1
+  },
+  "request_ids": {
+    "clerk_parse": "ca57c454-bf64-4868-941a-a3797858b392",
+    "clerk_approve": "1ff33119-afa7-4d04-bf33-33f9f880e9a1",
+    "owner_me": "6419881e-c291-4f77-90b8-b58c60b3ec29",
+    "owner_audit": "1e280d20-c220-4c52-a802-3f0e5cb8dcc0",
+    "warehouse_me": "4a86f95c-93c2-4a31-8f16-6176d2f221b2",
+    "warehouse_picking": "721e59d9-df2a-4c54-a60d-9a56db2ab7d2"
+  },
+  "selected_original_entry_indexes": [
+    0,
+    10,
+    11,
+    22,
+    35,
+    59,
+    69,
+    86,
+    99,
+    109,
+    113,
+    116
+  ],
+  "outside_this_acceptance": {
+    "C07": "PENDING_SEPARATE_ACCEPTANCE",
+    "LLM_readiness": "NOT_ESTABLISHED_BY_THIS_RUN",
+    "T2": "NOT_ASSESSED_HERE",
+    "B04": "NOT_ASSESSED_HERE"
+  },
+  "closeout_operations": "File verification and archival only; no application API requests, approvals, stock writes or deployment changes."
+}

@@ -1,0 +1,2 @@
+# Reviewed evidence keeps original bytes; CRLF endings are intentional.
+* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

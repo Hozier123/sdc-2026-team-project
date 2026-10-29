@@ -1,0 +1,1955 @@
+[
+  {
+    "source_entry_index": 0,
+    "started_at_utc": "2026-10-29T07:09:06.100Z",
+    "started_at_utc8": "2026-10-29 15:09:06 +08:00",
+    "duration_ms": 380.8830000052694,
+    "request": {
+      "method": "GET",
+      "url": "https://kiraorder-api.replit.app/api/v1/me",
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "cf328892-1c9a-4b03-935b-fb6c1a1da0b2"
+        }
+      ],
+      "body": {
+        "user_id": "USR_T1_CLERK",
+        "tenant": {
+          "id": "T1",
+          "name": "Sinaran Food Supply"
+        },
+        "display_name": "Siti",
+        "role": "CLERK",
+        "permissions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "COPY_CLARIFICATION",
+          "APPROVE_AND_GENERATE_DO",
+          "SUBMIT_FOR_OWNER",
+          "VIEW_ACTIVITY",
+          "WAKE_AI"
+        ],
+        "permission_summary": "Can create and edit drafts, resolve issues, and submit for approval."
+      }
+    }
+  },
+  {
+    "source_entry_index": 10,
+    "started_at_utc": "2026-10-29T07:09:06.862Z",
+    "started_at_utc8": "2026-10-29 15:09:06 +08:00",
+    "duration_ms": 457.07999999285676,
+    "request": {
+      "method": "GET",
+      "url": "https://kiraorder-api.replit.app/api/v1/ai/status",
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "4c976e26-d75c-45f9-bdfc-014432de63db"
+        }
+      ],
+      "body": {
+        "state": "OFFLINE",
+        "available_modes": [
+          "FALLBACK",
+          "ALIAS_ONLY"
+        ],
+        "fallback_available": true,
+        "last_checked_at": "2026-10-29T07:09:07.364097Z",
+        "message": "AI endpoint not configured; local fallback/manual path only."
+      }
+    }
+  },
+  {
+    "source_entry_index": 11,
+    "started_at_utc": "2026-10-29T07:09:06.863Z",
+    "started_at_utc8": "2026-10-29 15:09:06 +08:00",
+    "duration_ms": 361.5050000080373,
+    "request": {
+      "method": "POST",
+      "url": "https://kiraorder-api.replit.app/api/v1/ai/wake",
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "2360271c-f106-4253-a1cf-c85bf9ef3e6e"
+        }
+      ],
+      "body": {
+        "state": "OFFLINE",
+        "accepted": false,
+        "fallback_available": true,
+        "last_checked_at": "2026-10-29T07:09:07.346746Z",
+        "message": "AI endpoint not configured; no wake request was sent."
+      }
+    }
+  },
+  {
+    "source_entry_index": 22,
+    "started_at_utc": "2026-10-29T07:09:53.058Z",
+    "started_at_utc8": "2026-10-29 15:09:53 +08:00",
+    "duration_ms": 4678.782000002684,
+    "request": {
+      "method": "POST",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/parse-draft",
+      "body": {
+        "customer_id": "CUS_ALI",
+        "message_text": "Tepung 4 bag\nMinyak 2 btl",
+        "language_hint": null
+      }
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "ca57c454-bf64-4868-941a-a3797858b392"
+        }
+      ],
+      "body": {
+        "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+        "version": 1,
+        "status": "DISAMBIGUATION_REQUIRED",
+        "customer_id": "CUS_ALI",
+        "customer": {
+          "customer_id": "CUS_ALI",
+          "name": "Restoran Ali",
+          "tier": "A",
+          "credit_flag": "NONE",
+          "has_credit_notice": false
+        },
+        "masked_message": "Tepung 4 bag\nMinyak 2 btl",
+        "ai_mode": "FALLBACK",
+        "lines": [
+          {
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "client_line_ref": "ai-1",
+            "sku_id": null,
+            "family_id": "FAM_TEPUNG",
+            "description": "Tepung 4 bag",
+            "requested_qty": 4,
+            "confirmed_qty": null,
+            "effective_qty": 4,
+            "uom": "bag",
+            "pack_size": null,
+            "grade": null,
+            "tier_unit_price": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": null,
+            "subtotal_rm": null,
+            "match_source": "RAPIDFUZZ_FALLBACK",
+            "source_span": "Tepung 4 bag",
+            "span_start": 0,
+            "span_end": 12,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "4",
+                "start": 7,
+                "end": 8,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [
+              {
+                "sku_id": "SKU_TEPUNG_1KG",
+                "family_id": "FAM_TEPUNG",
+                "display_name": "Tepung gandum 面粉",
+                "pack_size": "1kg",
+                "grade": null,
+                "base_unit": "bag",
+                "tier_unit_price": "3.20",
+                "available_qty": 31
+              },
+              {
+                "sku_id": "SKU_TEPUNG_2KG",
+                "family_id": "FAM_TEPUNG",
+                "display_name": "Tepung gandum 面粉",
+                "pack_size": "2kg",
+                "grade": null,
+                "base_unit": "bag",
+                "tier_unit_price": "6.00",
+                "available_qty": 30
+              }
+            ],
+            "saved_alias": null,
+            "available_qty": null
+          },
+          {
+            "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+            "client_line_ref": "ai-2",
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "description": "Minyak masak 食用油",
+            "requested_qty": 2,
+            "confirmed_qty": null,
+            "effective_qty": 2,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "tier_unit_price": "29.00",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "29.00",
+            "subtotal_rm": "58.00",
+            "match_source": "RAPIDFUZZ_FALLBACK",
+            "source_span": "Minyak 2 btl",
+            "span_start": 13,
+            "span_end": 25,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "2",
+                "start": 20,
+                "end": 21,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 23
+          }
+        ],
+        "issues": [
+          {
+            "issue_id": "ISS_6FFF5CEAF6094AD9B3B161526535C047",
+            "code": "MULTIPLE_PACK_SIZES",
+            "condition_id": null,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "span": "Tepung 4 bag",
+            "source_span": "Tepung 4 bag",
+            "span_start": 0,
+            "span_end": 12,
+            "condition_kind": null,
+            "condition_scope": null,
+            "candidate_line_ids": [],
+            "target_line_ids": [],
+            "requested_unit_price": null,
+            "price_basis": null,
+            "reason_code": null,
+            "ask": "CLERK",
+            "data_used": {
+              "candidate_skus": [
+                {
+                  "sku_id": "SKU_TEPUNG_1KG",
+                  "family_id": "FAM_TEPUNG",
+                  "display_name": "Tepung gandum 面粉",
+                  "pack_size": "1kg",
+                  "grade": null,
+                  "base_unit": "bag",
+                  "tier_unit_price": "3.20",
+                  "available_qty": 31
+                },
+                {
+                  "sku_id": "SKU_TEPUNG_2KG",
+                  "family_id": "FAM_TEPUNG",
+                  "display_name": "Tepung gandum 面粉",
+                  "pack_size": "2kg",
+                  "grade": null,
+                  "base_unit": "bag",
+                  "tier_unit_price": "6.00",
+                  "available_qty": 30
+                }
+              ]
+            },
+            "blocking": true,
+            "resolved": false,
+            "resolution": null,
+            "resolution_note": null,
+            "auto_resolved_by": null
+          },
+          {
+            "issue_id": "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+            "code": "SAME_DAY_ORDER",
+            "condition_id": null,
+            "line_id": null,
+            "span": null,
+            "source_span": null,
+            "span_start": null,
+            "span_end": null,
+            "condition_kind": null,
+            "condition_scope": null,
+            "candidate_line_ids": [],
+            "target_line_ids": [],
+            "requested_unit_price": null,
+            "price_basis": null,
+            "reason_code": null,
+            "ask": "CLERK",
+            "data_used": {
+              "existing_do_numbers": [
+                "DO_20261029_39FF35A3"
+              ]
+            },
+            "blocking": true,
+            "resolved": false,
+            "resolution": null,
+            "resolution_note": null,
+            "auto_resolved_by": null
+          }
+        ],
+        "conditions": [],
+        "blocking_issues": [
+          "MULTIPLE_PACK_SIZES",
+          "SAME_DAY_ORDER"
+        ],
+        "escalation_preview": [],
+        "totals": {
+          "order_total": null,
+          "currency": "MYR",
+          "is_complete": false
+        },
+        "allowed_actions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "COPY_CLARIFICATION"
+        ],
+        "blocked_actions": {
+          "APPROVE_AND_GENERATE_DO": [
+            "MULTIPLE_PACK_SIZES",
+            "SAME_DAY_ORDER"
+          ]
+        },
+        "clarification_draft": {
+          "language": "en",
+          "message": "Please confirm this order: Tepung 4 bag: 1kg (RM 3.20/bag) / 2kg (RM 6.00/bag)? Please confirm whether this is an additional order on top of an existing order today. Thank you!",
+          "unresolved_issue_ids": [
+            "ISS_6FFF5CEAF6094AD9B3B161526535C047",
+            "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9"
+          ]
+        },
+        "clarification_lang": "en",
+        "ignored_spans": [],
+        "disambiguations": [],
+        "termination_reason": null,
+        "terminated_by_user_id": null,
+        "termination_note": null,
+        "created_at": "2026-10-29T07:09:57.715287Z",
+        "updated_at": "2026-10-29T07:09:57.715287Z",
+        "do_number": null
+      }
+    }
+  },
+  {
+    "source_entry_index": 35,
+    "started_at_utc": "2026-10-29T07:10:04.589Z",
+    "started_at_utc8": "2026-10-29 15:10:04 +08:00",
+    "duration_ms": 5445.5009999801405,
+    "request": {
+      "method": "PUT",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/drafts/DRF_39D4D66CACC440A594B1C1AEBEF151B9/lines",
+      "body": {
+        "expected_version": 1,
+        "lines": [
+          {
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "sku_id": "SKU_TEPUNG_1KG",
+            "family_id": "FAM_TEPUNG",
+            "confirmed_qty": 4,
+            "uom": "bag",
+            "pack_size": "1kg",
+            "grade": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "match_source": "MANUAL_SELECTED"
+          },
+          {
+            "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "confirmed_qty": null,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "match_source": "RAPIDFUZZ_FALLBACK"
+          }
+        ],
+        "deleted_line_ids": [],
+        "resolutions": []
+      }
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "d24da55a-3678-4407-aa6a-0e359aa9befd"
+        }
+      ],
+      "body": {
+        "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+        "version": 2,
+        "status": "DISAMBIGUATION_REQUIRED",
+        "customer_id": "CUS_ALI",
+        "customer": {
+          "customer_id": "CUS_ALI",
+          "name": "Restoran Ali",
+          "tier": "A",
+          "credit_flag": "NONE",
+          "has_credit_notice": false
+        },
+        "masked_message": "Tepung 4 bag\nMinyak 2 btl",
+        "ai_mode": "FALLBACK",
+        "lines": [
+          {
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "client_line_ref": null,
+            "sku_id": "SKU_TEPUNG_1KG",
+            "family_id": "FAM_TEPUNG",
+            "description": "Tepung gandum 面粉",
+            "requested_qty": 4,
+            "confirmed_qty": 4,
+            "effective_qty": 4,
+            "uom": "bag",
+            "pack_size": "1kg",
+            "grade": null,
+            "tier_unit_price": "3.20",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "3.20",
+            "subtotal_rm": "12.80",
+            "match_source": "MANUAL_SELECTED",
+            "source_span": "Tepung 4 bag",
+            "span_start": 0,
+            "span_end": 12,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "4",
+                "start": 7,
+                "end": 8,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 31
+          },
+          {
+            "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+            "client_line_ref": null,
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "description": "Minyak masak 食用油",
+            "requested_qty": 2,
+            "confirmed_qty": null,
+            "effective_qty": 2,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "tier_unit_price": "29.00",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "29.00",
+            "subtotal_rm": "58.00",
+            "match_source": "RAPIDFUZZ_FALLBACK",
+            "source_span": "Minyak 2 btl",
+            "span_start": 13,
+            "span_end": 25,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "2",
+                "start": 20,
+                "end": 21,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 23
+          }
+        ],
+        "issues": [
+          {
+            "issue_id": "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+            "code": "SAME_DAY_ORDER",
+            "condition_id": null,
+            "line_id": null,
+            "span": null,
+            "source_span": null,
+            "span_start": null,
+            "span_end": null,
+            "condition_kind": null,
+            "condition_scope": null,
+            "candidate_line_ids": [],
+            "target_line_ids": [],
+            "requested_unit_price": null,
+            "price_basis": null,
+            "reason_code": null,
+            "ask": "CLERK",
+            "data_used": {
+              "existing_do_numbers": [
+                "DO_20261029_39FF35A3"
+              ]
+            },
+            "blocking": true,
+            "resolved": false,
+            "resolution": null,
+            "resolution_note": null,
+            "auto_resolved_by": null
+          }
+        ],
+        "conditions": [],
+        "blocking_issues": [
+          "SAME_DAY_ORDER"
+        ],
+        "escalation_preview": [],
+        "totals": {
+          "order_total": "70.80",
+          "currency": "MYR",
+          "is_complete": true
+        },
+        "allowed_actions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "CANCEL_DRAFT",
+          "VIEW_ACTIVITY",
+          "COPY_CLARIFICATION"
+        ],
+        "blocked_actions": {
+          "APPROVE_AND_GENERATE_DO": [
+            "BLOCKING_ISSUES"
+          ]
+        },
+        "clarification_draft": {
+          "language": "en",
+          "message": "Please confirm this order: Please confirm whether this is an additional order on top of an existing order today. Thank you!",
+          "unresolved_issue_ids": [
+            "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9"
+          ]
+        },
+        "clarification_lang": "en",
+        "ignored_spans": [],
+        "disambiguations": [],
+        "termination_reason": null,
+        "terminated_by_user_id": null,
+        "termination_note": null,
+        "created_at": "2026-10-29T07:09:57.803356Z",
+        "updated_at": "2026-10-29T07:10:10.069988Z",
+        "do_number": null
+      }
+    }
+  },
+  {
+    "source_entry_index": 59,
+    "started_at_utc": "2026-10-29T07:16:53.912Z",
+    "started_at_utc8": "2026-10-29 15:16:53 +08:00",
+    "duration_ms": 595.5090000061318,
+    "request": {
+      "method": "PUT",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/drafts/DRF_39D4D66CACC440A594B1C1AEBEF151B9/lines",
+      "body": {
+        "expected_version": 2,
+        "lines": [
+          {
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "sku_id": "SKU_TEPUNG_1KG",
+            "family_id": "FAM_TEPUNG",
+            "confirmed_qty": 4,
+            "uom": "bag",
+            "pack_size": "1kg",
+            "grade": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "match_source": "MANUAL_SELECTED"
+          },
+          {
+            "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "confirmed_qty": null,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "match_source": "RAPIDFUZZ_FALLBACK"
+          }
+        ],
+        "deleted_line_ids": [],
+        "resolutions": [
+          {
+            "issue_id": "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+            "choice": "SEPARATE_ADD_ON",
+            "target_line_ids": [],
+            "related_do_number": "DO_20261029_39FF35A3",
+            "note": "Separate add-on order"
+          }
+        ]
+      }
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "9144a013-034c-4804-8f1a-cf50af5226a0"
+        }
+      ],
+      "body": {
+        "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+        "version": 3,
+        "status": "READY_FOR_APPROVAL",
+        "customer_id": "CUS_ALI",
+        "customer": {
+          "customer_id": "CUS_ALI",
+          "name": "Restoran Ali",
+          "tier": "A",
+          "credit_flag": "NONE",
+          "has_credit_notice": false
+        },
+        "masked_message": "Tepung 4 bag\nMinyak 2 btl",
+        "ai_mode": "FALLBACK",
+        "lines": [
+          {
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "client_line_ref": null,
+            "sku_id": "SKU_TEPUNG_1KG",
+            "family_id": "FAM_TEPUNG",
+            "description": "Tepung gandum 面粉",
+            "requested_qty": 4,
+            "confirmed_qty": 4,
+            "effective_qty": 4,
+            "uom": "bag",
+            "pack_size": "1kg",
+            "grade": null,
+            "tier_unit_price": "3.20",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "3.20",
+            "subtotal_rm": "12.80",
+            "match_source": "MANUAL_SELECTED",
+            "source_span": "Tepung 4 bag",
+            "span_start": 0,
+            "span_end": 12,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "4",
+                "start": 7,
+                "end": 8,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 31
+          },
+          {
+            "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+            "client_line_ref": null,
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "description": "Minyak masak 食用油",
+            "requested_qty": 2,
+            "confirmed_qty": null,
+            "effective_qty": 2,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "tier_unit_price": "29.00",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "29.00",
+            "subtotal_rm": "58.00",
+            "match_source": "RAPIDFUZZ_FALLBACK",
+            "source_span": "Minyak 2 btl",
+            "span_start": 13,
+            "span_end": 25,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "2",
+                "start": 20,
+                "end": 21,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 23
+          }
+        ],
+        "issues": [
+          {
+            "issue_id": "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+            "code": "SAME_DAY_ORDER",
+            "condition_id": null,
+            "line_id": null,
+            "span": null,
+            "source_span": null,
+            "span_start": null,
+            "span_end": null,
+            "condition_kind": null,
+            "condition_scope": null,
+            "candidate_line_ids": [],
+            "target_line_ids": [],
+            "requested_unit_price": null,
+            "price_basis": null,
+            "reason_code": null,
+            "ask": "CLERK",
+            "data_used": {
+              "existing_do_numbers": [
+                "DO_20261029_39FF35A3"
+              ],
+              "related_do_number": "DO_20261029_39FF35A3"
+            },
+            "blocking": true,
+            "resolved": true,
+            "resolution": "SEPARATE_ADD_ON",
+            "resolution_note": "Separate add-on order",
+            "auto_resolved_by": null
+          }
+        ],
+        "conditions": [],
+        "blocking_issues": [],
+        "escalation_preview": [],
+        "totals": {
+          "order_total": "70.80",
+          "currency": "MYR",
+          "is_complete": true
+        },
+        "allowed_actions": [
+          "EDIT_DRAFT",
+          "APPROVE_AND_GENERATE_DO",
+          "CANCEL_DRAFT",
+          "VIEW_ACTIVITY"
+        ],
+        "blocked_actions": {},
+        "clarification_draft": null,
+        "clarification_lang": null,
+        "ignored_spans": [],
+        "disambiguations": [],
+        "termination_reason": null,
+        "terminated_by_user_id": null,
+        "termination_note": null,
+        "created_at": "2026-10-29T07:09:57.803356Z",
+        "updated_at": "2026-10-29T07:16:54.592170Z",
+        "do_number": null
+      }
+    }
+  },
+  {
+    "source_entry_index": 69,
+    "started_at_utc": "2026-10-29T07:16:58.483Z",
+    "started_at_utc8": "2026-10-29 15:16:58 +08:00",
+    "duration_ms": 415.0729999819305,
+    "request": {
+      "method": "POST",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/DRF_39D4D66CACC440A594B1C1AEBEF151B9/approve",
+      "body": {
+        "expected_version": 3
+      }
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "1ff33119-afa7-4d04-bf33-33f9f880e9a1"
+        }
+      ],
+      "body": {
+        "do_number": "DO_20261029_453C4BC2",
+        "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+        "draft_version": 3,
+        "customer_id": "CUS_ALI",
+        "customer_name": "Restoran Ali",
+        "lines": [
+          {
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "sku_id": "SKU_TEPUNG_1KG",
+            "display_name": "Tepung gandum 面粉",
+            "quantity": 4,
+            "unit": "bag",
+            "tier_unit_price": "3.20",
+            "applied_unit_price": "3.20",
+            "subtotal_rm": "12.80",
+            "override_reason": null,
+            "picking_note": null
+          },
+          {
+            "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+            "sku_id": "SKU_MINYAK_5KG",
+            "display_name": "Minyak masak 食用油",
+            "quantity": 2,
+            "unit": "btl",
+            "tier_unit_price": "29.00",
+            "applied_unit_price": "29.00",
+            "subtotal_rm": "58.00",
+            "override_reason": null,
+            "picking_note": null
+          }
+        ],
+        "final_total_rm": "70.80",
+        "prepared_by": "USR_T1_CLERK",
+        "approved_by": "USR_T1_CLERK",
+        "escalation_reasons": [],
+        "approval_mode": "DIRECT",
+        "reply_draft": {
+          "language": "en",
+          "message": "Order DO_20261029_453C4BC2 confirmed: Tepung gandum 面粉 4 bag @ RM 3.20; Minyak masak 食用油 2 btl @ RM 29.00. Total RM 70.80. Thank you!",
+          "do_number": "DO_20261029_453C4BC2",
+          "warnings": []
+        },
+        "related_do_number": "DO_20261029_39FF35A3",
+        "approved_at": "2026-10-29T07:16:58.981249Z"
+      }
+    }
+  },
+  {
+    "source_entry_index": 86,
+    "started_at_utc": "2026-10-29T07:20:21.259Z",
+    "started_at_utc8": "2026-10-29 15:20:21 +08:00",
+    "duration_ms": 4780.418999987887,
+    "request": {
+      "method": "POST",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/parse-draft",
+      "body": {
+        "customer_id": "CUS_ALI",
+        "message_text": "Tepung 4 bag\nMinyak 2 btl",
+        "language_hint": null
+      }
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "f1107f23-3870-41d0-90b1-e41432544ee7"
+        }
+      ],
+      "body": {
+        "draft_id": "DRF_A8EB0D45046145639C98949D01ED8058",
+        "version": 1,
+        "status": "DISAMBIGUATION_REQUIRED",
+        "customer_id": "CUS_ALI",
+        "customer": {
+          "customer_id": "CUS_ALI",
+          "name": "Restoran Ali",
+          "tier": "A",
+          "credit_flag": "NONE",
+          "has_credit_notice": false
+        },
+        "masked_message": "Tepung 4 bag\nMinyak 2 btl",
+        "ai_mode": "FALLBACK",
+        "lines": [
+          {
+            "line_id": "LNE_E9453B3653784D3EAFDD31D18B0CD3B2",
+            "client_line_ref": "ai-1",
+            "sku_id": null,
+            "family_id": "FAM_TEPUNG",
+            "description": "Tepung 4 bag",
+            "requested_qty": 4,
+            "confirmed_qty": null,
+            "effective_qty": 4,
+            "uom": "bag",
+            "pack_size": null,
+            "grade": null,
+            "tier_unit_price": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": null,
+            "subtotal_rm": null,
+            "match_source": "RAPIDFUZZ_FALLBACK",
+            "source_span": "Tepung 4 bag",
+            "span_start": 0,
+            "span_end": 12,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "4",
+                "start": 7,
+                "end": 8,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [
+              {
+                "sku_id": "SKU_TEPUNG_1KG",
+                "family_id": "FAM_TEPUNG",
+                "display_name": "Tepung gandum 面粉",
+                "pack_size": "1kg",
+                "grade": null,
+                "base_unit": "bag",
+                "tier_unit_price": "3.20",
+                "available_qty": 27
+              },
+              {
+                "sku_id": "SKU_TEPUNG_2KG",
+                "family_id": "FAM_TEPUNG",
+                "display_name": "Tepung gandum 面粉",
+                "pack_size": "2kg",
+                "grade": null,
+                "base_unit": "bag",
+                "tier_unit_price": "6.00",
+                "available_qty": 30
+              }
+            ],
+            "saved_alias": null,
+            "available_qty": null
+          },
+          {
+            "line_id": "LNE_AB905026992E4C9E81B17313E217FA9E",
+            "client_line_ref": "ai-2",
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "description": "Minyak masak 食用油",
+            "requested_qty": 2,
+            "confirmed_qty": null,
+            "effective_qty": 2,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "tier_unit_price": "29.00",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "29.00",
+            "subtotal_rm": "58.00",
+            "match_source": "RAPIDFUZZ_FALLBACK",
+            "source_span": "Minyak 2 btl",
+            "span_start": 13,
+            "span_end": 25,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "2",
+                "start": 20,
+                "end": 21,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 21
+          }
+        ],
+        "issues": [
+          {
+            "issue_id": "ISS_3BDA64BCC4F9419AB2FD9BDAACBEB2F9",
+            "code": "MULTIPLE_PACK_SIZES",
+            "condition_id": null,
+            "line_id": "LNE_E9453B3653784D3EAFDD31D18B0CD3B2",
+            "span": "Tepung 4 bag",
+            "source_span": "Tepung 4 bag",
+            "span_start": 0,
+            "span_end": 12,
+            "condition_kind": null,
+            "condition_scope": null,
+            "candidate_line_ids": [],
+            "target_line_ids": [],
+            "requested_unit_price": null,
+            "price_basis": null,
+            "reason_code": null,
+            "ask": "CLERK",
+            "data_used": {
+              "candidate_skus": [
+                {
+                  "sku_id": "SKU_TEPUNG_1KG",
+                  "family_id": "FAM_TEPUNG",
+                  "display_name": "Tepung gandum 面粉",
+                  "pack_size": "1kg",
+                  "grade": null,
+                  "base_unit": "bag",
+                  "tier_unit_price": "3.20",
+                  "available_qty": 27
+                },
+                {
+                  "sku_id": "SKU_TEPUNG_2KG",
+                  "family_id": "FAM_TEPUNG",
+                  "display_name": "Tepung gandum 面粉",
+                  "pack_size": "2kg",
+                  "grade": null,
+                  "base_unit": "bag",
+                  "tier_unit_price": "6.00",
+                  "available_qty": 30
+                }
+              ]
+            },
+            "blocking": true,
+            "resolved": false,
+            "resolution": null,
+            "resolution_note": null,
+            "auto_resolved_by": null
+          },
+          {
+            "issue_id": "CHK_SAME_DAY_DRF_A8EB0D45046145639C98949D01ED8058",
+            "code": "SAME_DAY_ORDER",
+            "condition_id": null,
+            "line_id": null,
+            "span": null,
+            "source_span": null,
+            "span_start": null,
+            "span_end": null,
+            "condition_kind": null,
+            "condition_scope": null,
+            "candidate_line_ids": [],
+            "target_line_ids": [],
+            "requested_unit_price": null,
+            "price_basis": null,
+            "reason_code": null,
+            "ask": "CLERK",
+            "data_used": {
+              "existing_do_numbers": [
+                "DO_20261029_453C4BC2",
+                "DO_20261029_39FF35A3"
+              ]
+            },
+            "blocking": true,
+            "resolved": false,
+            "resolution": null,
+            "resolution_note": null,
+            "auto_resolved_by": null
+          }
+        ],
+        "conditions": [],
+        "blocking_issues": [
+          "MULTIPLE_PACK_SIZES",
+          "SAME_DAY_ORDER"
+        ],
+        "escalation_preview": [],
+        "totals": {
+          "order_total": null,
+          "currency": "MYR",
+          "is_complete": false
+        },
+        "allowed_actions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "COPY_CLARIFICATION"
+        ],
+        "blocked_actions": {
+          "APPROVE_AND_GENERATE_DO": [
+            "MULTIPLE_PACK_SIZES",
+            "SAME_DAY_ORDER"
+          ]
+        },
+        "clarification_draft": {
+          "language": "en",
+          "message": "Please confirm this order: Tepung 4 bag: 1kg (RM 3.20/bag) / 2kg (RM 6.00/bag)? Please confirm whether this is an additional order on top of an existing order today. Thank you!",
+          "unresolved_issue_ids": [
+            "ISS_3BDA64BCC4F9419AB2FD9BDAACBEB2F9",
+            "CHK_SAME_DAY_DRF_A8EB0D45046145639C98949D01ED8058"
+          ]
+        },
+        "clarification_lang": "en",
+        "ignored_spans": [],
+        "disambiguations": [],
+        "termination_reason": null,
+        "terminated_by_user_id": null,
+        "termination_note": null,
+        "created_at": "2026-10-29T07:20:26.009301Z",
+        "updated_at": "2026-10-29T07:20:26.009301Z",
+        "do_number": null
+      }
+    }
+  },
+  {
+    "source_entry_index": 99,
+    "started_at_utc": "2026-10-29T07:20:43.793Z",
+    "started_at_utc8": "2026-10-29 15:20:43 +08:00",
+    "duration_ms": 346.19999999995343,
+    "request": {
+      "method": "PUT",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/drafts/DRF_A8EB0D45046145639C98949D01ED8058/lines",
+      "body": {
+        "expected_version": 1,
+        "lines": [
+          {
+            "line_id": "LNE_E9453B3653784D3EAFDD31D18B0CD3B2",
+            "sku_id": "SKU_TEPUNG_1KG",
+            "family_id": "FAM_TEPUNG",
+            "confirmed_qty": 4,
+            "uom": "bag",
+            "pack_size": "1kg",
+            "grade": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "match_source": "MANUAL_SELECTED"
+          },
+          {
+            "line_id": "LNE_AB905026992E4C9E81B17313E217FA9E",
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "confirmed_qty": null,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "unit_price_override": null,
+            "override_reason": null,
+            "match_source": "RAPIDFUZZ_FALLBACK"
+          }
+        ],
+        "deleted_line_ids": [],
+        "resolutions": []
+      }
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "dee0209e-9b15-4297-ba6d-8909afa060dd"
+        }
+      ],
+      "body": {
+        "draft_id": "DRF_A8EB0D45046145639C98949D01ED8058",
+        "version": 2,
+        "status": "DISAMBIGUATION_REQUIRED",
+        "customer_id": "CUS_ALI",
+        "customer": {
+          "customer_id": "CUS_ALI",
+          "name": "Restoran Ali",
+          "tier": "A",
+          "credit_flag": "NONE",
+          "has_credit_notice": false
+        },
+        "masked_message": "Tepung 4 bag\nMinyak 2 btl",
+        "ai_mode": "FALLBACK",
+        "lines": [
+          {
+            "line_id": "LNE_E9453B3653784D3EAFDD31D18B0CD3B2",
+            "client_line_ref": null,
+            "sku_id": "SKU_TEPUNG_1KG",
+            "family_id": "FAM_TEPUNG",
+            "description": "Tepung gandum 面粉",
+            "requested_qty": 4,
+            "confirmed_qty": 4,
+            "effective_qty": 4,
+            "uom": "bag",
+            "pack_size": "1kg",
+            "grade": null,
+            "tier_unit_price": "3.20",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "3.20",
+            "subtotal_rm": "12.80",
+            "match_source": "MANUAL_SELECTED",
+            "source_span": "Tepung 4 bag",
+            "span_start": 0,
+            "span_end": 12,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "4",
+                "start": 7,
+                "end": 8,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 27
+          },
+          {
+            "line_id": "LNE_AB905026992E4C9E81B17313E217FA9E",
+            "client_line_ref": null,
+            "sku_id": "SKU_MINYAK_5KG",
+            "family_id": "FAM_MINYAK",
+            "description": "Minyak masak 食用油",
+            "requested_qty": 2,
+            "confirmed_qty": null,
+            "effective_qty": 2,
+            "uom": "btl",
+            "pack_size": "5kg",
+            "grade": null,
+            "tier_unit_price": "29.00",
+            "unit_price_override": null,
+            "override_reason": null,
+            "effective_unit_price": "29.00",
+            "subtotal_rm": "58.00",
+            "match_source": "RAPIDFUZZ_FALLBACK",
+            "source_span": "Minyak 2 btl",
+            "span_start": 13,
+            "span_end": 25,
+            "field_evidence": [
+              {
+                "field": "requested_qty",
+                "raw_text": "2",
+                "start": 20,
+                "end": 21,
+                "normalizer_version": "field-evidence-v2"
+              }
+            ],
+            "candidate_skus": [],
+            "saved_alias": null,
+            "available_qty": 21
+          }
+        ],
+        "issues": [
+          {
+            "issue_id": "CHK_SAME_DAY_DRF_A8EB0D45046145639C98949D01ED8058",
+            "code": "SAME_DAY_ORDER",
+            "condition_id": null,
+            "line_id": null,
+            "span": null,
+            "source_span": null,
+            "span_start": null,
+            "span_end": null,
+            "condition_kind": null,
+            "condition_scope": null,
+            "candidate_line_ids": [],
+            "target_line_ids": [],
+            "requested_unit_price": null,
+            "price_basis": null,
+            "reason_code": null,
+            "ask": "CLERK",
+            "data_used": {
+              "existing_do_numbers": [
+                "DO_20261029_453C4BC2",
+                "DO_20261029_39FF35A3"
+              ]
+            },
+            "blocking": true,
+            "resolved": false,
+            "resolution": null,
+            "resolution_note": null,
+            "auto_resolved_by": null
+          }
+        ],
+        "conditions": [],
+        "blocking_issues": [
+          "SAME_DAY_ORDER"
+        ],
+        "escalation_preview": [],
+        "totals": {
+          "order_total": "70.80",
+          "currency": "MYR",
+          "is_complete": true
+        },
+        "allowed_actions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "CANCEL_DRAFT",
+          "VIEW_ACTIVITY",
+          "COPY_CLARIFICATION"
+        ],
+        "blocked_actions": {
+          "APPROVE_AND_GENERATE_DO": [
+            "BLOCKING_ISSUES"
+          ]
+        },
+        "clarification_draft": {
+          "language": "en",
+          "message": "Please confirm this order: Please confirm whether this is an additional order on top of an existing order today. Thank you!",
+          "unresolved_issue_ids": [
+            "CHK_SAME_DAY_DRF_A8EB0D45046145639C98949D01ED8058"
+          ]
+        },
+        "clarification_lang": "en",
+        "ignored_spans": [],
+        "disambiguations": [],
+        "termination_reason": null,
+        "terminated_by_user_id": null,
+        "termination_note": null,
+        "created_at": "2026-10-29T07:20:26.079456Z",
+        "updated_at": "2026-10-29T07:20:44.201441Z",
+        "do_number": null
+      }
+    }
+  },
+  {
+    "source_entry_index": 109,
+    "started_at_utc": "2026-10-29T07:22:10.339Z",
+    "started_at_utc8": "2026-10-29 15:22:10 +08:00",
+    "duration_ms": 194.67600001371466,
+    "request": {
+      "method": "POST",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/DRF_39D4D66CACC440A594B1C1AEBEF151B9/approve",
+      "body": {
+        "expected_version": 3
+      }
+    },
+    "response": {
+      "status": 0,
+      "error": "net::ERR_FAILED",
+      "headers": [],
+      "body": null
+    }
+  },
+  {
+    "source_entry_index": 113,
+    "started_at_utc": "2026-10-29T07:23:43.754Z",
+    "started_at_utc8": "2026-10-29 15:23:43 +08:00",
+    "duration_ms": 504.12599998526275,
+    "request": {
+      "method": "GET",
+      "url": "https://kiraorder-api.replit.app/api/v1/delivery-orders/DO_20261029_453C4BC2",
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "fbe15141-7d62-42ef-86f2-bc5823ec13bd"
+        }
+      ],
+      "body": {
+        "do_number": "DO_20261029_453C4BC2",
+        "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+        "draft_version": 3,
+        "customer_id": "CUS_ALI",
+        "customer_name": "Restoran Ali",
+        "lines": [
+          {
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "sku_id": "SKU_TEPUNG_1KG",
+            "display_name": "Tepung gandum 面粉",
+            "quantity": 4,
+            "unit": "bag",
+            "tier_unit_price": "3.20",
+            "applied_unit_price": "3.20",
+            "subtotal_rm": "12.80",
+            "override_reason": null,
+            "picking_note": null
+          },
+          {
+            "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+            "sku_id": "SKU_MINYAK_5KG",
+            "display_name": "Minyak masak 食用油",
+            "quantity": 2,
+            "unit": "btl",
+            "tier_unit_price": "29.00",
+            "applied_unit_price": "29.00",
+            "subtotal_rm": "58.00",
+            "override_reason": null,
+            "picking_note": null
+          }
+        ],
+        "final_total_rm": "70.80",
+        "prepared_by": "USR_T1_CLERK",
+        "approved_by": "USR_T1_CLERK",
+        "escalation_reasons": [],
+        "approval_mode": "DIRECT",
+        "reply_draft": {
+          "language": "en",
+          "message": "Order DO_20261029_453C4BC2 confirmed: Tepung gandum 面粉 4 bag @ RM 3.20; Minyak masak 食用油 2 btl @ RM 29.00. Total RM 70.80. Thank you!",
+          "do_number": "DO_20261029_453C4BC2",
+          "warnings": []
+        },
+        "related_do_number": "DO_20261029_39FF35A3",
+        "approved_at": "2026-10-29T07:16:58.981249Z"
+      }
+    }
+  },
+  {
+    "source_entry_index": 116,
+    "started_at_utc": "2026-10-29T07:23:47.512Z",
+    "started_at_utc8": "2026-10-29 15:23:47 +08:00",
+    "duration_ms": 223.73899997910485,
+    "request": {
+      "method": "GET",
+      "url": "https://kiraorder-api.replit.app/api/v1/orders/DO_20261029_453C4BC2/audit-detail",
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "error": null,
+      "headers": [
+        {
+          "name": "access-control-allow-origin",
+          "value": "https://hozier123.github.io"
+        },
+        {
+          "name": "access-control-expose-headers",
+          "value": "X-Request-ID"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        },
+        {
+          "name": "vary",
+          "value": "Origin"
+        },
+        {
+          "name": "x-request-id",
+          "value": "b1f69163-67d1-48ed-8735-abe95c70f91f"
+        }
+      ],
+      "body": {
+        "do_number": "DO_20261029_453C4BC2",
+        "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+        "draft_version": 3,
+        "ai_initial_snapshot": {
+          "lines": [
+            {
+              "uom": "bag",
+              "grade": null,
+              "sku_id": null,
+              "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+              "span_end": 12,
+              "family_id": "FAM_TEPUNG",
+              "pack_size": null,
+              "span_start": 0,
+              "description": "Tepung 4 bag",
+              "saved_alias": null,
+              "source_span": "Tepung 4 bag",
+              "subtotal_rm": null,
+              "match_source": "RAPIDFUZZ_FALLBACK",
+              "available_qty": null,
+              "confirmed_qty": null,
+              "effective_qty": 4,
+              "requested_qty": 4,
+              "candidate_skus": [
+                {
+                  "grade": null,
+                  "sku_id": "SKU_TEPUNG_1KG",
+                  "base_unit": "bag",
+                  "family_id": "FAM_TEPUNG",
+                  "pack_size": "1kg",
+                  "display_name": "Tepung gandum 面粉",
+                  "available_qty": 31,
+                  "tier_unit_price": "3.20"
+                },
+                {
+                  "grade": null,
+                  "sku_id": "SKU_TEPUNG_2KG",
+                  "base_unit": "bag",
+                  "family_id": "FAM_TEPUNG",
+                  "pack_size": "2kg",
+                  "display_name": "Tepung gandum 面粉",
+                  "available_qty": 30,
+                  "tier_unit_price": "6.00"
+                }
+              ],
+              "field_evidence": [
+                {
+                  "end": 8,
+                  "field": "requested_qty",
+                  "start": 7,
+                  "raw_text": "4",
+                  "normalizer_version": "field-evidence-v2"
+                }
+              ],
+              "client_line_ref": "ai-1",
+              "override_reason": null,
+              "tier_unit_price": null,
+              "unit_price_override": null,
+              "effective_unit_price": null
+            },
+            {
+              "uom": "btl",
+              "grade": null,
+              "sku_id": "SKU_MINYAK_5KG",
+              "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+              "span_end": 25,
+              "family_id": "FAM_MINYAK",
+              "pack_size": "5kg",
+              "span_start": 13,
+              "description": "Minyak masak 食用油",
+              "saved_alias": null,
+              "source_span": "Minyak 2 btl",
+              "subtotal_rm": "58.00",
+              "match_source": "RAPIDFUZZ_FALLBACK",
+              "available_qty": 23,
+              "confirmed_qty": null,
+              "effective_qty": 2,
+              "requested_qty": 2,
+              "candidate_skus": [],
+              "field_evidence": [
+                {
+                  "end": 21,
+                  "field": "requested_qty",
+                  "start": 20,
+                  "raw_text": "2",
+                  "normalizer_version": "field-evidence-v2"
+                }
+              ],
+              "client_line_ref": "ai-2",
+              "override_reason": null,
+              "tier_unit_price": "29.00",
+              "unit_price_override": null,
+              "effective_unit_price": "29.00"
+            }
+          ],
+          "issues": [
+            {
+              "ask": "CLERK",
+              "code": "MULTIPLE_PACK_SIZES",
+              "span": "Tepung 4 bag",
+              "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+              "blocking": true,
+              "issue_id": "ISS_6FFF5CEAF6094AD9B3B161526535C047",
+              "resolved": false,
+              "span_end": 12,
+              "data_used": {
+                "candidate_skus": [
+                  {
+                    "grade": null,
+                    "sku_id": "SKU_TEPUNG_1KG",
+                    "base_unit": "bag",
+                    "family_id": "FAM_TEPUNG",
+                    "pack_size": "1kg",
+                    "display_name": "Tepung gandum 面粉",
+                    "available_qty": 31,
+                    "tier_unit_price": "3.20"
+                  },
+                  {
+                    "grade": null,
+                    "sku_id": "SKU_TEPUNG_2KG",
+                    "base_unit": "bag",
+                    "family_id": "FAM_TEPUNG",
+                    "pack_size": "2kg",
+                    "display_name": "Tepung gandum 面粉",
+                    "available_qty": 30,
+                    "tier_unit_price": "6.00"
+                  }
+                ]
+              },
+              "resolution": null,
+              "span_start": 0,
+              "price_basis": null,
+              "reason_code": null,
+              "source_span": "Tepung 4 bag",
+              "condition_id": null,
+              "condition_kind": null,
+              "condition_scope": null,
+              "resolution_note": null,
+              "target_line_ids": [],
+              "auto_resolved_by": null,
+              "candidate_line_ids": [],
+              "requested_unit_price": null
+            },
+            {
+              "ask": "CLERK",
+              "code": "SAME_DAY_ORDER",
+              "span": null,
+              "line_id": null,
+              "blocking": true,
+              "issue_id": "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+              "resolved": false,
+              "span_end": null,
+              "data_used": {
+                "existing_do_numbers": [
+                  "DO_20261029_39FF35A3"
+                ]
+              },
+              "resolution": null,
+              "span_start": null,
+              "price_basis": null,
+              "reason_code": null,
+              "source_span": null,
+              "condition_id": null,
+              "condition_kind": null,
+              "condition_scope": null,
+              "resolution_note": null,
+              "target_line_ids": [],
+              "auto_resolved_by": null,
+              "candidate_line_ids": [],
+              "requested_unit_price": null
+            }
+          ],
+          "status": "DISAMBIGUATION_REQUIRED",
+          "totals": {
+            "currency": "MYR",
+            "is_complete": false,
+            "order_total": null
+          },
+          "ai_mode": "FALLBACK",
+          "version": 1,
+          "customer": {
+            "name": "Restoran Ali",
+            "tier": "A",
+            "credit_flag": "NONE",
+            "customer_id": "CUS_ALI",
+            "has_credit_notice": false
+          },
+          "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+          "do_number": null,
+          "conditions": [],
+          "created_at": "2026-10-29T07:09:57.715287Z",
+          "updated_at": "2026-10-29T07:09:57.715287Z",
+          "customer_id": "CUS_ALI",
+          "ignored_spans": [],
+          "masked_message": "Tepung 4 bag\nMinyak 2 btl",
+          "allowed_actions": [
+            "EDIT_DRAFT",
+            "RESOLVE_ISSUE",
+            "COPY_CLARIFICATION"
+          ],
+          "blocked_actions": {
+            "APPROVE_AND_GENERATE_DO": [
+              "MULTIPLE_PACK_SIZES",
+              "SAME_DAY_ORDER"
+            ]
+          },
+          "blocking_issues": [
+            "MULTIPLE_PACK_SIZES",
+            "SAME_DAY_ORDER"
+          ],
+          "disambiguations": [],
+          "termination_note": null,
+          "clarification_lang": "en",
+          "escalation_preview": [],
+          "termination_reason": null,
+          "clarification_draft": {
+            "message": "Please confirm this order: Tepung 4 bag: 1kg (RM 3.20/bag) / 2kg (RM 6.00/bag)? Please confirm whether this is an additional order on top of an existing order today. Thank you!",
+            "language": "en",
+            "unresolved_issue_ids": [
+              "ISS_6FFF5CEAF6094AD9B3B161526535C047",
+              "CHK_SAME_DAY_DRF_39D4D66CACC440A594B1C1AEBEF151B9"
+            ]
+          },
+          "terminated_by_user_id": null
+        },
+        "final_snapshot": {
+          "do_number": "DO_20261029_453C4BC2",
+          "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+          "draft_version": 3,
+          "customer_id": "CUS_ALI",
+          "customer_name": "Restoran Ali",
+          "lines": [
+            {
+              "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+              "sku_id": "SKU_TEPUNG_1KG",
+              "display_name": "Tepung gandum 面粉",
+              "quantity": 4,
+              "unit": "bag",
+              "tier_unit_price": "3.20",
+              "applied_unit_price": "3.20",
+              "subtotal_rm": "12.80",
+              "override_reason": null,
+              "picking_note": null
+            },
+            {
+              "line_id": "LNE_388BA7E21E8C4EFCA03473DD6E023FD8",
+              "sku_id": "SKU_MINYAK_5KG",
+              "display_name": "Minyak masak 食用油",
+              "quantity": 2,
+              "unit": "btl",
+              "tier_unit_price": "29.00",
+              "applied_unit_price": "29.00",
+              "subtotal_rm": "58.00",
+              "override_reason": null,
+              "picking_note": null
+            }
+          ],
+          "final_total_rm": "70.80",
+          "prepared_by": "USR_T1_CLERK",
+          "approved_by": "USR_T1_CLERK",
+          "escalation_reasons": [],
+          "approval_mode": "DIRECT",
+          "reply_draft": {
+            "language": "en",
+            "message": "Order DO_20261029_453C4BC2 confirmed: Tepung gandum 面粉 4 bag @ RM 3.20; Minyak masak 食用油 2 btl @ RM 29.00. Total RM 70.80. Thank you!",
+            "do_number": "DO_20261029_453C4BC2",
+            "warnings": []
+          },
+          "related_do_number": "DO_20261029_39FF35A3",
+          "approved_at": "2026-10-29T07:16:58.981249Z"
+        },
+        "field_diffs": [
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "sku_id",
+            "before_value": null,
+            "after_value": "SKU_TEPUNG_1KG",
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "description",
+            "before_value": "Tepung 4 bag",
+            "after_value": "Tepung gandum 面粉",
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "confirmed_qty",
+            "before_value": null,
+            "after_value": 4,
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "pack_size",
+            "before_value": null,
+            "after_value": "1kg",
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "tier_unit_price",
+            "before_value": null,
+            "after_value": "3.20",
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "effective_unit_price",
+            "before_value": null,
+            "after_value": "3.20",
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "subtotal_rm",
+            "before_value": null,
+            "after_value": "12.80",
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "match_source",
+            "before_value": "RAPIDFUZZ_FALLBACK",
+            "after_value": "MANUAL_SELECTED",
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          },
+          {
+            "draft_version": 2,
+            "line_id": "LNE_337BB41D9F324B7A85C02DB34BF180D6",
+            "field_path": "available_qty",
+            "before_value": null,
+            "after_value": 31,
+            "source": "PUT_LINES",
+            "reason_code": "USER_EDIT"
+          }
+        ],
+        "events": [
+          {
+            "event_type": "SAVE_LINES",
+            "actor_user_id": "USR_T1_CLERK",
+            "actor_role": "CLERK",
+            "created_at": "2026-10-29T07:10:09.998383Z",
+            "payload": {
+              "version": 2,
+              "line_count": 2
+            }
+          },
+          {
+            "event_type": "SAVE_LINES",
+            "actor_user_id": "USR_T1_CLERK",
+            "actor_role": "CLERK",
+            "created_at": "2026-10-29T07:16:54.515746Z",
+            "payload": {
+              "version": 3,
+              "line_count": 2
+            }
+          },
+          {
+            "event_type": "APPROVE",
+            "actor_user_id": "USR_T1_CLERK",
+            "actor_role": "CLERK",
+            "created_at": "2026-10-29T07:16:58.927554Z",
+            "payload": {
+              "mode": "DIRECT",
+              "do_number": "DO_20261029_453C4BC2",
+              "customer_name": "Restoran Ali"
+            }
+          },
+          {
+            "event_type": "INVENTORY_DEDUCT",
+            "actor_user_id": "USR_T1_CLERK",
+            "actor_role": "CLERK",
+            "created_at": "2026-10-29T07:16:58.927554Z",
+            "payload": {
+              "do_number": "DO_20261029_453C4BC2"
+            }
+          }
+        ]
+      }
+    }
+  }
+]

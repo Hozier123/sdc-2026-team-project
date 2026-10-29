@@ -1,0 +1,65 @@
+{
+  "description": "Original byte hashes retained; local absolute paths removed. Current public paths are mapped in artifact-manifest.json.",
+  "files": [
+    {
+      "source_file": "Records.txt",
+      "source_size_bytes": 356,
+      "source_sha256": "4643feb939093c6fd38be14a8de7a281e52465b84bfff92752fc3dd976905e9c",
+      "historical_copy_hint": "Records.original.txt"
+    },
+    {
+      "source_file": "c01_session.har",
+      "source_size_bytes": 1273472,
+      "source_sha256": "24d15f599373eac4591276c414abf148f6de67f8ce1b006220ea5db8bd5bfca3",
+      "historical_copy_hint": null
+    },
+    {
+      "source_file": "c01_01_baseline.png",
+      "source_size_bytes": 708443,
+      "source_sha256": "5bdbeafd987e5a8eb5a044a1191dae3000e8377c41d5523f95b71b3ef792790a",
+      "historical_copy_hint": "screenshots/c01_01_baseline.png"
+    },
+    {
+      "source_file": "c01_02_approved.png",
+      "source_size_bytes": 786326,
+      "source_sha256": "aabbdc555b25a503b40f1719f89d66565279eac199dabb2ab6017d4d692c4243",
+      "historical_copy_hint": "screenshots/c01_02_approved.png"
+    },
+    {
+      "source_file": "c01_03_do.png",
+      "source_size_bytes": 73673,
+      "source_sha256": "42b91856ef42caeeaea5da0258384fe54de722a61b521e80ab9145fb83fd2ebd",
+      "historical_copy_hint": "screenshots/c01_03_do.png"
+    },
+    {
+      "source_file": "c01_04_stock_after.png",
+      "source_size_bytes": 714673,
+      "source_sha256": "2f349998917849dd5fffca626df91a78fdb9771a82dc2f7df17a4ac78f50c99c",
+      "historical_copy_hint": "screenshots/c01_04_stock_after.png"
+    },
+    {
+      "source_file": "c01_05_log.png",
+      "source_size_bytes": 46551,
+      "source_sha256": "195cddc46133571d9dd89387cd742717628544cd299473acfa5981dbd061405f",
+      "historical_copy_hint": "screenshots/c01_05_log.png"
+    },
+    {
+      "source_file": "codex-clipboard-6a2e96cc-0ac5-4d57-976d-bceaeb7d9dab.png",
+      "source_size_bytes": 17720,
+      "source_sha256": "a4ea41c85add2a837b4bcf33220954ad1f11e5fa4ce1d38d62472021cc23d789",
+      "historical_copy_hint": "screenshots/ai-offline.png"
+    },
+    {
+      "source_file": "codex-clipboard-095203b6-8bb6-4585-b722-20e89b362dff.png",
+      "source_size_bytes": 11718,
+      "source_sha256": "02877fed3f18e30eb09b05d40c294dcec7ca4db46bc596ad9b5bf8bcbb77df2e",
+      "historical_copy_hint": "screenshots/c07-console-409.png"
+    },
+    {
+      "source_file": "codex-clipboard-b158463e-01fb-49be-b9c9-007273f524c9.png",
+      "source_size_bytes": 4976,
+      "source_sha256": "3b7d67c20beff7dd820bb82d91a76a2fcc008ac7079deb9aec62e5696c953937",
+      "historical_copy_hint": "screenshots/c07-status-409.png"
+    }
+  ]
+}

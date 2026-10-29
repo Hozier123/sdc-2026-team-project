@@ -1,0 +1,29 @@
+实际操作时间为 17:13–17:16，UTC+8
+记录整理时间：2026-10-29 17:22，UTC+8
+
+前端：https://hozier123.github.io/sdc-2026-team-project/
+API base：https://kiraorder-api.replit.app/api/v1
+
+/me request_id：4a86f95c-93c2-4a31-8f16-6176d2f221b2
+
+查询的 DO：DO_20261029_453C4BC2
+
+仓库查询接口：
+GET /api/v1/warehouse/delivery-orders/DO_20261029_453C4BC2
+warehouse/delivery-orders request_id：721e59d9-df2a-4c54-a60d-9a56db2ab7d2
+
+网页与响应核对：
+DO 号码一致：✔
+面粉 SKU_TEPUNG_1KG，4 bag：✔
+食用油 SKU_MINYAK_5KG，2 btl：✔
+
+字段裁剪：
+响应中没有单价、小计、总额字段：✔
+响应中没有客户电话：✔
+响应中没有原始消息或 masked_message：✔
+
+页面只读：
+显示 Read-only picking list：✔
+显示 Prices and contacts excluded.：✔
+
+HAR 文件：warehouse_session.har
