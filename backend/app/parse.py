@@ -17,6 +17,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.ai.catalog import load_family_catalog
+from app.ai.extractor import AiAndFallbackUnavailableError as ProviderUnavailableError
 from app.auth import CurrentUser
 from app.checks import apply_checks
 from app.clarification import build_clarification
@@ -596,8 +597,12 @@ def parse_draft(
                     request.state.request_id,
                 )
             raw = validate_raw_extraction(raw, masked.masked_text, strict=False)
+            request.app.state.ai_orchestrator.observe_inference(
+                raw.ai_mode or ("FALLBACK" if isinstance(extractor, StubExtractor) else "LLM")
+            )
             raw, memory_used = merge_memory(raw, memory)
-    except (AiServiceError, ValueError, TypeError) as exc:
+    except (AiServiceError, ProviderUnavailableError, ValueError, TypeError) as exc:
+        request.app.state.ai_orchestrator.observe_inference("FALLBACK")
         raise AiAndFallbackUnavailableError() from exc
     raw = _guard_families_and_units(
         raw,

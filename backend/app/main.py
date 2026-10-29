@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.ai.adapter import OrderAiAdapter
 from app.ai.extractor import RunPodExtractor
+from app.ai_runtime import AiRuntimeConfig, resolve_ai_runtime
 from app.ai_status import AiOrchestrator
 from app.approvals import router as approvals_router
 from app.config import Settings
@@ -22,26 +23,23 @@ from app.parse import router as parse_router
 from app.read_models import router as read_models_router
 
 
-def _extractor(settings: Settings):
-    if settings.ai_provider == "runpod_adapter":
-        if settings.runpod_api_key is None or not settings.runpod_endpoint_id:
-            raise ValueError(
-                "AI_PROVIDER=runpod_adapter requires RUNPOD_API_KEY and RUNPOD_ENDPOINT_ID"
-            )
+def _extractor(settings: Settings, *, runtime: AiRuntimeConfig | None = None):
+    runtime = runtime or resolve_ai_runtime(settings)
+    api_key = runtime.api_key.get_secret_value() if runtime.api_key is not None else None
+    if runtime.provider == "runpod_adapter":
         runpod_extractor = RunPodExtractor(
-            api_key=settings.runpod_api_key.get_secret_value(),
-            endpoint_id=settings.runpod_endpoint_id,
-            timeout_s=settings.llm_timeout_s,
-            model_name=settings.runpod_model_name,
+            api_key=api_key,
+            endpoint_id=runtime.endpoint_id,
+            base_url=runtime.inference_url,
+            timeout_s=runtime.inference_timeout_s,
+            model_name=runtime.model_name,
         )
         return RunPodAdapterProvider(adapter=OrderAiAdapter(extractor=runpod_extractor))
-    if settings.ai_provider != "stub" and settings.ai_service_url:
+    if runtime.provider == "http":
         return HttpAiExtractor(
-            service_url=settings.ai_service_url,
-            api_key=(
-                settings.ai_api_key.get_secret_value() if settings.ai_api_key is not None else None
-            ),
-            timeout_s=settings.ai_timeout_s,
+            service_url=runtime.inference_url,
+            api_key=api_key,
+            timeout_s=runtime.inference_timeout_s,
         )
     return StubExtractor()
 
@@ -73,9 +71,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             allow_headers=["*"],
             expose_headers=[REQUEST_ID_HEADER],
         )
-    owned_provider = _extractor(app.state.settings)
+    runtime = resolve_ai_runtime(app.state.settings)
+    owned_provider = _extractor(app.state.settings, runtime=runtime)
     app.state.extraction_provider = owned_provider
-    owned_orchestrator = AiOrchestrator(app.state.settings)
+    owned_orchestrator = AiOrchestrator(app.state.settings, runtime=runtime)
     app.state.ai_orchestrator = owned_orchestrator
     register_error_handlers(app)
     app.include_router(health_router)
