@@ -1,0 +1,29 @@
+{
+  "label": "status-poll",
+  "method": "GET",
+  "path": "/api/v1/ai/status",
+  "started_at_utc": "2026-10-29T15:03:57.859208+00:00",
+  "started_at_utc8": "2026-10-29T23:03:57.859208+08:00",
+  "completed_at_utc": "2026-10-29T15:03:58.557544+00:00",
+  "elapsed_ms": 698.4,
+  "sent_request_id": "b01-9072fa6999e14b3e848356def3553d28",
+  "request_id": "b01-9072fa6999e14b3e848356def3553d28",
+  "request_body": null,
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-9072fa6999e14b3e848356def3553d28"
+  },
+  "response_body": {
+    "state": "READY",
+    "available_modes": [
+      "LLM",
+      "FALLBACK",
+      "ALIAS_ONLY"
+    ],
+    "fallback_available": true,
+    "last_checked_at": "2026-10-29T15:03:58.567765Z",
+    "message": "AI model verified by a valid synthetic extraction."
+  }
+}

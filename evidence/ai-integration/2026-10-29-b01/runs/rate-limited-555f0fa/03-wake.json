@@ -1,0 +1,27 @@
+{
+  "label": "wake",
+  "method": "POST",
+  "path": "/api/v1/ai/wake",
+  "started_at_utc": "2026-10-29T15:02:13.578047+00:00",
+  "started_at_utc8": "2026-10-29T23:02:13.578047+08:00",
+  "completed_at_utc": "2026-10-29T15:02:13.668972+00:00",
+  "elapsed_ms": 90.9,
+  "sent_request_id": "b01-54e91815579d4952b1a885b297060e93",
+  "request_id": "b01-54e91815579d4952b1a885b297060e93",
+  "request_body": null,
+  "http_status": 429,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "retry-after": "45",
+    "x-request-id": "b01-54e91815579d4952b1a885b297060e93"
+  },
+  "response_body": {
+    "error_code": "RATE_LIMITED",
+    "message": "Too many requests.",
+    "details": {
+      "scope": "AI_WAKE",
+      "retry_after_seconds": 45
+    }
+  }
+}

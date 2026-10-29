@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "scope": "real API parse output only; no new approval/DO/inventory transaction",
+  "checks": {
+    "b01_mode_llm": true,
+    "b01_exact_line": true,
+    "c01_mode_llm": true,
+    "c01_flour_qty_uom": true,
+    "c01_flour_ambiguity_preserved": true,
+    "c01_oil_line": true,
+    "same_day_gate_preserved": true,
+    "no_approval_available": true
+  }
+}

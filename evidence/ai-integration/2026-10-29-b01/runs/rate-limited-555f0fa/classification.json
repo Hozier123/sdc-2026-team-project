@@ -1,0 +1,9 @@
+{
+  "classification": "EXPECTED_WAKE_RATE_LIMIT_WITH_PARSE_SUCCESS",
+  "retry_after_seconds": 45,
+  "parse_modes": [
+    "LLM",
+    "LLM"
+  ],
+  "warmup_acceptance": "Not established by this run; established by final run after cooldown."
+}

@@ -1,0 +1,28 @@
+{
+  "label": "status-poll",
+  "method": "GET",
+  "path": "/api/v1/ai/status",
+  "started_at_utc": "2026-10-29T14:51:43.285995+00:00",
+  "started_at_utc8": "2026-10-29T22:51:43.285995+08:00",
+  "completed_at_utc": "2026-10-29T14:51:49.066527+00:00",
+  "elapsed_ms": 5780.5,
+  "sent_request_id": "b01-ef9474ec49e0483abcd186e623f8a030",
+  "request_id": "b01-ef9474ec49e0483abcd186e623f8a030",
+  "request_body": null,
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-ef9474ec49e0483abcd186e623f8a030"
+  },
+  "response_body": {
+    "state": "DEGRADED",
+    "available_modes": [
+      "FALLBACK",
+      "ALIAS_ONLY"
+    ],
+    "fallback_available": true,
+    "last_checked_at": "2026-10-29T14:51:49.074558Z",
+    "message": "AI returned an invalid inference probe result. Local fallback/manual handling remains available."
+  }
+}

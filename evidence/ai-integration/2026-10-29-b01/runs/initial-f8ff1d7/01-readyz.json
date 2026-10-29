@@ -1,0 +1,21 @@
+{
+  "label": "readyz",
+  "method": "GET",
+  "path": "/readyz",
+  "started_at_utc": "2026-10-29T14:51:39.389352+00:00",
+  "started_at_utc8": "2026-10-29T22:51:39.389352+08:00",
+  "completed_at_utc": "2026-10-29T14:51:39.500779+00:00",
+  "elapsed_ms": 111.4,
+  "sent_request_id": "b01-bb76e0206a9440ec8da51ad167059ac7",
+  "request_id": "b01-bb76e0206a9440ec8da51ad167059ac7",
+  "request_body": null,
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-bb76e0206a9440ec8da51ad167059ac7"
+  },
+  "response_body": {
+    "status": "ready"
+  }
+}

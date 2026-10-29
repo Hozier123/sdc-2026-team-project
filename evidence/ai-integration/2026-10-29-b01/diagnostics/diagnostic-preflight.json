@@ -1,0 +1,99 @@
+[
+  {
+    "label": "health",
+    "started_at_utc": "2026-10-29T14:53:35.621002+00:00",
+    "elapsed_ms": 1003.6,
+    "http_status": 200,
+    "sent_request_id": "b01-preflight-8c1a1dac9d8f49e58012f0549015fe4c",
+    "request_id": null,
+    "response": {
+      "text": ""
+    }
+  },
+  {
+    "label": "models",
+    "started_at_utc": "2026-10-29T14:53:36.624649+00:00",
+    "elapsed_ms": 335.7,
+    "http_status": 200,
+    "sent_request_id": "b01-preflight-8c1a1dac9d8f49e58012f0549015fe4c",
+    "request_id": null,
+    "response": {
+      "object": "list",
+      "data": [
+        {
+          "id": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+          "object": "model",
+          "created": 1793285616,
+          "owned_by": "vllm",
+          "root": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+          "parent": null,
+          "max_model_len": 8192,
+          "permission": [
+            {
+              "id": "modelperm-be2a0b89ed477ad4",
+              "object": "model_permission",
+              "created": 1793285616,
+              "allow_create_engine": false,
+              "allow_sampling": true,
+              "allow_logprobs": true,
+              "allow_search_indices": false,
+              "allow_view": true,
+              "allow_fine_tuning": false,
+              "organization": "*",
+              "group": null,
+              "is_blocking": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "warmup-original",
+    "started_at_utc": "2026-10-29T14:53:36.960349+00:00",
+    "elapsed_ms": 1262.8,
+    "http_status": 200,
+    "sent_request_id": "b01-preflight-8c1a1dac9d8f49e58012f0549015fe4c",
+    "request_id": null,
+    "response": {
+      "id": "chatcmpl-b01-preflight-8c1a1dac9d8f49e58012f0549015fe4c",
+      "object": "chat.completion",
+      "created": 1793285617,
+      "model": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"rows\": [\n    {\n      \"span\": \"Milo 1 ctn\",\n      \"fam\": \"FAM_MILO\",\n      \"qty\": 1,\n      \"uom\": \"ctn\",\n      \"pack_size\": \"\",\n      \"conds\": []\n    }\n  ],\n  \"ignored_spans\": []\n}",
+            "refusal": null,
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "reasoning": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids": null,
+          "routed_experts": null
+        }
+      ],
+      "service_tier": null,
+      "system_fingerprint": "vllm-0.32.0-cde58403",
+      "usage": {
+        "prompt_tokens": 561,
+        "total_tokens": 632,
+        "completion_tokens": 71,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "prompt_logprobs": null,
+      "prompt_token_ids": null,
+      "prompt_text": null,
+      "kv_transfer_params": null,
+      "ec_transfer_params": null,
+      "metrics": null
+    }
+  }
+]

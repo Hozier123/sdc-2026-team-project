@@ -1,0 +1,246 @@
+{
+  "label": "c01-parse",
+  "method": "POST",
+  "path": "/api/v1/orders/parse-draft",
+  "started_at_utc": "2026-10-29T14:51:52.274815+00:00",
+  "started_at_utc8": "2026-10-29T22:51:52.274815+08:00",
+  "completed_at_utc": "2026-10-29T14:51:55.437805+00:00",
+  "elapsed_ms": 3163.1,
+  "sent_request_id": "b01-b666f458d5324affaf937c8756872a71",
+  "request_id": "b01-b666f458d5324affaf937c8756872a71",
+  "request_body": {
+    "customer_id": "CUS_ALI",
+    "message_text": "Tepung 4 bag\nMinyak 2 btl",
+    "language_hint": null
+  },
+  "http_status": 200,
+  "response_headers": {
+    "access-control-allow-origin": "https://hozier123.github.io",
+    "content-type": "application/json",
+    "x-request-id": "b01-b666f458d5324affaf937c8756872a71"
+  },
+  "response_body": {
+    "draft_id": "DRF_5F0AE9B60D404D2BB40B036DEAA63D08",
+    "version": 1,
+    "status": "DISAMBIGUATION_REQUIRED",
+    "customer_id": "CUS_ALI",
+    "customer": {
+      "customer_id": "CUS_ALI",
+      "name": "Restoran Ali",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": "+60120000001"
+    },
+    "masked_message": "Tepung 4 bag\nMinyak 2 btl",
+    "ai_mode": "LLM",
+    "lines": [
+      {
+        "line_id": "LNE_F2DBF2DAAD75409DB86B47CCD37186C0",
+        "client_line_ref": "ai-1",
+        "sku_id": null,
+        "family_id": "FAM_TEPUNG",
+        "description": "Tepung 4 bag",
+        "requested_qty": 4,
+        "confirmed_qty": null,
+        "effective_qty": 4,
+        "uom": "bag",
+        "pack_size": null,
+        "grade": null,
+        "tier_unit_price": null,
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": null,
+        "subtotal_rm": null,
+        "match_source": "LLM_EXTRACTED",
+        "source_span": "Tepung 4 bag",
+        "span_start": 0,
+        "span_end": 12,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "4",
+            "start": 7,
+            "end": 8,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [
+          {
+            "sku_id": "SKU_TEPUNG_1KG",
+            "family_id": "FAM_TEPUNG",
+            "display_name": "Tepung gandum 面粉",
+            "pack_size": "1kg",
+            "grade": null,
+            "base_unit": "bag",
+            "tier_unit_price": "3.20",
+            "available_qty": 27
+          },
+          {
+            "sku_id": "SKU_TEPUNG_2KG",
+            "family_id": "FAM_TEPUNG",
+            "display_name": "Tepung gandum 面粉",
+            "pack_size": "2kg",
+            "grade": null,
+            "base_unit": "bag",
+            "tier_unit_price": "6.00",
+            "available_qty": 30
+          }
+        ],
+        "saved_alias": null,
+        "available_qty": null
+      },
+      {
+        "line_id": "LNE_0F7F98D082B84C6F9073F041BA232A4A",
+        "client_line_ref": "ai-2",
+        "sku_id": "SKU_MINYAK_5KG",
+        "family_id": "FAM_MINYAK",
+        "description": "Minyak masak 食用油",
+        "requested_qty": 2,
+        "confirmed_qty": null,
+        "effective_qty": 2,
+        "uom": "btl",
+        "pack_size": "5kg",
+        "grade": null,
+        "tier_unit_price": "29.00",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "29.00",
+        "subtotal_rm": "58.00",
+        "match_source": "LLM_EXTRACTED",
+        "source_span": "Minyak 2 btl",
+        "span_start": 13,
+        "span_end": 25,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "2",
+            "start": 20,
+            "end": 21,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 21
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "ISS_95CABD67B18A4F708CFD307EAF5084F4",
+        "code": "MULTIPLE_PACK_SIZES",
+        "condition_id": null,
+        "line_id": "LNE_F2DBF2DAAD75409DB86B47CCD37186C0",
+        "span": "Tepung 4 bag",
+        "source_span": "Tepung 4 bag",
+        "span_start": 0,
+        "span_end": 12,
+        "condition_kind": null,
+        "condition_scope": null,
+        "candidate_line_ids": [],
+        "target_line_ids": [],
+        "requested_unit_price": null,
+        "price_basis": null,
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "candidate_skus": [
+            {
+              "sku_id": "SKU_TEPUNG_1KG",
+              "family_id": "FAM_TEPUNG",
+              "display_name": "Tepung gandum 面粉",
+              "pack_size": "1kg",
+              "grade": null,
+              "base_unit": "bag",
+              "tier_unit_price": "3.20",
+              "available_qty": 27
+            },
+            {
+              "sku_id": "SKU_TEPUNG_2KG",
+              "family_id": "FAM_TEPUNG",
+              "display_name": "Tepung gandum 面粉",
+              "pack_size": "2kg",
+              "grade": null,
+              "base_unit": "bag",
+              "tier_unit_price": "6.00",
+              "available_qty": 30
+            }
+          ]
+        },
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      },
+      {
+        "issue_id": "CHK_SAME_DAY_DRF_5F0AE9B60D404D2BB40B036DEAA63D08",
+        "code": "SAME_DAY_ORDER",
+        "condition_id": null,
+        "line_id": null,
+        "span": null,
+        "source_span": null,
+        "span_start": null,
+        "span_end": null,
+        "condition_kind": null,
+        "condition_scope": null,
+        "candidate_line_ids": [],
+        "target_line_ids": [],
+        "requested_unit_price": null,
+        "price_basis": null,
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "existing_do_numbers": [
+            "DO_20261029_453C4BC2",
+            "DO_20261029_39FF35A3"
+          ]
+        },
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [],
+    "blocking_issues": [
+      "MULTIPLE_PACK_SIZES",
+      "SAME_DAY_ORDER"
+    ],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": null,
+      "currency": "MYR",
+      "is_complete": false
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "RESOLVE_ISSUE",
+      "COPY_CLARIFICATION"
+    ],
+    "blocked_actions": {
+      "APPROVE_AND_GENERATE_DO": [
+        "MULTIPLE_PACK_SIZES",
+        "SAME_DAY_ORDER"
+      ]
+    },
+    "clarification_draft": {
+      "language": "en",
+      "message": "Please confirm this order: Tepung 4 bag: 1kg (RM 3.20/bag) / 2kg (RM 6.00/bag)? Please confirm whether this is an additional order on top of an existing order today. Thank you!",
+      "unresolved_issue_ids": [
+        "ISS_95CABD67B18A4F708CFD307EAF5084F4",
+        "CHK_SAME_DAY_DRF_5F0AE9B60D404D2BB40B036DEAA63D08"
+      ]
+    },
+    "clarification_lang": "en",
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-29T14:51:55.260823Z",
+    "updated_at": "2026-10-29T14:51:55.260823Z",
+    "do_number": null
+  }
+}
