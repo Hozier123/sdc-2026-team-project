@@ -155,6 +155,18 @@ class AiOrchestrator:
                 if data.get("model", self.runtime.model_name) != self.runtime.model_name:
                     raise ValueError("model mismatch")
                 data = json.loads(data["choices"][0]["message"]["content"])
+                # The model also uses an empty string for an absent optional
+                # pack size. Production extraction treats it as absent.
+                if isinstance(data, dict) and isinstance(data.get("rows"), list):
+                    data = {
+                        **data,
+                        "rows": [
+                            {**row, "pack_size": None}
+                            if isinstance(row, dict) and row.get("pack_size") == ""
+                            else row
+                            for row in data["rows"]
+                        ],
+                    }
             result = AiExtraction.model_validate(data)
             if len(result.rows) != 1 or result.ignored_spans:
                 raise ValueError("invalid probe result")

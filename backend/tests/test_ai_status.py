@@ -181,6 +181,19 @@ def test_invalid_or_empty_inference_is_not_ready(content):
         assert "invalid inference" in ai.status().message
 
 
+@pytest.mark.parametrize("pack_size, expected", [("", "READY"), ("1kg", "DEGRADED")])
+def test_runpod_probe_accepts_absent_pack_but_rejects_invented_pack(pack_size, expected):
+    upstream = Upstream()
+    upstream.content = {
+        "rows": [{**RESULT["rows"][0], "pack_size": pack_size}],
+        "ignored_spans": [],
+    }
+    with orchestrator(upstream) as (ai, _):
+        ai.wake("user")
+        finish(ai)
+        assert ai.status().state == expected
+
+
 def test_wrong_model_prevents_inference():
     upstream = Upstream()
     upstream.model = "wrong-model"
