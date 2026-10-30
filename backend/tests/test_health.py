@@ -48,6 +48,7 @@ def test_probe_and_identity_responses_are_documented():
             "/api/v1/approvals/{approval_id}/decide",
             "/api/v1/delivery-orders/{do_number}",
             "/api/v1/customers",
+            "/api/v1/catalog/products",
             "/api/v1/activity",
             "/api/v1/warehouse/delivery-orders/{do_number}",
             "/api/v1/ai/status",
