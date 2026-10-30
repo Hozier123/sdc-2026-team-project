@@ -1,0 +1,10 @@
+# Preserve the signed A03 original artifact bytes, including CRLF.
+/dev41_ai_only_v1_prod_2026-10-29.json -text whitespace=cr-at-eol
+/dev41_ai_only_v1_prod_2026-10-30.json -text whitespace=cr-at-eol
+/ai-samples-2026-10-30/run-20261030T041632Z.json -text whitespace=cr-at-eol
+/phase2/2026-10-30/A03_REVIEW_SHA256.txt -text whitespace=cr-at-eol
+
+# Signed derived archive files use LF on every platform.
+/.gitattributes text eol=lf
+/phase2/2026-10-30/*.md text eol=lf
+/phase2/2026-10-30/SHA256.txt text eol=lf
