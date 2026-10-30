@@ -1,0 +1,178 @@
+(证据包内副本：截图路径相对于本包根目录；原始文件在桌面 C06直接用.txt)
+
+C06 直接用 —— C04 产出的“待老板批”稳定样例
+生成时间：2026-10-30 17:05（UTC+8）
+适用：T1 / Sinaran Food Supply；前端 v1.4.0（f8ff1d7）；后端 555f0fa
+
+======================================================================
+0. 一句话
+======================================================================
+
+这条 PENDING 审批就是 C04 的产物，C06 直接用它，不要新建、不要 reset。
+截至本文件生成时：approval = PENDING，total = RM 34.00，draft = v2。
+全 T1 当前只有这 1 条 PENDING。
+
+======================================================================
+1. C06 开始前 30 秒核对（防止样例被别人先批了）
+======================================================================
+
+打开：https://hozier123.github.io/sdc-2026-team-project/
+连接：API connection -> Base URL 填 https://kiraorder-api.replit.app/api/v1
+      token 用 T1 OWNER
+进入：左侧 Owner approvals
+
+必须看到：
+  approval_id = APR_7A1382B29D5C44FFB6242D15477A60B7
+  status      = Awaiting decision / PENDING
+  customer    = Kedai Rasa（Tier B）
+  version     = v2
+  total       = RM 34.00
+
+如果状态已经不是 PENDING（被批过/被拒过）：
+  立刻停下，在群里说一声，不要随便拿另一条审批顶替。
+  复核接口（只读）：
+  GET https://kiraorder-api.replit.app/api/v1/approvals/APR_7A1382B29D5C44FFB6242D15477A60B7
+  Authorization: Bearer <T1 OWNER 令牌>
+  预期：status=PENDING，total_rm=34.00，reasons[0].code=PRICE_OVERRIDE_BELOW_TIER
+
+======================================================================
+2. 样例身份（照抄，不用改）
+======================================================================
+
+租户            T1 / Sinaran Food Supply
+客户            Kedai Rasa（CUS_RASA，Tier B，NONE）
+草稿            DRF_AFC94FC488144FC6932FA4800D73B0EC
+草稿状态        PENDING_OWNER_APPROVAL，version 2
+审批            APR_7A1382B29D5C44FFB6242D15477A60B7
+审批状态        PENDING（未决定）
+提交人          USR_T1_CLERK（Siti / Order clerk）
+提交时间        2026-10-30 16:57 MYT（08:57:07Z）
+金额            RM 34.00
+老板账号        Boss Tan / USR_T1_OWNER
+库存            2 requested / 30 available
+
+======================================================================
+3. 固定输入（C04 已按此跑完，复现也用它）
+======================================================================
+
+原文            Milo 1kg 2 bag, kalau RM17 boleh?
+商品            Milo 美禄 1kg（SKU_MILO_1KG，1kg/bag）
+数量            2 bag
+tier 单价       RM 19.00
+成交单价        RM 17.00
+override 原因   Customer asked RM17 per 1kg bag; below tier price, owner approval required.
+升级原因        PRICE_OVERRIDE_BELOW_TIER
+                detail: tier_unit_price=19.00 -> effective_unit_price=17.00
+小计            RM 34.00（2 x 17.00）
+订单总额        RM 34.00
+T1 金额阈值     RM 1500.00（总额远低于阈值，所以只有“低价”这一条升级原因）
+
+C04 已执行步骤（留档）：
+  1) CLERK 令牌连接 API
+  2) New order -> 客户 Kedai Rasa
+  3) 输入上面原文 -> Create order draft
+  4) Price condition -> Accept a requested discount（Owner decides）
+  5) 勾选 Milo 行；Confirmed price 填 17.00；填写 override 原因
+  6) Record decision -> Save changes
+  7) 出现 PRICE_OVERRIDE_BELOW_TIER -> Send to owner
+  8) 状态变为 Pending owner approval
+
+======================================================================
+4. C06 怎么做
+======================================================================
+
+1) OWNER 令牌连接 API（同上）。
+2) 左侧 Owner approvals -> 点开 APR_7A1382B29D5C44FFB6242D15477A60B7。
+3) 核对第 2、3 节的字段，尤其是：
+   - Awaiting decision
+   - Milo 1kg，2 bag
+   - Unit price RM 17.00（划线 RM 19.00）
+   - Subtotal RM 34.00
+   - Changes 表：Effective unit price 19.00 -> 17.00；Subtotal 38.00 -> 34.00
+4) 按 C06 的定义做决定：
+   A. 老板批准（默认路径）：
+      点 Approve & generate DO
+      预期：审批变 APPROVED，草稿变 DO_GENERATED，生成 DO
+   B. 老板拒绝（若 C06 是拒绝场景）：
+      点 Reject with reason，填写拒绝原因
+      预期：审批变 REJECTED，不生成 DO
+5) 不要改价、不要改单、不要 reset、不要重新部署。
+
+======================================================================
+5. C06 做完要记录的结果
+======================================================================
+
+审批结果          APPROVED / REJECTED
+decided_at         （页面或接口里的时间）
+decision_note      （拒绝时才有）
+DO 号              DO_...（批准时）
+DO 金额/明细       RM 34.00；Milo 1kg x 2 bag；单价 17.00
+库存变化           30 bag -> 28 bag（批准时）
+活动/审计          审批决定、DO_CREATED、INVENTORY_DEDUCTED（事件名以实际为准）
+草稿终态           DO_GENERATED（批准）或 REJECTED（拒绝）
+
+======================================================================
+6. C04 证据图（4 张，已截好）
+======================================================================
+
+目录：evidence/screenshots/
+
+c04_01_clerk_draft_top.jpg
+  CLERK 草稿页顶部：URL #/order/DRF_AFC94...、Awaiting owner、Kedai Rasa Tier B、原文
+c04_02_clerk_draft_totals.jpg
+  CLERK 草稿页下半：Tier unit price RM 19.00、Subtotal/Order total RM 34.00、库存 30 bag
+c04_03_owner_approval_top.jpg
+  OWNER 审批页顶部：URL #/approval/APR_7A1382...、Boss Tan / Owner、Awaiting decision
+c04_04_owner_approval_changes.jpg
+  OWNER 审批页下半：Milo 1kg、2 bag、RM 17.00（划线 RM 19.00）、
+  Changes 表 19.00 -> 17.00、38.00 -> 34.00、Approve & generate DO
+
+说明：
+  - 第 1 张顶部显示 “AI offline”，是前端不自动轮询导致的过期显示；
+    服务端当时是 READY（已用 /ai/status 复核），第 3 张 OWNER 页也显示 AI ready。
+    这是显示问题，不是“AI 离线也能抽单”的证据矛盾。
+  - 第 1、2 张右侧 Owner review 卡片显示 “Tier price RM 0.00 -> requested RM 0.00”，
+    是前端字段名 bug（见第 7 节），真实数字看商品表和 Changes 表。
+
+======================================================================
+7. 已知显示 bug（不是数据错，现在不要改代码）
+======================================================================
+
+现象：
+  CLERK 草稿页的 Owner review 卡片、OWNER 审批页的 Approval reasons 卡片
+  显示 “Tier price RM 0.00 -> requested RM 0.00”。
+
+原因：
+  前端 ui.tsx 第 273 行读的是 detail.tier_price / detail.applied_price，
+  后端实际返回的是 detail.tier_unit_price / detail.effective_unit_price，
+  取不到就回退成 "0"。
+
+真实数据（接口复核）：
+  GET /api/v1/approvals/APR_7A1382B29D5C44FFB6242D15477A60B7
+  reasons[0].code   = PRICE_OVERRIDE_BELOW_TIER
+  reasons[0].detail = {"tier_unit_price":"19.00","effective_unit_price":"17.00"}
+  total_rm          = 34.00
+  snapshot.lines[0] = SKU_MILO_1KG，2 bag，tier 19.00，effective 17.00，subtotal 34.00
+
+处理：
+  记录为 P3 UI 显示缺陷即可；不要在 C08 复核/入库前改前端或重新部署
+  （C08 仍钉在 f8ff1d7 / v1.4.0）。
+
+======================================================================
+8. 红线
+======================================================================
+
+1) 不要 reset_demo：会删掉这条 PENDING，也会删掉 C08 锚定的
+   DO_20261029_453C4BC2，两边的证据都会失效。
+2) 不要重新部署、不要改前端版本：C08 证据钉在 f8ff1d7（v1.4.0）/ 555f0fa。
+3) 不要改 T1 的 below_tier_price_override_requires_owner 或 amount_threshold_rm：
+   C04 这条样例依赖开关为 TRUE、阈值 1500。
+4) 不要编辑这条草稿：它已 v2 锁定，C06 只做“决定”。
+5) C06 做完前不要让任何人跑 reset；C06 结果落盘后再考虑清理。
+
+======================================================================
+9. 一句话交接
+======================================================================
+
+C06 打开 APR_7A1382B29D5C44FFB6242D15477A60B7，核对 19.00/17.00/34.00，
+点 Approve & generate DO，记录 DO 号和库存 30->28，结束。

@@ -1,0 +1,135 @@
+{
+  "case_id": "C04",
+  "captured_at": "2026-10-30T17:09:36+08:00",
+  "tenant": {
+    "id": "T1",
+    "name": "Sinaran Food Supply",
+    "threshold_rm": "1500.00",
+    "below_tier_price_override_requires_owner": true
+  },
+  "customer": {
+    "id": "CUS_RASA",
+    "name": "Kedai Rasa",
+    "tier": "B"
+  },
+  "draft": {
+    "id": "DRF_AFC94FC488144FC6932FA4800D73B0EC",
+    "version": 2,
+    "status": "PENDING_OWNER_APPROVAL"
+  },
+  "approval": {
+    "id": "APR_7A1382B29D5C44FFB6242D15477A60B7",
+    "status": "PENDING",
+    "requested_by": "USR_T1_CLERK",
+    "requested_at": "2026-10-30T08:57:07.416038Z",
+    "decided_at": null,
+    "total_rm": "34.00",
+    "line_count": 1
+  },
+  "line": {
+    "sku_id": "SKU_MILO_1KG",
+    "description": "Milo 美禄",
+    "pack_size": "1kg",
+    "requested_qty": 2,
+    "effective_qty": 2,
+    "uom": "bag",
+    "tier_unit_price": "19.00",
+    "unit_price_override": "17.00",
+    "effective_unit_price": "17.00",
+    "subtotal_rm": "34.00",
+    "available_qty": 30,
+    "match_source": "LLM_EXTRACTED",
+    "source_span": "Milo 1kg 2 bag"
+  },
+  "escalation": {
+    "code": "PRICE_OVERRIDE_BELOW_TIER",
+    "detail": {
+      "tier_unit_price": "19.00",
+      "effective_unit_price": "17.00"
+    }
+  },
+  "input": {
+    "masked_message_text": "Milo 1kg 2 bag, kalau RM17 boleh?",
+    "override_reason": "Customer asked RM17 per 1kg bag; below tier price, owner approval required."
+  },
+  "field_diffs": [
+    {
+      "field_path": "unit_price_override",
+      "before": null,
+      "after": "17.00",
+      "reason_code": "USER_EDIT"
+    },
+    {
+      "field_path": "override_reason",
+      "before": null,
+      "after": "Customer asked RM17 per 1kg bag; below tier price, owner approval required.",
+      "reason_code": "USER_EDIT"
+    },
+    {
+      "field_path": "effective_unit_price",
+      "before": "19.00",
+      "after": "17.00",
+      "reason_code": "USER_EDIT"
+    },
+    {
+      "field_path": "subtotal_rm",
+      "before": "38.00",
+      "after": "34.00",
+      "reason_code": "USER_EDIT"
+    }
+  ],
+  "stock_check": {
+    "state": "PASSED",
+    "checked_at": "2026-10-30T08:57:07.416038Z",
+    "lines": [
+      {
+        "line_id": "LNE_1BA40D92EC474993BC57F43D52A6596F",
+        "sku_id": "SKU_MILO_1KG",
+        "requested_qty": 2,
+        "available_qty": 30,
+        "sufficient": true,
+        "effective_qty": 2
+      }
+    ]
+  },
+  "condition": {
+    "source": "GET /api/v1/orders/drafts/DRF_AFC94FC488144FC6932FA4800D73B0EC -> conditions[0]",
+    "issue_id": "ISS_50B3AF9E5C0E1D2D28267D52",
+    "condition_id": "CND_9932E3733CF3F5330B391284",
+    "line_id": "LNE_1BA40D92EC474993BC57F43D52A6596F",
+    "condition_kind": "PRICE",
+    "condition_scope": "SINGLE_LINE",
+    "span": "kalau RM17",
+    "source_span": "kalau RM17",
+    "span_start": 16,
+    "span_end": 26,
+    "candidate_line_ids": [
+      "LNE_1BA40D92EC474993BC57F43D52A6596F"
+    ],
+    "target_line_ids": [
+      "LNE_1BA40D92EC474993BC57F43D52A6596F"
+    ],
+    "requested_unit_price": null,
+    "price_basis": "UNIT",
+    "data_used": {
+      "amount_text": "17",
+      "confirmed_unit_price": "17.00"
+    },
+    "blocking": true,
+    "resolved": true,
+    "resolution": "ACCEPT_REQUESTED_PRICE",
+    "resolution_note": "Customer asked RM17 per 1kg bag; below tier price, owner approval required."
+  },
+  "rechecked_at": "2026-10-30T23:09:16+08:00",
+  "recheck": {
+    "checked_at": "2026-10-30T23:09:16+08:00",
+    "status": "PENDING",
+    "decided_by": null,
+    "decided_at": null,
+    "source": "GET /api/v1/approvals/APR_7A1382B29D5C44FFB6242D15477A60B7 (owner token)"
+  },
+  "reviewed_at": "2026-10-30T23:21:00+08:00",
+  "review_status": "APPROVED",
+  "reviewer": "Zhou Jingxi",
+  "ui01": "ACCEPTED_P3"
+}
