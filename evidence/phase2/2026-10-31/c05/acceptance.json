@@ -7,7 +7,7 @@
   "timezone": "UTC+08:00",
   "observed_window": "01:42-02:03 MYT",
   "execution_method": "Operator performed all application actions; assistant reviewed screenshots and archived evidence.",
-  "independent_review": "NOT_PERFORMED",
+  "independent_review": "PASSED",
   "frontend": {
     "version_observed": "1.4.0",
     "deployed_sha": null
@@ -92,5 +92,15 @@
     "LLM inference readiness",
     "Private TEST32 or other cases"
   ],
-  "archive_scope": "English manual acceptance record and source hashes; original screenshots retained locally."
+  "archive_scope": "English manual acceptance record and source hashes; original screenshots retained locally.",
+  "independent_reviewer": "Zhou",
+  "independent_review_date": "2026-10-31",
+  "independent_review_scope": "Manual UI acceptance with the stated evidence limitations",
+  "independent_review_record": "independent-review.json",
+  "accepted_review_limitations": [
+    "No-DO and unchanged-stock conclusions are UI evidence only, not direct API or DB proof.",
+    "Empty rejection reason and terminal-state lock were not tested through API bypass attempts.",
+    "Frontend/backend deployment SHAs were not captured.",
+    "C02 backend reference 555f0fa must not be assigned to this C05 execution."
+  ]
 }

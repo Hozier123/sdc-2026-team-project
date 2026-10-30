@@ -4,7 +4,7 @@
 
 **PASS for this manual browser run.** The operator created a new C05 order, submitted a below-tier price, confirmed that an empty rejection reason disabled submission, and rejected the request as the owner. The original draft then showed a closed terminal state with the reason preserved. A fresh, unapproved auxiliary draft showed the same stock reading before it was closed with an explanatory note.
 
-Execution: 2026-10-31, approximately 01:42-02:03 MYT (UTC+08:00). The operator performed application actions through the real API session and supplied eleven screenshots. The operator and assistant reviewed the evidence together; no independent reviewer or formal private TEST32 run is claimed.
+Execution: 2026-10-31, approximately 01:42-02:03 MYT (UTC+08:00). The operator performed application actions through the real API session and supplied eleven screenshots. The operator and assistant reviewed the evidence together; Zhou independently reviewed the manual UI evidence and passed it on 2026-10-31; no formal private TEST32 run is claimed. See the [review record](independent-review.json).
 
 The displayed frontend version was **1.4.0**, with historical extraction mode **FALLBACK**. Frontend/backend deployment SHAs, raw HTTP responses, and request IDs were not captured.
 
@@ -51,7 +51,7 @@ The comparison establishes equal stock values displayed for two fresh drafts. It
 - [Private-source screenshot manifest](source-manifest.json): eleven original filenames, byte sizes, capture times, and exact-byte SHA-256 hashes
 - [Public-file checksums](SHA256.txt)
 
-Original screenshots are retained locally and are not part of the public candidate. Readers cannot inspect those images from this directory alone. No session tokens, API keys, private test answers, or absolute local filesystem paths are included. A source-image hash binds the retained original; it does not mean the image has been published or independently reviewed.
+Original screenshots are retained locally and are not part of the public candidate. Readers cannot inspect those images from this directory alone. No session tokens, API keys, private test answers, or absolute local filesystem paths are included. A source-image hash binds the retained original; it does not mean the image has been published. Zhou verified the privately supplied images for this review.
 
 This directory's `.gitattributes` disables line-ending conversion. `SHA256.txt` covers exact public-file bytes and excludes itself.
 
@@ -60,3 +60,14 @@ This directory's `.gitattributes` disables line-ending conversion. `SHA256.txt` 
 The legacy owner-review summary still displayed RM0.00 to RM0.00. The actual item price and stored rejection reason showed RM19.00 and RM17.00. This previously observed display issue is tracked in PR #86 and is not silently reported as fixed in the frontend used for this run.
 
 No direct API bypass or repeat-decision attempt was performed. The no-DO result is supported by the closed page and displayed order-specific trail, not a direct read of API `do_number` or database rows. This run does not establish LLM readiness, concurrency behavior, stock idempotency, or private TEST32 acceptance. Publication of this record remains separate from the completed browser run.
+
+## Independent review — 31 October 2026
+
+**PASSED — Zhou, manual UI scope.** The reviewer reported 11/11 original screenshots and 33/33 supplemental checks verified. The reviewed PR head and merge SHAs are preserved in [independent-review.json](independent-review.json).
+
+- No-DO and unchanged-stock conclusions are UI evidence only, not direct API or DB proof.
+- Empty rejection reason and terminal-state lock were not tested through API bypass attempts.
+- Frontend/backend deployment SHAs were not captured.
+- C02 backend reference 555f0fa must not be assigned to this C05 execution.
+
+The RM0.00 → RM0.00 summary issue remains P3. Before the demo, identify and label or clean up the two older pending owner requests while preserving samples reserved for C06. This documentation change does not change those requests.
