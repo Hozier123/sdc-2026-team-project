@@ -1,0 +1,75 @@
+{
+  "case_id": "C05",
+  "status": "COMPLETE_LOCAL_SOURCE_ARCHIVE",
+  "files": [
+    {
+      "file": "01-new-draft-baseline.png",
+      "captured_at": "2026-10-31T01:42:22+08:00",
+      "bytes": 573194,
+      "sha256_raw_bytes": "e6ffe1a2179d336895636fd3c066b0e48a15ba708c96b9bcb9d9d76ce768b59d"
+    },
+    {
+      "file": "02-low-price-saved-v2.png",
+      "captured_at": "2026-10-31T01:45:05+08:00",
+      "bytes": 597238,
+      "sha256_raw_bytes": "c9066a1fb68ebac44db70e0fcf51f47bb2262a01c52a4a5a7c4aff3a8ce7df12"
+    },
+    {
+      "file": "03-submitted-awaiting-owner.png",
+      "captured_at": "2026-10-31T01:46:44+08:00",
+      "bytes": 604057,
+      "sha256_raw_bytes": "9d8a21708e4b5dac47dd837316f08d4237d871c2d5ecff55c0036ecdcb398191"
+    },
+    {
+      "file": "04-owner-pending-list.png",
+      "captured_at": "2026-10-31T01:50:40+08:00",
+      "bytes": 574314,
+      "sha256_raw_bytes": "ba3301e818ff50ab9ec25382c86959206f2eb31cbba2eef7d6bae4ab69d34c53"
+    },
+    {
+      "file": "05-empty-rejection-reason.png",
+      "captured_at": "2026-10-31T01:52:08+08:00",
+      "bytes": 659915,
+      "sha256_raw_bytes": "e87d7981e8c6595d670dd6896d3d59940d5db60ab09d6843ae0f63dfa0f0badc"
+    },
+    {
+      "file": "06-owner-rejection-result.png",
+      "captured_at": "2026-10-31T01:53:22+08:00",
+      "bytes": 574107,
+      "sha256_raw_bytes": "418a6c60c8217f16d2d81680ba100876ccae74620c0fa7b31038cdf3214ff51e"
+    },
+    {
+      "file": "07-inbox-closed-draft.png",
+      "captured_at": "2026-10-31T01:56:33+08:00",
+      "bytes": 603484,
+      "sha256_raw_bytes": "aeccc10b747b32a7101de66bedd9a79a0c2e3fa24e313652022c21ff1210112a"
+    },
+    {
+      "file": "08-closed-draft-detail.png",
+      "captured_at": "2026-10-31T01:57:37+08:00",
+      "bytes": 604262,
+      "sha256_raw_bytes": "317cc4f9b77c31b11a0b7e0ff1aba06bd3a29b7fad4b3261ba0f1cceaec75e11"
+    },
+    {
+      "file": "09-order-rejection-trail.png",
+      "captured_at": "2026-10-31T01:59:05+08:00",
+      "bytes": 709372,
+      "sha256_raw_bytes": "deb9ee156daf2b0b5ff1d7b4459b0a316a9f448a4aa3eabd3f972f0fad420117"
+    },
+    {
+      "file": "10-fresh-draft-stock-after-rejection.png",
+      "captured_at": "2026-10-31T02:00:54+08:00",
+      "bytes": 571451,
+      "sha256_raw_bytes": "736f77a9d048aeb5fc65741756dc919159bdae7c100517bc6961a44244e802e4"
+    },
+    {
+      "file": "11-auxiliary-draft-closed.png",
+      "captured_at": "2026-10-31T02:03:00+08:00",
+      "bytes": 622355,
+      "sha256_raw_bytes": "f05abe30b75645f2c084e4c82e4fe1867571da233db359cfc3ef59324a39bb19"
+    }
+  ],
+  "publication": "PRIVATE_LOCAL_ONLY",
+  "originals_in_public_candidate": false,
+  "hash_convention": "SHA-256 of exact original PNG bytes, not Git blob hashes"
+}
