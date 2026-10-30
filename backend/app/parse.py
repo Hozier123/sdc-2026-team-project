@@ -34,7 +34,12 @@ from app.errors import (
 )
 from app.extraction.ai import AiServiceError, classify_condition
 from app.extraction.base import ExtractionProvider, RawExtraction, RawRow, validate_raw_extraction
-from app.extraction.evidence import exact_phrase, pack_size_evidence, quantity_evidence
+from app.extraction.evidence import (
+    evidenced_uom,
+    exact_phrase,
+    pack_size_evidence,
+    quantity_evidence,
+)
 from app.extraction.runpod_adapter import RunPodAdapterProvider
 from app.extraction.stub import StubExtractor
 from app.pii import mask_message
@@ -307,27 +312,29 @@ def _ai_draft(
                     end=end,
                     reason_code="FAMILY_NOT_EVIDENCED",
                 )
-            if product is None and row.uom is None:
+            if product is None and resolution.issue_code:
+                # The resolver already named the blocker. Emit it once, with
+                # the candidate payload; a bare `uom is None` check here would
+                # duplicate MISSING_UOM and mislabel single-base-unit families
+                # whose real blocker is pack size.
                 add_issue(
-                    code="MISSING_UOM",
+                    code=resolution.issue_code,
                     line_id=line_id,
                     span=row.span,
                     start=start if start >= 0 else None,
                     end=end,
-                    reason_code="FIELD_NOT_EVIDENCED",
-                )
-            if product is None and candidates:
-                add_issue(
-                    code=resolution.issue_code or "MULTIPLE_PACK_SIZES",
-                    line_id=line_id,
-                    span=row.span,
-                    start=start if start >= 0 else None,
-                    end=end,
-                    data_used={
-                        "candidate_skus": [
-                            candidate.model_dump(mode="json") for candidate in candidates
-                        ]
-                    },
+                    reason_code=(
+                        "FIELD_NOT_EVIDENCED" if resolution.issue_code == "MISSING_UOM" else None
+                    ),
+                    data_used=(
+                        {
+                            "candidate_skus": [
+                                candidate.model_dump(mode="json") for candidate in candidates
+                            ]
+                        }
+                        if candidates
+                        else None
+                    ),
                 )
             elif product is None:
                 add_issue(
@@ -496,11 +503,7 @@ def _guard_families_and_units(
             if family_id in active and exact_phrase(phrase, row.span)
         }
         family = row.fam if hits == {row.fam} else "UNKNOWN"
-        unit = (
-            row.uom
-            if any(unit == row.uom and exact_phrase(alias, row.span) for unit, alias in units)
-            else None
-        )
+        unit = evidenced_uom(row.uom, row.span, units)
         pack = row.pack_size if row.pack_size and exact_phrase(row.pack_size, row.span) else None
         if pack is None and not row.pack_size:
             evidence = pack_size_evidence(row.span)
