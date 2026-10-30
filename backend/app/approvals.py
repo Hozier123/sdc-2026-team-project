@@ -616,8 +616,10 @@ def decide(
             approval = _approval(conn, user.tenant_id, approval_id)
             order = _order(conn, user.tenant_id, approval["draft_id"], lock=True)
             approval = _approval(conn, user.tenant_id, approval_id, lock=True)
-            if approval["status"] != "PENDING":
-                raise PendingOwnerApprovalError()
+            if approval["status"] == "APPROVED":
+                raise AlreadyApprovedError()
+            if approval["status"] == "REJECTED":
+                raise DraftRejectedError()
             if approval["draft_version"] != order["version"]:
                 raise StaleVersionError(
                     details={
