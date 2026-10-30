@@ -36,8 +36,9 @@
     "he_34_checks": "Assistant-supported evidence cross-check, not an independent rerun",
     "new_instance_31_checks": "Preparation preflight only; not a fresh full reset/resume acceptance",
     "current_main_full_isolation_reset_acceptance": false,
-    "portable_runtime_delivery": "LOCAL_ONLY_NOT_PUBLISHED_AS_A_STANDALONE_REPOSITORY_PACKAGE",
-    "current_round_startup": "CLOSED"
+    "portable_runtime_delivery": "REPOSITORY_BOOTSTRAP_KIT_AND_SEPARATE_LOCAL_ENVIRONMENT_DELIVERED",
+    "current_round_startup": "CLOSED",
+    "initial_round_runtime_delivery": "LOCAL_ONLY_AT_INITIAL_SCOPE_CLOSEOUT"
   },
   "actual_participant_trials": {
     "status": "NOT_RUN",
@@ -85,5 +86,13 @@
     "locked_materials": true,
     "separate_actual_trial_pr": true,
     "preserve_current_not_run_record": true
+  },
+  "environment_delivery_followup": {
+    "date_utc8": "2026-10-31",
+    "status": "DELIVERED_WINDOWS_LOCAL_TECHNICAL_PASS",
+    "record": "evidence/b05-environment/2026-10-31-delivery.json",
+    "actual_participant_trials": "NOT_RUN",
+    "initial_round_record_preserved": true,
+    "independent_review": "NOT_PERFORMED_FOR_THIS_NEW_DELIVERY"
   }
 }
