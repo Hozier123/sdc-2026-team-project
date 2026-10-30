@@ -4,7 +4,7 @@
   "result": "PASS_SIGNED_OFF",
   "overall_status": "SIGNED_OFF",
   "independent_review_status": "APPROVED",
-  "repo_status": "PENDING_COMMIT",
+  "repo_status": "MERGED",
   "c06_ready": true,
   "numbers": {
     "checks_total": 12,
@@ -83,5 +83,10 @@
     "conclusion": "APPROVED",
     "ui01": "ACCEPTED_P3",
     "file": "reviews/01-Zhou-review-r3-2026-10-30.md"
-  }
+  },
+  "merge_commit": "a3e1da6c3f984d7fe0e6f88faa9858eaf473c281",
+  "merge_commit_url": "https://github.com/Hozier123/sdc-2026-team-project/commit/a3e1da6c3f984d7fe0e6f88faa9858eaf473c281",
+  "merged_at": "2026-10-30T16:10:49Z",
+  "metadata_updated_at": "2026-10-31T00:25:00+08:00",
+  "post_merge_note": "Post-merge metadata update after PR #84. Signed package r4 (SHA256 C0D6EB23B779AA4EDC5090ED83019B06602EB7862101BC7032EFC8706D16CDE9) remains the signed artifact; business evidence, condition, and screenshots unchanged. This update records repo_status=MERGED and the merge commit."
 }
