@@ -64,7 +64,13 @@ Zhou 一旦重定稿（库存或价格变化），必须重建模板并升版本
 
 ## 4. 命令
 
+先确认 `data/seed` 的字节没被 Windows 行尾改写：CRLF 会让 `--seed-sha256` 直接对不上，
+而 `Get-FileHash` 分不清“只是换行符”和“内容被改”。`--fix` 只修行尾，不碰内容差异。
+
 ```powershell
+# 先查 seed 字节，exit 0 才继续
+python -m tools.check_seed_bytes
+
 # 只看计划，不改库
 python -m tools.reset_demo --dry-run --expect-seed-version T1-0.1 --expect-seed-sha256 <sha>
 

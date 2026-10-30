@@ -25,6 +25,27 @@ SEED_MANIFEST.json
 
 T2 has 2 `alias_cache` entries; T1 also has 2 entries (the two aliases for `CUS_RASA`).
 
+## Line endings (Windows)
+
+`SEED_MANIFEST.json` signs the LF bytes of each SQL file. A checkout made before
+`.gitattributes` pinned `data/seed/*.sql` to `text eol=lf`, an editor, or
+`Get-Content … | Set-Content` can rewrite a working copy to CRLF. Every row stays the
+same, but the SHA-256 does not: T2 is 27,611 B / `134EFD…` at LF and 27,766 B /
+`8EB158…` at CRLF. Both `app.seed` and `tools.reset_demo` hash raw bytes, so a CRLF copy
+fails with `seed SQL checksum does not match` — `Get-FileHash` alone cannot tell that
+apart from a real content change.
+
+Check or repair a working copy before seeding or resetting:
+
+```powershell
+Set-Location backend
+python -m tools.check_seed_bytes          # exit 0 only when both files match the manifest
+python -m tools.check_seed_bytes --fix    # rewrite EOL-only drift back to LF
+```
+
+`git checkout -- data/seed/T2_seed.sql` re-applies the LF checkout as well; re-run the
+check afterwards, since git may keep a CRLF copy that predates the `.gitattributes` rule.
+
 ## Import
 
 Run migrations first, then import each tenant separately:
