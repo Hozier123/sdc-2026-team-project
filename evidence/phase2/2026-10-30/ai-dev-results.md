@@ -1,10 +1,10 @@
 # A03 当前版本 AI 证据（2026-10-30）
 
-运行窗口：2026-10-30 12:16–12:17 UTC+8，RunPod 热态 worker（无冷启动）。
+运行时间（UTC+8）：23 条报告写入时间为 2026-10-30 12:16:11，6 条报告生成为 12:16:32；精确起始未记录。按 Xiong 事后估计，23 条约 12:15:18 开始，6 条约 12:16:11 开始；均非精确计时。RunPod 为热态 worker。
 应用版本：`555f0fa669ac40e2d7b9d9ceacdbfb6d24301127`。
 部署：`72258e1f`（He 2026-10-30 确认，2026-10-29 23:01:39 UTC+8 发布；`7c492845` 为历史部署）。
 AI 模块标识：`app/ai@db6f0ce`（DEV 脚本自报 code_base）。
-模型：`Qwen/Qwen2.5-7B-Instruct-AWQ`；vLLM `0.32.0`（`system_fingerprint=vllm-0.32.0-cde58403`）。
+模型：`Qwen/Qwen2.5-7B-Instruct-AWQ`；vLLM `0.32.0` 为报告级绑定，参考 10/29 B01 的 `vllm-0.32.0-cde58403`；本轮 JSON 未保存 fingerprint，不声称本轮逐请求复验。
 业务超时：`LLM_TIMEOUT_S=4.1`。
 
 ## 1. 23 条 DEV AI-only
@@ -18,7 +18,7 @@ AI 模块标识：`app/ai@db6f0ce`（DEV 脚本自报 code_base）。
 | 报告文件 | `evidence/dev41_ai_only_v1_prod_2026-10-30.json` |
 | SHA-256 | `30EAFF548FE096A587C824E9336CDA675C13A5CACB3B08112729128D0CDC6BC3` |
 
-**口径：23/23 是调用成功，不是识别准确率。** 准确率仍由 Zhou 用独立答案键判分。
+**口径：23/23 是调用成功，不是识别准确率。** Zhou 已用独立答案键判分，结果见下方；本复核未取得私有答案键，不另行重算 DEV 准确率。
 
 ### Zhou 独立复核（2026-10-30 14:28，脱敏汇总）
 
@@ -39,7 +39,7 @@ AI 模块标识：`app/ai@db6f0ce`（DEV 脚本自报 code_base）。
 
 | 项 | 结果 |
 |---|---|
-| 执行 | 6/6 HTTP 成功，6/6 `ai_mode=LLM` |
+| 执行 | 6/6 adapter 调用有结果，6/6 `ai_mode=LLM` |
 | 评分字段（span / qty / uom / pack_size） | 5 条一致 |
 | 已知限制 | `condition` 的条件 span 截断为 `kalau RM95`，期望 `kalau RM95 untuk 1 ctn boleh?`；记 1 条 `KNOWN_LIMITATION` |
 | family | `family_scored=false`，不参与这 6 条判分；实际返回 T1 租户 ID（`FAM_TEPUNG/FAM_BERAS/FAM_MINYAK/FAM_GULA`），与样例的通用 ID 不同不构成失败 |
