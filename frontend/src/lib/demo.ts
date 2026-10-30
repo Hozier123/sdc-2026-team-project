@@ -22,6 +22,7 @@ import {
   type Service,
   type WarehouseOrder,
 } from "./types";
+import type { CatalogProductsResponse } from "./catalog";
 
 // The local demo is a separate service, never used to authorize a live API request.
 export const DEMO_CUSTOMERS: Customer[] = [
@@ -252,6 +253,20 @@ export class DemoService implements Service {
   }
   private catalog() {
     return this.tenant === "T2" ? HARDWARE : CATALOG;
+  }
+  async catalogProducts(): Promise<CatalogProductsResponse> {
+    this.require(["CLERK", "OWNER"]);
+    return {
+      items: this.catalog().slice(0, 100).map((product) => ({
+        sku_id: product.sku_id,
+        display_name: product.display_name,
+        pack_size: product.pack_size ?? null,
+        grade: product.grade ?? null,
+        base_unit: product.base_unit,
+      })),
+      limit: 100,
+      truncated: this.catalog().length > 100,
+    };
   }
   private customersForTenant() {
     return this.tenant === "T2"

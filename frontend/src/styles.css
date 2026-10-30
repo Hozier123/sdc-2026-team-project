@@ -5585,6 +5585,20 @@ a {
   }
 }
 
+.catalog-description { max-width: 720px; margin: 0 0 24px; color: var(--muted); line-height: 1.6; }
+.catalog-toolbar, .catalog-summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 22px; }
+.catalog-toolbar h2 { margin: 0; font-size: 18px; }
+.catalog-summary { border-top: 1px solid var(--border); flex-wrap: wrap; font-size: 13px; }
+.catalog-summary p { margin: 0; }
+.catalog-summary [role="alert"] { font-weight: 600; }
+.catalog-summary span { color: var(--muted); }
+.catalog-scroll { overflow-x: auto; }
+.catalog-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+.catalog-table th, .catalog-table td { padding: 14px 22px; border-top: 1px solid var(--border); white-space: nowrap; }
+.catalog-table th { color: var(--muted); font-size: 12px; font-weight: 500; }
+.catalog-table code { font-size: 12px; }
+@media (max-width: 760px) { .catalog-toolbar { align-items: flex-start; flex-wrap: wrap; } }
+
 /* v1.3.0 — 移动端可读性底线:手机/平板下工作台内容文字不再低于以下标度。 */
 @media (max-width: 760px) {
   .app-shell .mini-activity strong {

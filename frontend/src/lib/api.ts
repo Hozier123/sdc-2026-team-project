@@ -16,6 +16,7 @@ import {
   type Gate0,
 } from "./types";
 import { assertQuantities } from "./review";
+import type { CatalogProductsResponse } from "./catalog";
 import { validateApiBase } from "./connection";
 import {
   approvalView,
@@ -163,6 +164,10 @@ export class HttpService implements Service {
   }
   customers() {
     return this.list<Customer>("/customers");
+  }
+  catalogProducts(): Promise<CatalogProductsResponse> {
+    // Keep the full envelope: generic list() discards limit/truncated.
+    return this.request<CatalogProductsResponse>("/catalog/products");
   }
   async drafts() {
     return (await this.list<Gate0["DraftSummary"]>("/orders/drafts")).map(

@@ -45,6 +45,7 @@ import { ConnectionModal } from "./components/ConnectionModal";
 import { reconnectRequired, rememberConnection } from "./lib/connection";
 import { useAiControl, useResource } from "./lib/hooks";
 import { PrivacyPage } from "./components/PrivacyPage";
+import { CatalogPage } from "./components/CatalogPage";
 import { WorkspaceSwitcher } from "./components/WorkspaceSwitcher";
 import { RoleSwitcher } from "./components/RoleSwitcher";
 import {
@@ -85,11 +86,12 @@ import {
 
 import type { Navigate, Notify } from "./lib/types";
 import { PageHeading } from "./components/ui";
-export const APP_VERSION = "1.5.0";
+export const APP_VERSION = "1.5.1";
 const links = [
   { path: "workspace", label: "Overview", Icon: LayoutDashboard },
   { path: "new", label: "New order", Icon: Plus },
   { path: "inbox", label: "Order inbox", Icon: Inbox },
+  { path: "catalog", label: "Product directory", Icon: Boxes },
   { path: "approvals", label: "Owner approvals", Icon: ClipboardCheck },
   { path: "delivery-orders", label: "Delivery orders", Icon: FileCheck2 },
   { path: "activity", label: "Activity log", Icon: ActivityIcon },
@@ -330,6 +332,7 @@ function Workspace() {
   const wakeEnabled =
     !!me?.permissions.includes("WAKE_AI") &&
     route !== "intro" &&
+    route !== "catalog" &&
     route !== "privacy";
   const { busy: wakeBusy, wake } = useAiControl(
     service,
@@ -665,7 +668,9 @@ function Workspace() {
                   </button>
                 </div>
               </section>
-              {me.role === "WAREHOUSE" ? (
+              {routeValid && active === "catalog" ? (
+                <CatalogPage key={service.mode + me.user_id} service={service} />
+              ) : me.role === "WAREHOUSE" ? (
                 <WarehousePage
                   key={service.mode + tenant + me.user_id}
                   service={service}
@@ -861,7 +866,7 @@ function Workspace() {
             setLive(s);
             setNeedsConnection(false);
             setSettings(false);
-            forceNav(verified.role === "WAREHOUSE" ? "warehouse" : "workspace");
+            forceNav(routeRef.current === "catalog" ? "catalog" : verified.role === "WAREHOUSE" ? "warehouse" : "workspace");
           }}
           onDemo={() => {
             rememberConnection(sessionStorage, false);
