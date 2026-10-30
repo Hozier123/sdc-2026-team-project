@@ -1,0 +1,135 @@
+{
+  "scope": "C07 public HTTPS/Neon execution; independent online review pending",
+  "application_source_commit": "9dfee3382b6191adb314c09bbe8ff779eff9ddac",
+  "github_main_at_publish": "f3110d068561be5fff686a799467277b6e9ec1e4",
+  "deployment_id": "9cff61ed",
+  "platform_state": "Published/Live; all five stages success",
+  "code_pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/79",
+  "application_delta_from_555f0fa": [
+    "backend/app/approvals.py"
+  ],
+  "started_at_utc": "2026-10-30T16:21:23.464668+00:00",
+  "completed_at_utc": "2026-10-30T16:26:08.332209+00:00",
+  "accepted_scenarios": 6,
+  "accepted_http_requests": 34,
+  "offline_checks": 194,
+  "execution_status": "PASS",
+  "offline_audit_status": "PASS",
+  "independent_online_review": "PENDING_ZHOU",
+  "cases": [
+    {
+      "case_id": "C07-01",
+      "tenant_id": "C07LIVE_4e7b74_C07_01",
+      "http_requests": 4,
+      "final_stock": 9,
+      "delivery_orders": 1
+    },
+    {
+      "case_id": "C07-02",
+      "tenant_id": "C07LIVE_4e7b74_C07_02",
+      "http_requests": 6,
+      "final_stock": 9,
+      "delivery_orders": 1
+    },
+    {
+      "case_id": "C07-03",
+      "tenant_id": "C07LIVE_4e7b74_C07_03",
+      "http_requests": 6,
+      "final_stock": 7,
+      "delivery_orders": 1
+    },
+    {
+      "case_id": "C07-04",
+      "tenant_id": "C07LIVE_4e7b74_C07_04",
+      "http_requests": 7,
+      "final_stock": 7,
+      "delivery_orders": 1
+    },
+    {
+      "case_id": "C07-05",
+      "tenant_id": "C07LIVE_b34944_C07_05",
+      "http_requests": 5,
+      "final_stock": 0,
+      "delivery_orders": 1
+    },
+    {
+      "case_id": "C07-07",
+      "tenant_id": "C07LIVE_4e7b74_C07_07",
+      "http_requests": 6,
+      "final_stock": 10,
+      "delivery_orders": 0
+    }
+  ],
+  "concurrent_db_waiters": {
+    "C07-02": "4/4",
+    "C07-04": "4/4",
+    "C07-05": "2/2"
+  },
+  "case_paths_in_handoff": {
+    "C07-01": "../c07-online-20261030T162123Z-4e7b74/cases/C07-01",
+    "C07-02": "../c07-online-20261030T162123Z-4e7b74/cases/C07-02",
+    "C07-03": "../c07-online-20261030T162123Z-4e7b74/cases/C07-03",
+    "C07-04": "../c07-online-20261030T162123Z-4e7b74/cases/C07-04",
+    "C07-05": "../c07-online-20261030T162601Z-b34944/cases/C07-05",
+    "C07-07": "../c07-online-20261030T162123Z-4e7b74/cases/C07-07"
+  },
+  "history": [
+    {
+      "batch": "c07-online-20261030T161953Z-a3377a",
+      "status": "DRIVER_SETUP_FAILED",
+      "detail": "Identity 200; driver used tenant_id instead of tenant.id; no approval/stock operation sent"
+    },
+    {
+      "batch": "c07-online-20261030T162123Z-4e7b74",
+      "status": "FAIL",
+      "detail": "Only C07-05 overlap proof missing; all stock/DO/error outcomes correct; other five cases PASS"
+    },
+    {
+      "batch": "c07-online-20261030T162601Z-b34944",
+      "status": "PASS",
+      "detail": "C07-05 only; same application/deployment, observation timing adjusted; 2/2 DB waiters proven"
+    }
+  ],
+  "failed_history_preserved": true,
+  "existing_tenant_writes": 0,
+  "model_and_gpu_calls": 0,
+  "reset_delete_migration_calls": 0,
+  "fixture_scope": "New C07LIVE synthetic tenants/users/products/drafts only; retained for review",
+  "fixture_parse_origin": "Explicit SQL fixtures followed by real HTTP save/approval; no public AI parse called",
+  "runtime_draft_id": "DRF_C07LIVE_38634818951b45cf828fa4baf3094ae7",
+  "runtime_log_rows": [
+    {
+      "ui_local_time_utc8": "2026-10-31 00:21:26.54",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "ui_local_time_utc8": "2026-10-31 00:21:33.27",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "ui_local_time_utc8": "2026-10-31 00:21:34.73",
+      "method": "POST",
+      "status": 409
+    }
+  ],
+  "runtime_log_deployment": "9cff61ed",
+  "server_file_byte_readback": "Not performed; source mapping uses Git/editor/publish and actual request logs",
+  "C07_06": "Local candidate rollback PASS; no fault injected into shared public service",
+  "excluded": [
+    "browser clicks",
+    "formal TEST32",
+    "AI accuracy",
+    "public fault injection"
+  ],
+  "handoff": {
+    "filename": "C07_ONLINE_9cff61ed_20261031.zip",
+    "size": 1098265,
+    "sha256": "9aa671cd862e08e74bf6ebada39b0ef3b90cf17dc65b052e74f1fbcd438849c6",
+    "files": 278,
+    "crc_and_every_entry_verified": true,
+    "secret_cookie_scan": "PASS",
+    "visibility": "Raw handoff retained locally for reviewer transfer; this repository stores the public record and hash"
+  }
+}
