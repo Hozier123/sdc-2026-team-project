@@ -1,0 +1,38 @@
+{
+  "case_id": "C02",
+  "files": [
+    {
+      "file": "01-ambiguity.png",
+      "bytes": 655774,
+      "sha256_raw_bytes": "074dac1d6ce5b3b83bee5406978bc5897c562ea3598d67ff9b414a4944d7ae8a"
+    },
+    {
+      "file": "02-selected-unsaved.png",
+      "bytes": 716507,
+      "sha256_raw_bytes": "5bf48e96f86962d38e20d6b090dd42096500408c4b02dba09692df78bde39cca"
+    },
+    {
+      "file": "03-saved-ready.png",
+      "bytes": 579133,
+      "sha256_raw_bytes": "0e42f072a778a94c81fb5cd9afc80ae254b2b73c2f6607b4ccf10dcbcb4ebfee"
+    },
+    {
+      "file": "04-delivery-order.png",
+      "bytes": 723240,
+      "sha256_raw_bytes": "80b682b99caed490f03be42e4d15bc6982818efb0e4663b226c18a26a2287797"
+    },
+    {
+      "file": "05-confirmed-fields.png",
+      "bytes": 908599,
+      "sha256_raw_bytes": "06eccf12894278396476d7b02f1a9cb09d31ac15feece83e149c90015adc3b45"
+    },
+    {
+      "file": "06-approval-trail.png",
+      "bytes": 888259,
+      "sha256_raw_bytes": "f081723c9a46c3f0dc3d5a24a194810f165675a60efbb913910fc4c4fee1b470"
+    }
+  ],
+  "publication": "PRIVATE_LOCAL_ONLY",
+  "hash_convention": "SHA-256 of exact original PNG bytes, not Git blob hashes",
+  "originals_in_public_submission": false
+}

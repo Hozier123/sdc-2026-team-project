@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "case_id": "C02",
+  "status": "PASS",
+  "acceptance_scope": "Manual browser business acceptance of pack-size ambiguity, based on operator-provided screenshots",
+  "execution_date": "2026-10-30",
+  "timezone": "UTC+08:00",
+  "execution_channel": "operator_browser",
+  "review_method": "operator_and_assistant_screenshot_review",
+  "independent_review": "NOT_PERFORMED",
+  "frontend": {
+    "version_observed": "1.4.0",
+    "url": "https://hozier123.github.io/sdc-2026-team-project/",
+    "deployed_commit_sha": null
+  },
+  "backend": {
+    "connection": "REAL_API_AS_REPORTED_BY_OPERATOR",
+    "deployed_commit_sha": null,
+    "raw_http_responses": "NOT_CAPTURED",
+    "request_ids": []
+  },
+  "historical_ai_mode": "FALLBACK",
+  "initial_line_match_source": "RAPIDFUZZ_FALLBACK",
+  "final_line_match_source": "MANUAL_SELECTED",
+  "tenant_id": "T1",
+  "actor_role": "CLERK",
+  "customer": "Warung Sinar",
+  "synthetic_business_data": true,
+  "message_text": "Milo 2 bag",
+  "draft_id": "DRF_1A40577F823E44C2A18F5E75F7E957A7",
+  "draft_version": 2,
+  "do_number": "DO_20261030_71A20EE4",
+  "confirmed_item": {
+    "sku_id": "SKU_MILO_1KG",
+    "pack_size": "1kg",
+    "quantity": 2,
+    "uom": "bag",
+    "tier": "A",
+    "unit_price_rm": "18.00",
+    "subtotal_rm": "36.00"
+  },
+  "total_rm": "36.00",
+  "currency": "MYR",
+  "save_alias_cache_selected": false,
+  "checks": [
+    {
+      "id": "ambiguity_block",
+      "status": "PASS",
+      "observed": "1kg and 2kg candidates unselected; one pack-size check; Resolve checks action"
+    },
+    {
+      "id": "unsaved_protection",
+      "status": "PASS",
+      "observed": "1kg manually selected; quantity 2; Unsaved changes; approval button disabled"
+    },
+    {
+      "id": "save_and_reprice",
+      "status": "PASS",
+      "observed": "Saved v2; blocking checks clear; RM18.00 per bag; total RM36.00; approval enabled"
+    },
+    {
+      "id": "generate_do",
+      "status": "PASS",
+      "observed": "DO generated with draft version 2, 2 bag, RM18.00 unit price and RM36.00 total"
+    },
+    {
+      "id": "manual_selection_trace",
+      "status": "PASS",
+      "observed": "SKU_MILO_1KG, 1kg; RAPIDFUZZ_FALLBACK changed to MANUAL_SELECTED"
+    },
+    {
+      "id": "audit_trail",
+      "status": "PASS",
+      "observed": "SAVE_LINES at 21:52; INVENTORY_DEDUCT and APPROVE at 21:55; synthetic actor USR_T1_CLERK"
+    }
+  ],
+  "source_screenshots": {
+    "count": 6,
+    "publication": "PRIVATE_LOCAL_ONLY",
+    "manifest": "source-manifest.json"
+  },
+  "outside_this_acceptance": {
+    "LLM_inference": "NOT_ESTABLISHED",
+    "direct_api_bypass_attempt": "NOT_EXECUTED",
+    "actual_stock_delta": "NOT_MEASURED",
+    "stock_idempotency": "NOT_ASSESSED",
+    "private_TEST32": "NOT_EXECUTED",
+    "T2": "NOT_ASSESSED"
+  },
+  "ui_follow_up": {
+    "description": "Delivery order item description omits the 1kg pack size; audit confirms the correct SKU and pack size.",
+    "blocks_C02": false
+  },
+  "closeout_operations": "Evidence preparation and Git publication only; no application API writes, approvals, stock resets or deployments."
+}
