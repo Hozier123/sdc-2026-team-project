@@ -10,18 +10,19 @@
 | `overall_status` | `SIGNED_OFF` |
 | `independent_review_status` | `PASSED` |
 | `repo_status` | `MERGED` |
+| `gate_a_status` | `DEFERRED` |
 | 证据 PR | #75，merge `c69f4ba1498c73bc1d1700c4723b5c8e39b171cc` |
 | 元数据 PR | #78，merge `d98658f261c17ebbd5943286e389fe9567843fc2` |
 | 最终清单 | `170E92024B8D7ED38C34AD3CCC541E942DB6C722BA3AF371C3D2CD6E204165EC`（58 文件） |
 | 离线包 | `C08_API_evidence_2026-10-30.zip`，1,913,528 B，`11D9D98F751D7D4A59A4EA9A19C43551D58BF001D97AE5FD93473E9F37C919DA`（传输件，未入库） |
-| 索引号 | `ZR-20261030-19`（Zhan 核包后分配） |
+| 索引号 | `ZR-20261030-18`（仓库目录）/ `ZR-20261030-19`（离线包），Zhan 核包后分配 |
 
-**Zhou 收口确认（2026-10-30）**：v4 复签继续有效，不需要重开复核。PR #80 `ed60f6d` 建立结项记录，PR #81 `13d58d5` 仅补索引号，证据未动。唯一外部待办为 Gate A 时间（Zhou 确认、Zhan 同步）。
+**Zhou 收口确认（2026-10-30）**：v4 复签继续有效，不需要重开复核。PR #80 `ed60f6d` 建立结项记录，PR #81 `13d58d5` 仅补索引号，证据未动。唯一外部待办为 Gate A 状态/时间（Zhou 确认、Zhan 同步）；C04/C05 尚无入库证据。
 
 **未决外部字段**（不影响 C08 结论）：
 
-- **Gate A 时间**：由 Zhou 确认后 Zhan 同步；C08 材料已入库。
-- **索引号**：`ZR-20261030-19`（Zhan 2026-10-30 核包后分配）。
+- **Gate A 状态**：`DEFERRED`；时间由 Zhou 确认后 Zhan 同步；按 v5 四例（C01/C04/C05/C08），当前有材料的是 C01/C08，C04/C05 尚无入库证据（Zhan 2026-10-30 核对口径，不改变 C08 结论）。
+- **索引号**：`ZR-20261030-18`（仓库目录）/ `ZR-20261030-19`（离线包），Zhan 2026-10-30 核包后分配。
 
 ## 2. 范围与对象
 
@@ -83,7 +84,7 @@
 | 17:47 | 元数据修正（`not_covered`/README）；Zhou v4 确认；58 文件 |
 | 17:52 | PR #75 合入 `c69f4ba` |
 | 23:10 | 合并后 `repo_status=MERGED`；PR #78 合入 `d98658f`；最终 58 文件，manifest `170E…` |
-| 23:30 | Zhan 核包通过，分配索引号 `ZR-20261030-19`；Gate A 时间待定 |
+| 23:30 | Zhan 完整性核对通过（58/58 哈希；未复核 API 结论）；分配索引号 `ZR-20261030-18`（仓库目录）/ `ZR-20261030-19`（离线包）；Gate A 时间待定 |
 | 23:47 | Zhou 收口确认：v4 复签继续有效，无需重开复核；唯一外部待办 Gate A 时间 |
 
 ## 6. 边界
@@ -103,13 +104,15 @@
 | 编号 | C08 |
 | 名称 | 仓库权限（Warehouse RBAC / 字段裁剪） |
 | 结论 | `PASS_API_LAYER` / `SIGNED_OFF` / `independent PASSED` |
+| repo_status | `MERGED` |
+| gate_a_status | `DEFERRED`（四例中 C04、C05 尚无入库证据） |
 | 证据 PR | #75，merge `c69f4ba1498c73bc1d1700c4723b5c8e39b171cc` |
 | 证据目录 | `evidence/e2e/c08/2026-10-30/` |
 | 清单 | `170E9202…4165EC`（58 文件） |
 | 离线包 | `C08_API_evidence_2026-10-30.zip`，`11D9D98F…C919DA`，1,913,528 B |
 | 复核 | Zhou Jingxi，2026-10-30 16:40，[reviews/03](../../evidence/e2e/c08/2026-10-30/reviews/03-Zhou-signoff-2026-10-30.md) |
-| Gate A | 时间待 Zhou 确认、Zhan 同步 |
-| 索引号 | `ZR-20261030-19` |
+| Gate A | `DEFERRED`；时间待 Zhou 确认、Zhan 同步 |
+| 索引号 | `ZR-20261030-18`（仓库目录）/ `ZR-20261030-19`（离线包） |
 
 ## 8. 复现
 
