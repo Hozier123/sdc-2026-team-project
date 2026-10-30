@@ -307,6 +307,9 @@ def fetch_orders(
     params: tuple[Any, ...] = (tenant_id, do_number) if do_number else (tenant_id,)
     query = (
         "SELECT to_jsonb(d) || jsonb_build_object("
+        # Keep numeric(12,2) as decimal text before JSON decoding can turn it
+        # into a float and drop the required cents (e.g. 6.00 -> 6.0).
+        "  'final_total_rm', d.final_total_rm::text,"
         "  'ai_mode', o.ai_mode,"
         "  'working_lines', COALESCE(dv.snapshot->'lines', o.working_lines)"
         ") "

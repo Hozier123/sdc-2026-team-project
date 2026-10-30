@@ -219,6 +219,7 @@ def test_exports_real_do_from_database(admin, tmp_path):
 
         orders, products = fetch_orders(url, "T1", "DO-20261021-0003")
         assert len(orders) == 1
+        assert orders[0]["final_total_rm"] == "360.00"
 
         export = build_export(
             "TEST-01",
@@ -233,9 +234,15 @@ def test_exports_real_do_from_database(admin, tmp_path):
         assert export.rows[0]["line_no"] == "L1"
         assert export.rows[0]["customer_id"] == "CUS_ALI"
         assert export.ai_mode == "ALIAS_ONLY"
+        assert export.final_total_rm == "360.00"
+        assert export.rows[0]["final_total_rm"] == "360.00"
 
         csv_path, json_path = write_outputs(tmp_path, "TEST-01", [export], total_row=False)
         assert csv_path.is_file() and json_path.is_file()
+        rows = list(csv.DictReader(csv_path.read_text(encoding="utf-8-sig").splitlines()))
+        payload = json.loads(json_path.read_text(encoding="utf-8"))
+        assert rows[0]["final_total_rm"] == "360.00"
+        assert payload["orders"][0]["final_total_rm"] == "360.00"
     finally:
         admin.execute(
             sql.SQL("DROP DATABASE IF EXISTS {} WITH (FORCE)").format(sql.Identifier(name))
