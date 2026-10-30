@@ -3,18 +3,16 @@
   "title": "Warehouse role permission matrix (API layer, read-only)",
   "status": "PASS_API_LAYER",
   "overall_status": "SIGNED_OFF",
-  "repo_status": "PENDING_COMMIT",
+  "repo_status": "MERGED",
   "gate_a_status": "DEFERRED",
   "run_at": "2026-10-30T16:28:28+08:00",
-  "metadata_updated_at": "2026-10-30T17:47:50+08:00",
+  "metadata_updated_at": "2026-10-30T23:10:56+08:00",
   "operator": "He",
   "review_status": "ZHOU_SIGNED_OFF",
   "independent_review_status": "PASSED",
   "review_record": "evidence/reviews/03-Zhou-signoff-2026-10-30.md",
   "hash_convention": "responses/*.json store the exact raw response bytes received on the wire; each file SHA-256 equals matrix.response_sha256 (and its size equals response_bytes)",
-  "open_items": [
-    "Draft PR / repository commit pending"
-  ],
+  "open_items": [],
   "base_url": "https://kiraorder-api.replit.app/api/v1",
   "object_of_record": {
     "do_number": "DO_20261029_453C4BC2",
@@ -127,5 +125,8 @@
     "SHA256.txt"
   ],
   "signed_off_by": "Zhou Jingxi",
-  "signed_off_at": "2026-10-30T16:40:00+08:00"
+  "signed_off_at": "2026-10-30T16:40:00+08:00",
+  "merge_commit": "c69f4ba1498c73bc1d1700c4723b5c8e39b171cc",
+  "merge_commit_url": "https://github.com/Hozier123/sdc-2026-team-project/commit/c69f4ba1498c73bc1d1700c4723b5c8e39b171cc",
+  "post_merge_note": "Merged in PR #75 at c69f4ba1498c73bc1d1700c4723b5c8e39b171cc. Only repository metadata changed after the v4 sign-off: repo_status MERGED, merge commit recorded, open_items cleared. The earlier 17:47 not_covered/README correction was also metadata-only. The 41 response files, matrix and browser screenshots are unchanged; Zhou confirmed no re-review is required."
 }

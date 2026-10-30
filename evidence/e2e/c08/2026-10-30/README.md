@@ -1,9 +1,9 @@
-# C08 仓库权限：API 层 PASS（Zhou 已签 SIGNED_OFF；待入库）
+# C08 仓库权限：API 层 PASS（Zhou 已签 SIGNED_OFF；已入库）
 
-执行人：He；API 矩阵：2026-10-30 16:28（UTC+8）；浏览器证据：2026-10-30 16:04（UTC+8）；Zhou 复签：2026-10-30 16:40（UTC+8）；环境：生产 API `https://kiraorder-api.replit.app/api/v1`。
+执行人：He；API 矩阵：2026-10-30 16:28（UTC+8）；浏览器证据：2026-10-30 16:04（UTC+8）；Zhou 复签：2026-10-30 16:40（UTC+8）；合并：2026-10-30 `c69f4ba`（UTC+8）；环境：生产 API `https://kiraorder-api.replit.app/api/v1`。
 对象：C01 已出的 DO `DO_20261029_453C4BC2`（Restoran Ali，面粉 4 bag + 食用油 2 btl，`approved_at 2026-10-29T07:16:58Z`，草稿 `DRF_39D4D66CACC440A594B1C1AEBEF151B9`）。
 
-**结论：API 层 41/41 通过，字段扫描与投影对比均通过，无 P0；浏览器两张已补齐；`response_sha256` 口径已按 Zhou 的选项 1 修正并通过 v2 复核（57/57 清单一致、41/41 response 文件哈希与 matrix 一致）。Zhou 已复签 `SIGNED_OFF`（2026-10-30 16:40），剩余仅 Draft PR 入库。**
+**结论：API 层 41/41 通过，字段扫描与投影对比均通过，无 P0；浏览器两张已补齐；`response_sha256` 口径已按 Zhou 的选项 1 修正并通过 v2 复核（v2 57/57、v4 58/58，多出的是 `reviews/03` 本身；41/41 response 文件哈希与 matrix 一致）。Zhou 已复签 `SIGNED_OFF`（16:40），PR #75 已 squash 合入 `c69f4ba1498c73bc1d1700c4723b5c8e39b171cc`。合并后只更新了 `repo_status=MERGED` 等元数据，证据文件未变。**
 
 ## 1. 本次补的是什么
 
@@ -25,7 +25,7 @@ C01 的验收边界原文是：
 - 版本：前端 `f8ff1d7` / 后端 `555f0fa`；屏上要可见 **Ah Kow / Warehouse**。
 - 403 必须是 `GET /api/v1/delivery-orders/DO_20261029_453C4BC2`，**不能用 audit-detail 代替**；要能看到 `FORBIDDEN_ACTION` 响应体，或完整 URL + 403，只截状态码不算。
 - **C01 页面证据不是 f8ff1d7 构建**：C01 会话是 2026-10-29 17:13–17:16（UTC+8），Pages 部署 f8ff1d7 在 19:51，所以按 Zhou 第 7 条补了当前 picking 页截图。
-- 两张截图已于 2026-10-30 16:04 补齐，见 [browser/](browser/)；入库前 API 层标“待入库”，不提前签全通过。
+- 两张截图已于 2026-10-30 16:04 补齐，见 [browser/](browser/)；入库前 API 层曾标“待入库”，16:40 Zhou 复签后才改 `SIGNED_OFF`，没有提前签全通过。
 
 完整记录见 [reviews/01-Zhou-scope-2026-10-30.md](reviews/01-Zhou-scope-2026-10-30.md)，截图要求见 [browser/README.md](browser/README.md)。
 
@@ -77,12 +77,14 @@ C01 的验收边界原文是：
 |---|---|
 | v1（16:16） | API/浏览器通过；证据包因 `response_sha256` 与 response 文件字节不一致暂缓 |
 | 修正 | 按选项 1：responses 改为原始响应字节；41/41 文件哈希与 matrix 一致（`read.warehouse_do` 均 `ae663539…`，347 B） |
-| v2（16:40） | **复签通过：`SIGNED_OFF`**；57/57 清单一致、41/41 response 哈希与大小一致、浏览器两张不变 |
+| v2（16:40） | **复签通过：`SIGNED_OFF`**；v2 57/57、v4 58/58（多 `reviews/03` 本身）；41/41 response 哈希与大小一致、浏览器两张不变 |
 | 记录 | [v1 复核](reviews/02-Zhou-review-2026-10-30.md) · [v2 复签](reviews/03-Zhou-signoff-2026-10-30.md) |
 
-Zhou 已复签 `SIGNED_OFF`；剩余仅 Draft PR 入库。
+Zhou 已复签 `SIGNED_OFF`；PR #75 已 squash 合入 `c69f4ba`。合并后只把 `repo_status` 元数据改为 `MERGED`，证据文件未改。
 
-## 4. 边界与待入库项
+## 4. 边界与入库记录
+
+- **入库**：PR #75 squash merged at `c69f4ba1498c73bc1d1700c4723b5c8e39b171cc`；合并后仅把 `repo_status` 改为 `MERGED`、清空 `open_items`，41 条 response、matrix、浏览器图均未改。17:47 的 `not_covered`/README 修正与本次合并后更新都只改元数据，Zhou 已确认不需要重开复核。
 
 - **部署版本不可见**：API 未暴露部署 commit。前端版本由 `gh-pages` 提交 `12ff95f`（“Deploy B01 frontend from f8ff1d7”）证明；后端 `0a255df` 未改 `backend/app/`，最后一个改 `backend/app/` 的是 `555f0fa`。本包结论对应 2026-10-30 16:28 的生产响应。
 - **T2 无已批准 DO**：T2 的活动流为空，当前演示库没有 T2 DO，所以反向跨租户用“T1 真实 DO + T2 令牌”验证 404；要在 T2 侧造 DO 属于写入，超出 C08 只读范围。
@@ -136,7 +138,7 @@ py -3.13 c08_warehouse_audit.py `
 ## 8. 结论
 
 - Zhou 2026-10-30 16:40 复签 `SIGNED_OFF`；API、浏览器、证据包全部通过，41/41 response 文件哈希与 matrix 一致。
-- 剩余：Draft PR 入库；API、浏览器、复核都不需要再改。
-- 状态：`status=PASS_API_LAYER`、`overall_status=SIGNED_OFF`、`repo_status=PENDING_COMMIT`。
-- Gate A 已顺延（Zhou 2026-10-30 确认）；入库后按 Gate A 时间报给 Zhan。
+- 剩余：无；PR #75 已合入 `c69f4ba1498c73bc1d1700c4723b5c8e39b171cc`，C08 证据、复核、入库均已闭环。
+- 状态：`status=PASS_API_LAYER`、`overall_status=SIGNED_OFF`、`independent_review_status=PASSED`、`repo_status=MERGED`、`merge_commit=c69f4ba1498c73bc1d1700c4723b5c8e39b171cc`。
+- Gate A：时间由 Zhou 确认后由 Zhan 同步；C08 材料已入库，等 Zhan 挂索引。
 - 本次 41 条请求累计约 14.3 秒（最长 5.3 秒），远低于任务表给的 20 分钟，时间可以留给 Gate A 的其他项。
