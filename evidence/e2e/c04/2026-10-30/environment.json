@@ -1,0 +1,29 @@
+{
+  "captured_at": "2026-10-30T17:09:36+08:00",
+  "app_url": "https://hozier123.github.io/sdc-2026-team-project/",
+  "api_base": "https://kiraorder-api.replit.app/api/v1",
+  "frontend": {
+    "version": "v1.4.0",
+    "source_commit": "f8ff1d7",
+    "pages_deploy_commit": "12ff95f",
+    "pages_head_commit": "94f0a6e",
+    "pages_head_note": "94f0a6e records the published index hash after deploy; it is not the deploy commit"
+  },
+  "backend": {
+    "commit": "555f0fa"
+  },
+  "tenant": "T1",
+  "actors": {
+    "clerk": "USR_T1_CLERK (Siti)",
+    "owner": "USR_T1_OWNER (Boss Tan)"
+  },
+  "ai_status": {
+    "state": "READY",
+    "checked_at": "2026-10-30T08:54:32Z",
+    "note": "READY 16s after wake; first READY 2026-10-30 16:42:21+08 (08:42:21Z), second 16:54:32+08 (08:54:32Z); c04_01 AI offline is a stale UI indicator",
+    "checked_at_local": "2026-10-30 16:54:32+08:00"
+  },
+  "browser": "Chrome incognito",
+  "secrets_stored": false,
+  "sample_status_at_capture": "PENDING"
+}

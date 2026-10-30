@@ -1,0 +1,87 @@
+{
+  "case_id": "C04",
+  "title": "低价例外：低于 tier 价 -> 送老板审批",
+  "result": "PASS_SIGNED_OFF",
+  "overall_status": "SIGNED_OFF",
+  "independent_review_status": "APPROVED",
+  "repo_status": "PENDING_COMMIT",
+  "c06_ready": true,
+  "numbers": {
+    "checks_total": 12,
+    "checks_passed": 12,
+    "checks_failed": 0,
+    "screenshots": 4,
+    "blocking_issues": 0
+  },
+  "sample": {
+    "draft_id": "DRF_AFC94FC488144FC6932FA4800D73B0EC",
+    "draft_version": 2,
+    "draft_status": "PENDING_OWNER_APPROVAL",
+    "approval_id": "APR_7A1382B29D5C44FFB6242D15477A60B7",
+    "approval_status": "PENDING",
+    "customer_id": "CUS_RASA",
+    "customer_name": "Kedai Rasa",
+    "customer_tier": "B",
+    "total_rm": "34.00",
+    "tier_unit_price": "19.00",
+    "effective_unit_price": "17.00",
+    "escalation_code": "PRICE_OVERRIDE_BELOW_TIER",
+    "requested_at": "2026-10-30T08:57:07.416038Z",
+    "current_status": "PENDING",
+    "decided_at": null,
+    "rechecked_at": "2026-10-30T23:09:16+08:00",
+    "recheck_status": "PENDING"
+  },
+  "known_issues": [
+    {
+      "id": "UI-01",
+      "severity": "P3",
+      "summary": "CLERK 草稿页 Owner review 卡片与 OWNER 审批页 Approval reasons 卡片显示 Tier price RM 0.00 -> requested RM 0.00",
+      "cause": "ui.tsx:273 读取 detail.tier_price/detail.applied_price，API 返回 detail.tier_unit_price/detail.effective_unit_price",
+      "impact": "仅显示；商品表、Changes 表与 /approvals 接口均为 19.00 -> 17.00",
+      "action": "记录，不在 C08 复核/入库前改前端或重新部署"
+    },
+    {
+      "id": "ENV-01",
+      "severity": "P3",
+      "summary": "c04_01 shows AI offline while the server was READY",
+      "cause": "the frontend refreshes AI status once after wake and does not poll",
+      "impact": "display only; server READY at 16:42:21+08 / 16:54:32+08",
+      "action": "documented; no code change before C08 signoff"
+    }
+  ],
+  "boundaries": [
+    "C06 的批准/拒绝、DO 生成、库存扣减不在本包范围",
+    "样例必须保持 PENDING 直到 C06 消费",
+    "C08 签字前不得 reset_demo，否则 C08 的 DO 锚点消失",
+    "本包为 UI 级人工取证，不含自动化脚本"
+  ],
+  "revision": "r4",
+  "supersedes": {
+    "file": "C04_low_price_evidence_2026-10-30_r3.zip",
+    "sha256": "1B27F98FFFAC0126980A658E738B0EA23F63980548D17AB66F4EDCE63C0E0626"
+  },
+  "revision_notes": [
+    "sample.json now persists the PRICE condition object (condition_kind/span/resolved/resolution) from the draft API",
+    "README ENV-01 timestamps corrected to UTC+8 with explicit UTC values",
+    "environment.json now records source commit f8ff1d7, Pages deploy 12ff95f, Pages HEAD 94f0a6e (record only)",
+    "added rechecked_at=2026-10-30T23:09:16+08:00 and recheck_status=PENDING; proves the live status beyond the 17:09 capture",
+    "independent review by Zhou Jingxi approved on 2026-10-30T23:21:00+08:00; overall_status set to SIGNED_OFF; review record added"
+  ],
+  "condition_verified": true,
+  "pages": {
+    "source_commit": "f8ff1d7",
+    "deploy_commit": "12ff95f",
+    "head_commit": "94f0a6e",
+    "note": "94f0a6e records the published index hash after deploy; it is not the deploy commit"
+  },
+  "signed_off_at": "2026-10-30T23:21:00+08:00",
+  "review": {
+    "reviewer": "Zhou Jingxi",
+    "reviewed_at": "2026-10-30T23:21:00+08:00",
+    "scope": "C04 r3 data and flow; UI-01 P3",
+    "conclusion": "APPROVED",
+    "ui01": "ACCEPTED_P3",
+    "file": "reviews/01-Zhou-review-r3-2026-10-30.md"
+  }
+}
