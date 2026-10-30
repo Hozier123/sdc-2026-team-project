@@ -797,6 +797,14 @@ def main() -> int:
     browser_files = sorted(p.name for p in browser_dir.glob("*.png"))
     browser_sources = sorted((browser_dir / "source").glob("*.jpg"))
     browser_ready = {"c08_01_picking_current.png", "c08_02_forbidden_403.png"} <= set(browser_files)
+    browser_gaps = (
+        []
+        if browser_ready
+        else [
+            "current f8ff1d7 picking page screenshot (browser/)",
+            "DevTools 403 screenshot with FORBIDDEN_ACTION body (browser/)",
+        ]
+    )
     signed_off = (out / "reviews" / "03-Zhou-signoff-2026-10-30.md").exists()
     acceptance = {
         "case_id": "C08",
@@ -905,8 +913,7 @@ def main() -> int:
             "responses": "raw JSON captured per case",
         },
         "not_covered": [
-            "current f8ff1d7 picking page screenshot (browser/)",
-            "DevTools 403 screenshot with FORBIDDEN_ACTION body (browser/)",
+            *browser_gaps,
             "browser-captured HAR (this pack is API-level only)",
             "page-level absence of write entry points (C01 covers this for one DO)",
             "frontend Local Demo path",

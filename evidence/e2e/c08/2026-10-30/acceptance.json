@@ -96,8 +96,6 @@
     "responses": "raw JSON captured per case"
   },
   "not_covered": [
-    "current f8ff1d7 picking page screenshot (browser/)",
-    "DevTools 403 screenshot with FORBIDDEN_ACTION body (browser/)",
     "browser-captured HAR (this pack is API-level only)",
     "page-level absence of write entry points (C01 covers this for one DO)",
     "frontend Local Demo path",

@@ -99,7 +99,7 @@ py -3.13 c08_warehouse_audit.py `
 
 - 仅需 Python 3.13 标准库与公网访问；默认打生产，`--base-url` 可切本地。
 - `--skip-wake` 可跳过 `POST /ai/wake`（默认包含，403 时不会产生任务）。
-- 期望输出：`41/41 passed, field_scan=True, projection_diff=True, status=PASS_API_LAYER_PENDING_REPO`，退出码 0。
+- 期望输出：`41/41 passed, field_scan=True, projection_diff=True, status=PASS_API_LAYER`，退出码 0。
 - 令牌文件格式同本地 `99_敏感资料_勿提交/demo_tokens.json`：`{"T1": {"USR_T1_CLERK": ..., ...}, "T2": {...}}`。
 
 ## 6. 文件清单
