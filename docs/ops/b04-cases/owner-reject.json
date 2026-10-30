@@ -1,0 +1,24 @@
+{
+  "case_id": "DEV-B04-owner-reject",
+  "tenant_id": "T1",
+  "route": "owner_reject",
+  "allowed_ai_modes": ["FALLBACK", "ALIAS_ONLY", "MIXED", "LLM"],
+  "token_env": {
+    "CLERK": "B04_T1_CLERK_TOKEN",
+    "OWNER": "B04_T1_OWNER_TOKEN",
+    "WAREHOUSE": "B04_T1_WAREHOUSE_TOKEN"
+  },
+  "parse": {"customer_id": "CUS_ALI", "message_text": "2 bag Gula 1kg", "language_hint": "en"},
+  "save": {
+    "lines": [{
+      "line_id": {"$draft": "lines.0.line_id"},
+      "sku_id": "SKU_GULA_1KG", "confirmed_qty": 2, "uom": "bag",
+      "match_source": "MANUAL_SELECTED", "unit_price_override": "2.50",
+      "override_reason": "B04 synthetic agreed discount", "save_to_alias_cache": false
+    }]
+  },
+  "decision_note": "B04 synthetic rejection: discount declined",
+  "expected": {
+    "lines": [{"sku_id": "SKU_GULA_1KG", "quantity": 2, "unit": "bag", "applied_unit_price": "2.50"}]
+  }
+}

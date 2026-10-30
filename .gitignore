@@ -30,3 +30,11 @@ evidence/reset/
 # Local scratch / private review artifacts
 .tmp/
 evidence/ai-samples/
+
+# B04 raw/local evidence and private review assets; publish only b04-public summaries.
+evidence/b04-runs/
+evidence/b04-audits/
+evidence/b04-independent/
+evidence/b04-preparation/
+TEST32_answers_2026-10-24_v5.json
+TEST32_review_*_PRIVATE.zip

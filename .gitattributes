@@ -22,3 +22,9 @@ evidence/e2e/post55/** -text
 
 # T2 E2E evidence must keep its original bytes and SHA.
 evidence/e2e/t2/** -text
+
+# The B04 evidence auditor binds this signed driver's exact LF bytes.
+backend/tools/run_workflow.py text eol=lf
+backend/tools/verify_t2_local.py text eol=lf
+docs/ops/b04-cases/*.json text eol=lf
+backend/tests/fixtures/b04-audit-direct.zip binary

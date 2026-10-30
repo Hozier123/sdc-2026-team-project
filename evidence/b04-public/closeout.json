@@ -1,0 +1,74 @@
+{
+  "schema_version": "B04-PUBLIC-CLOSEOUT-v1",
+  "task_id": "B04",
+  "status": "COMPLETE",
+  "closed_on": "2026-10-30",
+  "timezone": "Asia/Shanghai",
+  "scope": "Original minimum HTTP driver, per-step evidence/checkpoints and independent startup/single-case handoff",
+  "remaining_b04_items": [],
+  "driver_sha256": "16c08c081d107582a48cd193bfbd554a4719df1ff8a8d01c32bcb41c88b9ffd5",
+  "basis": "Public summary of user-relayed independent reports and locally checked originals; not a new independent signature",
+  "independent_acceptance": {
+    "verifier": "Zhou Jingxi",
+    "minimum_real_direct_plus_expected_failure": "ACCEPTED",
+    "mock": "STARTUP_ONLY",
+    "t1_supplement_files_matched": 58,
+    "t2_real_routes": 4,
+    "t2_reported_result": "API_PASS_AND_DB_PASS",
+    "t2_actual_ai_mode": "FALLBACK",
+    "source_files_matched": 46,
+    "serial_409_and_tenant_404_records": "MATCH"
+  },
+  "retained_evidence_notes": [
+    {
+      "code": "PROTECTED_SNAPSHOT_PAIRS_MISSING",
+      "count": 4
+    },
+    {
+      "code": "RETRY_DB_PAIR_MISSING",
+      "count": 1
+    },
+    {
+      "code": "T1_NEGATIVE_NO_DB_SNAPSHOT"
+    },
+    {
+      "code": "T1_OTHER_ROUTES_NOT_INDEPENDENTLY_RERUN"
+    },
+    {
+      "code": "SUPPLEMENT_ZIP_INDEPENDENT_HASH_NOT_RECOMPUTED"
+    }
+  ],
+  "public_branch_validation": {
+    "offline_driver_tests": 35,
+    "offline_auditor_tests": 48,
+    "offline_total_tests": 83,
+    "ruff": "PASS",
+    "format": "PASS",
+    "signed_checkout_guard": "LF enforced in .gitattributes and exact digest regression test",
+    "real_api_db_gpu_retested_for_publication": false
+  },
+  "publication": {
+    "base_commit": "7cf8fcfe33dbd99e85b05efedb574e32d91c650d",
+    "scope": "B04 tools, synthetic DEV cases/test fixture, regression tests and public documentation",
+    "raw_independent_evidence_included": false,
+    "private_answer_key_or_bundle_included": false,
+    "credentials_included": false
+  },
+  "boundaries": {
+    "D03": "Formal workflow mapping, prerequisites, schema, decisions, freezing and independent answer verification remain separate",
+    "formal_workflow_logical_count": 12,
+    "formal_workflow_execution_count": 14,
+    "formal_execution_status": "NOT_RUN",
+    "formal_freeze_effective": false,
+    "B05": "Isolation/reset and paused-run resumption not accepted by this closure",
+    "historical_application_snapshot_not_current_main_acceptance": true
+  },
+  "documents": [
+    "docs/ops/b04-driver.md",
+    "docs/ops/b04-t2.md",
+    "docs/ops/b04-evidence-auditor.md",
+    "docs/ops/b04-closure.md",
+    "docs/ops/b04-status.md",
+    "evidence/b04-public/README.md"
+  ]
+}

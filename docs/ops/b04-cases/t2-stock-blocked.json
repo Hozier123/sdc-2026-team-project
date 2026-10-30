@@ -1,0 +1,21 @@
+{
+  "case_id": "DEV-B04-T2-stock-blocked",
+  "tenant_id": "T2",
+  "route": "stock_blocked",
+  "allowed_ai_modes": ["FALLBACK"],
+  "token_env": {
+    "CLERK": "B04_T2_CLERK_TOKEN",
+    "OWNER": "B04_T2_OWNER_TOKEN",
+    "WAREHOUSE": "B04_T2_WAREHOUSE_TOKEN"
+  },
+  "parse": {
+    "customer_id": "CUS_KILAT_04",
+    "message_text": "999999 btl pencuci lantai 1L",
+    "language_hint": "ms"
+  },
+  "expected": {
+    "lines": [
+      {"sku_id": "SKU_PENCUCI_1L", "quantity": 999999, "unit": "btl", "applied_unit_price": "9.60"}
+    ]
+  }
+}
