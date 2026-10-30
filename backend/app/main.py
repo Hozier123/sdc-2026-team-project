@@ -10,6 +10,7 @@ from app.ai.extractor import RunPodExtractor
 from app.ai_runtime import AiRuntimeConfig, resolve_ai_runtime
 from app.ai_status import AiOrchestrator
 from app.approvals import router as approvals_router
+from app.catalog import router as catalog_router
 from app.config import Settings
 from app.delivery import router as delivery_router
 from app.drafts import router as drafts_router
@@ -84,6 +85,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(approvals_router)
     app.include_router(delivery_router)
     app.include_router(read_models_router)
+    app.include_router(catalog_router)
     return app
 
 
