@@ -1,0 +1,30 @@
+{
+  "case_id": "DEV-B04-T2-owner-approve",
+  "tenant_id": "T2",
+  "route": "owner_approve",
+  "allowed_ai_modes": ["FALLBACK"],
+  "token_env": {
+    "CLERK": "B04_T2_CLERK_TOKEN",
+    "OWNER": "B04_T2_OWNER_TOKEN",
+    "WAREHOUSE": "B04_T2_WAREHOUSE_TOKEN"
+  },
+  "parse": {
+    "customer_id": "CUS_KILAT_03",
+    "message_text": "2 btl pencuci lantai 1L",
+    "language_hint": "ms"
+  },
+  "save": {
+    "lines": [{
+      "line_id": {"$draft": "lines.0.line_id"},
+      "sku_id": "SKU_PENCUCI_1L", "confirmed_qty": 2, "uom": "btl", "pack_size": "1L",
+      "match_source": "MANUAL_SELECTED", "unit_price_override": "8.50",
+      "override_reason": "B04 T2 synthetic agreed discount", "save_to_alias_cache": false
+    }]
+  },
+  "decision_note": "B04 T2 synthetic owner approval",
+  "expected": {
+    "lines": [
+      {"sku_id": "SKU_PENCUCI_1L", "quantity": 2, "unit": "btl", "applied_unit_price": "8.50"}
+    ]
+  }
+}

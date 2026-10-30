@@ -1,5 +1,10 @@
 # KiraOrder backend: implementation and acceptance boundaries
 
+B04's minimum HTTP driver and independent handoff are complete. See the
+[closeout](../docs/ops/b04-closure.md), [driver runbook](../docs/ops/b04-driver.md), and
+[offline evidence auditor](../docs/ops/b04-evidence-auditor.md). This public delivery contains
+tools, synthetic DEV tests, and redacted summaries; original private evidence stays offline.
+
 Implemented features include identity and tenant permissions, explicit migrations and seed loading, PII masking, the AI HTTP boundary, the in-process RunPod adapter, field-evidence guards, catalogue resolution and customer memory, batch draft saves, conditions and clarification, trilingual replies, draft discard, price escalation, owner approval, DO/inventory transactions, query/audit/warehouse reads, AI status and wake-up, `checks_enabled` soft checks, concurrent rollback, and contract regression. Development is based on `gate0-baseline-v1` (internal `gate0-v4 / draft revision 5`). The original SQL is `gate0/migrations/0001_baseline.sql` and was not changed in this iteration.
 
 The review dated 2026-10-23 and subsequent status are in `docs/audit/backend-audit-2026-10-23.md`. The recorded full main test suite at this checkpoint was **407 passed**. With the code default `AI_PROVIDER=auto`, the adapter still uses Stub when no HTTP service is configured. Real RunPod endpoint preflight, model quality, public deployment, and independent frontend/data UAT were external acceptance boundaries at that checkpoint; do not describe this record as completed live model extraction. For the latest recorded deployment and review access, use the [root README](../README.md).
