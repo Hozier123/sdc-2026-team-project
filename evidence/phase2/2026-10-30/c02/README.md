@@ -1,60 +1,60 @@
-# C02 规格歧义验收记录
+# C02 Pack-Size Ambiguity Acceptance Record
 
-## 结论与范围
+## Result and scope
 
-- 结果：PASS（本次公开业务场景的手动页面验收）。
-- 日期与时区：2026-10-30，UTC+8。
-- 执行：用户在公开前端操作，通过聊天提供连续步骤截图；由用户与本次助手共同核对结果。
-- 前端：GitHub Pages 正式工作台，界面版本 1.4.0。
-- 接口：真实 API；本单提取模式 FALLBACK。
-- 测试数据：T1 合成业务数据，客户 Warung Sinar，CLERK 身份。
-- 前端部署 SHA、后端部署 SHA、HTTP 原始响应与请求编号：本次未采集。
-- 本记录属于方案 C02 手动业务验收，不等同于私有 TEST32 正式批次或独立复核报告。
+- Result: PASS for this manual browser run of the plan's C02 business scenario.
+- Execution date and timezone: 2026-10-30, UTC+08:00.
+- Execution and review: the operator used the public frontend and supplied screenshots of successive steps. The operator and assistant reviewed the results together.
+- Frontend: the production GitHub Pages workspace, displaying version 1.4.0.
+- Backend: real API connection as reported by the operator; historical extraction mode FALLBACK.
+- Test data: synthetic T1 business data, customer Warung Sinar, CLERK role.
+- Frontend deployment SHA, backend deployment SHA, raw HTTP responses, and request IDs: not captured during this run.
+- This record covers manual C02 business acceptance. It is not a formal private TEST32 run or an independent review report.
 
-## 本次单据
+## Order details
 
-| 字段 | 实际结果 |
+| Field | Observed result |
 | --- | --- |
-| 原始输入 | `Milo 2 bag` |
-| 草稿 | `DRF_1A40577F823E44C2A18F5E75F7E957A7` |
-| 保存版本 | v2 |
-| 最终 SKU | `SKU_MILO_1KG` |
-| 规格 | 1kg |
-| 数量与交易单位 | 2 bag |
-| 客户等级 | A |
-| 单价 | RM18.00 / bag |
-| 总额 | RM36.00 |
-| DO | `DO_20261030_71A20EE4` |
-| 人工选择来源 | `MANUAL_SELECTED` |
-| 记忆选项 | 未勾选 |
+| Original input | `Milo 2 bag` |
+| Draft ID | `DRF_1A40577F823E44C2A18F5E75F7E957A7` |
+| Saved draft version | v2 |
+| Confirmed SKU | `SKU_MILO_1KG` |
+| Pack size | 1kg |
+| Quantity and transaction unit | 2 bag |
+| Customer tier | A |
+| Unit price | RM18.00 / bag |
+| Order total | RM36.00 |
+| Delivery order | `DO_20261030_71A20EE4` |
+| Confirmed match source | `MANUAL_SELECTED` |
+| Remember-phrase option | Not selected |
 
-## 操作、预期与观察结果
+## Steps, expectations, and observations
 
-| 步骤 | 预期 | 页面与审计观察 | 结果 |
+| Step | Expected behavior | UI and audit observation | Result |
 | --- | --- | --- | --- |
-| 规格缺失时创建草稿 | 提供合法规格候选并阻断批准 | 1kg / 2kg 两候选均未选中；显示 1 pending check、Which pack size?；底部 Resolve checks | PASS |
-| 人工选定 1kg，尚未保存 | 保留未保存保护 | 数量 2，显示 Unsaved changes、Pending save；批准按钮禁用 | PASS |
-| 保存人工选择 | 后端返回已保存版本，解除规格阻断并提供金额 | Saved v2、Blocking checks clear、Ready to approve；单价 RM18.00、总额 RM36.00；批准按钮开放 | PASS |
-| 执行批准 | 根据已保存内容生成 DO | DO 已生成；2 bag × RM18.00 = RM36.00；绑定 v2；批准记录只读 | PASS |
-| 查看字段差异 | SKU、规格及人工来源可追踪 | SKU 从 Not specified 变为 SKU_MILO_1KG；Pack size 为 1kg；Match source 从 RAPIDFUZZ_FALLBACK 变为 MANUAL_SELECTED | PASS |
-| 查看审批轨迹 | 本次保存与批准记录包含操作人及时间 | Save lines：21:52；Inventory deduct 与 Approve：21:55；操作人均为合成角色 USR_T1_CLERK | PASS |
+| Create a draft without a pack size | Offer valid pack-size candidates and block approval | The 1kg and 2kg candidates were both unselected. The page showed 1 pending check, Which pack size?, and Resolve checks. | PASS |
+| Select 1kg without saving | Keep the unsaved-change protection active | Quantity remained 2. The page showed Unsaved changes and Pending save; approval was disabled. | PASS |
+| Save the manual selection | Return a saved version, resolve the pack-size blocker, and calculate the price | The page showed Saved v2, Blocking checks clear, and Ready to approve. Unit price was RM18.00, total was RM36.00, and approval became available. | PASS |
+| Approve the saved draft | Generate a delivery order from the saved contents | A read-only approved delivery order was generated: 2 bag x RM18.00 = RM36.00, bound to draft version 2. | PASS |
+| Inspect field changes | Trace the confirmed SKU, pack size, and manual selection | SKU changed from Not specified to SKU_MILO_1KG. Pack size was 1kg. Match source changed from RAPIDFUZZ_FALLBACK to MANUAL_SELECTED. | PASS |
+| Inspect the approval trail | Associate the save and approval with an actor and timestamps | Save lines was recorded at 21:52; Inventory deduct and Approve at 21:55. All showed the synthetic actor USR_T1_CLERK. | PASS |
 
-## 证据保管
+## Evidence handling
 
-本次公开归档只包含手动验收摘要、结构化结论及原始截图哈希。六张原始截图保存在本地，未纳入公开归档；浏览者无法仅凭本目录直接复查原图。本文件不包含会话令牌、Key、私有测试答案或本机绝对路径。
+This public archive contains the manual acceptance summary, structured result, and hashes of the original screenshots. The six original screenshots are retained locally and are not included in the public archive. Readers cannot inspect the original images from this directory alone. The public files contain no session tokens, API keys, private test answers, or absolute local filesystem paths.
 
-## 观察到的展示改进
+## Observed presentation improvement
 
-DO 正文显示“Milo 美禄”，未同时显示规格 1kg。变更记录已确认最终 SKU 与规格正确，因此本次 C02 通过；可另记展示改进，建议 DO 商品描述带规格。
+The delivery order shows the product name without the 1kg pack size. The change record confirms the correct final SKU and pack size, so this does not block C02 acceptance. A separate UI improvement can add the pack size to the delivery-order item description.
 
-## 本次证据边界
+## Evidence limitations
 
-本次直接观察到 UI 保存前阻断、保存后开放与生成单据的连续过程。没有直接请求 API 尝试绕过未保存保护。日志中的库存扣减事件不能单独证明数据库实际扣减数量或防重复扣减；实际库存变化与防重复扣减需在 C01/C07 等对应场景单独验证。本次没有因上传证据而重做订单、修改库存、复位数据库或更改应用代码。
+The screenshots show the sequence of UI blocking before saving, approval becoming available after saving, and delivery-order generation. No direct API request was made to attempt to bypass the unsaved-change protection. An inventory-deduction log entry alone does not establish the actual database stock delta or protection against duplicate deduction; those require separate verification in scenarios such as C01/C07. Archiving this evidence did not repeat the order, modify stock, reset the database, or change application code.
 
-## 归档文件与校验
+## Archive files and verification
 
-- [结构化验收结果](acceptance.json)：范围、逐项结果及未采集字段。
-- [私存原图来源清单](source-manifest.json)：原始截图的文件名、大小、精确字节 SHA-256；原图未公开。
-- [本目录校验清单](SHA256.txt)：公开文件精确字节的 SHA-256，不包含校验清单自身。
+- [Structured acceptance result](acceptance.json): scope, individual observations, and fields not captured.
+- [Private-source image manifest](source-manifest.json): filenames, byte sizes, and exact-byte SHA-256 hashes of the privately retained original screenshots.
+- [Directory checksums](SHA256.txt): exact-byte SHA-256 hashes of the public files, excluding the checksum file itself.
 
-原图哈希仅用于绑定私存来源，不代表图片已经公开，也不能替代对原图的实际审阅。本目录 `.gitattributes` 禁止换行转换；`SHA256.txt` 按本次公开文件的实际字节计算，与仓库其他目录的旧校验清单分开。
+Original-image hashes bind the record to privately retained sources; they do not mean the images have been published or replace inspection of those images. This directory's `.gitattributes` disables line-ending conversion. `SHA256.txt` covers the exact bytes of this directory's public files and is separate from existing checksum lists elsewhere in the repository.
