@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { useDialogMotion } from "./useWorkbenchMotion";
+import { approvalReasonPrices } from "../lib/approval-display";
 import {
   Check,
   Copy,
@@ -294,7 +295,7 @@ export function Reasons({ reasons }: { reasons: Reason[] }) {
             </strong>
             <p>
               {r.code === "PRICE_OVERRIDE_BELOW_TIER"
-                ? `Tier price ${money(String(r.detail.tier_price ?? "0"))} → requested ${money(String(r.detail.applied_price ?? "0"))}`
+                ? `Tier price ${money(approvalReasonPrices(r.detail).tier)} → requested ${money(approvalReasonPrices(r.detail).applied)}`
                 : r.code === "AMOUNT_OVER_THRESHOLD"
                   ? `Threshold ${money(String(r.detail.threshold_rm ?? r.detail.amount_threshold_rm ?? "0"))}`
                   : "The owner needs to review this customer’s order."}

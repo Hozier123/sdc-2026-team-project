@@ -2268,6 +2268,16 @@ a {
   margin-top: 7px;
   display: block;
 }
+.app-shell .approval-card small.approval-request-meta {
+  color: var(--tone-99b3c8);
+  font-size: 13px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+.approval-request-meta > span {
+  display: block;
+  overflow-wrap: anywhere;
+}
 .approval-total {
   text-align: right;
 }
