@@ -60,7 +60,7 @@ export function assertQuantities(lines: LineInput[]) {
 
 export function validRoute(route: string) {
   const parts = route.split("/");
-  if (["order", "approval", "delivery"].includes(parts[0]))
+  if (["order", "approval", "delivery"].includes(parts[0]) || (parts[0] === "activity" && parts.length > 1))
     return parts.length === 2 && !!parts[1].trim() && !/[?#]/.test(parts[1]);
   if (parts[0] === "inbox")
     return (

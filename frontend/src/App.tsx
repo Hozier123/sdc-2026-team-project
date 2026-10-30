@@ -41,8 +41,9 @@ import {
   Activity as ActivityIcon,
 } from "lucide-react";
 import { DemoService } from "./lib/demo";
-import { DEFAULT_API_BASE, HttpService } from "./lib/api";
-import { useAiControl, useRequestScope, useResource } from "./lib/hooks";
+import { ConnectionModal } from "./components/ConnectionModal";
+import { reconnectRequired, rememberConnection } from "./lib/connection";
+import { useAiControl, useResource } from "./lib/hooks";
 import { PrivacyPage } from "./components/PrivacyPage";
 import { WorkspaceSwitcher } from "./components/WorkspaceSwitcher";
 import { RoleSwitcher } from "./components/RoleSwitcher";
@@ -84,7 +85,7 @@ import {
 
 import type { Navigate, Notify } from "./lib/types";
 import { PageHeading } from "./components/ui";
-export const APP_VERSION = "1.4.0";
+export const APP_VERSION = "1.5.0";
 const links = [
   { path: "workspace", label: "Overview", Icon: LayoutDashboard },
   { path: "new", label: "New order", Icon: Plus },
@@ -126,8 +127,8 @@ class Boundary extends Component<
       <div className="crash">
         <h1>Let’s get back to clarity.</h1>
         <p>
-          This screen could not be displayed. Your saved orders are still in the
-          local workspace.
+          This screen could not be displayed. Reopen the workspace and reconnect
+          your API session to read saved backend orders.
         </p>
         <button
           className="button primary"
@@ -185,6 +186,8 @@ function Workspace() {
     [demoRole, tenant],
   );
   const [live, setLive] = useState<Service | null>(null);
+  const [needsConnection, setNeedsConnection] = useState(() => reconnectRequired(sessionStorage));
+  const [liveBase, setLiveBase] = useState<string>();
   const service: Service = live ?? demo;
   const [dirty, setDirty] = useState(false);
   const dirtyRef = useRef(false);
@@ -229,7 +232,7 @@ function Workspace() {
       previous?.focus();
     };
   }, [sidebar]);
-  const [settings, setSettings] = useState(false);
+  const [settings, setSettings] = useState(needsConnection);
   const [permissionsOpen, setPermissionsOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const [revision, setRevision] = useState(0);
@@ -284,7 +287,7 @@ function Workspace() {
       return () => clearTimeout(timeout);
     }
   }, [notice]);
-  const identity = useResource(() => service.me(), [service]);
+  const identity = useResource(() => service.me(), [service], !needsConnection);
   const me = identity.value;
   const business = !!me && me.role !== "WAREHOUSE";
   const draftsResource = useResource(
@@ -304,6 +307,14 @@ function Workspace() {
   );
   const aiResource = useResource(() => service.aiStatus(), [service], !!me);
   const ai = aiResource.value;
+  const refreshWorkspace = () => {
+    identity.refresh();
+    draftsResource.refresh();
+    approvalsResource.refresh();
+    activityResource.refresh();
+    aiResource.refresh();
+    changed();
+  };
   useEffect(() => {
     if (
       service.mode !== "live" ||
@@ -561,6 +572,7 @@ function Workspace() {
                 wakeBusy ||
                 (!aiResource.error && !me?.permissions.includes("WAKE_AI"))
               }
+              aria-label={service.mode === "live" ? "AI service status. Order extraction mode is shown on each order." : undefined}
               title={
                 aiResource.error
                   ? "AI status unavailable. Click to retry."
@@ -569,7 +581,9 @@ function Workspace() {
             >
               {wakeBusy ? <Spinner /> : <span className="status-light" />}
               <span>
-                {service.mode === "demo"
+                {needsConnection
+                  ? "Session required"
+                  : service.mode === "demo"
                   ? "Offline match"
                   : wakeBusy
                     ? "AI warming…"
@@ -578,10 +592,10 @@ function Workspace() {
                       : aiResource.loading
                         ? "Checking AI…"
                         : ai?.state === "READY"
-                          ? "AI ready"
-                          : "AI " + (ai?.state.toLowerCase() ?? "status")}
+                          ? "Service ready"
+                          : "Service " + (ai?.state.toLowerCase() ?? "status")}
               </span>
-              {service.mode === "demo" && <small>non-AI</small>}
+              {!needsConnection && service.mode === "demo" && <small>non-AI</small>}
             </button>
             <span className="top-divider" />
             <div className="identity">
@@ -589,6 +603,7 @@ function Workspace() {
                 aria-label="View role permissions"
                 title={me?.permission_summary}
                 onClick={() => setPermissionsOpen(true)}
+                disabled={!me}
                 className={`user-avatar ${me?.role === "OWNER" ? "owner" : ""}`}
               >
                 {me?.display_name
@@ -598,8 +613,8 @@ function Workspace() {
                   .join("") ?? "S"}
               </button>
               <div className="identity-meta">
-                <strong>{me?.display_name ?? "Loading"}</strong>
-                {service.mode === "demo" ? (
+                <strong>{me?.display_name ?? (needsConnection ? "Reconnect session" : "Loading")}</strong>
+                {!needsConnection && service.mode === "demo" ? (
                   <RoleSwitcher role={demoRole} onChange={setRole} />
                 ) : (
                   <small>
@@ -618,27 +633,41 @@ function Workspace() {
         <main id="main-content" className="page-content" tabIndex={-1}>
           {active === "privacy" ? (
             <PrivacyPage mode={service.fixture ? "fixture" : service.mode} />
+          ) : needsConnection ? (
+            <section className="panel session-recovery">
+              <PlugZap size={28} aria-hidden="true" />
+              <h1>Reconnect to your orders</h1>
+              <p>Your session token was cleared on reload. Reconnect to read your saved backend orders, approvals and logs.</p>
+              <div className="connection-actions">
+                <button className="button primary" onClick={() => setSettings(true)}>Reconnect API</button>
+                <button className="button secondary" onClick={() => { rememberConnection(sessionStorage, false); setNeedsConnection(false); forceNav("workspace"); }}>Use local demo</button>
+              </div>
+            </section>
           ) : identity.loading && !me ? (
             <Loading label="Loading your workspace…" />
           ) : identity.error ? (
             <ErrorNotice error={identity.error} retry={identity.refresh} />
           ) : me ? (
             <>
-              {(service.mode === "demo" || service.fixture) && (
-                <div className="demo-strip">
-                  <span className="demo-dot" />{" "}
-                  {service.fixture ? "FIXTURE MOCK" : "LOCAL DEMO"}{" "}
-                  <span>
-                    ·{" "}
-                    {service.fixture
-                      ? "Synthetic responses · no real backend"
-                      : "Synthetic data"}
-                  </span>
+              <section className={`workflow-connection ${service.mode === "live" && !service.fixture ? "is-live" : ""}`} aria-label="Workflow connection">
+                <div className="connection-summary">
+                  <span className="connection-mode">{service.fixture ? "FIXTURE MOCK" : service.mode === "live" ? "LIVE API" : "LOCAL DEMO"}</span>
+                  <p>{service.fixture
+                    ? "Synthetic API responses · no real backend or model."
+                    : service.mode === "live"
+                      ? `${me.tenant.name} · ${me.role} · Backend orders and activity records.`
+                      : "Synthetic data · browser-only matching · no backend or model."}</p>
                 </div>
-              )}
+                <div className="connection-actions">
+                  {service.mode === "live" && <button className="text-button" disabled={dirty} onClick={refreshWorkspace}>Refresh records</button>}
+                  <button className="button secondary small" onClick={() => setSettings(true)}>
+                    <PlugZap size={15} />{service.mode === "live" ? "Change API session" : "Connect real workflow"}
+                  </button>
+                </div>
+              </section>
               {me.role === "WAREHOUSE" ? (
                 <WarehousePage
-                  key={service.mode + tenant}
+                  key={service.mode + tenant + me.user_id}
                   service={service}
                   notify={notify}
                 />
@@ -669,6 +698,7 @@ function Workspace() {
                   )}
                   {routeValid && active === "new" && (
                     <NewOrder
+                      key={me.user_id + tenant + service.mode}
                       service={service}
                       navigate={navigate}
                       complete={forceNav}
@@ -679,7 +709,7 @@ function Workspace() {
                   )}
                   {routeValid && active === "order" && route.split("/")[1] && (
                     <OrderDetail
-                      key={route + tenant + service.mode + me.role}
+                      key={route + tenant + service.mode + me.user_id}
                       id={route.split("/")[1]}
                       service={service}
                       me={me}
@@ -705,7 +735,7 @@ function Workspace() {
                     active === "approval" &&
                     route.split("/")[1] && (
                       <ApprovalDetail
-                        key={route + me.role}
+                        key={route + me.user_id}
                         id={route.split("/")[1]}
                         service={service}
                         me={me}
@@ -725,7 +755,7 @@ function Workspace() {
                     active === "delivery" &&
                     route.split("/")[1] && (
                       <DeliveryPage
-                        key={route}
+                        key={route + me.user_id}
                         id={route.split("/")[1]}
                         service={service}
                         notify={notify}
@@ -736,9 +766,11 @@ function Workspace() {
                     <ResourceView resource={activityResource}>
                       {(activity) => (
                         <ActivityPage
+                          key={route}
                           activity={activity}
                           drafts={draftsResource.value ?? []}
                           navigate={navigate}
+                          initialQuery={route.split("/")[1] ?? ""}
                         />
                       )}
                     </ResourceView>
@@ -799,7 +831,13 @@ function Workspace() {
           title="Your permissions"
           onClose={() => setPermissionsOpen(false)}
         >
-          <p className="modal-copy">{me?.permission_summary}</p>
+          <p className="modal-copy">{me?.permission_summary ?? "Connect an API session to verify your permissions."}</p>
+          {me && <dl className="permission-facts">
+            <div><dt>Company</dt><dd>{me.tenant.name}</dd></div>
+            <div><dt>Role</dt><dd>{me.role}</dd></div>
+            <div><dt>Session</dt><dd>{service.mode === "demo" ? "Local demo" : service.fixture ? "Fixture mock" : "Verified by /me"}</dd></div>
+          </dl>}
+          <p className="modal-copy">Clerks review and submit orders. Owners decide escalations. Warehouse sessions read picking lists. Backend permissions determine the available actions.</p>
           <div className="modal-actions">
             <button
               className="button primary"
@@ -814,13 +852,20 @@ function Workspace() {
         <ConnectionModal
           current={service.mode}
           dirty={dirty}
+          reconnect={needsConnection}
+          initialBase={liveBase}
           onClose={() => setSettings(false)}
-          onConnect={(s) => {
+          onConnect={(s, verified, base) => {
+            rememberConnection(sessionStorage, true);
+            setLiveBase(base);
             setLive(s);
+            setNeedsConnection(false);
             setSettings(false);
-            forceNav("workspace");
+            forceNav(verified.role === "WAREHOUSE" ? "warehouse" : "workspace");
           }}
           onDemo={() => {
+            rememberConnection(sessionStorage, false);
+            setNeedsConnection(false);
             setLive(null);
             setSettings(false);
             forceNav("workspace");
@@ -1232,112 +1277,5 @@ function InboxPage({
         )}
       </section>
     </>
-  );
-}
-function ConnectionModal({
-  current,
-  dirty,
-  onConnect,
-  onDemo,
-  onClose,
-}: {
-  current: "demo" | "live";
-  dirty: boolean;
-  onConnect: (s: Service) => void;
-  onDemo: () => void;
-  onClose: () => void;
-}) {
-  const [base, setBase] = useState(
-    (import.meta as ImportMeta & { env: Record<string, string> }).env
-      .VITE_API_BASE_URL ?? DEFAULT_API_BASE,
-  );
-  const [token, setToken] = useState("");
-  const beginConnection = useRequestScope([]);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<unknown>();
-  return (
-    <Modal title="Your workspace connection" onClose={onClose}>
-      <p className="modal-copy">
-        Connect a Gate 0 API to use real orders. Your role and permissions come
-        from the API session.
-      </p>
-      <Pill tone={current === "demo" ? "amber" : "mint"}>
-        {current === "demo" ? "Local demo active" : "API connected"}
-      </Pill>
-      <form
-        className="form-stack"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          if (busy) return;
-          if (dirty) {
-            setError(
-              new Error(
-                "Save or discard your changes before switching connections.",
-              ),
-            );
-            return;
-          }
-          setBusy(true);
-          const currentRequest = beginConnection();
-          setError(undefined);
-          try {
-            const s = new HttpService(base, token);
-            await s.me();
-            if (currentRequest()) onConnect(s);
-          } catch (err) {
-            if (currentRequest()) setError(err);
-          } finally {
-            if (currentRequest()) setBusy(false);
-          }
-        }}
-      >
-        <label>
-          API base URL
-          <input
-            type="url"
-            disabled={busy}
-            required
-            value={base}
-            onChange={(e) => setBase(e.target.value)}
-            placeholder="https://your-api.example/api/v1"
-          />
-        </label>
-        <label>
-          Session token
-          <input
-            type="password"
-            disabled={busy}
-            required
-            autoComplete="off"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder="Your API session token"
-          />
-        </label>
-        <div className="permission-note">
-          <ShieldCheck size={17} />
-          <p>
-            The token stays in memory for this tab session. Reloading returns to
-            the local demo. No document files are uploaded.
-          </p>
-        </div>
-        {!!error && <ErrorNotice error={error} />}
-        <div className="modal-actions">
-          {current === "live" && (
-            <button
-              type="button"
-              className="button secondary"
-              disabled={dirty || busy}
-              onClick={onDemo}
-            >
-              <LogOut size={15} /> Return to demo
-            </button>
-          )}
-          <button className="button primary" disabled={busy}>
-            {busy ? <Spinner /> : <Zap size={15} />}Connect API
-          </button>
-        </div>
-      </form>
-    </Modal>
   );
 }

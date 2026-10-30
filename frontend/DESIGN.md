@@ -57,3 +57,20 @@ The user selected **Marcellus** for default interface text, including navigation
 ## Validation boundaries
 
 Desktop and mobile viewport checks prove rendered layout, not physical touch, Safari behavior, battery use or measured FPS. Keep those limitations explicit. Preserve print rules and backend contracts during UI changes.
+
+## Local competition upgrade · 2026-10-29
+
+- `src/styles/connection.css` owns the compact workflow connection card, session recovery and permission facts. Keep existing palette, type, overview composition and introduction.
+- The connection card always names Local demo, Fixture mock or Live API. Only `/me` supplies a real session's company and role. A failed session stays on its error/reconnect path until the user explicitly selects demo.
+- Order extraction labels use the saved `ai_mode`; the service readiness control never substitutes for an order's actual mode. Delivery activity is directly reachable and filterable by draft/DO.
+- Workbench entry must work without the introduction chunk, Three.js, WebGL or remote video. React/runtime dependencies are separated from the lazy 3D chunk.
+- Before/after browser measurements at 1440/768/390 remain 0 FAIL and the same 3 existing WARN. Retain the established display type and asymmetric queue/rail composition for this functional upgrade; see `docs/FRONTEND_UPGRADE_INTEGRATION_2026-10-30.md` for scope and validation limits.
+
+## Readability corrections · 2026-10-30
+
+- The user's receipt instruction overrides the shared type system only inside `.delivery-document`: all receipt text uses Times New Roman, including print. `.document-brand` keeps its existing Cormorant Garamond wordmark, Marcellus tagline and glyph. Other screens keep their current typefaces.
+- `src/styles/receipt.css` owns receipt typography and document ink. Keep this scope separate from the surrounding delivery page and action rail.
+- The connection dialog uses the `connection-modal` class. Labels, body copy, notes and actions share a 14px scale; inputs use 16px. Other dialogs retain their own scale.
+- `src/styles/review.css` owns the product field contrast, 14px price labels, 16px values, and the responsive 320–380px approval rail. Product field labels use full text ink. Same-day editors use the full panel width without a second inset and keep 44px action targets.
+- Pending checks use an amber panel edge and clear heading. Tablet and phone views expose a compact reminder and focusable jump to the checks panel. Respect reduced motion for that jump.
+- Taste verification, permitted logo/dialog exceptions and remaining warnings are recorded in `docs/FRONTEND_UPGRADE_INTEGRATION_2026-10-30.md`.

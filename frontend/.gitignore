@@ -8,3 +8,7 @@ dist/
 
 *.tsbuildinfo
 .DS_Store
+
+# This file contains public build defaults only; all private env files stay ignored.
+!.env.production
+.taste-skill/

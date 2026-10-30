@@ -16,6 +16,7 @@ import {
   type Gate0,
 } from "./types";
 import { assertQuantities } from "./review";
+import { validateApiBase } from "./connection";
 import {
   approvalView,
   draftView,
@@ -34,6 +35,7 @@ export const DEFAULT_API_BASE = "http://127.0.0.1:8000/api/v1";
 type WireActivity = {
   activity_id: string | number;
   entity_id?: string | null;
+  draft_id?: string | null;
   event_type: string;
   payload?: Record<string, unknown>;
   actor_user_id?: string | null;
@@ -42,9 +44,11 @@ type WireActivity = {
 };
 const activityView = (a: WireActivity): Activity => ({
   activity_id: String(a.activity_id),
-  entity_id: a.entity_id ?? "",
+  entity_id: a.entity_id ?? a.draft_id ?? (typeof a.payload?.draft_id === "string" ? a.payload.draft_id : ""),
   action: a.event_type,
-  actor: a.actor_user_id ?? a.actor_role ?? "System",
+  actor: a.actor_user_id ?? a.actor_role ?? "Actor unavailable",
+  actor_role: a.actor_role,
+  do_number: typeof a.payload?.do_number === "string" ? a.payload.do_number : null,
   created_at: a.created_at,
   detail:
     typeof a.payload?.message === "string"
@@ -60,18 +64,7 @@ export class HttpService implements Service {
     private base: string,
     private token: string,
   ) {
-    const u = new URL(base);
-    if (u.username || u.password)
-      throw new Error("Use the session token field for credentials.");
-    if (
-      u.protocol !== "https:" &&
-      !(
-        u.protocol === "http:" &&
-        ["localhost", "127.0.0.1", "[::1]"].includes(u.hostname)
-      )
-    )
-      throw new Error("Use HTTPS or a local development API.");
-    this.base = base.replace(/\/$/, "");
+    this.base = validateApiBase(base);
   }
   private async request<T>(
     path: string,
@@ -238,10 +231,16 @@ export class HttpService implements Service {
       `/delivery-orders/${encodeURIComponent(id)}`,
     );
   }
-  warehouse(id: string) {
-    return this.request<WarehouseOrder>(
+  async warehouse(id: string) {
+    const order = await this.request<WarehouseOrder>(
       `/warehouse/delivery-orders/${encodeURIComponent(id)}`,
     );
+    // Fail visibly on an overbroad server response; hiding fields in JSX is insufficient.
+    const rootKeys = new Set(["do_number", "customer_name", "items", "approved_at"]);
+    const itemKeys = new Set(["sku_id", "display_name", "quantity", "unit", "picking_note"]);
+    if (!order || !Array.isArray(order.items) || Object.keys(order).some(key => !rootKeys.has(key)) || order.items.some(item => !item || Object.keys(item).some(key => !itemKeys.has(key))))
+      throw new ApiError("WAREHOUSE_RESPONSE_NOT_REDACTED", "The warehouse response contains unexpected fields. Ask the backend owner to verify price and contact redaction before continuing.");
+    return order;
   }
   async activity(entity?: string) {
     const items = await this.list<WireActivity>(

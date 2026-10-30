@@ -1,0 +1,21 @@
+/* A printed business document has its own typeface; the brand mark is preserved. */
+.app-shell .delivery-document { --receipt-font: "Times New Roman", Times, serif; }
+.app-shell .delivery-document,
+.app-shell .delivery-document :where(*) { font-family: var(--receipt-font); }
+.app-shell .delivery-document .document-brand,
+.app-shell .delivery-document .document-brand :where(*) { font-family: var(--font-ui); }
+.app-shell .delivery-document .document-brand > strong { font-family: var(--serif); }
+.app-shell .delivery-document .document-brand small { font-family: var(--font-ui); }
+.app-shell .delivery-document :is(.document-header > div:last-child > span, .document-parties small, .document-signatures small, .do-table-head) { letter-spacing: 0; font-size: 12px; }
+.app-shell .delivery-document :is(.document-signatures small, .document-parties small, .document-parties span, .document-header > div:last-child > small, .document-header > div:last-child > span, .document-footer, .document-total > span, .document-total small, .do-line small) { color: #4b6254; }
+.app-shell .delivery-document .do-line,
+.app-shell .delivery-document .do-line > span,
+.app-shell .delivery-document .do-line strong { color: #374d3f; font-size: 14px; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.app-shell .delivery-document .document-signatures span,
+.app-shell .delivery-document .document-parties span { font-size: 13px; }
+.app-shell .delivery-document .do-table-head { color: #4b6254; font-variant-numeric: tabular-nums; }
+@media print {
+  .app-shell .delivery-document .do-line,
+  .app-shell .delivery-document .do-line > span,
+  .app-shell .delivery-document .do-line strong { font-size: 11pt; }
+}

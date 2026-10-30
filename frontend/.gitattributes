@@ -1,0 +1,5 @@
+# Frozen contract and fixtures are checked byte-for-byte.
+contracts/** -text
+tests/fixtures/** -text
+# Generated TypeScript must stay LF on Windows as well as macOS.
+src/lib/gate0.generated.ts text eol=lf

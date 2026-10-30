@@ -31,6 +31,7 @@ import {
 } from "../lib/types";
 import { useRequestScope, useResource } from "../lib/hooks";
 import { pickingItems } from "../lib/review";
+import { EXTRACTION, snapshotMode } from "../lib/extraction";
 import type { Navigate, Notify } from "../lib/types";
 import { PageHeading } from "./ui";
 import {
@@ -253,8 +254,9 @@ export function ApprovalDetail({
         >
           <CircleCheck size={19} />
           <div>
-            <strong>Decision recorded.</strong>
+            <strong>{a.status === "REJECTED" ? "Order rejected · no delivery order generated" : "Decision recorded."}</strong>
             <p>{a.decision_note || "This request has already been decided."}</p>
+            <button className="text-button" onClick={() => navigate(`activity/${encodeURIComponent(a.draft_id)}`)}>View order activity <ArrowUpRight size={14} /></button>
           </div>
           {success && (
             <button
@@ -432,7 +434,7 @@ export function ApprovalDetail({
         >
           <p className="modal-copy">
             The order will close with your reason in its activity record. The
-            clerk can create a new draft if needed.
+            clerk can create a new draft if needed. Rejection generates no delivery order and does not deduct stock.
           </p>
           <label className="field-label">
             Reason for rejection
@@ -679,6 +681,9 @@ export function DeliveryPage({
               <ActivityIcon size={16} />
               View change record
             </button>
+            <button className="button secondary" onClick={() => navigate(`activity/${encodeURIComponent(d.draft_id)}`)}>
+              <ArrowUpRight size={16} /> Open order activity
+            </button>
             <div className="permission-note">
               <LockKeyhole size={15} />
               <p>Approved record · read-only.</p>
@@ -766,6 +771,10 @@ function AuditModal({
       ) : (
         r.value && (
           <>
+            <p className="modal-copy">
+              {r.value.delivery_order.do_number} · saved version {r.value.delivery_order.draft_version}
+              {snapshotMode(r.value.ai_initial_snapshot) && <> · Extraction: {EXTRACTION[snapshotMode(r.value.ai_initial_snapshot)!].label}</>}
+            </p>
             <span className="section-kicker">
               EXTRACTION → HUMAN CONFIRMATION
             </span>
@@ -788,7 +797,7 @@ function AuditModal({
                     <strong>{pretty(a.action)}</strong>
                     <p>{a.detail}</p>
                     <small>
-                      {a.actor} · {dateLabel(a.created_at)} ·{" "}
+                      {a.actor}{a.actor_role ? ` · ${a.actor_role}` : ""} · {dateLabel(a.created_at)} ·{" "}
                       {time(a.created_at)} MYT
                     </small>
                   </section>
@@ -805,14 +814,16 @@ export function ActivityPage({
   activity,
   drafts,
   navigate,
+  initialQuery = "",
 }: {
   activity: Activity[];
   drafts: DraftSummary[];
   navigate: Navigate;
+  initialQuery?: string;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const filtered = activity.filter((a) =>
-    `${a.action} ${a.actor} ${a.detail}`
+    `${a.action} ${a.actor} ${a.actor_role ?? ""} ${a.detail} ${a.entity_id} ${a.do_number ?? ""} ${drafts.find(d => d.draft_id === a.entity_id)?.do_number ?? ""}`
       .toLowerCase()
       .includes(query.toLowerCase()),
   );
@@ -835,10 +846,12 @@ export function ActivityPage({
             />
           </label>
         </div>
+        {query && <div className="activity-filter-summary"><span>Filtered by {query}</span><button className="text-button" onClick={() => { setQuery(""); navigate("activity"); }}>Clear filter <X size={13} /></button></div>}
         {filtered.length ? (
           <div className="activity-table">
             {filtered.map((a) => {
-              const d = drafts.find((d) => d.draft_id === a.entity_id);
+              const d = drafts.find((d) => d.draft_id === a.entity_id || (!!a.do_number && d.do_number === a.do_number));
+              const deliveryNumber = a.do_number ?? d?.do_number;
               return (
                 <div className="activity-event" key={a.activity_id}>
                   <span
@@ -855,23 +868,23 @@ export function ActivityPage({
                   <div>
                     <strong>
                       {pretty(a.action)}
-                      {d && (
+                      {(d || deliveryNumber || a.entity_id) && (
                         <button
                           className="activity-customer"
                           onClick={() =>
                             navigate(
-                              d.do_number
-                                ? `delivery/${d.do_number}`
-                                : `order/${d.draft_id}`,
+                              deliveryNumber
+                                ? `delivery/${encodeURIComponent(deliveryNumber)}`
+                                : `order/${encodeURIComponent(d?.draft_id ?? a.entity_id)}`,
                             )
                           }
                         >
-                          {d.customer_name} <ArrowUpRight size={11} />
+                          {deliveryNumber ?? d?.customer_name ?? a.entity_id} <ArrowUpRight size={11} />
                         </button>
                       )}
                     </strong>
                     <p>{a.detail}</p>
-                    <small>{a.actor}</small>
+                    <small>{a.actor}{a.actor_role ? ` · ${a.actor_role}` : ""}</small>
                   </div>
                   <time dateTime={a.created_at}>
                     <span>{time(a.created_at)} MYT</span>
@@ -913,7 +926,7 @@ export function WarehousePage({
         <LockKeyhole size={18} />
         <div>
           <strong>Read-only picking list</strong>
-          <p>Prices and contacts excluded.</p>
+          <p>Prices and contacts must be excluded by the API. Unexpected response fields block this view.</p>
         </div>
       </div>
       <section className="panel warehouse-lookup no-print">

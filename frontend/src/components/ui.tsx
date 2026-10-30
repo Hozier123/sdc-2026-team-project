@@ -160,11 +160,13 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  className = "",
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  className?: string;
 }) {
   const titleId = useId();
   const ref = useRef<HTMLDivElement>(null);
@@ -219,7 +221,7 @@ export function Modal({
     >
       <div
         ref={ref}
-        className={`modal ${wide ? "wide" : ""}`}
+        className={`modal ${wide ? "wide" : ""} ${className}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -256,14 +258,18 @@ export function CopyButton({
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(text);
-          onCopy("Copied to clipboard.");
-          void Promise.resolve()
-            .then(() => onCopied?.())
-            .catch(() => undefined);
         } catch {
           onCopy(
             "Clipboard is unavailable. Select and copy the message manually.",
           );
+          return;
+        }
+        onCopy("Copied to clipboard.");
+        if (onCopied) {
+          try { await onCopied(); }
+          catch (error) {
+            onCopy(`Copied, but the activity record could not be saved.${error instanceof ApiError && error.requestId ? ` Request ${error.requestId}.` : ""} Reconnect or refresh the order before retrying.`);
+          }
         }
       }}
     >

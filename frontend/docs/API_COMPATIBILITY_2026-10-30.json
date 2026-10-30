@@ -1,0 +1,124 @@
+{
+  "checked_at": "2026-10-30",
+  "backend_revision": "0a255df",
+  "method": "Actual frontend HttpService requests and synthetic responses validated against current FastAPI-generated OpenAPI",
+  "production_api_called": false,
+  "database_tested_locally": false,
+  "passed_exchanges": 19,
+  "exchanges": [
+    {
+      "method": "GET",
+      "path": "/api/v1/me",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/drafts",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/drafts/{draft_id}",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/parse-draft",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/orders/drafts/{draft_id}/lines",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/{draft_id}/approve",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/{draft_id}/approve",
+      "status": 202,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/approvals",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/approvals/{approval_id}",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/approvals/{approval_id}/decide",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/delivery-orders/{do_number}",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/warehouse/delivery-orders/{do_number}",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activity",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/{do_number}/audit-detail",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/status",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ai/wake",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/drafts/{draft_id}/clarification-copied",
+      "status": 200,
+      "valid": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/drafts/{draft_id}/discard",
+      "status": 200,
+      "valid": true
+    }
+  ]
+}
