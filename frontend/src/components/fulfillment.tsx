@@ -32,6 +32,7 @@ import {
 import { useRequestScope, useResource } from "../lib/hooks";
 import { pickingItems } from "../lib/review";
 import { EXTRACTION, snapshotMode } from "../lib/extraction";
+import { approvalSubmissionLabel } from "../lib/approval-display";
 import type { Navigate, Notify } from "../lib/types";
 import { PageHeading } from "./ui";
 import {
@@ -142,10 +143,13 @@ export function ApprovalsPage({
                       )
                       .join(" · ")}
                   </p>
-                  <small>
-                    {a.requested_by} · {time(a.requested_at)} MYT ·{" "}
-                    {a.line_count} product{a.line_count === 1 ? "" : "s"} · v
-                    {a.draft_version}
+                  <small className="approval-request-meta">
+                    <span>{approvalSubmissionLabel(a.requested_at)}</span>
+                    <span title={a.draft_id}>
+                      Draft #{shortId(a.draft_id)} · v{a.draft_version} ·{" "}
+                      {a.line_count} product{a.line_count === 1 ? "" : "s"}
+                    </span>
+                    <span>Requested by {a.requested_by}</span>
                   </small>
                 </div>
                 <div className="approval-total">
@@ -222,7 +226,7 @@ export function ApprovalDetail({
       <PageHeading
         eyebrow={`OWNER REVIEW · VERSION ${a.draft_version}`}
         title={a.customer.name}
-        description={`Submitted by ${a.requested_by} · ${dateLabel(a.requested_at)} at ${time(a.requested_at)} MYT`}
+        description={`Draft #${shortId(a.draft_id)} · ${approvalSubmissionLabel(a.requested_at)} · Requested by ${a.requested_by}`}
       >
         <Pill
           tone={
