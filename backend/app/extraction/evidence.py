@@ -125,6 +125,27 @@ def exact_phrase(phrase, span):
     return re.search(pattern, normalize(span)) is not None
 
 
+def evidenced_uom(value, span, units):
+    """Return the tenant canonical unit only when the span evidences it.
+
+    `units` is an iterable of `(canonical_unit, alias)` pairs from the tenant
+    `uom_aliases` table plus the H1 lexicon. The provider may return either the
+    canonical form ("btl"/"pail") or the surface alias ("botol"/"pail"); both
+    are accepted only when the alias itself appears in the masked span. A
+    surface alias is never inferred from the SKU or the pack size, and tenant
+    aliases are only looked up from the caller's own tenant rows.
+    """
+    if not value:
+        return None
+    wanted = normalize(value)
+    for canonical, alias in units:
+        if normalize(canonical) != wanted and normalize(alias) != wanted:
+            continue
+        if exact_phrase(alias, span):
+            return canonical
+    return None
+
+
 def pack_size_evidence(span):
     """Return (value, start, end) for a registered pack-size pattern."""
     if not span:

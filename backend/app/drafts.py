@@ -187,6 +187,17 @@ def _tier_price(conn, tenant: str, tier: str, sku_id: str) -> Decimal | None:
     return Decimal(row[0]) if row is not None else None
 
 
+def _family_has_mixed_base_units(conn, tenant: str, family_id: str) -> bool:
+    rows = conn.execute(
+        "SELECT DISTINCT p.base_unit FROM products p "
+        "JOIN product_families f "
+        "ON f.tenant_id=p.tenant_id AND f.family_id=p.family_id "
+        "WHERE p.tenant_id=%s AND p.family_id=%s AND p.active=true AND f.active=true",
+        (tenant, family_id),
+    ).fetchall()
+    return len(rows) > 1
+
+
 def _canonical_uom(conn, tenant: str, value: str | None, base_unit: str) -> str:
     if value is None:
         return base_unit
@@ -401,7 +412,14 @@ def _line(
         product = _product(conn, tenant, item.sku_id)
         family_id = product["family_id"]
         description = product["name"]
-        uom = _canonical_uom(conn, tenant, uom, product["base_unit"])
+        if uom is None and _family_has_mixed_base_units(conn, tenant, family_id):
+            # kg/bag or btl/pail: selecting a SKU is not itself a unit
+            # confirmation. Leave uom empty so the MISSING_UOM issue below stays
+            # blocking; the clerk must save the unit explicitly. Single-base-unit
+            # families keep the documented family-level default.
+            pass
+        else:
+            uom = _canonical_uom(conn, tenant, uom, product["base_unit"])
         for field in ("pack_size", "grade"):
             provided = getattr(item, field)
             if provided is not None and provided != product[field]:
@@ -571,7 +589,11 @@ def _escalation(
 
 
 def _actions(
-    *, role: str, status: str, escalation: list[dict[str, Any]]
+    *,
+    role: str,
+    status: str,
+    escalation: list[dict[str, Any]],
+    blocking: list[str] | tuple[str, ...] = (),
 ) -> tuple[list[str], dict[str, list[str]]]:
     if status in {"DO_GENERATED", "REJECTED"}:
         return ["VIEW_ACTIVITY"], {}
@@ -580,8 +602,10 @@ def _actions(
             return ["OWNER_APPROVE", "OWNER_REJECT", "VIEW_ACTIVITY"], {}
         return ["VIEW_ACTIVITY"], {"EDIT_DRAFT": ["PENDING_OWNER_APPROVAL"]}
     if status == "DISAMBIGUATION_REQUIRED":
+        # Name the actual blockers so the client does not have to guess, and
+        # always keep APPROVE_AND_GENERATE_DO blocked while status is unresolved.
         return ["EDIT_DRAFT", "RESOLVE_ISSUE", "CANCEL_DRAFT", "VIEW_ACTIVITY"], {
-            "APPROVE_AND_GENERATE_DO": ["BLOCKING_ISSUES"]
+            "APPROVE_AND_GENERATE_DO": sorted(set(blocking)) or ["BLOCKING_ISSUES"]
         }
     if escalation:
         if role == "OWNER":
@@ -900,6 +924,7 @@ def _draft_payload(conn, user, order) -> OrderDraftResponse:
         role=user.role,
         status=order["status"],
         escalation=order["escalation_preview"],
+        blocking=blocking,
     )
     if clarification is not None:
         allowed.append("COPY_CLARIFICATION")
@@ -1257,6 +1282,7 @@ def _apply_save_lines(conn, user, order, body):
         role=user.role,
         status=status,
         escalation=escalation,
+        blocking=blocking,
     )
     if clarification is not None:
         allowed.append("COPY_CLARIFICATION")

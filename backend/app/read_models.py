@@ -185,6 +185,7 @@ def get_draft(
             role=user.role,
             status=order["status"],
             escalation=order["escalation_preview"],
+            blocking=blocking,
         )
         snapshot = _latest_snapshot(conn, user.tenant_id, draft_id)
         do_row = conn.execute(
