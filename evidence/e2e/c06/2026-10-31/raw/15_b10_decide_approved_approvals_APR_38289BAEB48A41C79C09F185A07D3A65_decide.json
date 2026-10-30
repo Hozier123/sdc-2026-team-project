@@ -1,0 +1,59 @@
+{
+  "seq": 15,
+  "label": "15_b10_decide_approved_approvals_APR_38289BAEB48A41C79C09F185A07D3A65_decide",
+  "role": "OWNER",
+  "method": "POST",
+  "path": "/approvals/APR_38289BAEB48A41C79C09F185A07D3A65/decide",
+  "request_body": {
+    "decision": "APPROVE"
+  },
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "f6fa779e-4e71-4ea9-a1de-f1446491f361"
+  },
+  "response": {
+    "do_number": "DO_20261030_6FC83E94",
+    "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+    "draft_version": 2,
+    "customer_id": "CUS_RASA",
+    "customer_name": "Kedai Rasa",
+    "lines": [
+      {
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "sku_id": "SKU_MILO_1KG",
+        "display_name": "Milo 美禄",
+        "quantity": 2,
+        "unit": "bag",
+        "tier_unit_price": "19.00",
+        "applied_unit_price": "17.00",
+        "subtotal_rm": "34.00",
+        "override_reason": "Accept requested RM17.00 per bag; below tier, owner decides.",
+        "picking_note": null
+      }
+    ],
+    "final_total_rm": "34.00",
+    "prepared_by": "USR_T1_CLERK",
+    "approved_by": "USR_T1_OWNER",
+    "escalation_reasons": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "detail": {
+          "tier_unit_price": "19.00",
+          "effective_unit_price": "17.00"
+        }
+      }
+    ],
+    "approval_mode": "OWNER_APPROVED",
+    "reply_draft": {
+      "language": "ms",
+      "message": "Order DO_20261030_6FC83E94 dah confirm: Milo 美禄 2 bag @ RM 17.00. Jumlah RM 34.00. Terima kasih!",
+      "do_number": "DO_20261030_6FC83E94",
+      "warnings": []
+    },
+    "related_do_number": null,
+    "approved_at": "2026-10-30T17:46:54.177887Z"
+  },
+  "at_utc": "2026-10-30T17:46:53.927420+00:00"
+}

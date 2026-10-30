@@ -1,0 +1,47 @@
+{
+  "seq": 10,
+  "label": "10_b3_submit_owner_orders_DRF_BDBE7DE379764193A467498773FC80AE_approve",
+  "role": "CLERK",
+  "method": "POST",
+  "path": "/orders/DRF_BDBE7DE379764193A467498773FC80AE/approve",
+  "request_body": {
+    "expected_version": 2
+  },
+  "status": 202,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "0c2db4eb-90b3-483d-bdf0-83e4eefefe47"
+  },
+  "response": {
+    "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+    "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+    "draft_version": 2,
+    "status": "PENDING",
+    "customer": {
+      "customer_id": "CUS_RASA",
+      "name": "Kedai Rasa",
+      "tier": "B",
+      "credit_flag": "NONE",
+      "has_credit_notice": false
+    },
+    "total_rm": "34.00",
+    "line_count": 1,
+    "reasons": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "detail": {
+          "tier_unit_price": "19.00",
+          "effective_unit_price": "17.00"
+        },
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+      }
+    ],
+    "requested_by": "USR_T1_CLERK",
+    "requested_at": "2026-10-31T01:46:32.658264+08:00",
+    "allowed_actions": [],
+    "decided_by": null,
+    "decided_at": null,
+    "decision_note": null
+  },
+  "at_utc": "2026-10-30T17:46:32.478646+00:00"
+}

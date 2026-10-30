@@ -1,0 +1,31 @@
+{
+  "seq": 12,
+  "label": "12_b6_decide_stock_changed_approvals_APR_38289BAEB48A41C79C09F185A07D3A65_decide",
+  "role": "OWNER",
+  "method": "POST",
+  "path": "/approvals/APR_38289BAEB48A41C79C09F185A07D3A65/decide",
+  "request_body": {
+    "decision": "APPROVE"
+  },
+  "status": 409,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "184b50de-a105-4e14-80d1-ee19e257baf4"
+  },
+  "response": {
+    "error_code": "STOCK_CHANGED",
+    "message": "Stock changed and no longer satisfies the draft.",
+    "details": {
+      "lines": [
+        {
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+          "sku_id": "SKU_MILO_1KG",
+          "requested_qty": 2,
+          "effective_qty": 2,
+          "available_qty": 1
+        }
+      ]
+    }
+  },
+  "at_utc": "2026-10-30T17:46:43.410687+00:00"
+}

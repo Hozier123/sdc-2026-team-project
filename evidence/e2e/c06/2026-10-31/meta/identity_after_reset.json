@@ -1,0 +1,30 @@
+{
+  "firstuse": {
+    "environment_id": "b05-env-ea709a8e70d0",
+    "side": "firstuse",
+    "pid": 30104,
+    "instance": "c1fcb97c1650445f98eca967f164f0ea",
+    "database": {
+      "database": "kiraorder_demo_b05_firstuse_ea709a8e70d0",
+      "port": 51393,
+      "system_identifier": "7702509799995540300"
+    },
+    "mode_policy": "OFFLINE_FALLBACK",
+    "remote_ai_configured": false,
+    "cache_scope": "this API process and this side's database; no shared Redis"
+  },
+  "protected": {
+    "environment_id": "b05-env-ea709a8e70d0",
+    "side": "protected",
+    "pid": 36740,
+    "instance": "f38f26dcf6a949db949e1b28d6e5f71f",
+    "database": {
+      "database": "kiraorder_demo_b05_protected_ea709a8e70d0",
+      "port": 51390,
+      "system_identifier": "7702509778719010148"
+    },
+    "mode_policy": "OFFLINE_FALLBACK",
+    "remote_ai_configured": false,
+    "cache_scope": "this API process and this side's database; no shared Redis"
+  }
+}

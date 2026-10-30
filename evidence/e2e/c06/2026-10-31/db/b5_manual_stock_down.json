@@ -1,0 +1,12 @@
+{
+  "after_qty": 1,
+  "at_utc": "2026-10-30T17:46:43.305593+00:00",
+  "before_qty": 30,
+  "label": "b5_manual_stock_down",
+  "reason": "Manual stock change for C06: lower Milo from 30 to 1 before owner decision",
+  "rowcount": 1,
+  "sku_id": "SKU_MILO_1KG",
+  "sql": "UPDATE inventory SET available_qty=%s, updated_at=now() WHERE tenant_id=%s AND product_id=%s",
+  "target_qty": 1,
+  "updated_at": "2026-10-31 01:46:43.399608+08:00"
+}

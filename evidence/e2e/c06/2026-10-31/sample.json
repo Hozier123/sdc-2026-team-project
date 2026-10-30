@@ -1,0 +1,102 @@
+{
+  "case_id": "C06",
+  "title": "缺货与库存变化：人工改库存、阻断复核与隔离库复位",
+  "environment_id": "b05-env-ea709a8e70d0",
+  "mode": "LOCAL_SYNTHETIC_T1_FALLBACK",
+  "source_commit": "c8848efce1ccbe31e1dead315816c14d313e7a0f",
+  "executed_at_local": "2026-10-31 01:45–01:48 (UTC+8)",
+  "executed_at_utc": "2026-10-30 17:45–17:48",
+  "operator": "He",
+  "firstuse_api": "http://127.0.0.1:51394/api/v1",
+  "protected_api": "http://127.0.0.1:51391/api/v1",
+  "frontend_url": "http://127.0.0.1:51389/#/workspace",
+  "scenarios": [
+    {
+      "id": "C06-A",
+      "name": "缺货阻断 → 减量到可满足 → 批准生成 DO",
+      "customer": {"customer_id": "CUS_SINAR", "name": "Warung Sinar", "tier": "A"},
+      "message": "Teh 500g 10 bag",
+      "sku_id": "SKU_TEH_500G",
+      "tier_unit_price": "9.00",
+      "requested_qty": 10,
+      "available_qty": 3,
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "shortage_issue_id": "ISS_AEAC2AB55E0044FEA81F7C86A20C2573",
+      "shortage_draft_status": "DISAMBIGUATION_REQUIRED",
+      "blocked_actions": {"APPROVE_AND_GENERATE_DO": ["INSUFFICIENT_STOCK"]},
+      "approve_shortage_status": 400,
+      "approve_shortage_error": "DISAMBIGUATION_UNRESOLVED",
+      "reduced_confirmed_qty": 3,
+      "reduced_version": 2,
+      "reduced_status": "READY_FOR_APPROVAL",
+      "reduced_total_rm": "27.00",
+      "do_number": "DO_20261030_77EBD4F2",
+      "approval_mode": "DIRECT",
+      "stock_before": 3,
+      "stock_after": 0
+    },
+    {
+      "id": "C06-B",
+      "name": "低价审批 + 人工降库存 → 409 STOCK_CHANGED → 恢复库存后批准",
+      "customer": {"customer_id": "CUS_RASA", "name": "Kedai Rasa", "tier": "B"},
+      "message": "Milo 1kg 2 bag, kalau RM17 boleh?",
+      "sku_id": "SKU_MILO_1KG",
+      "tier_unit_price": "19.00",
+      "effective_unit_price": "17.00",
+      "total_rm": "34.00",
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "draft_version": 2,
+      "condition_issue_id": "ISS_CF29C38608156FFD41EE123E",
+      "condition_resolution": "ACCEPT_REQUESTED_PRICE",
+      "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+      "approval_status_before_stock_change": "PENDING",
+      "approval_reason": "PRICE_OVERRIDE_BELOW_TIER",
+      "manual_stock_change": {"before": 30, "after": 1, "sql_rows": 1},
+      "decide_after_stock_drop_status": 409,
+      "decide_after_stock_drop_error": "STOCK_CHANGED",
+      "decide_after_stock_drop_detail": {
+        "sku_id": "SKU_MILO_1KG",
+        "effective_qty": 2,
+        "available_qty": 1
+      },
+      "approval_after_409": "PENDING",
+      "draft_after_409": "PENDING_OWNER_APPROVAL",
+      "audit_rows_before_409": 5,
+      "audit_rows_after_409": 5,
+      "stock_restored": 30,
+      "decide_after_restore_status": 200,
+      "do_number": "DO_20261030_6FC83E94",
+      "approval_mode": "OWNER_APPROVED",
+      "approval_final_status": "APPROVED",
+      "decided_by": "USR_T1_OWNER",
+      "decided_at": "2026-10-31T01:46:54.163765+08:00",
+      "draft_final_status": "DO_GENERATED",
+      "stock_before_final_deduct": 30,
+      "stock_after_final_deduct": 28
+    }
+  ],
+  "inventory": {
+    "baseline_total": 795,
+    "after_shortage_do": 792,
+    "after_stock_change_do": 790,
+    "restored_after_reset": 795,
+    "selected": {
+      "SKU_MILO_1KG": {"baseline": 30, "manual_down": 1, "restored": 30, "final": 28, "after_reset": 30},
+      "SKU_TEH_500G": {"baseline": 3, "final": 0, "after_reset": 3}
+    }
+  },
+  "reset": {
+    "dryrun": {"status": "PASS", "report": "evidence/reset/dryrun_result.json"},
+    "apply": {"status": "PASS", "report": "evidence/reset/apply_result.json"},
+    "firstuse_after": {"inventory_total": 795, "flow_rows_zero": true},
+    "protected_unchanged": {"tables_identical": true, "inventory_identical": true},
+    "firstuse_api_pid_before": 32720,
+    "firstuse_api_pid_after": 30104,
+    "protected_api_pid_before": 36740,
+    "protected_api_pid_after": 36740
+  },
+  "side_effects": [
+    "预检草稿 DRF_198ABA85C3FC4DB8A4C334E9E7FDCD7F（Milo 1kg 2 bag，未保存/未批准）在探测阶段创建，复位时清除，不计入 C06 检查。",
+    "生产 C04/C08 演示库未连接、未 reset、未改动。"
+  ]
+}

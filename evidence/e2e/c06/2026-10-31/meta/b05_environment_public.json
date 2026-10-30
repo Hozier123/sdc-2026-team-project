@@ -1,0 +1,36 @@
+{
+  "environment_id": "b05-env-ea709a8e70d0",
+  "kind": "TECHNICAL_ENVIRONMENT_DELIVERY",
+  "status": "READY",
+  "frontend_url": "http://127.0.0.1:51389/#/workspace",
+  "sides": {
+    "protected": {
+      "database": "kiraorder_demo_b05_protected_ea709a8e70d0",
+      "postgres_port": 51390,
+      "api_base": "http://127.0.0.1:51391/api/v1",
+      "identity": {
+        "database": "kiraorder_demo_b05_protected_ea709a8e70d0",
+        "port": 51390,
+        "system_identifier": "7702509778719010148"
+      }
+    },
+    "firstuse": {
+      "database": "kiraorder_demo_b05_firstuse_ea709a8e70d0",
+      "postgres_port": 51393,
+      "api_base": "http://127.0.0.1:51394/api/v1",
+      "identity": {
+        "database": "kiraorder_demo_b05_firstuse_ea709a8e70d0",
+        "port": 51393,
+        "system_identifier": "7702509799995540300"
+      }
+    }
+  },
+  "mode": "LOCAL_SYNTHETIC_T1_FALLBACK",
+  "actual_participant_trials": "NOT_RUN",
+  "cache_isolation": "separate API processes and database alias caches; no shared Redis",
+  "reset_target": "generated firstuse database only",
+  "state_file": "<local-path>",
+  "source_commit": "c8848efce1ccbe31e1dead315816c14d313e7a0f",
+  "source_manifest_sha256": "1a787f959a8b19c4c41faf528ad671c8de98bd8bac160a234d2b0f3889a752ae",
+  "credentials": "credentials.private.json beside the state; never publish it"
+}

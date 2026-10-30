@@ -1,0 +1,111 @@
+{
+  "checks": {
+    "firstuse_restored_795_zero_flow": true,
+    "protected_not_reset": true,
+    "protected_unchanged": true
+  },
+  "firstuse": {
+    "after": {
+      "inventory_total": 795,
+      "selected": {
+        "SKU_MILO_1KG": 30,
+        "SKU_TEH_500G": 3
+      },
+      "tables": {
+        "activity_log": 0,
+        "alias_cache": 2,
+        "approval_requests": 0,
+        "audit_logs": 0,
+        "customers": 8,
+        "delivery_orders": 0,
+        "draft_versions": 0,
+        "family_aliases": 50,
+        "field_diffs": 0,
+        "inbound_messages": 0,
+        "inventory": 40,
+        "orders": 0,
+        "product_families": 25,
+        "products": 40,
+        "uom_aliases": 26
+      }
+    },
+    "before": {
+      "inventory_total": 790,
+      "selected": {
+        "SKU_MILO_1KG": 28,
+        "SKU_TEH_500G": 0
+      },
+      "tables": {
+        "activity_log": 7,
+        "alias_cache": 2,
+        "approval_requests": 1,
+        "audit_logs": 7,
+        "customers": 8,
+        "delivery_orders": 2,
+        "draft_versions": 5,
+        "family_aliases": 50,
+        "field_diffs": 10,
+        "inbound_messages": 3,
+        "inventory": 40,
+        "orders": 3,
+        "product_families": 25,
+        "products": 40,
+        "uom_aliases": 26
+      }
+    },
+    "inventory_identical": false,
+    "tables_identical": false
+  },
+  "protected": {
+    "after": {
+      "inventory_total": 793,
+      "selected": {
+        "SKU_MILO_1KG": 30,
+        "SKU_TEH_500G": 3
+      },
+      "tables": {
+        "activity_log": 4,
+        "alias_cache": 3,
+        "approval_requests": 1,
+        "audit_logs": 4,
+        "customers": 8,
+        "delivery_orders": 1,
+        "draft_versions": 2,
+        "family_aliases": 50,
+        "field_diffs": 6,
+        "inbound_messages": 1,
+        "inventory": 40,
+        "orders": 1,
+        "product_families": 25,
+        "products": 40,
+        "uom_aliases": 26
+      }
+    },
+    "before": {
+      "inventory_total": 793,
+      "selected": {
+        "SKU_MILO_1KG": 30,
+        "SKU_TEH_500G": 3
+      },
+      "tables": {
+        "activity_log": 4,
+        "alias_cache": 3,
+        "approval_requests": 1,
+        "audit_logs": 4,
+        "customers": 8,
+        "delivery_orders": 1,
+        "draft_versions": 2,
+        "family_aliases": 50,
+        "field_diffs": 6,
+        "inbound_messages": 1,
+        "inventory": 40,
+        "orders": 1,
+        "product_families": 25,
+        "products": 40,
+        "uom_aliases": 26
+      }
+    },
+    "inventory_identical": true,
+    "tables_identical": true
+  }
+}

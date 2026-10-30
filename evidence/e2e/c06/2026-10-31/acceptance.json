@@ -1,0 +1,140 @@
+{
+  "case_id": "C06",
+  "title": "缺货与库存变化：人工改库存、阻断复核与隔离库复位",
+  "result": "PASS_TECHNICAL_SIGNED_OFF",
+  "overall_status": "SIGNED_OFF",
+  "independent_review_status": "PASSED",
+  "repo_status": "PENDING_COMMIT",
+  "gate_a_status": "DEFERRED",
+  "gate_a_note": "C06 不是 Gate A 条目；本包不改变 Gate A 状态。",
+  "environment_id": "b05-env-ea709a8e70d0",
+  "source_commit": "c8848efce1ccbe31e1dead315816c14d313e7a0f",
+  "index": "ZR-20261031-03",
+  "reviews": {
+    "zhou": {
+      "reviewer": "Zhou Jingxi",
+      "date": "2026-10-31",
+      "result": "APPROVED",
+      "scope": "技术层 API+DB；13/13，0 P0",
+      "source": "transcribed_by_he",
+      "transcribed_at": "2026-10-31T02:46:00+08:00",
+      "note": "Zhou 原消息时间未单独记录；由 He 转录。",
+      "limits_accepted": {
+        "LIM-01": "接受；只能写 API+DB 技术验收，不能写浏览器/UI 通过",
+        "LIM-02": "接受；c8848ef 与当时 main f1e40fd 的差异只有 B02 catalog.py + main.py 2 行，C06 相关 app/B05 工具/seed/gate0 一致"
+      }
+    },
+    "zhan": {
+      "reviewer": "Zhan",
+      "date": "2026-10-31",
+      "result": "FORMAL_PASS",
+      "index": "ZR-20261031-03",
+      "source": "transcribed_by_he",
+      "transcribed_at": "2026-10-31T02:50:00+08:00",
+      "public_copy_index": "ZR-20261031-04",
+      "public_copy_review": "原件 PASS 维持；公开副本另核：raw 19/19、db 11/11 与原件逐字节相同，SHA256 51/51，11 个改动均在声明范围。",
+      "note": "本回执对象为签字原件；公开副本为派生件，另行核对。",
+      "checks": "PACK 59/59、evidence 46/46、外层 zip 89AC…58A6、路径无冲突、环境绑定 4/4、无 token/密码/Authorization/电话"
+    }
+  },
+  "numbers": {
+    "checks_total": 13,
+    "checks_passed": 13,
+    "checks_failed": 0,
+    "blocking_issues": 0,
+    "raw_api_responses": 19,
+    "db_snapshots": 8,
+    "db_auxiliary_records": 3,
+    "screenshots": 0
+  },
+  "checks": [
+    {"id": 1, "name": "隔离环境：firstuse/protected 独立 cluster，未连接生产", "status": "PASS"},
+    {"id": 2, "name": "基线：40 SKU / 795 库存 / 2 alias / 8 张流水表为 0", "status": "PASS"},
+    {"id": 3, "name": "缺货识别：Teh 10 bag > 3，INSUFFICIENT_STOCK blocking", "status": "PASS"},
+    {"id": 4, "name": "缺货阻断批准：400 DISAMBIGUATION_UNRESOLVED，无 DO", "status": "PASS"},
+    {"id": 5, "name": "减量到 3：v2 READY_FOR_APPROVAL，问题清零，27.00", "status": "PASS"},
+    {"id": 6, "name": "减量后批准：DO_20261030_77EBD4F2，库存 3→0，审计链", "status": "PASS"},
+    {"id": 7, "name": "低价审批：19.00→17.00，34.00，202 PENDING", "status": "PASS"},
+    {"id": 8, "name": "人工改库存：Milo 30→1（SQL rowcount=1，留档）", "status": "PASS"},
+    {"id": 9, "name": "库存变化阻断：OWNER 批准返回 409 STOCK_CHANGED，无 DO、无审计新增", "status": "PASS"},
+    {"id": 10, "name": "恢复库存后批准：DO_20261030_6FC83E94，库存 30→28，APPROVED", "status": "PASS"},
+    {"id": 11, "name": "库存守恒：795−3−2=790，无负库存；复位后 795", "status": "PASS"},
+    {"id": 12, "name": "复位：dry-run + apply PASS；firstuse 795/0，protected 不变", "status": "PASS"},
+    {"id": 13, "name": "证据完整性：19 条原始响应、8+3 份 DB 文件、复位报告、哈希", "status": "PASS"}
+  ],
+  "scenarios": {
+    "shortage": {
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "customer": "CUS_SINAR",
+      "sku_id": "SKU_TEH_500G",
+      "requested_qty": 10,
+      "available_qty": 3,
+      "approve_error": "DISAMBIGUATION_UNRESOLVED",
+      "reduced_qty": 3,
+      "do_number": "DO_20261030_77EBD4F2",
+      "total_rm": "27.00",
+      "stock_before": 3,
+      "stock_after": 0
+    },
+    "stock_change": {
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "customer": "CUS_RASA",
+      "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+      "manual_stock": {"from": 30, "to": 1},
+      "decide_status": 409,
+      "error_code": "STOCK_CHANGED",
+      "do_number": "DO_20261030_6FC83E94",
+      "total_rm": "34.00",
+      "final_stock": 28
+    }
+  },
+  "reset": {
+    "dryrun_status": "PASS",
+    "apply_status": "PASS",
+    "firstuse_restored": true,
+    "firstuse_api_restarted": true,
+    "protected_tables_and_checkpoints_unchanged": true,
+    "protected_api_pid_instance_unchanged": true
+  },
+  "known_issues": [
+    {
+      "id": "C06-LIM-01",
+      "severity": "P3",
+      "summary": "本包是 API + DB 技术验收，没有浏览器截图；不能写成浏览器/UI 通过。",
+      "impact": "阻断/409/扣库存由 API 响应与数据库快照证明；UI 呈现不在本包范围。"
+    },
+    {
+      "id": "C06-LIM-02",
+      "severity": "P3",
+      "summary": "环境绑定源码 c8848ef，非当前 main；复核时 main f1e40fd，PR base bc8f4aa，当前 main befac4c。",
+      "impact": "Zhou 核对时差异只有 B02 catalog.py + main.py 2 行；C06 相关 app/B05 工具/seed/gate0 一致。换环境复跑需重新 create 并记录新版本。"
+    },
+    {
+      "id": "C06-LIM-03",
+      "severity": "P3",
+      "summary": "探测阶段创建过一条未使用的 Milo 草稿 DRF_198ABA85C3FC4DB8A4C334E9E7FDCD7F。",
+      "impact": "未保存、未批准、无 DO；复位时清除，不计入 C06 检查与库存差额。"
+    }
+  ],
+  "public_export": {
+    "derived_from_zip_sha256": "89AC444265CADB22DAEBF1659FFA01F7A6A3A0A86D5251F7FE271488CF2F58A6",
+    "derived_from_zip_bytes": 86506,
+    "original_manifest_counts": {"pack": 59, "evidence": 46},
+    "changes": [
+      "matrix.md：拆分 raw/02 与 raw/04 的 blocked_actions；补 raw/13/14 snapshot 说明；澄清 db 文件计数",
+      "acceptance.json：补 gate_a_status=DEFERRED；状态改 SIGNED_OFF/PASSED；补复核与公开副本字段",
+      "README.md：补复核、限制口径、公开副本说明",
+      "HANDOFF_C06.md：补复核状态与索引号；去掉本机绝对路径",
+      "reviews/acceptance：标注 He 转录来源，区分原件 PASS（ZR-20261031-03）与公开副本 PASS（ZR-20261031-04）",
+      "evidence/meta、evidence/reset：脱敏本机路径与备份库名",
+      "不含 scripts/；技术证据 raw/、db/ 字节未改"
+    ]
+  },
+  "boundaries": [
+    "只在 B05 隔离环境 b05-env-ea709a8e70d0 的 firstuse 侧执行；protected 侧只读核对。",
+    "未连接、未 reset、未改动生产 C04/C08 演示库；C04 的 PENDING 样例未消费。",
+    "不含真实 LLM 验收、真实受试者、TEST32 或 Gate A 签字；C06 不是 Gate A 条目。",
+    "复位能力属于 B05 交付；本包只证明本次 C06 使用它并复核了保护侧不变。",
+    "不含 token、密码、Authorization 或客户电话。"
+  ]
+}

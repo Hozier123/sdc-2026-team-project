@@ -1,0 +1,132 @@
+{
+  "seq": 4,
+  "label": "04_a1_draft_before_orders_drafts_DRF_7E91987524DA4A6C857E170769EDAE94",
+  "role": "CLERK",
+  "method": "GET",
+  "path": "/orders/drafts/DRF_7E91987524DA4A6C857E170769EDAE94",
+  "request_body": null,
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "679a1cce-5769-4e8b-9fe3-be11a6bd50fa"
+  },
+  "response": {
+    "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+    "version": 1,
+    "status": "DISAMBIGUATION_REQUIRED",
+    "customer_id": "CUS_SINAR",
+    "customer": {
+      "customer_id": "CUS_SINAR",
+      "name": "Warung Sinar",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false
+    },
+    "masked_message": "Teh 500g 10 bag",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+        "client_line_ref": "ai-1",
+        "sku_id": "SKU_TEH_500G",
+        "family_id": "FAM_TEH",
+        "description": "Teh 茶叶",
+        "requested_qty": 10,
+        "confirmed_qty": null,
+        "effective_qty": 10,
+        "uom": "bag",
+        "pack_size": "500g",
+        "grade": null,
+        "tier_unit_price": "9.00",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "9.00",
+        "subtotal_rm": "90.00",
+        "match_source": "RAPIDFUZZ_FALLBACK",
+        "source_span": "Teh 500g 10 bag",
+        "span_start": 0,
+        "span_end": 15,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "10",
+            "start": 9,
+            "end": 11,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 3
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "ISS_AEAC2AB55E0044FEA81F7C86A20C2573",
+        "code": "INSUFFICIENT_STOCK",
+        "condition_id": null,
+        "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+        "span": "Teh 500g 10 bag",
+        "source_span": "Teh 500g 10 bag",
+        "span_start": 0,
+        "span_end": 15,
+        "condition_kind": null,
+        "condition_scope": null,
+        "candidate_line_ids": [],
+        "target_line_ids": [],
+        "requested_unit_price": null,
+        "price_basis": null,
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "available_qty": 3,
+          "effective_qty": 10
+        },
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [],
+    "blocking_issues": [
+      "INSUFFICIENT_STOCK"
+    ],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "90.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "RESOLVE_ISSUE",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY",
+      "COPY_CLARIFICATION"
+    ],
+    "blocked_actions": {
+      "APPROVE_AND_GENERATE_DO": [
+        "BLOCKING_ISSUES"
+      ]
+    },
+    "clarification_draft": {
+      "language": "en",
+      "message": "Please confirm this order: We only have 3 bag of Teh 茶叶. Is 3 bag OK? Thank you!",
+      "unresolved_issue_ids": [
+        "ISS_AEAC2AB55E0044FEA81F7C86A20C2573"
+      ]
+    },
+    "clarification_lang": "en",
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-31T01:45:28.062959+08:00",
+    "updated_at": "2026-10-31T01:45:28.062959+08:00",
+    "do_number": null
+  },
+  "at_utc": "2026-10-30T17:46:07.487087+00:00"
+}

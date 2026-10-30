@@ -1,0 +1,167 @@
+{
+  "seq": 14,
+  "label": "14_b8_draft_after_409_orders_drafts_DRF_BDBE7DE379764193A467498773FC80AE",
+  "role": "OWNER",
+  "method": "GET",
+  "path": "/orders/drafts/DRF_BDBE7DE379764193A467498773FC80AE",
+  "request_body": null,
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "cea4f9a0-b806-4cd5-8be3-6b8e1306dfed"
+  },
+  "response": {
+    "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+    "version": 2,
+    "status": "PENDING_OWNER_APPROVAL",
+    "customer_id": "CUS_RASA",
+    "customer": {
+      "customer_id": "CUS_RASA",
+      "name": "Kedai Rasa",
+      "tier": "B",
+      "credit_flag": "NONE",
+      "has_credit_notice": false
+    },
+    "masked_message": "Milo 1kg 2 bag, kalau RM17 boleh?",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "client_line_ref": null,
+        "sku_id": "SKU_MILO_1KG",
+        "family_id": "FAM_MILO",
+        "description": "Milo 美禄",
+        "requested_qty": 2,
+        "confirmed_qty": 2,
+        "effective_qty": 2,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "tier_unit_price": "19.00",
+        "unit_price_override": "17.00",
+        "override_reason": "Accept requested RM17.00 per bag; below tier, owner decides.",
+        "effective_unit_price": "17.00",
+        "subtotal_rm": "34.00",
+        "match_source": "MANUAL_SELECTED",
+        "source_span": "Milo 1kg 2 bag, kalau RM17 boleh?",
+        "span_start": 0,
+        "span_end": 33,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "2",
+            "start": 9,
+            "end": 10,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 30
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "ISS_CF29C38608156FFD41EE123E",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_63C5EF7DDBC9585CE690ED83",
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "span": "kalau RM17",
+        "source_span": "kalau RM17",
+        "span_start": 16,
+        "span_end": 26,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LNE_5162F53F0F354723A8D514F211A10E22"
+        ],
+        "target_line_ids": [
+          "LNE_5162F53F0F354723A8D514F211A10E22"
+        ],
+        "requested_unit_price": null,
+        "price_basis": "UNIT",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "amount_text": "17",
+          "trigger_ids": [],
+          "lexicon_version": null,
+          "confirmed_unit_price": "17.00"
+        },
+        "blocking": true,
+        "resolved": true,
+        "resolution": "ACCEPT_REQUESTED_PRICE",
+        "resolution_note": "Accept requested RM17.00 per bag; below tier, owner decides.",
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [
+      {
+        "issue_id": "ISS_CF29C38608156FFD41EE123E",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_63C5EF7DDBC9585CE690ED83",
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "span": "kalau RM17",
+        "source_span": "kalau RM17",
+        "span_start": 16,
+        "span_end": 26,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LNE_5162F53F0F354723A8D514F211A10E22"
+        ],
+        "target_line_ids": [
+          "LNE_5162F53F0F354723A8D514F211A10E22"
+        ],
+        "requested_unit_price": null,
+        "price_basis": "UNIT",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "amount_text": "17",
+          "trigger_ids": [],
+          "lexicon_version": null,
+          "confirmed_unit_price": "17.00"
+        },
+        "blocking": true,
+        "resolved": true,
+        "resolution": "ACCEPT_REQUESTED_PRICE",
+        "resolution_note": "Accept requested RM17.00 per bag; below tier, owner decides.",
+        "auto_resolved_by": null
+      }
+    ],
+    "blocking_issues": [],
+    "escalation_preview": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "detail": {
+          "tier_unit_price": "19.00",
+          "effective_unit_price": "17.00"
+        },
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+      }
+    ],
+    "totals": {
+      "order_total": "34.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "OWNER_APPROVE",
+      "OWNER_REJECT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {},
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-31T01:46:15.923067+08:00",
+    "updated_at": "2026-10-31T01:46:32.658264+08:00",
+    "do_number": null
+  },
+  "at_utc": "2026-10-30T17:46:43.818397+00:00"
+}

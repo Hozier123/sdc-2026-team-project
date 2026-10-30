@@ -1,0 +1,167 @@
+{
+  "seq": 8,
+  "label": "08_b1_parse_lowprice_orders_parse-draft",
+  "role": "CLERK",
+  "method": "POST",
+  "path": "/orders/parse-draft",
+  "request_body": {
+    "customer_id": "CUS_RASA",
+    "message_text": "Milo 1kg 2 bag, kalau RM17 boleh?"
+  },
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "0e3f6fa7-1cca-4083-a845-f31b57f73c9a"
+  },
+  "response": {
+    "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+    "version": 1,
+    "status": "DISAMBIGUATION_REQUIRED",
+    "customer_id": "CUS_RASA",
+    "customer": {
+      "customer_id": "CUS_RASA",
+      "name": "Kedai Rasa",
+      "tier": "B",
+      "credit_flag": "NONE",
+      "has_credit_notice": false
+    },
+    "masked_message": "Milo 1kg 2 bag, kalau RM17 boleh?",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "client_line_ref": "ai-1",
+        "sku_id": "SKU_MILO_1KG",
+        "family_id": "FAM_MILO",
+        "description": "Milo 美禄",
+        "requested_qty": 2,
+        "confirmed_qty": null,
+        "effective_qty": 2,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "tier_unit_price": "19.00",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "19.00",
+        "subtotal_rm": "38.00",
+        "match_source": "RAPIDFUZZ_FALLBACK",
+        "source_span": "Milo 1kg 2 bag, kalau RM17 boleh?",
+        "span_start": 0,
+        "span_end": 33,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "2",
+            "start": 9,
+            "end": 10,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 30
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "ISS_CF29C38608156FFD41EE123E",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_63C5EF7DDBC9585CE690ED83",
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "span": "kalau RM17",
+        "source_span": "kalau RM17",
+        "span_start": 16,
+        "span_end": 26,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LNE_5162F53F0F354723A8D514F211A10E22"
+        ],
+        "target_line_ids": [],
+        "requested_unit_price": null,
+        "price_basis": "UNKNOWN",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "trigger_ids": [],
+          "lexicon_version": null,
+          "amount_text": "17"
+        },
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [
+      {
+        "issue_id": "ISS_CF29C38608156FFD41EE123E",
+        "code": "CUSTOMER_CONDITION",
+        "condition_id": "CND_63C5EF7DDBC9585CE690ED83",
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "span": "kalau RM17",
+        "source_span": "kalau RM17",
+        "span_start": 16,
+        "span_end": 26,
+        "condition_kind": "PRICE",
+        "condition_scope": "SINGLE_LINE",
+        "candidate_line_ids": [
+          "LNE_5162F53F0F354723A8D514F211A10E22"
+        ],
+        "target_line_ids": [],
+        "requested_unit_price": null,
+        "price_basis": "UNKNOWN",
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "trigger_ids": [],
+          "lexicon_version": null,
+          "amount_text": "17"
+        },
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "blocking_issues": [
+      "CUSTOMER_CONDITION"
+    ],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "38.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "RESOLVE_ISSUE",
+      "COPY_CLARIFICATION"
+    ],
+    "blocked_actions": {
+      "APPROVE_AND_GENERATE_DO": [
+        "CUSTOMER_CONDITION"
+      ]
+    },
+    "clarification_draft": {
+      "language": "ms",
+      "message": "Sila sahkan pesanan ini: Harga Milo 美禄 RM 19.00/bag. Masih nak ambil 2 bag? Terima kasih!",
+      "unresolved_issue_ids": [
+        "ISS_CF29C38608156FFD41EE123E"
+      ]
+    },
+    "clarification_lang": "ms",
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-30T17:46:15.733674Z",
+    "updated_at": "2026-10-30T17:46:15.733674Z",
+    "do_number": null
+  },
+  "at_utc": "2026-10-30T17:46:15.322501+00:00"
+}

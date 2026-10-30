@@ -1,0 +1,320 @@
+{
+  "seq": 19,
+  "label": "19_b14_audit_detail_orders_DO_20261030_6FC83E94_audit-detail",
+  "role": "CLERK",
+  "method": "GET",
+  "path": "/orders/DO_20261030_6FC83E94/audit-detail",
+  "request_body": null,
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "b813b54e-7a39-4bfa-a24b-ca431d8a332f"
+  },
+  "response": {
+    "do_number": "DO_20261030_6FC83E94",
+    "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+    "draft_version": 2,
+    "ai_initial_snapshot": {
+      "lines": [
+        {
+          "uom": "bag",
+          "grade": null,
+          "sku_id": "SKU_MILO_1KG",
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+          "span_end": 33,
+          "family_id": "FAM_MILO",
+          "pack_size": "1kg",
+          "span_start": 0,
+          "description": "Milo 美禄",
+          "saved_alias": null,
+          "source_span": "Milo 1kg 2 bag, kalau RM17 boleh?",
+          "subtotal_rm": "38.00",
+          "match_source": "RAPIDFUZZ_FALLBACK",
+          "available_qty": 30,
+          "confirmed_qty": null,
+          "effective_qty": 2,
+          "requested_qty": 2,
+          "candidate_skus": [],
+          "field_evidence": [
+            {
+              "end": 10,
+              "field": "requested_qty",
+              "start": 9,
+              "raw_text": "2",
+              "normalizer_version": "field-evidence-v2"
+            }
+          ],
+          "client_line_ref": "ai-1",
+          "override_reason": null,
+          "tier_unit_price": "19.00",
+          "unit_price_override": null,
+          "effective_unit_price": "19.00"
+        }
+      ],
+      "issues": [
+        {
+          "ask": "CLERK",
+          "code": "CUSTOMER_CONDITION",
+          "span": "kalau RM17",
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+          "blocking": true,
+          "issue_id": "ISS_CF29C38608156FFD41EE123E",
+          "resolved": false,
+          "span_end": 26,
+          "data_used": {
+            "amount_text": "17",
+            "trigger_ids": [],
+            "lexicon_version": null
+          },
+          "resolution": null,
+          "span_start": 16,
+          "price_basis": "UNKNOWN",
+          "reason_code": null,
+          "source_span": "kalau RM17",
+          "condition_id": "CND_63C5EF7DDBC9585CE690ED83",
+          "condition_kind": "PRICE",
+          "condition_scope": "SINGLE_LINE",
+          "resolution_note": null,
+          "target_line_ids": [],
+          "auto_resolved_by": null,
+          "candidate_line_ids": [
+            "LNE_5162F53F0F354723A8D514F211A10E22"
+          ],
+          "requested_unit_price": null
+        }
+      ],
+      "status": "DISAMBIGUATION_REQUIRED",
+      "totals": {
+        "currency": "MYR",
+        "is_complete": true,
+        "order_total": "38.00"
+      },
+      "ai_mode": "FALLBACK",
+      "version": 1,
+      "customer": {
+        "name": "Kedai Rasa",
+        "tier": "B",
+        "credit_flag": "NONE",
+        "customer_id": "CUS_RASA",
+        "has_credit_notice": false
+      },
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": null,
+      "conditions": [
+        {
+          "ask": "CLERK",
+          "code": "CUSTOMER_CONDITION",
+          "span": "kalau RM17",
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+          "blocking": true,
+          "issue_id": "ISS_CF29C38608156FFD41EE123E",
+          "resolved": false,
+          "span_end": 26,
+          "data_used": {
+            "amount_text": "17",
+            "trigger_ids": [],
+            "lexicon_version": null
+          },
+          "resolution": null,
+          "span_start": 16,
+          "price_basis": "UNKNOWN",
+          "reason_code": null,
+          "source_span": "kalau RM17",
+          "condition_id": "CND_63C5EF7DDBC9585CE690ED83",
+          "condition_kind": "PRICE",
+          "condition_scope": "SINGLE_LINE",
+          "resolution_note": null,
+          "target_line_ids": [],
+          "auto_resolved_by": null,
+          "candidate_line_ids": [
+            "LNE_5162F53F0F354723A8D514F211A10E22"
+          ],
+          "requested_unit_price": null
+        }
+      ],
+      "created_at": "2026-10-30T17:46:15.733674Z",
+      "updated_at": "2026-10-30T17:46:15.733674Z",
+      "customer_id": "CUS_RASA",
+      "ignored_spans": [],
+      "masked_message": "Milo 1kg 2 bag, kalau RM17 boleh?",
+      "allowed_actions": [
+        "EDIT_DRAFT",
+        "RESOLVE_ISSUE",
+        "COPY_CLARIFICATION"
+      ],
+      "blocked_actions": {
+        "APPROVE_AND_GENERATE_DO": [
+          "CUSTOMER_CONDITION"
+        ]
+      },
+      "blocking_issues": [
+        "CUSTOMER_CONDITION"
+      ],
+      "disambiguations": [],
+      "termination_note": null,
+      "clarification_lang": "ms",
+      "escalation_preview": [],
+      "termination_reason": null,
+      "clarification_draft": {
+        "message": "Sila sahkan pesanan ini: Harga Milo 美禄 RM 19.00/bag. Masih nak ambil 2 bag? Terima kasih!",
+        "language": "ms",
+        "unresolved_issue_ids": [
+          "ISS_CF29C38608156FFD41EE123E"
+        ]
+      },
+      "terminated_by_user_id": null
+    },
+    "final_snapshot": {
+      "do_number": "DO_20261030_6FC83E94",
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "draft_version": 2,
+      "customer_id": "CUS_RASA",
+      "customer_name": "Kedai Rasa",
+      "lines": [
+        {
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+          "sku_id": "SKU_MILO_1KG",
+          "display_name": "Milo 美禄",
+          "quantity": 2,
+          "unit": "bag",
+          "tier_unit_price": "19.00",
+          "applied_unit_price": "17.00",
+          "subtotal_rm": "34.00",
+          "override_reason": "Accept requested RM17.00 per bag; below tier, owner decides.",
+          "picking_note": null
+        }
+      ],
+      "final_total_rm": "34.00",
+      "prepared_by": "USR_T1_CLERK",
+      "approved_by": "USR_T1_OWNER",
+      "escalation_reasons": [
+        {
+          "code": "PRICE_OVERRIDE_BELOW_TIER",
+          "detail": {
+            "tier_unit_price": "19.00",
+            "effective_unit_price": "17.00"
+          },
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+        }
+      ],
+      "approval_mode": "OWNER_APPROVED",
+      "reply_draft": {
+        "language": "ms",
+        "message": "Order DO_20261030_6FC83E94 dah confirm: Milo 美禄 2 bag @ RM 17.00. Jumlah RM 34.00. Terima kasih!",
+        "do_number": "DO_20261030_6FC83E94",
+        "warnings": []
+      },
+      "related_do_number": null,
+      "approved_at": "2026-10-31T01:46:54.177887+08:00"
+    },
+    "field_diffs": [
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "confirmed_qty",
+        "before_value": null,
+        "after_value": 2,
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "unit_price_override",
+        "before_value": null,
+        "after_value": "17.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "override_reason",
+        "before_value": null,
+        "after_value": "Accept requested RM17.00 per bag; below tier, owner decides.",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "effective_unit_price",
+        "before_value": "19.00",
+        "after_value": "17.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "subtotal_rm",
+        "before_value": "38.00",
+        "after_value": "34.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "match_source",
+        "before_value": "RAPIDFUZZ_FALLBACK",
+        "after_value": "MANUAL_SELECTED",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      }
+    ],
+    "events": [
+      {
+        "event_type": "SAVE_LINES",
+        "actor_user_id": "USR_T1_CLERK",
+        "actor_role": "CLERK",
+        "created_at": "2026-10-31T01:46:32.429198+08:00",
+        "payload": {
+          "version": 2,
+          "line_count": 1
+        }
+      },
+      {
+        "event_type": "SUBMIT_APPROVAL",
+        "actor_user_id": "USR_T1_CLERK",
+        "actor_role": "CLERK",
+        "created_at": "2026-10-31T01:46:32.658264+08:00",
+        "payload": {
+          "reasons": [
+            {
+              "code": "PRICE_OVERRIDE_BELOW_TIER",
+              "detail": {
+                "tier_unit_price": "19.00",
+                "effective_unit_price": "17.00"
+              },
+              "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+            }
+          ],
+          "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65"
+        }
+      },
+      {
+        "event_type": "INVENTORY_DEDUCT",
+        "actor_user_id": "USR_T1_OWNER",
+        "actor_role": "OWNER",
+        "created_at": "2026-10-31T01:46:54.163765+08:00",
+        "payload": {
+          "do_number": "DO_20261030_6FC83E94"
+        }
+      },
+      {
+        "event_type": "DECIDE_APPROVE",
+        "actor_user_id": "USR_T1_OWNER",
+        "actor_role": "OWNER",
+        "created_at": "2026-10-31T01:46:54.163765+08:00",
+        "payload": {
+          "note": null,
+          "do_number": "DO_20261030_6FC83E94",
+          "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+          "customer_name": "Kedai Rasa"
+        }
+      }
+    ]
+  },
+  "at_utc": "2026-10-30T17:46:54.884450+00:00"
+}

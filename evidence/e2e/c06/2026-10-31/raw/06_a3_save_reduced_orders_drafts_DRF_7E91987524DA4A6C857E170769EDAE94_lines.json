@@ -1,0 +1,109 @@
+{
+  "seq": 6,
+  "label": "06_a3_save_reduced_orders_drafts_DRF_7E91987524DA4A6C857E170769EDAE94_lines",
+  "role": "CLERK",
+  "method": "PUT",
+  "path": "/orders/drafts/DRF_7E91987524DA4A6C857E170769EDAE94/lines",
+  "request_body": {
+    "expected_version": 1,
+    "lines": [
+      {
+        "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+        "sku_id": "SKU_TEH_500G",
+        "family_id": "FAM_TEH",
+        "confirmed_qty": 3,
+        "uom": "bag",
+        "pack_size": "500g",
+        "grade": null,
+        "unit_price_override": null,
+        "override_reason": null,
+        "match_source": "MANUAL_SELECTED"
+      }
+    ],
+    "deleted_line_ids": [],
+    "resolutions": []
+  },
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "317bc4e4-d783-49ae-bbaf-ea4e19434a00"
+  },
+  "response": {
+    "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+    "version": 2,
+    "status": "READY_FOR_APPROVAL",
+    "customer_id": "CUS_SINAR",
+    "customer": {
+      "customer_id": "CUS_SINAR",
+      "name": "Warung Sinar",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false
+    },
+    "masked_message": "Teh 500g 10 bag",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+        "client_line_ref": null,
+        "sku_id": "SKU_TEH_500G",
+        "family_id": "FAM_TEH",
+        "description": "Teh 茶叶",
+        "requested_qty": 10,
+        "confirmed_qty": 3,
+        "effective_qty": 3,
+        "uom": "bag",
+        "pack_size": "500g",
+        "grade": null,
+        "tier_unit_price": "9.00",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "9.00",
+        "subtotal_rm": "27.00",
+        "match_source": "MANUAL_SELECTED",
+        "source_span": "Teh 500g 10 bag",
+        "span_start": 0,
+        "span_end": 15,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "10",
+            "start": 9,
+            "end": 11,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 3
+      }
+    ],
+    "issues": [],
+    "conditions": [],
+    "blocking_issues": [],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "27.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "APPROVE_AND_GENERATE_DO",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {},
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-31T01:45:28.062959+08:00",
+    "updated_at": "2026-10-30T17:46:08.311266Z",
+    "do_number": null
+  },
+  "at_utc": "2026-10-30T17:46:07.952010+00:00"
+}
