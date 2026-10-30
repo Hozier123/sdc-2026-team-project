@@ -54,7 +54,15 @@ ports, CORS and provider/model settings; the deployment configuration reference 
 [replit-c07-deployment.toml](replit-c07-deployment.toml).
 
 See [online acceptance](../../evidence/e2e/c07/2026-10-31/online-acceptance.json),
-[C07 status](c07-status.md) and [runbook](c07-runbook.md). He-side online execution is complete;
-Zhou's independent online review is pending. The prior local P2 signature does not cover the
-new online version. C07-06 fault rollback remains the isolated main-candidate/CI proof; no fault
-was injected into the shared public service. Browser clicks, TEST32 and AI accuracy are excluded.
+[C07 status](c07-status.md) and [runbook](c07-runbook.md). Zhou Jingxi independently reviewed and
+signed the online version at **2026-10-31 01:30 UTC+8**: C07-01/02/03/04/05/07 pass, with
+276/276 manifest files verified and the offline audit passing 194 checks for 34 accepted requests.
+The original [online review](../../evidence/e2e/c07/2026-10-31/C07_ONLINE_REVIEW.md) is preserved
+byte-for-byte. **C07 is CLOSED**; local safety/P2 signatures remain valid for their original scope.
+
+C07-06 fault rollback remains the isolated main-candidate/CI proof; no fault was injected into the
+shared public service. Browser clicks, formal TEST32, AI accuracy and online database
+replication/failover are excluded. Online source binding uses the candidate snapshot, Git/PR,
+publishing page and runtime request logs, rather than whole-server byte readback. Historical
+handoff packages and failed records remain unchanged; any new application version needs its own
+binding and affected-scenario review.
