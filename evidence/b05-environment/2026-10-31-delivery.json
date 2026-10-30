@@ -1,0 +1,120 @@
+{
+  "schema": "b05-environment-delivery-v1",
+  "task": "B05",
+  "delivery_date_utc8": "2026-10-31",
+  "kind": "OWNED_LOCAL_ENVIRONMENT_DELIVERY_NOT_PARTICIPANT_TESTING",
+  "status": "DELIVERED_WINDOWS_LOCAL_TECHNICAL_PASS",
+  "validated_code_commit": "c8848efce1ccbe31e1dead315816c14d313e7a0f",
+  "validated_application_tree": "e4b98b9a7075db09367b8aecc6544e3a895ee860",
+  "source_manifest_sha256": "1a787f959a8b19c4c41faf528ad671c8de98bd8bac160a234d2b0f3889a752ae",
+  "tools": [
+    "backend/tools/b05_environment.py",
+    "backend/tools/verify_b05_environment.py"
+  ],
+  "documentation": "docs/ops/b05-environment.md",
+  "environment_id": "b05-env-ea709a8e70d0",
+  "access_scope": "Loopback on He local Windows host; other machines create their own environment with this kit",
+  "frontend_url": "http://127.0.0.1:51389/#/workspace",
+  "sides": {
+    "protected": {
+      "database": "kiraorder_demo_b05_protected_ea709a8e70d0",
+      "template": "kiraorder_b05_protected_seed_ea709a8e70d0",
+      "pg_port": 51390,
+      "api_base": "http://127.0.0.1:51391/api/v1",
+      "system_identifier": "7702509778719010148"
+    },
+    "firstuse": {
+      "database": "kiraorder_demo_b05_firstuse_ea709a8e70d0",
+      "template": "kiraorder_b05_firstuse_seed_ea709a8e70d0",
+      "pg_port": 51393,
+      "api_base": "http://127.0.0.1:51394/api/v1",
+      "system_identifier": "7702509799995540300"
+    }
+  },
+  "mode": "LOCAL_SYNTHETIC_T1_FALLBACK",
+  "remote_ai_configured": false,
+  "cache_isolation": "Separate API/provider processes and separate database alias caches; no shared Redis",
+  "create_behavior": "New owned PostgreSQL clusters, templates, random admin credentials and role sessions; no external DSN inputs",
+  "reset_behavior": "Only generated firstuse target; backup and evidence retained; protected tables/checkpoints/API identity verified unchanged",
+  "shared_demo_access": {
+    "connected": false,
+    "reset": false,
+    "reconfigured": false,
+    "C04_C08_no_reset_constraint": "RETAINED"
+  },
+  "validation": {
+    "unit_tests": {
+      "passed": 22,
+      "failed": 0
+    },
+    "synthetic_environment_checks": {
+      "identities_roles_cors": true,
+      "nonempty_protected_pending_alias_checkpoint": true,
+      "firstuse_synthetic_do_created": true,
+      "firstuse_write_is_real": true,
+      "dry_run_preserves_both_sides": true,
+      "firstuse_reset_and_scoped_api_restart": true,
+      "all_12_protected_tables_and_checkpoint_bytes_unchanged": true,
+      "firstuse_exact_initial_state_restored": true,
+      "original_checkpoint_resume_pass": true,
+      "resume_stock_only_expected_minus_2": true,
+      "resume_one_new_do_and_unchanged_aliases": true
+    },
+    "post_restart_role_identity_cors_checks": {
+      "protected_fallback": true,
+      "protected_role_CLERK": true,
+      "protected_role_OWNER": true,
+      "protected_role_WAREHOUSE": true,
+      "protected_rejects_other_side_token": true,
+      "protected_frontend_cors": true,
+      "firstuse_fallback": true,
+      "firstuse_role_CLERK": true,
+      "firstuse_role_OWNER": true,
+      "firstuse_role_WAREHOUSE": true,
+      "firstuse_rejects_other_side_token": true,
+      "firstuse_frontend_cors": true
+    },
+    "frontend_build": "PASS",
+    "frontend_http_and_index_hash": "PASS",
+    "stop_start_persistence": "PASS",
+    "firstuse_sku_rows": 40,
+    "firstuse_inventory_total": 795,
+    "firstuse_alias_rows": 2,
+    "firstuse_flow_rows": {
+      "approval_requests": 0,
+      "orders": 0,
+      "delivery_orders": 0,
+      "audit_logs": 0,
+      "draft_versions": 0,
+      "inbound_messages": 0,
+      "activity_log": 0,
+      "field_diffs": 0
+    },
+    "protected_fixture": "Synthetic checkpoint consumed after verified reset protection; not a reusable real-trial sample",
+    "resume_stock_delta": {
+      "SKU_GULA_1KG": -2
+    }
+  },
+  "raw_evidence": {
+    "storage": "Offline technical delivery archive; secret-bearing runtime files excluded",
+    "technical_acceptance_sha256": "7f9ed6b41f71acba97c3caa03dfbe21b63bc2c97d472eef84d2bcaee44674a57",
+    "protected_before_sha256": "31835bdb40a700c07b0ba824f5eea58c1bac1e395b3cb23dceed8df1ef3fafd1",
+    "protected_after_reset_sha256": "31835bdb40a700c07b0ba824f5eea58c1bac1e395b3cb23dceed8df1ef3fafd1"
+  },
+  "independent_review": "NOT_PERFORMED_FOR_THIS_NEW_DELIVERY",
+  "actual_participant_trials": {
+    "status": "NOT_RUN",
+    "participant_count": 0,
+    "included_in_denominator": false,
+    "trial_run_id": null,
+    "completion_rate": null,
+    "timing_benefit": null
+  },
+  "full_b05_acceptance_complete": false,
+  "limitations": [
+    "Windows local technical acceptance only",
+    "No independently signed new-delivery review",
+    "No formal TEST32, live deployment or real-LLM acceptance",
+    "Frontend API connection must target generated firstuse endpoint; no browser UX acceptance claimed"
+  ]
+}
