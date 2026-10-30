@@ -1,0 +1,89 @@
+{
+  "schema": "b05-round-closeout-v1",
+  "task": "B05",
+  "decision_date_utc8": "2026-10-30",
+  "clarification_date_utc8": "2026-10-31",
+  "round_closed": true,
+  "round_status": "SCOPE_CLOSED_WITH_ACTUAL_TRIALS_NOT_RUN",
+  "full_b05_acceptance_complete": false,
+  "current_round_execution_pending": false,
+  "closure_basis": {
+    "authority": "He explicit current-round scope closure instruction",
+    "zhou_reply": "User-forwarded explicit current-round NOT_RUN decision",
+    "zhan_reply": "User-forwarded request to record actual trials as NOT_RUN and separate rehearsal from independent participant trials",
+    "independent_signature_created": false
+  },
+  "code_delivery": {
+    "pr": "https://github.com/Hozier123/sdc-2026-team-project/pull/76",
+    "merge_commit": "8b298f2b0a827378c351284aba915e0a5dd0d7b3",
+    "scope": "Database export preserves numeric total decimal scale, plus regression assertions",
+    "changed_files": [
+      "backend/tools/export_trial_record.py",
+      "backend/tests/test_export_trial_record.py"
+    ],
+    "additions": 10,
+    "exporter_git_lf_sha256": "816d3334192ee47f8c835967175f4d64994f03eed5026ad5f7b4608222fffb80",
+    "reviewed_exporter_windows_crlf_sha256": "215e1895f5f8aa16e50e022ac2a7fbf0de4f09c207b628694146ab9c351dba4a",
+    "standalone_b05_environment_delivered_by_this_pr": false
+  },
+  "local_rehearsal": {
+    "scope": "Historical local synthetic T1/FALLBACK only",
+    "isolation_reset_resume": "LOCAL_PASS_EVIDENCE_REVIEW_PASS_LIMITED_SCOPE",
+    "single_line_export": "LOCAL_PASS_EVIDENCE_REVIEW_PASS_LIMITED_SCOPE",
+    "multiline_export": "LOCAL_PASS_3_ORDERS_11_LINES_EVIDENCE_REVIEW_PASS_LIMITED_SCOPE",
+    "reviewer": "Zhou",
+    "review_method": "Evidence review; not an independent rerun",
+    "he_34_checks": "Assistant-supported evidence cross-check, not an independent rerun",
+    "new_instance_31_checks": "Preparation preflight only; not a fresh full reset/resume acceptance",
+    "current_main_full_isolation_reset_acceptance": false,
+    "portable_runtime_delivery": "LOCAL_ONLY_NOT_PUBLISHED_AS_A_STANDALONE_REPOSITORY_PACKAGE",
+    "current_round_startup": "CLOSED"
+  },
+  "actual_participant_trials": {
+    "status": "NOT_RUN",
+    "included_in_current_denominator": false,
+    "run_id": null,
+    "start_utc8": null,
+    "end_utc8": null,
+    "start_utc": null,
+    "end_utc": null,
+    "participants": [],
+    "records_file_count": 0,
+    "audit_file_count": 0,
+    "approval_support": "NOT_RUN",
+    "between_trial_reset": "NOT_RUN",
+    "post_trial_export": "NOT_RUN",
+    "completion_rate": null,
+    "timing_benefit": null
+  },
+  "offline_archive": {
+    "existing_preparation_index": "ZR-20261030-01",
+    "receipt_source": "User-forwarded Zhan receipt; remote archive was not accessed by this chat",
+    "prior_outer_manifest_count": 21,
+    "prior_nested_manifest_count": 303,
+    "final_round_closeout_supplement_receipt": "NOT_CONFIRMED_IN_THIS_CHAT",
+    "archives_sha256": {
+      "B05-rehearsal-evidence.zip": "3fddd22ab3e576b9ecfe6874613a169c1edb7fb310e61d887a6e772ab13e3b41",
+      "B05-export-verification-supplement.zip": "5153b3d6807a73e902773b18752167aa6b43c7d0053369d5eff1fa002be12b22",
+      "B05-multiline-evidence-HOLD.zip": "0d70144df69ccc5430b6241cd479123dc6321f80dde917f808d0cc976c43f102",
+      "B05-preparation-validation-closeout-for-Zhan.zip": "86c500db99731c9428eb7d997618df2a60b9e8660f1596837b336a86f6fc05f8",
+      "B05-round-closeout-NOT_RUN-for-Zhan.zip": "14adab3a166b302c57e48dccc32649bdacdea2dfaad31b544e36fa8b7dd50227"
+    }
+  },
+  "limits": [
+    "No actual independent participant trial acceptance",
+    "No portable standalone B05 runtime published",
+    "No general or current-main isolation/reset readiness claim",
+    "No public deployment, formal TEST32, T2, MIXED or real-LLM acceptance",
+    "B04 historical scope exclusion is not B05 acceptance or a B05 failure verdict"
+  ],
+  "future_work": {
+    "required_this_round": false,
+    "conditional_on_time_and_resources": true,
+    "new_isolated_environment": true,
+    "new_batch_and_run_id": true,
+    "locked_materials": true,
+    "separate_actual_trial_pr": true,
+    "preserve_current_not_run_record": true
+  }
+}
