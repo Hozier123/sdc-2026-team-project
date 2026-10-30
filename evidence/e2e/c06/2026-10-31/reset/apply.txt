@@ -1,0 +1,1 @@
+{"report": "<local-path>", "status": "PASS", "apply": true, "target": "kiraorder_demo_b05_firstuse_ea709a8e70d0", "checks": {"protected_all_tables_and_checkpoints_unchanged": true, "protected_api_pid_instance_unchanged": true, "firstuse_restored": true, "firstuse_api_restarted": true}, "actual_participant_trials": "NOT_RUN"}

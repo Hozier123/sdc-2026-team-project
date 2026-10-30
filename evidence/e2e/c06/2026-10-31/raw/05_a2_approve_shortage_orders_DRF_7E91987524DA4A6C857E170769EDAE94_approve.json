@@ -1,0 +1,25 @@
+{
+  "seq": 5,
+  "label": "05_a2_approve_shortage_orders_DRF_7E91987524DA4A6C857E170769EDAE94_approve",
+  "role": "CLERK",
+  "method": "POST",
+  "path": "/orders/DRF_7E91987524DA4A6C857E170769EDAE94/approve",
+  "request_body": {
+    "expected_version": 1
+  },
+  "status": 400,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "8119bc2d-d605-4edf-a51a-d2a1bc4ed512"
+  },
+  "response": {
+    "error_code": "DISAMBIGUATION_UNRESOLVED",
+    "message": "Resolve blocking issues before approval.",
+    "details": {
+      "issue_ids": [
+        "ISS_AEAC2AB55E0044FEA81F7C86A20C2573"
+      ]
+    }
+  },
+  "at_utc": "2026-10-30T17:46:07.729057+00:00"
+}

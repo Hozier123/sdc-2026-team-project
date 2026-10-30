@@ -1,0 +1,48 @@
+{
+  "environment_id": "b05-env-ea709a8e70d0",
+  "kind": "TECHNICAL_ENVIRONMENT_DELIVERY",
+  "status": "READY",
+  "mode": "LOCAL_SYNTHETIC_T1_FALLBACK",
+  "source_commit": "c8848efce1ccbe31e1dead315816c14d313e7a0f",
+  "source_manifest_sha256": "1a787f959a8b19c4c41faf528ad671c8de98bd8bac160a234d2b0f3889a752ae",
+  "host": "local Windows host (loopback only)",
+  "postgres": {
+    "version": "PostgreSQL 17.10 on x86_64-windows, compiled by msvc-19.44.35226, 64-bit",
+    "firstuse": {
+      "database": "kiraorder_demo_b05_firstuse_ea709a8e70d0",
+      "port": 51393,
+      "system_identifier": "7702509799995540300"
+    },
+    "protected": {
+      "database": "kiraorder_demo_b05_protected_ea709a8e70d0",
+      "port": 51390,
+      "system_identifier": "7702509778719010148"
+    }
+  },
+  "api": {
+    "firstuse": "http://127.0.0.1:51394/api/v1",
+    "protected": "http://127.0.0.1:51391/api/v1"
+  },
+  "frontend_url": "http://127.0.0.1:51389/#/workspace",
+  "identity_after_reset": {
+    "firstuse": {"pid": 30104, "instance": "c1fcb97c1650445f98eca967f164f0ea"},
+    "protected": {"pid": 36740, "instance": "f38f26dcf6a949db949e1b28d6e5f71f"}
+  },
+  "ai": {
+    "mode": "FALLBACK",
+    "remote_ai_configured": false,
+    "note": "OFFLINE_FALLBACK；未调用 RunPod，未使用真实 LLM"
+  },
+  "reset_capability": {
+    "command": "python -m tools.b05_environment --state <environment.json> reset-firstuse --apply",
+    "target": "generated firstuse database only",
+    "protected_side": "not accepted as reset target; verified unchanged"
+  },
+  "data": {
+    "tenant": "T1 / Sinaran Food Supply",
+    "customers_used": ["CUS_SINAR (Warung Sinar, Tier A)", "CUS_RASA (Kedai Rasa, Tier B)"],
+    "seed": "canonical T1, 40 SKU / 25 families / 8 customers / 795 stock / 2 alias cache"
+  },
+  "secrets": "No token, password or Authorization value is included in this evidence package.",
+  "actual_participant_trials": "NOT_RUN"
+}

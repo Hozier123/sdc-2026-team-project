@@ -1,0 +1,75 @@
+{
+  "seq": 1,
+  "label": "01_customers_customers",
+  "role": "CLERK",
+  "method": "GET",
+  "path": "/customers",
+  "request_body": null,
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "d3039091-3161-427c-9951-287580d0cc99"
+  },
+  "response": {
+    "items": [
+      {
+        "customer_id": "CUS_ALI",
+        "name": "Restoran Ali",
+        "tier": "A",
+        "credit_flag": "NONE",
+        "has_credit_notice": false
+      },
+      {
+        "customer_id": "CUS_AMAN",
+        "name": "Kantin Aman",
+        "tier": "A",
+        "credit_flag": "NONE",
+        "has_credit_notice": false
+      },
+      {
+        "customer_id": "CUS_MELATI",
+        "name": "Restoran Melati",
+        "tier": "B",
+        "credit_flag": "NONE",
+        "has_credit_notice": false
+      },
+      {
+        "customer_id": "CUS_MESRA",
+        "name": "Kedai Mesra",
+        "tier": "B",
+        "credit_flag": "OVERDUE_NOTICE",
+        "has_credit_notice": true
+      },
+      {
+        "customer_id": "CUS_MURNI",
+        "name": "Cafe Murni",
+        "tier": "A",
+        "credit_flag": "NONE",
+        "has_credit_notice": false
+      },
+      {
+        "customer_id": "CUS_RASA",
+        "name": "Kedai Rasa",
+        "tier": "B",
+        "credit_flag": "NONE",
+        "has_credit_notice": false
+      },
+      {
+        "customer_id": "CUS_SERI",
+        "name": "Dapur Seri",
+        "tier": "B",
+        "credit_flag": "NONE",
+        "has_credit_notice": false
+      },
+      {
+        "customer_id": "CUS_SINAR",
+        "name": "Warung Sinar",
+        "tier": "A",
+        "credit_flag": "NONE",
+        "has_credit_notice": false
+      }
+    ],
+    "next_cursor": null
+  },
+  "at_utc": "2026-10-30T17:45:27.222867+00:00"
+}

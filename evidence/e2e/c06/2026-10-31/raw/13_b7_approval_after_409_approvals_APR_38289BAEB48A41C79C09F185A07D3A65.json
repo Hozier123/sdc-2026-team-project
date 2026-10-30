@@ -1,0 +1,170 @@
+{
+  "seq": 13,
+  "label": "13_b7_approval_after_409_approvals_APR_38289BAEB48A41C79C09F185A07D3A65",
+  "role": "OWNER",
+  "method": "GET",
+  "path": "/approvals/APR_38289BAEB48A41C79C09F185A07D3A65",
+  "request_body": null,
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "e5a78759-56c7-4069-83b8-590bc941e83e"
+  },
+  "response": {
+    "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+    "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+    "draft_version": 2,
+    "status": "PENDING",
+    "customer": {
+      "customer_id": "CUS_RASA",
+      "name": "Kedai Rasa",
+      "tier": "B",
+      "credit_flag": "NONE",
+      "has_credit_notice": false
+    },
+    "total_rm": "34.00",
+    "line_count": 1,
+    "reasons": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "detail": {
+          "tier_unit_price": "19.00",
+          "effective_unit_price": "17.00"
+        },
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+      }
+    ],
+    "requested_by": "USR_T1_CLERK",
+    "requested_at": "2026-10-31T01:46:32.658264+08:00",
+    "allowed_actions": [
+      "OWNER_APPROVE",
+      "OWNER_REJECT"
+    ],
+    "decided_by": null,
+    "decided_at": null,
+    "decision_note": null,
+    "snapshot": {
+      "customer_id": "CUS_RASA",
+      "customer_name": "Kedai Rasa",
+      "masked_customer_text": "Milo 1kg 2 bag, kalau RM17 boleh?",
+      "lines": [
+        {
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+          "client_line_ref": null,
+          "sku_id": "SKU_MILO_1KG",
+          "family_id": "FAM_MILO",
+          "description": "Milo 美禄",
+          "requested_qty": 2,
+          "confirmed_qty": 2,
+          "effective_qty": 2,
+          "uom": "bag",
+          "pack_size": "1kg",
+          "grade": null,
+          "tier_unit_price": "19.00",
+          "unit_price_override": "17.00",
+          "override_reason": "Accept requested RM17.00 per bag; below tier, owner decides.",
+          "effective_unit_price": "17.00",
+          "subtotal_rm": "34.00",
+          "match_source": "MANUAL_SELECTED",
+          "source_span": "Milo 1kg 2 bag, kalau RM17 boleh?",
+          "span_start": 0,
+          "span_end": 33,
+          "field_evidence": [
+            {
+              "field": "requested_qty",
+              "raw_text": "2",
+              "start": 9,
+              "end": 10,
+              "normalizer_version": "field-evidence-v2"
+            }
+          ],
+          "candidate_skus": [],
+          "saved_alias": null,
+          "available_qty": 30
+        }
+      ],
+      "total_rm": "34.00",
+      "reasons": [
+        {
+          "code": "PRICE_OVERRIDE_BELOW_TIER",
+          "detail": {
+            "tier_unit_price": "19.00",
+            "effective_unit_price": "17.00"
+          },
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+        }
+      ]
+    },
+    "field_diffs": [
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "confirmed_qty",
+        "before_value": null,
+        "after_value": 2,
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "unit_price_override",
+        "before_value": null,
+        "after_value": "17.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "override_reason",
+        "before_value": null,
+        "after_value": "Accept requested RM17.00 per bag; below tier, owner decides.",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "effective_unit_price",
+        "before_value": "19.00",
+        "after_value": "17.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "subtotal_rm",
+        "before_value": "38.00",
+        "after_value": "34.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+        "field_path": "match_source",
+        "before_value": "RAPIDFUZZ_FALLBACK",
+        "after_value": "MANUAL_SELECTED",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      }
+    ],
+    "stock_check": {
+      "state": "PASSED",
+      "checked_at": "2026-10-31T01:46:32.658264+08:00",
+      "lines": [
+        {
+          "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+          "sku_id": "SKU_MILO_1KG",
+          "requested_qty": 2,
+          "available_qty": 30,
+          "sufficient": true,
+          "effective_qty": 2
+        }
+      ]
+    }
+  },
+  "at_utc": "2026-10-30T17:46:43.615208+00:00"
+}

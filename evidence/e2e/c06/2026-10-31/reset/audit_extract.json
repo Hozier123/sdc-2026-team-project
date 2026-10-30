@@ -1,0 +1,366 @@
+{
+  "source": "reset before.json (full DB snapshot, private)",
+  "captured_at_utc": null,
+  "audit_logs": [
+    {
+      "action": "APPROVE",
+      "payload": {
+        "mode": "DIRECT",
+        "do_number": "DO_20261030_77EBD4F2",
+        "customer_name": "Warung Sinar"
+      },
+      "audit_id": "AUD_1DD3F5D79B994DECAE29B868B97A2CB2",
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "do_number": "DO_20261030_77EBD4F2",
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:08.522509+08:00",
+      "actor_user_id": "USR_T1_CLERK",
+      "draft_version": 2
+    },
+    {
+      "action": "DECIDE_APPROVE",
+      "payload": {
+        "note": null,
+        "do_number": "DO_20261030_6FC83E94",
+        "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+        "customer_name": "Kedai Rasa"
+      },
+      "audit_id": "AUD_F347267FE2E7451CB57F55CCCEE7B2A7",
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": "DO_20261030_6FC83E94",
+      "tenant_id": "T1",
+      "actor_role": "OWNER",
+      "created_at": "2026-10-31T01:46:54.163765+08:00",
+      "actor_user_id": "USR_T1_OWNER",
+      "draft_version": 2
+    },
+    {
+      "action": "INVENTORY_DEDUCT",
+      "payload": {
+        "do_number": "DO_20261030_6FC83E94"
+      },
+      "audit_id": "AUD_0F88BD5DFE154990BB8E84E596679C77",
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": "DO_20261030_6FC83E94",
+      "tenant_id": "T1",
+      "actor_role": "OWNER",
+      "created_at": "2026-10-31T01:46:54.163765+08:00",
+      "actor_user_id": "USR_T1_OWNER",
+      "draft_version": 2
+    },
+    {
+      "action": "INVENTORY_DEDUCT",
+      "payload": {
+        "do_number": "DO_20261030_77EBD4F2"
+      },
+      "audit_id": "AUD_09FD2CEE78B343A8AD4C742B58A6FDBD",
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "do_number": "DO_20261030_77EBD4F2",
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:08.522509+08:00",
+      "actor_user_id": "USR_T1_CLERK",
+      "draft_version": 2
+    },
+    {
+      "action": "SAVE_LINES",
+      "payload": {
+        "version": 2,
+        "line_count": 1
+      },
+      "audit_id": "AUD_0BF3DB3EB3544507863C8DFAC491A82C",
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "do_number": null,
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:08.282333+08:00",
+      "actor_user_id": "USR_T1_CLERK",
+      "draft_version": 2
+    },
+    {
+      "action": "SAVE_LINES",
+      "payload": {
+        "version": 2,
+        "line_count": 1
+      },
+      "audit_id": "AUD_7FD5508567F444A681D5AF4E6F195882",
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": null,
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "actor_user_id": "USR_T1_CLERK",
+      "draft_version": 2
+    },
+    {
+      "action": "SUBMIT_APPROVAL",
+      "payload": {
+        "reasons": [
+          {
+            "code": "PRICE_OVERRIDE_BELOW_TIER",
+            "detail": {
+              "tier_unit_price": "19.00",
+              "effective_unit_price": "17.00"
+            },
+            "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+          }
+        ],
+        "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65"
+      },
+      "audit_id": "AUD_D0914B2787C44521A9AC5DBE2D772F76",
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": null,
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:32.658264+08:00",
+      "actor_user_id": "USR_T1_CLERK",
+      "draft_version": 2
+    }
+  ],
+  "activity_log": [
+    {
+      "payload": {
+        "do_number": "DO_20261030_6FC83E94"
+      },
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": "DO_20261030_6FC83E94",
+      "tenant_id": "T1",
+      "actor_role": "OWNER",
+      "created_at": "2026-10-31T01:46:54.163765+08:00",
+      "event_type": "INVENTORY_DEDUCTED",
+      "activity_id": 7,
+      "actor_user_id": "USR_T1_OWNER"
+    },
+    {
+      "payload": {
+        "do_number": "DO_20261030_77EBD4F2"
+      },
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "do_number": "DO_20261030_77EBD4F2",
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:08.522509+08:00",
+      "event_type": "INVENTORY_DEDUCTED",
+      "activity_id": 3,
+      "actor_user_id": "USR_T1_CLERK"
+    },
+    {
+      "payload": {
+        "mode": "DIRECT",
+        "do_number": "DO_20261030_77EBD4F2",
+        "customer_name": "Warung Sinar"
+      },
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "do_number": "DO_20261030_77EBD4F2",
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:08.522509+08:00",
+      "event_type": "DO_CREATED",
+      "activity_id": 2,
+      "actor_user_id": "USR_T1_CLERK"
+    },
+    {
+      "payload": {
+        "note": null,
+        "do_number": "DO_20261030_6FC83E94",
+        "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+        "customer_name": "Kedai Rasa"
+      },
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": "DO_20261030_6FC83E94",
+      "tenant_id": "T1",
+      "actor_role": "OWNER",
+      "created_at": "2026-10-31T01:46:54.163765+08:00",
+      "event_type": "OWNER_APPROVED",
+      "activity_id": 6,
+      "actor_user_id": "USR_T1_OWNER"
+    },
+    {
+      "payload": {
+        "reasons": [
+          {
+            "code": "PRICE_OVERRIDE_BELOW_TIER",
+            "detail": {
+              "tier_unit_price": "19.00",
+              "effective_unit_price": "17.00"
+            },
+            "line_id": "LNE_5162F53F0F354723A8D514F211A10E22"
+          }
+        ],
+        "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65"
+      },
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": null,
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:32.658264+08:00",
+      "event_type": "OWNER_APPROVAL_REQUESTED",
+      "activity_id": 5,
+      "actor_user_id": "USR_T1_CLERK"
+    },
+    {
+      "payload": {
+        "version": 2,
+        "line_count": 1
+      },
+      "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+      "do_number": null,
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:08.282333+08:00",
+      "event_type": "DRAFT_VERSION_CREATED",
+      "activity_id": 1,
+      "actor_user_id": "USR_T1_CLERK"
+    },
+    {
+      "payload": {
+        "version": 2,
+        "line_count": 1
+      },
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "do_number": null,
+      "tenant_id": "T1",
+      "actor_role": "CLERK",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "event_type": "DRAFT_VERSION_CREATED",
+      "activity_id": 4,
+      "actor_user_id": "USR_T1_CLERK"
+    }
+  ],
+  "field_diffs": [
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+      "audit_id": "AUD_0BF3DB3EB3544507863C8DFAC491A82C",
+      "created_at": "2026-10-31T01:46:08.282333+08:00",
+      "field_path": "confirmed_qty",
+      "after_value": 3,
+      "reason_code": "USER_EDIT",
+      "before_value": null,
+      "draft_version": 2,
+      "field_diff_id": 1
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+      "audit_id": "AUD_0BF3DB3EB3544507863C8DFAC491A82C",
+      "created_at": "2026-10-31T01:46:08.282333+08:00",
+      "field_path": "effective_qty",
+      "after_value": 3,
+      "reason_code": "USER_EDIT",
+      "before_value": 10,
+      "draft_version": 2,
+      "field_diff_id": 2
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+      "audit_id": "AUD_0BF3DB3EB3544507863C8DFAC491A82C",
+      "created_at": "2026-10-31T01:46:08.282333+08:00",
+      "field_path": "match_source",
+      "after_value": "MANUAL_SELECTED",
+      "reason_code": "USER_EDIT",
+      "before_value": "RAPIDFUZZ_FALLBACK",
+      "draft_version": 2,
+      "field_diff_id": 4
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+      "audit_id": "AUD_0BF3DB3EB3544507863C8DFAC491A82C",
+      "created_at": "2026-10-31T01:46:08.282333+08:00",
+      "field_path": "subtotal_rm",
+      "after_value": "27.00",
+      "reason_code": "USER_EDIT",
+      "before_value": "90.00",
+      "draft_version": 2,
+      "field_diff_id": 3
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+      "audit_id": "AUD_7FD5508567F444A681D5AF4E6F195882",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "field_path": "confirmed_qty",
+      "after_value": 2,
+      "reason_code": "USER_EDIT",
+      "before_value": null,
+      "draft_version": 2,
+      "field_diff_id": 5
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+      "audit_id": "AUD_7FD5508567F444A681D5AF4E6F195882",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "field_path": "effective_unit_price",
+      "after_value": "17.00",
+      "reason_code": "USER_EDIT",
+      "before_value": "19.00",
+      "draft_version": 2,
+      "field_diff_id": 8
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+      "audit_id": "AUD_7FD5508567F444A681D5AF4E6F195882",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "field_path": "match_source",
+      "after_value": "MANUAL_SELECTED",
+      "reason_code": "USER_EDIT",
+      "before_value": "RAPIDFUZZ_FALLBACK",
+      "draft_version": 2,
+      "field_diff_id": 10
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+      "audit_id": "AUD_7FD5508567F444A681D5AF4E6F195882",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "field_path": "override_reason",
+      "after_value": "Accept requested RM17.00 per bag; below tier, owner decides.",
+      "reason_code": "USER_EDIT",
+      "before_value": null,
+      "draft_version": 2,
+      "field_diff_id": 7
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+      "audit_id": "AUD_7FD5508567F444A681D5AF4E6F195882",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "field_path": "subtotal_rm",
+      "after_value": "34.00",
+      "reason_code": "USER_EDIT",
+      "before_value": "38.00",
+      "draft_version": 2,
+      "field_diff_id": 9
+    },
+    {
+      "source": "PUT_LINES",
+      "line_id": "LNE_5162F53F0F354723A8D514F211A10E22",
+      "audit_id": "AUD_7FD5508567F444A681D5AF4E6F195882",
+      "created_at": "2026-10-31T01:46:32.429198+08:00",
+      "field_path": "unit_price_override",
+      "after_value": "17.00",
+      "reason_code": "USER_EDIT",
+      "before_value": null,
+      "draft_version": 2,
+      "field_diff_id": 6
+    }
+  ],
+  "approval_requests": [
+    {
+      "approval_id": "APR_38289BAEB48A41C79C09F185A07D3A65",
+      "draft_id": "DRF_BDBE7DE379764193A467498773FC80AE",
+      "draft_version": 2,
+      "status": "APPROVED",
+      "requested_by": "USR_T1_CLERK",
+      "requested_at": "2026-10-31T01:46:32.658264+08:00",
+      "decided_by": "USR_T1_OWNER",
+      "decided_at": "2026-10-31T01:46:54.163765+08:00",
+      "total_rm": null
+    }
+  ]
+}

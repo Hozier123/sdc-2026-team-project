@@ -1,0 +1,50 @@
+{
+  "seq": 7,
+  "label": "07_a4_approve_reduced_orders_DRF_7E91987524DA4A6C857E170769EDAE94_approve",
+  "role": "CLERK",
+  "method": "POST",
+  "path": "/orders/DRF_7E91987524DA4A6C857E170769EDAE94/approve",
+  "request_body": {
+    "expected_version": 2
+  },
+  "status": 200,
+  "response_headers": {
+    "content-type": "application/json",
+    "x-request-id": "03659b2b-2026-401d-bdab-7c7d8e023082"
+  },
+  "response": {
+    "do_number": "DO_20261030_77EBD4F2",
+    "draft_id": "DRF_7E91987524DA4A6C857E170769EDAE94",
+    "draft_version": 2,
+    "customer_id": "CUS_SINAR",
+    "customer_name": "Warung Sinar",
+    "lines": [
+      {
+        "line_id": "LNE_26F4260552F447E3AFEA76A7831FC6FE",
+        "sku_id": "SKU_TEH_500G",
+        "display_name": "Teh 茶叶",
+        "quantity": 3,
+        "unit": "bag",
+        "tier_unit_price": "9.00",
+        "applied_unit_price": "9.00",
+        "subtotal_rm": "27.00",
+        "override_reason": null,
+        "picking_note": null
+      }
+    ],
+    "final_total_rm": "27.00",
+    "prepared_by": "USR_T1_CLERK",
+    "approved_by": "USR_T1_CLERK",
+    "escalation_reasons": [],
+    "approval_mode": "DIRECT",
+    "reply_draft": {
+      "language": "en",
+      "message": "Order DO_20261030_77EBD4F2 confirmed: Teh 茶叶 3 bag @ RM 9.00. Total RM 27.00. Thank you!",
+      "do_number": "DO_20261030_77EBD4F2",
+      "warnings": []
+    },
+    "related_do_number": null,
+    "approved_at": "2026-10-30T17:46:08.537021Z"
+  },
+  "at_utc": "2026-10-30T17:46:08.342738+00:00"
+}

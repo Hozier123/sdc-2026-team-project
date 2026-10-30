@@ -1,0 +1,12 @@
+{
+  "after_qty": 30,
+  "at_utc": "2026-10-30T17:46:53.798577+00:00",
+  "before_qty": 1,
+  "label": "b9_restore_stock",
+  "reason": "Restore Milo stock to 30 after 409; retry owner decision",
+  "rowcount": 1,
+  "sku_id": "SKU_MILO_1KG",
+  "sql": "UPDATE inventory SET available_qty=%s, updated_at=now() WHERE tenant_id=%s AND product_id=%s",
+  "target_qty": 30,
+  "updated_at": "2026-10-31 01:46:53.916715+08:00"
+}
