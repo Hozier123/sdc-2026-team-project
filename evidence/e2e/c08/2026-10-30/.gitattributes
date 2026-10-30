@@ -1,0 +1,4 @@
+# C08 evidence keeps its exact bytes so SHA256.txt matches the committed blob.
+# Same convention as evidence/e2e/c01/2026-10-29/.gitattributes: the root
+# `* text=auto` rule would otherwise rewrite CRLF and break the recorded hashes.
+* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -1,0 +1,13 @@
+{
+  "scanned_cases": [
+    "identity.me_t1_warehouse",
+    "read.ai_status",
+    "read.warehouse_do",
+    "tenant.t1_override_param",
+    "override.me_query",
+    "override.me_headers"
+  ],
+  "forbidden_keys": [],
+  "forbidden_values": [],
+  "passed": true
+}

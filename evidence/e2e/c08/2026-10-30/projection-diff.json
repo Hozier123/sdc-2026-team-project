@@ -1,0 +1,68 @@
+{
+  "source_case": "read.clerk_do_full",
+  "target_case": "read.warehouse_do",
+  "clerk_top_level_keys": [
+    "approval_mode",
+    "approved_at",
+    "approved_by",
+    "customer_id",
+    "customer_name",
+    "do_number",
+    "draft_id",
+    "draft_version",
+    "escalation_reasons",
+    "final_total_rm",
+    "lines",
+    "prepared_by",
+    "related_do_number",
+    "reply_draft"
+  ],
+  "warehouse_top_level_keys": [
+    "approved_at",
+    "customer_name",
+    "do_number",
+    "items"
+  ],
+  "top_level_removed": [
+    "approval_mode",
+    "approved_by",
+    "customer_id",
+    "draft_id",
+    "draft_version",
+    "escalation_reasons",
+    "final_total_rm",
+    "lines",
+    "prepared_by",
+    "related_do_number",
+    "reply_draft"
+  ],
+  "clerk_line_keys": [
+    "applied_unit_price",
+    "display_name",
+    "line_id",
+    "override_reason",
+    "picking_note",
+    "quantity",
+    "sku_id",
+    "subtotal_rm",
+    "tier_unit_price",
+    "unit"
+  ],
+  "warehouse_item_keys": [
+    "display_name",
+    "picking_note",
+    "quantity",
+    "sku_id",
+    "unit"
+  ],
+  "line_fields_removed": [
+    "applied_unit_price",
+    "line_id",
+    "override_reason",
+    "subtotal_rm",
+    "tier_unit_price"
+  ],
+  "final_total_rm": "70.80",
+  "final_total_value_present_in_warehouse_body": false,
+  "passed": true
+}

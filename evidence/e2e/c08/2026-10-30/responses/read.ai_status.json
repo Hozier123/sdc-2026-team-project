@@ -1,0 +1,1 @@
+{"state":"DEGRADED","available_modes":["FALLBACK","ALIAS_ONLY"],"fallback_available":true,"last_checked_at":"2026-10-30T08:28:24.182670Z","message":"AI inference is unverified or expired; use Wake AI or ask the team to warm up. Local fallback/manual handling remains available."}

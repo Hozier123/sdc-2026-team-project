@@ -1,0 +1,1 @@
+{"user_id":"USR_T1_CLERK","tenant":{"id":"T1","name":"Sinaran Food Supply"},"display_name":"Siti","role":"CLERK","permissions":["EDIT_DRAFT","RESOLVE_ISSUE","COPY_CLARIFICATION","APPROVE_AND_GENERATE_DO","SUBMIT_FOR_OWNER","VIEW_ACTIVITY","WAKE_AI"],"permission_summary":"Can create and edit drafts, resolve issues, and submit for approval."}
