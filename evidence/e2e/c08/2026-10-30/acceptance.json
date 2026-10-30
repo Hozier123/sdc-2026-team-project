@@ -1,0 +1,133 @@
+{
+  "case_id": "C08",
+  "title": "Warehouse role permission matrix (API layer, read-only)",
+  "status": "PASS_API_LAYER",
+  "overall_status": "SIGNED_OFF",
+  "repo_status": "PENDING_COMMIT",
+  "gate_a_status": "DEFERRED",
+  "run_at": "2026-10-30T16:28:28+08:00",
+  "metadata_updated_at": "2026-10-30T17:47:50+08:00",
+  "operator": "He",
+  "review_status": "ZHOU_SIGNED_OFF",
+  "independent_review_status": "PASSED",
+  "review_record": "evidence/reviews/03-Zhou-signoff-2026-10-30.md",
+  "hash_convention": "responses/*.json store the exact raw response bytes received on the wire; each file SHA-256 equals matrix.response_sha256 (and its size equals response_bytes)",
+  "open_items": [
+    "Draft PR / repository commit pending"
+  ],
+  "base_url": "https://kiraorder-api.replit.app/api/v1",
+  "object_of_record": {
+    "do_number": "DO_20261029_453C4BC2",
+    "draft_id": "DRF_39D4D66CACC440A594B1C1AEBEF151B9",
+    "customer": "Restoran Ali",
+    "approved_at": "2026-10-29T07:16:58.981249Z",
+    "request_id": "c609a846-92c4-43f6-b634-0b3fba81e51d"
+  },
+  "scope_approval": {
+    "by": "Zhou Jingxi",
+    "date": "2026-10-30",
+    "channel": "chat reply relayed through He",
+    "decision": "C01 warehouse page evidence may be cited; browser part needs one 403 screenshot; API layer is recorded first and must be marked pending-commit",
+    "conditions": [
+      "same DO DO_20261029_453C4BC2",
+      "Gate E version frontend f8ff1d7 / backend 555f0fa",
+      "WAREHOUSE identity visible (Ah Kow / Warehouse)",
+      "DevTools request GET /api/v1/delivery-orders/DO_20261029_453C4BC2 returns 403",
+      "FORBIDDEN_ACTION body visible, or full URL plus 403; status code alone is not enough",
+      "warehouse page shows no price, phone or raw message; C01 warehouse evidence stays cited",
+      "if C01 page evidence is not the f8ff1d7 build, add a current picking page screenshot",
+      "403 must use the full DO endpoint, not audit-detail",
+      "evidence pack in a controlled directory with SHA256; mark API layer pending-commit before the repository commit and do not sign the whole case off early"
+    ]
+  },
+  "version_basis": {
+    "frontend": "f8ff1d7",
+    "frontend_proof": "gh-pages commit 12ff95f 'Deploy B01 frontend from f8ff1d7' (2026-10-29T11:51:25Z), followed by 94f0a6e recording the published index",
+    "backend": "555f0fa",
+    "backend_proof": "0a255df (2026-10-30) changes only docs, tools, tests and README; the last commit touching backend/app is 555f0fa",
+    "runtime_attestation": "The API does not expose the deployed commit; version attribution is repository evidence, not runtime attestation."
+  },
+  "browser_evidence": {
+    "status": "CAPTURED",
+    "directory": "browser/",
+    "files": [
+      "c08_01_picking_current.png",
+      "c08_02_forbidden_403.png"
+    ],
+    "captured_at": "2026-10-30",
+    "source_files": [
+      {
+        "name": "c08_01_picking_current.jpg",
+        "sha256": "221156FD3805EE04DAA95BB03F28B12757196B6ED74BA7206C5DA87665D84651"
+      },
+      {
+        "name": "c08_02_forbidden_403.jpg",
+        "sha256": "2D82ED15443BC7F0DE16D28E191BEA01D6D41C4DB486F62E0FA8AA9C12D0BC67"
+      }
+    ],
+    "required": [
+      "c08_01_picking_current.png: current f8ff1d7 build picking page for DO_20261029_453C4BC2 with Ah Kow / Warehouse visible and no price/phone/raw message",
+      "c08_02_forbidden_403.png: DevTools (Console or Network) on GET /api/v1/delivery-orders/DO_20261029_453C4BC2 with 403 and the FORBIDDEN_ACTION response body (or full URL plus 403 on one screen)"
+    ],
+    "reason_current_picking_page": "C01 browser session ran 2026-10-29 17:13-17:16 UTC+8, before the f8ff1d7 Pages deploy at 19:51 UTC+8, so the C01 page screenshots are not the f8ff1d7 build.",
+    "verification": {
+      "identity": "Ah Kow / Warehouse visible in the c08_01 top bar",
+      "do_number": "DO_20261029_453C4BC2 visible in both screenshots",
+      "build": "v1.4.0 badge in c08_01; f8ff1d7 is the Pages build per gh-pages 12ff95f",
+      "forbidden": "full URL, 403 and FORBIDDEN_ACTION body visible in c08_02; no token shown",
+      "field_minimization": "c08_01 shows no price, phone or raw message"
+    }
+  },
+  "numbers": {
+    "cases_total": 41,
+    "cases_passed": 41,
+    "cases_failed": 0,
+    "field_scan_passed": true,
+    "projection_diff_passed": true
+  },
+  "failed_cases": [],
+  "coverage": {
+    "role_matrix": "WAREHOUSE vs CLERK/OWNER on read endpoints",
+    "write_endpoints": "schema-valid body + non-existent id (no DB writes)",
+    "tenant_isolation": "T2 token against T1 object, query-string and header override",
+    "identity_binding": "role/user_id/tenant_id query parameters and X-* headers ignored",
+    "method_surface": "unsafe methods on read routes",
+    "enumeration": "no WAREHOUSE DO list route",
+    "responses": "raw JSON captured per case"
+  },
+  "not_covered": [
+    "current f8ff1d7 picking page screenshot (browser/)",
+    "DevTools 403 screenshot with FORBIDDEN_ACTION body (browser/)",
+    "browser-captured HAR (this pack is API-level only)",
+    "page-level absence of write entry points (C01 covers this for one DO)",
+    "frontend Local Demo path",
+    "CLERK/OWNER-to-OWNER-IDOR (out of C08 scope)"
+  ],
+  "boundaries": [
+    "Synthetic T1/T2 demo data only.",
+    "Deployed production backend; deployed commit is not exposed by the API.",
+    "No DB writes, no reset; /ai/wake is rejected with 403 before any warm-up job."
+  ],
+  "notes": [
+    "Warehouse DO is an exact four-key projection; the CLERK projection of the same DO exposes 11 additional top-level fields and 5 additional line fields, all absent from the warehouse body (projection-diff.json).",
+    "/ai/status is readable by WAREHOUSE by contract (OpenAPI declares only 200/401) and exposes no business fields; this is not a C08 defect.",
+    "Invalid request bodies return 422 before the handler-level role check. The matrix therefore uses schema-valid bodies plus non-existent ids, so a missing guard could only reach 404 and never mutate data.",
+    "The implementation also guards /discard and /clarification-copied for WAREHOUSE even though those paths are not in the frozen Gate 0 OpenAPI path set (contract completeness is tracked separately, not as a C08 permission defect)."
+  ],
+  "c01_reference": "evidence/e2e/c01/2026-10-29/acceptance.json",
+  "artifacts": [
+    "environment.json",
+    "matrix.json",
+    "matrix.md",
+    "field-scan.json",
+    "projection-diff.json",
+    "api-requests.json",
+    "responses/",
+    "browser/",
+    "reviews/",
+    ".gitattributes",
+    "SHA256.txt"
+  ],
+  "signed_off_by": "Zhou Jingxi",
+  "signed_off_at": "2026-10-30T16:40:00+08:00"
+}
