@@ -51,7 +51,7 @@ def list_products(
     with connect(settings) as conn:
         rows = conn.execute(
             "SELECT product_id, name, pack_size, grade, base_unit FROM products "
-            "WHERE tenant_id=%s AND active=true ORDER BY product_id LIMIT %s",
+            'WHERE tenant_id=%s AND active=true ORDER BY product_id COLLATE "C" LIMIT %s',
             (user.tenant_id, CATALOG_LIMIT + 1),
         ).fetchall()
 

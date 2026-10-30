@@ -65,9 +65,10 @@ def test_full_canonical_directory_without_commercial_fields(
     with connect(db_settings) as conn:
         expected = conn.execute(
             "SELECT product_id, name, pack_size, grade, base_unit FROM products "
-            "WHERE tenant_id=%s AND active=true ORDER BY product_id",
+            "WHERE tenant_id=%s AND active=true",
             (tenant,),
         ).fetchall()
+    expected.sort(key=lambda row: row[0])
     assert body["items"] == [
         dict(zip(("sku_id", "display_name", "pack_size", "grade", "base_unit"), row, strict=True))
         for row in expected
