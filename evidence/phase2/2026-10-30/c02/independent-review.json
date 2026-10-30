@@ -1,0 +1,47 @@
+{
+  "case_id": "C02",
+  "independent_review": "PASSED",
+  "reviewer": "Zhou",
+  "review_date": "2026-10-31",
+  "scope": "Manual UI acceptance",
+  "provenance": "Review result relayed by Ye in this task; no new reviewer identity or GitHub review is impersonated.",
+  "reviewed_pr": 77,
+  "reviewed_head_sha": "32ba4ce6068b443655c7f7248fd595a7d4943b3d",
+  "reviewed_merge_sha": "869b0a89adcee283abd219ad35753031b3acef67",
+  "original_screenshots_verified": {
+    "verified": 6,
+    "total": 6
+  },
+  "supplement_verification_reported": {
+    "verified": 33,
+    "total": 33
+  },
+  "limitations": [
+    "Original 30 October HTTP responses and request IDs were not captured.",
+    "Supplemental audit response was a read-only reread on 31 October, not an original-run HTTP capture.",
+    "Post-approval stock was not measured.",
+    "Manual UI acceptance does not prove API bypass protection."
+  ],
+  "repository_version_evidence": {
+    "frontend": {
+      "version": "1.4.0",
+      "commit_refs": [
+        "f8ff1d7",
+        "94f0a6e"
+      ]
+    },
+    "backend": {
+      "commit_refs": [
+        "555f0fa",
+        "72258e1f"
+      ]
+    },
+    "scope": "Repository evidence reported by reviewer; not contemporaneous deployment SHA capture."
+  },
+  "non_blocking_issues": [
+    {
+      "priority": "P3",
+      "description": "DO item description omits the 1kg pack size."
+    }
+  ]
+}

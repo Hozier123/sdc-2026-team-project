@@ -1,0 +1,32 @@
+{
+  "case_id": "C05",
+  "independent_review": "PASSED",
+  "reviewer": "Zhou",
+  "review_date": "2026-10-31",
+  "scope": "Manual UI acceptance",
+  "provenance": "Review result relayed by Ye in this task; no new reviewer identity or GitHub review is impersonated.",
+  "reviewed_pr": 96,
+  "reviewed_head_sha": "0a85dac3982818e81374950c38483ada57d8648d",
+  "reviewed_merge_sha": "bc8f4aabec5ae9a7347c188b029394907d5cb5ad",
+  "original_screenshots_verified": {
+    "verified": 11,
+    "total": 11
+  },
+  "supplement_verification_reported": {
+    "verified": 33,
+    "total": 33
+  },
+  "limitations": [
+    "No-DO and unchanged-stock conclusions are UI evidence only, not direct API or DB proof.",
+    "Empty rejection reason and terminal-state lock were not tested through API bypass attempts.",
+    "Frontend/backend deployment SHAs were not captured.",
+    "C02 backend reference 555f0fa must not be assigned to this C05 execution."
+  ],
+  "non_blocking_issues": [
+    {
+      "priority": "P3",
+      "description": "Approval summary displays RM0.00 to RM0.00 while actual line prices are RM19.00 and RM17.00."
+    }
+  ],
+  "demo_follow_up": "Identify and label or clean up the two older pending owner requests before the demo. Preserve any sample reserved for C06; no application records were changed by this evidence update."
+}

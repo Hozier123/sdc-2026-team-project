@@ -9,7 +9,7 @@
 - Backend: real API connection as reported by the operator; historical extraction mode FALLBACK.
 - Test data: synthetic T1 business data, customer Warung Sinar, CLERK role.
 - Frontend deployment SHA, backend deployment SHA, raw HTTP responses, and request IDs: not captured during this run.
-- This record covers manual C02 business acceptance. It is not a formal private TEST32 run or an independent review report.
+- This record covers manual C02 business acceptance. It is not a formal private TEST32 run. Independent manual UI review by Zhou passed on 2026-10-31; see [review record](independent-review.json).
 
 ## Order details
 
@@ -58,3 +58,14 @@ The screenshots show the sequence of UI blocking before saving, approval becomin
 - [Directory checksums](SHA256.txt): exact-byte SHA-256 hashes of the public files, excluding the checksum file itself.
 
 Original-image hashes bind the record to privately retained sources; they do not mean the images have been published or replace inspection of those images. This directory's `.gitattributes` disables line-ending conversion. `SHA256.txt` covers the exact bytes of this directory's public files and is separate from existing checksum lists elsewhere in the repository.
+
+## Independent review — 31 October 2026
+
+**PASSED — Zhou, manual UI scope.** The reviewer reported 6/6 original screenshots and 33/33 supplemental checks verified. The reviewed PR head and merge SHAs are preserved in [independent-review.json](independent-review.json).
+
+- Original 30 October HTTP responses and request IDs were not captured.
+- Supplemental audit response was a read-only reread on 31 October, not an original-run HTTP capture.
+- Post-approval stock was not measured.
+- Manual UI acceptance does not prove API bypass protection.
+
+Repository evidence reported by the reviewer: frontend v1.4.0 refs `f8ff1d7` / `94f0a6e`; backend refs `555f0fa` / `72258e1f`. These are repository references, not newly captured historical deployment SHAs. The supplemental synthetic phone number is internal-only and is omitted from this public update. The DO description issue remains P3.
