@@ -1,5 +1,5 @@
 {
-  "scope": "C07 public HTTPS/Neon execution; independent online review pending",
+  "scope": "C07 public HTTPS/Neon independently reviewed and signed; C07 CLOSED",
   "application_source_commit": "9dfee3382b6191adb314c09bbe8ff779eff9ddac",
   "github_main_at_publish": "f3110d068561be5fff686a799467277b6e9ec1e4",
   "deployment_id": "9cff61ed",
@@ -15,7 +15,7 @@
   "offline_checks": 194,
   "execution_status": "PASS",
   "offline_audit_status": "PASS",
-  "independent_online_review": "PENDING_ZHOU",
+  "independent_online_review": "PASS_SIGNED",
   "cases": [
     {
       "case_id": "C07-01",
@@ -121,7 +121,8 @@
     "browser clicks",
     "formal TEST32",
     "AI accuracy",
-    "public fault injection"
+    "public fault injection",
+    "online database replication/failover"
   ],
   "handoff": {
     "filename": "C07_ONLINE_9cff61ed_20261031.zip",
@@ -131,5 +132,26 @@
     "crc_and_every_entry_verified": true,
     "secret_cookie_scan": "PASS",
     "visibility": "Raw handoff retained locally for reviewer transfer; this repository stores the public record and hash"
+  },
+  "task_status": "CLOSED",
+  "closed_at_utc8": "2026-10-31 01:30",
+  "independent_review_record": {
+    "reviewer": "Zhou Jingxi",
+    "signed_at_utc8": "2026-10-31 01:30",
+    "path": "C07_ONLINE_REVIEW.md",
+    "size": 3628,
+    "sha256": "3d0c12a35588b68c4680a0f1c4b7940d9e467fdd2c76ea55a489e02dd61583da",
+    "original_bytes_preserved": true,
+    "approved_online_cases": [
+      "C07-01",
+      "C07-02",
+      "C07-03",
+      "C07-04",
+      "C07-05",
+      "C07-07"
+    ],
+    "file_manifest_entries_verified": 276,
+    "sha256sums_sha256": "faf108d3917ab565eed39c1eeefa9ea3141ad437c5495e55550c6c33bf5d6653",
+    "offline_audit_run_by_reviewer": "PASS: 194 checks, 34 accepted requests; run on a copy"
   }
 }
