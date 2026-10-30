@@ -73,6 +73,7 @@ export function validRoute(route: string) {
     [
       "intro",
       "workspace",
+      "catalog",
       "new",
       "approvals",
       "delivery-orders",

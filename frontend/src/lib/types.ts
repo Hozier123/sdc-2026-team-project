@@ -1,4 +1,5 @@
 import type { components } from "./gate0.generated";
+import type { CatalogProductsResponse } from "./catalog";
 export type Gate0 = components["schemas"];
 export type Navigate = (path: string) => void;
 export type Notify = (message: string) => void;
@@ -305,6 +306,7 @@ export interface Service {
   readonly fixture?: boolean;
   me(): Promise<Me>;
   customers(): Promise<Customer[]>;
+  catalogProducts(): Promise<CatalogProductsResponse>;
   drafts(): Promise<DraftSummary[]>;
   draft(id: string): Promise<Draft>;
   parse(customerId: string, text: string, lang: string): Promise<Draft>;
