@@ -269,6 +269,8 @@ export interface Activity {
   actor: string;
   created_at: string;
   detail: string;
+  actor_role?: string | null;
+  do_number?: string | null;
 }
 export interface Audit {
   delivery_order: DeliveryOrder;

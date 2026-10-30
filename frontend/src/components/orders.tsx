@@ -36,6 +36,7 @@ import {
   type Service,
 } from "../lib/types";
 import { useRequestScope, useResource } from "../lib/hooks";
+import { EXTRACTION } from "../lib/extraction";
 import {
   assertQuantities,
   invalidQuantities,
@@ -298,6 +299,10 @@ const ISSUE_COPY: Record<string, { title: string; body: string }> = {
     title: "There isn’t enough stock",
     body: "Confirm a smaller quantity with the customer, then update the product line. No role can approve insufficient stock.",
   },
+  SAME_DAY_ORDER: {
+    title: "An order already exists today",
+    body: "Choose an add-on or close this duplicate before approval.",
+  },
 };
 export function OrderDetail({
   id,
@@ -474,14 +479,8 @@ export function OrderDetail({
             <i />
             <span>{time(draft.created_at)} MYT</span>
             <i />
-            <span>
-              {draft.ai_mode === "FALLBACK"
-                ? "Offline match · non-AI"
-                : draft.ai_mode === "ALIAS_ONLY"
-                  ? "Customer memory · non-AI"
-                  : draft.ai_mode === "MIXED"
-                    ? "Mixed extraction sources"
-                    : "AI extraction"}
+            <span title={service.mode === "demo" ? "Browser-only catalogue matching. No model or backend was called." : EXTRACTION[draft.ai_mode]?.description}>
+              {service.mode === "demo" ? "Local demo · non-AI" : `${service.fixture ? "Fixture · " : ""}${EXTRACTION[draft.ai_mode]?.label ?? "Extraction mode unavailable"}`}
             </span>
           </div>
         </div>
@@ -564,6 +563,17 @@ export function OrderDetail({
             The latest order is loaded and your edits are kept. Review all
             changes, then save again.
           </p>
+        </div>
+      )}
+      {unresolved.length > 0 && (
+        <div className="review-attention-link">
+          <AlertCircle size={18} aria-hidden="true" />
+          <span>{unresolved.length} {unresolved.length === 1 ? "check blocks" : "checks block"} approval</span>
+          <button className="text-button" onClick={() => {
+            const panel = document.getElementById("approval-checks");
+            panel?.focus({ preventScroll: true });
+            panel?.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+          }}>Review checks <ArrowRight size={14} /></button>
         </div>
       )}
       <fieldset className="review-fields" disabled={busy}>
@@ -960,9 +970,9 @@ export function OrderDetail({
               )}
           </div>
           <aside className="review-rail">
-            <section className="panel checks-panel" id="approval-checks" tabIndex={-1}>
-              <div className="rail-title">
-                Approval checks <ShieldCheck size={15} />
+            <section className={`panel checks-panel ${unresolved.length ? "has-blockers" : ""}`} id="approval-checks" tabIndex={-1} aria-label="Approval checks">
+              <div className="checks-heading">
+                <ShieldCheck size={18} aria-hidden="true" /><h2>Approval checks</h2>
               </div>
               <div
                 className={`check-summary ${unresolved.length ? "amber-text" : "mint-text"}`}
@@ -976,6 +986,7 @@ export function OrderDetail({
                   </>
                 )}
               </div>
+              {unresolved.length > 0 && <p className="checks-instruction">Resolve these checks before approval.</p>}
               {draft.issues.map((issue) => (
                 <div
                   className={`check-item ${issue.resolved ? "resolved" : ""}`}
@@ -1035,6 +1046,8 @@ export function OrderDetail({
                         busy={busy}
                         onResolve={saveResolution}
                         onDiscard={(reason) => {
+                          if (edit) { notify("Save or reset your changes before closing this draft."); return; }
+                          if (!service.discard || !draft.allowed_actions.includes("CANCEL_DRAFT")) { notify("Your session cannot close this draft. Copy a clarification question instead."); return; }
                           setNote(reason);
                           setDiscard(true);
                         }}
@@ -1075,9 +1088,7 @@ export function OrderDetail({
                 <CopyButton
                   text={draft.clarification_draft.message}
                   onCopy={notify}
-                  onCopied={() =>
-                    service.clarificationCopied?.(id, draft.version)
-                  }
+                  onCopied={async () => { await service.clarificationCopied?.(id, draft.version); changed(); }}
                   label="Copy question"
                 />
               </section>
@@ -1120,7 +1131,8 @@ export function OrderDetail({
                 <button
                   className="icon-button discard-button"
                   aria-label="Discard order draft"
-                  disabled={busy}
+                  disabled={busy || edit}
+                  title={edit ? "Save or reset edits before closing this draft" : "Close draft with a reason"}
                   onClick={() => setDiscard(true)}
                 >
                   <Trash2 size={16} />
@@ -1283,18 +1295,21 @@ export function OrderDetail({
               className="button danger"
               disabled={busy || !note.trim()}
               onClick={async () => {
+                if (busy) return;
+                const current = beginRequest();
                 setBusy(true);
                 try {
                   await service.discard!(id, draft.version, note);
+                  changed();
+                  if (!current()) return;
                   setDiscard(false);
                   setDirty(false);
-                  changed();
                   resource.refresh();
                   notify("Draft closed. Its activity record is preserved.");
                 } catch (e) {
-                  setError(e);
+                  if (current()) setError(e);
                 } finally {
-                  setBusy(false);
+                  if (current()) setBusy(false);
                 }
               }}
             >
@@ -1353,18 +1368,10 @@ function SameDayOrderEditor({
   );
 
   return (
-    <div className="condition-editor">
-      <div className="condition-title">
-        <Pill tone="amber">Same-day order</Pill>
-        {resolution && (
-          <span className="mint-text">
-            <Check size={13} /> Decision ready to save
-          </span>
-        )}
-      </div>
+    <div className="condition-editor same-day-editor">
+      {resolution && <p className="same-day-saved mint-text"><Check size={13} /> Decision ready to save</p>}
       <p className="micro-copy">
-        This customer already has a delivery order today. Choose how this draft
-        should be handled before saving.
+        Select the original DO to link a separate add-on.
       </p>
       <label className="field-label">
         Original DO

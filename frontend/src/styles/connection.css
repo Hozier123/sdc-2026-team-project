@@ -1,0 +1,49 @@
+/* Workflow entry and recovery follow the existing workbench tokens. */
+.workflow-connection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border, #26313d);
+  border-radius: 8px;
+}
+.connection-summary { min-width: 0; }
+.connection-mode { font-size: 12px; color: var(--amber, #e6b979); }
+.is-live .connection-mode { color: var(--mint, #94e3bd); }
+.connection-summary p { margin: 4px 0 0; font-size: 13px; line-height: 1.6; color: var(--muted); overflow-wrap: anywhere; }
+.connection-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
+.session-recovery { padding: 32px; max-width: 720px; }
+.session-recovery h1 { margin-top: 16px; }
+.session-recovery > p { line-height: 1.7; margin: 12px 0 24px; }
+.permission-facts { margin: 20px 0; }
+.permission-facts > div { display: grid; grid-template-columns: 100px 1fr; gap: 16px; margin: 10px 0; }
+.permission-facts dt { color: var(--muted); }
+.permission-facts dd { margin: 0; overflow-wrap: anywhere; }
+.activity-filter-summary { display: flex; justify-content: space-between; gap: 12px; padding: 12px 24px; font-size: 13px; overflow-wrap: anywhere; }
+.activity-event .activity-customer { overflow-wrap: anywhere; text-align: left; }
+
+/* One readable text scale for this dialog, including form labels and values. */
+.app-shell .connection-modal :is(.modal-copy, .permission-note p, .form-stack > label, .modal-actions .button) {
+  font-size: var(--type-body);
+  line-height: 1.65;
+}
+.app-shell .connection-modal .form-stack > label { color: var(--text); }
+.app-shell .connection-modal .form-stack input {
+  min-height: 46px;
+  font-size: var(--type-input);
+  color: var(--text);
+}
+.app-shell .connection-modal .form-stack input::placeholder { color: var(--text-placeholder); }
+.app-shell .connection-modal .permission-note p { color: var(--muted); }
+.app-shell .connection-modal .pill { font-size: 13px; }
+.app-shell .connection-modal .modal-actions { flex-wrap: wrap; }
+@media (max-width: 767px) {
+  .workflow-connection { flex-direction: column; align-items: stretch; padding: 14px 16px; gap: 10px; margin-bottom: 20px; }
+  .workflow-connection .connection-actions { justify-content: space-between; }
+  .connection-actions .button { min-height: 44px; }
+  .session-recovery { padding: 24px 20px; }
+  .activity-filter-summary { padding: 12px 18px; flex-wrap: wrap; }
+}

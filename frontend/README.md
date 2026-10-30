@@ -106,3 +106,11 @@ The recorded independent frontend checkpoint passed 55 automated tests, generate
 - [Desktop overview](docs/previews/homepage-desktop.png)
 - [Mobile overview](docs/previews/homepage-mobile.png)
 - [Introduction · 70%](docs/previews/intro-70-percent.png)
+
+## Frontend upgrade (2026-10-30)
+
+Version 1.5.0 adds explicit Demo/API connection status, memory-only sessions with reconnect after reload, per-order extraction mode, linked activity views, and warehouse response redaction checks. The review form and delivery document now have improved readability; only receipt content uses Times New Roman, preserving the logo.
+
+Use Node 22 (`.nvmrc`), then `npm ci`, `npm test`, and `npm run build`. Public production defaults in `.env.production` target `/sdc-2026-team-project/` and the public API. Override `VITE_PAGES_BASE` for other hosting paths. Session tokens must never be placed in VITE variables or committed env files.
+
+See [integration and compatibility checks](docs/FRONTEND_UPGRADE_INTEGRATION_2026-10-30.md) for the verification scope and remaining live acceptance. Source submission does not publish the production site.

@@ -1,0 +1,98 @@
+/* Product review owns field readability and the action rail at every breakpoint. */
+@media screen {
+  .app-shell .review-fields { font-variant-numeric: tabular-nums; }
+  .app-shell .review-layout {
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 28%, 380px);
+    gap: 24px;
+  }
+  .app-shell .products-panel .panel-heading h2 {
+    color: var(--text);
+    font-size: 24px;
+    line-height: 1.3;
+  }
+  .app-shell .products-panel .product-topline h3 {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .app-shell .products-panel .line-fields > label {
+    color: var(--text);
+    font-size: var(--type-body);
+    line-height: 1.5;
+  }
+  .app-shell .products-panel .line-fields :is(input, select, .readonly-field) {
+    color: var(--text);
+    font-size: var(--type-input);
+    font-variant-numeric: tabular-nums;
+  }
+  .app-shell .products-panel .line-fields :is(input, select) { min-height: 44px; }
+  .app-shell .products-panel .price-details summary {
+    min-height: 44px;
+    gap: 8px;
+    color: var(--text);
+    font-size: var(--type-body);
+    line-height: 1.5;
+  }
+  .app-shell .products-panel .price-details summary > svg { width: 16px; height: 16px; }
+  .app-shell .products-panel .price-details[open] summary { color: var(--text); }
+  .app-shell .products-panel .price-adjustment { grid-template-columns: minmax(150px, 0.7fr) minmax(0, 2fr); }
+  .app-shell .products-panel .price-adjustment label {
+    font-size: var(--type-body);
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .app-shell .products-panel .price-adjustment input {
+    font-size: var(--type-input);
+    line-height: 1.5;
+    min-height: 46px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .app-shell .products-panel .price-adjustment input::placeholder { color: var(--text-placeholder); }
+  .app-shell .products-panel .price-details .micro-copy { font-size: 13px; color: var(--muted); }
+
+  .app-shell .review-rail { gap: 20px; align-content: start; }
+  .app-shell .review-rail :is(.checks-panel, .clarification-card, .escalation-card) {
+    padding: 22px;
+    background: var(--panel);
+  }
+  .app-shell .review-rail .checks-panel { scroll-margin-top: 100px; }
+  .app-shell .review-rail .checks-panel.has-blockers { border-top: 3px solid var(--amber); }
+  .app-shell .checks-heading { display: flex; align-items: center; gap: 10px; }
+  .app-shell .checks-heading > svg { color: var(--amber); flex-shrink: 0; }
+  .app-shell .checks-heading h2 { margin: 0; color: var(--text); font-family: var(--font-ui); font-size: 18px; font-weight: 400; line-height: 1.4; }
+  .app-shell .checks-panel .check-summary { padding: 16px 0; margin: 0; border: 0; }
+  .app-shell .checks-panel .pending-checks { font-size: 14px; }
+  .app-shell .checks-panel .pending-checks > strong { font-size: 18px; }
+  .app-shell .checks-instruction { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+  .app-shell .checks-panel .check-item { display: block; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .app-shell .checks-panel .check-item-icon { float: left; width: 18px; height: 20px; margin: 0 8px 0 0; background: none; border: 0; border-radius: 0; color: var(--amber); }
+  .app-shell .checks-panel .check-item-icon.mint { color: var(--mint); }
+  .app-shell .checks-panel .check-owner { margin: 0 0 10px; color: var(--amber); font-size: 13px; line-height: 20px; }
+  .app-shell .checks-panel .check-item strong { clear: both; color: var(--text); font-size: 16px; line-height: 1.5; }
+  .app-shell .checks-panel .check-item p { color: var(--muted); font-size: 14px; line-height: 1.65; }
+  .app-shell .checks-panel .check-item.resolved .check-owner { color: var(--mint); }
+  .app-shell .checks-panel .same-day-editor { margin-top: 16px; padding: 16px 0 0; }
+  .app-shell .same-day-editor .field-label { font-size: 14px; line-height: 1.5; color: var(--text); }
+  .app-shell .same-day-editor select { min-height: 46px; font-size: 16px; }
+  .app-shell .same-day-editor .action-buttons { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .app-shell .same-day-editor .action-buttons .button { width: 100%; min-height: 44px; font-size: 14px; line-height: 1.5; }
+  .app-shell .same-day-editor .button:disabled { opacity: 1; color: var(--muted); background: var(--panel2); border-color: var(--border); }
+  .app-shell .same-day-editor .same-day-saved { display: flex; align-items: center; gap: 6px; }
+  .app-shell .review-rail .clarification-card h3 { font-size: 22px; line-height: 1.3; }
+  .app-shell .review-attention-link { display: none; }
+}
+
+@media screen and (max-width: 1100px) {
+  .app-shell .review-layout { grid-template-columns: minmax(0, 1fr); }
+  .app-shell .review-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-shell .review-attention-link { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 12px 16px; border: 1px solid var(--status-amber-border); border-radius: 8px; background: var(--status-amber-bg); color: var(--amber); font-size: 14px; line-height: 1.5; }
+  .app-shell .review-attention-link .text-button { margin-left: auto; color: var(--amber); }
+}
+@media screen and (max-width: 640px) {
+  .app-shell .review-rail { grid-template-columns: minmax(0, 1fr); }
+  .app-shell .products-panel .price-adjustment { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .app-shell .products-panel .line-fields { grid-template-columns: minmax(66px, 0.7fr) minmax(48px, 0.6fr) minmax(0, 1fr); gap: 16px 12px; }
+  .app-shell .products-panel .line-fields .readonly-field { white-space: normal; overflow-wrap: anywhere; }
+  .app-shell .review-rail :is(.checks-panel, .clarification-card, .escalation-card) { padding: 20px; }
+}

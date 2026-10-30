@@ -1908,7 +1908,7 @@ a {
 }
 .clarification-card {
   padding: 21px;
-  background: linear-gradient(140deg, var(--tone-17262333), transparent), var(--tone-111b22);
+  background: var(--panel);
 }
 .clarification-card .rail-title {
   color: var(--tone-94b1a5);
@@ -2007,7 +2007,6 @@ a {
   border: 1px solid var(--tone-3b5051);
   background: var(--tone-132126ed);
   backdrop-filter: blur(20px);
-  box-shadow: 0 7px 35px var(--tone-00000077);
   border-radius: 9px;
   padding: 18px 20px;
   margin-top: 27px;

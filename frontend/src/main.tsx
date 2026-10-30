@@ -14,6 +14,9 @@ import "./styles/motion.css";
 import "./tailwind.css";
 import "./styles/theme.css";
 import "./styles/theme-transition.css";
+import "./styles/connection.css";
+import "./styles/review.css";
+import "./styles/receipt.css";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
