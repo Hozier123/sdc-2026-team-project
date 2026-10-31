@@ -341,7 +341,7 @@ export function OrderDetail({
   const [inputs, setInputs] = useState<LineInput[]>([]);
   const [manualLines, setManualLines] = useState<ManualLineInput[]>([]);
   const [catalogChoices, setCatalogChoices] = useState<Record<string, CatalogProduct>>({});
-  const [pickerTarget, setPickerTarget] = useState<{ kind: "existing"; lineId: string } | { kind: "new" } | null>(null);
+  const [pickerTarget, setPickerTarget] = useState<{ kind: "existing"; lineId: string; view: "matched" | "all" } | { kind: "new" } | null>(null);
   const [deleted, setDeleted] = useState<string[]>([]);
   const [resolutions, setResolutions] = useState<Resolution[]>([]);
   const [edit, setEdit] = useState(false);
@@ -778,13 +778,24 @@ export function OrderDetail({
                             ))}
                           </div>
                         )}
-                        {editable && service.mode === "live" && !service.fixture && line.candidate_skus.length === 0 && (
+                        {editable && service.mode === "live" && !service.fixture &&
+                          (line.candidate_skus.length === 0 || (line.candidate_skus.length > 1 && !input.sku_id)) && (
                           <div className="manual-recovery-entry">
-                            <button type="button" className="button secondary small" disabled={busy}
-                              onClick={() => setPickerTarget({ kind: "existing", lineId: line.line_id })}>
-                              {input.sku_id ? "Change product from directory" : "Choose from product directory"}
-                            </button>
-                            <small>Only product identity and unit appear here. Save to check price and stock.</small>
+                            {!input.sku_id && (line.source_span || line.candidate_skus.length > 1) && (
+                              <button type="button" className="button secondary small" disabled={busy}
+                                onClick={() => setPickerTarget({ kind: "existing", lineId: line.line_id, view: "matched" })}>
+                                Review matching options
+                              </button>
+                            )}
+                            {line.candidate_skus.length === 0 && (
+                              <>
+                                <button type="button" className="button secondary small" disabled={busy}
+                                  onClick={() => setPickerTarget({ kind: "existing", lineId: line.line_id, view: "all" })}>
+                                  {input.sku_id ? "Change product from directory" : "Choose from product directory"}
+                                </button>
+                                <small>Only product identity and unit appear here. Save to check price and stock.</small>
+                              </>
+                            )}
                           </div>
                         )}
                         <div className="line-fields">
@@ -1475,6 +1486,9 @@ export function OrderDetail({
       )}
       {pickerTarget && editable && service.mode === "live" && !service.fixture && (
         <ManualCatalogPicker service={service} onSelect={chooseFromCatalog}
+          initialView={pickerTarget.kind === "existing" ? pickerTarget.view : "all"}
+          sourceSpan={pickerTarget.kind === "existing" ? draft.lines.find((line) => line.line_id === pickerTarget.lineId)?.source_span : undefined}
+          candidateSkuIds={pickerTarget.kind === "existing" ? draft.lines.find((line) => line.line_id === pickerTarget.lineId)?.candidate_skus.map((candidate) => candidate.sku_id) : undefined}
           onClose={() => setPickerTarget(null)} />
       )}
     </>

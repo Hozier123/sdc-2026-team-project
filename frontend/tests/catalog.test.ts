@@ -4,8 +4,9 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { HttpService } from "../src/lib/api";
 import { DemoService } from "../src/lib/demo";
-import { catalogNotice, type CatalogProductsResponse } from "../src/lib/catalog";
+import { catalogNotice, matchingCatalogProducts, type CatalogProductsResponse } from "../src/lib/catalog";
 import { CatalogResult } from "../src/components/CatalogPage";
+import { CatalogChoices } from "../src/components/ManualCatalogPicker";
 import { ApiError, type Service } from "../src/lib/types";
 import { validRoute } from "../src/lib/review";
 
@@ -69,4 +70,81 @@ test("empty directory is complete and local demo is clearly labelled", async () 
 test("catalog has an explicit route without allowing arbitrary nested paths", () => {
   assert.equal(validRoute("catalog"), true);
   assert.equal(validRoute("catalog/edit"), false);
+});
+
+test("contextual choices show all egg grades and packs without silently selecting one", () => {
+  const eggs = ["A", "B", "C"].flatMap((grade) => ["papan", "ctn"].map((unit) => ({
+    sku_id: `SKU_TELUR_${grade}_${unit}`,
+    display_name: "Telur 鸡蛋",
+    pack_size: unit === "papan" ? "30枚" : "12托×30枚",
+    grade,
+    base_unit: unit,
+  })));
+  const chicken = { sku_id: "SKU_AYAM", display_name: "Ayam 鸡肉", pack_size: "10kg", grade: "A", base_unit: "ctn" };
+  const directory = [chicken, ...eggs];
+  const result = matchingCatalogProducts(directory, "来一个鸡蛋");
+  assert.equal(result.phrase, "鸡蛋");
+  assert.deepEqual(result.items, eggs);
+  const markup = renderToStaticMarkup(createElement(CatalogChoices, {
+    result: { items: directory, limit: 100, truncated: false },
+    items: result.items, query: "", onSelect: () => {},
+  }));
+  assert.match(markup, /Choose Telur 鸡蛋, 30枚, grade A, papan/);
+  assert.doesNotMatch(markup, /Ayam 鸡肉/);
+  assert.deepEqual(matchingCatalogProducts(directory, "来一个鸡").items, []);
+  assert.deepEqual(matchingCatalogProducts(directory, "来一个鸡蛋", [chicken.sku_id]).items, [chicken]);
+});
+
+test("contextual matching distinguishes shared product words across two tenant catalogues", () => {
+  const make = (name: string, sku: string) => ({
+    sku_id: sku, display_name: name, pack_size: "1kg", grade: null, base_unit: "bag",
+  });
+  const food = [
+    make("Milo 美禄", "MILO_1"), make("Milo 美禄", "MILO_2"),
+    make("Tepung gandum 面粉", "FLOUR_1"), make("Tepung gandum 面粉", "FLOUR_2"),
+    make("Tepung jagung 玉米淀粉", "CORN"),
+    make("Kacang merah 红豆", "RED_BEAN"), make("Kacang dal 扁豆", "DAL"),
+    make("Sos tomato 番茄酱", "TOMATO"), make("Sos cili 辣椒酱", "CHILI"),
+  ];
+  const supplies = [
+    make("Liquid soap", "SOAP_1"), make("Liquid soap", "SOAP_5"),
+    make("Dishwashing liquid", "DISH"),
+    make("Garbage bag", "BAG_S"), make("Garbage bag", "BAG_M"), make("Garbage bag", "BAG_L"),
+    make("Gloves", "GLOVE_S"), make("Gloves", "GLOVE_M"), make("Gloves", "GLOVE_L"),
+  ];
+  for (const [directory, message, expected] of [
+    [food, "美禄要两包", ["MILO_1", "MILO_2"]],
+    [food, "Milo 2 bags", ["MILO_1", "MILO_2"]],
+    [food, "Tepung gandum 5 bag", ["FLOUR_1", "FLOUR_2"]],
+    [food, "请给我 Tepung gandum 面粉 2 bag, terima kasih", ["FLOUR_1", "FLOUR_2"]],
+    [food, "Tepung jagung 1 bag", ["CORN"]],
+    [food, "Kacang merah 2 bag", ["RED_BEAN"]],
+    [food, "Kacang dal 2 bag", ["DAL"]],
+    [food, "Sos cili 1 btl", ["CHILI"]],
+    [supplies, "Liquid soap 2 btl", ["SOAP_1", "SOAP_5"]],
+    [supplies, "请给我 Liquid soap 2 btl untuk kedai", ["SOAP_1", "SOAP_5"]],
+    [supplies, "Dishwashing liquid 1 btl", ["DISH"]],
+    [supplies, "Garbage bag 2 pack", ["BAG_S", "BAG_M", "BAG_L"]],
+    [supplies, "Gloves 1 box", ["GLOVE_S", "GLOVE_M", "GLOVE_L"]],
+  ] as const) {
+    assert.deepEqual(
+      matchingCatalogProducts(directory, message).items.map((item) => item.sku_id),
+      expected,
+      message,
+    );
+  }
+  assert.deepEqual(matchingCatalogProducts(food, "Tepung 1 bag").items.map((item) => item.sku_id),
+    ["FLOUR_1", "FLOUR_2", "CORN"]);
+  assert.deepEqual(matchingCatalogProducts(food, "Milotest 2 bag").items, []);
+});
+
+test("backend candidate IDs provide variants for aliases absent from directory display names", () => {
+  const items = [
+    { sku_id: "SOAP_1", display_name: "Liquid soap", pack_size: "1L", grade: null, base_unit: "btl" },
+    { sku_id: "SOAP_5", display_name: "Liquid soap", pack_size: "5L", grade: null, base_unit: "btl" },
+    { sku_id: "DISH", display_name: "Dishwashing liquid", pack_size: "1L", grade: null, base_unit: "btl" },
+  ];
+  assert.deepEqual(matchingCatalogProducts(items, "sabun cecair", ["SOAP_1", "SOAP_5"]).items,
+    items.slice(0, 2));
+  assert.deepEqual(matchingCatalogProducts(items, "清洁液").items, []);
 });
