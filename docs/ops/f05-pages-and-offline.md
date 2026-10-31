@@ -1,5 +1,10 @@
 # F05 Pages and offline runbook
 
+Status on 2026-10-31: the four first-use trials were cancelled because no
+participants were available, and no new Pages build was published under F05.
+The already verified public v1.5.1 remains the demo version. The steps below
+are a future release procedure, not a claim of full F05 acceptance.
+
 The production frontend is a GitHub Pages project site. Its base path is
 `/sdc-2026-team-project/` and its public API is
 `https://kiraorder-api.replit.app/api/v1`. Build with Node 22 from a reviewed,
