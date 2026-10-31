@@ -31,12 +31,15 @@ import {
   type Issue,
   type Line,
   type LineInput,
+  type ManualLineInput,
   type Me,
   type Resolution,
   type Service,
 } from "../lib/types";
 import { useRequestScope, useResource } from "../lib/hooks";
+import type { CatalogProduct } from "../lib/catalog";
 import { EXTRACTION } from "../lib/extraction";
+import { clearPriceResolutions, createManualLine, selectCatalogProduct } from "../lib/manualRecovery";
 import {
   assertQuantities,
   invalidQuantities,
@@ -60,6 +63,7 @@ import {
 import type { Navigate, Notify } from "../lib/types";
 import { PageHeading } from "./ui";
 import { CustomerSelect, LanguageSelect, UnitSelect } from "./FormSelect";
+import { ManualCatalogPicker } from "./ManualCatalogPicker";
 interface PageProps {
   service: Service;
   navigate: Navigate;
@@ -316,6 +320,9 @@ export function OrderDetail({
 }: PageProps & { id: string; me: Me }) {
   const resource = useResource(() => service.draft(id), [service, id]);
   const [inputs, setInputs] = useState<LineInput[]>([]);
+  const [manualLines, setManualLines] = useState<ManualLineInput[]>([]);
+  const [catalogChoices, setCatalogChoices] = useState<Record<string, CatalogProduct>>({});
+  const [pickerTarget, setPickerTarget] = useState<{ kind: "existing"; lineId: string } | { kind: "new" } | null>(null);
   const [deleted, setDeleted] = useState<string[]>([]);
   const [resolutions, setResolutions] = useState<Resolution[]>([]);
   const [edit, setEdit] = useState(false);
@@ -327,8 +334,12 @@ export function OrderDetail({
   const [conflictOpen, setConflictOpen] = useState(false);
   const [conflictError, setConflictError] = useState<unknown>();
   const [recovered, setRecovered] = useState(false);
+  const [reconcileRequired, setReconcileRequired] = useState(false);
+  const [conditionEpoch, setConditionEpoch] = useState(0);
   const retained = useRef<{
     inputs: LineInput[];
+    manualLines: ManualLineInput[];
+    catalogChoices: Record<string, CatalogProduct>;
     deleted: string[];
     resolutions: Resolution[];
   } | null>(null);
@@ -339,6 +350,8 @@ export function OrderDetail({
       const edits = retained.current;
       retained.current = null;
       setInputs(edits?.inputs ?? draft.lines.map(toInput));
+      setManualLines(edits?.manualLines ?? []);
+      setCatalogChoices(edits?.catalogChoices ?? {});
       setDeleted(edits?.deleted ?? []);
       setResolutions(edits?.resolutions ?? []);
       setEdit(!!edits);
@@ -358,17 +371,31 @@ export function OrderDetail({
     );
   };
   const choose = (l: Line, c: Candidate) => {
-    update(l.line_id, {
-      sku_id: c.sku_id,
-      family_id: c.family_id,
-      pack_size: c.pack_size,
-      grade: c.grade ?? null,
-      uom: c.base_unit,
-      confirmed_qty:
-        inputs.find((i) => i.line_id === l.line_id)?.confirmed_qty ??
-        l.requested_qty,
-      match_source: "MANUAL_SELECTED",
-    });
+    const input = inputs.find((item) => item.line_id === l.line_id);
+    if (!input) return;
+    update(l.line_id, selectCatalogProduct(input, {
+      sku_id: c.sku_id, display_name: c.display_name, pack_size: c.pack_size,
+      grade: c.grade ?? null, base_unit: c.base_unit,
+    }));
+    setResolutions((old) => clearPriceResolutions(old, draft?.conditions ?? []));
+    setConditionEpoch((old) => old + 1);
+  };
+  const chooseFromCatalog = (product: CatalogProduct) => {
+    if (busy || reconcileRequired || !pickerTarget || !draft?.allowed_actions.includes("EDIT_DRAFT")) return;
+    if (pickerTarget.kind === "existing") {
+      const input = inputs.find((item) => item.line_id === pickerTarget.lineId);
+      if (!input) return;
+      update(pickerTarget.lineId, selectCatalogProduct(input, product));
+      setCatalogChoices((old) => ({ ...old, [pickerTarget.lineId]: product }));
+    } else {
+      const ref = `manual-${crypto.randomUUID()}`;
+      mark();
+      setManualLines((old) => [...old, createManualLine(product, ref)]);
+      setCatalogChoices((old) => ({ ...old, [ref]: product }));
+    }
+    setResolutions((old) => clearPriceResolutions(old, draft.conditions));
+    setConditionEpoch((old) => old + 1);
+    setPickerTarget(null);
   };
   const saveResolution = (r: Resolution) => {
     mark();
@@ -390,11 +417,15 @@ export function OrderDetail({
     }
   };
   async function save() {
-    if (busy) return;
+    if (busy || reconcileRequired) return;
+    const activeInputs = inputs.filter((line) => !deleted.includes(line.line_id));
+    const lines = [...activeInputs, ...manualLines];
+    if (!lines.length) {
+      setError(new ApiError("EMPTY_ORDER", "Keep at least one product in the order."));
+      return;
+    }
     try {
-      assertQuantities(
-        inputs.filter((line) => !deleted.includes(line.line_id)),
-      );
+      assertQuantities(lines);
     } catch (err) {
       setError(err);
       return;
@@ -405,21 +436,31 @@ export function OrderDetail({
     try {
       const d = await service.save(id, {
         expected_version: draft!.version,
-        lines: inputs.filter((l) => !deleted.includes(l.line_id)),
+        lines,
         deleted_line_ids: deleted,
         resolutions,
       });
       changed();
       if (!current()) return;
       resource.setValue(d);
+      setInputs(d.lines.map(toInput));
+      setManualLines([]);
+      setCatalogChoices({});
+      setDeleted([]);
+      setResolutions([]);
       setRecovered(false);
+      setReconcileRequired(false);
       setDirty(false);
       setEdit(false);
       notify(
         `Version ${d.version} saved. ${d.blocking_issues.length ? "Review the remaining checks." : "All blocking checks are clear."}`,
       );
     } catch (e) {
-      if (current()) handleError(e);
+      if (current()) {
+        if (!(e instanceof ApiError) || ["TIMEOUT", "NETWORK_ERROR", "INVALID_RESPONSE", "PENDING_OWNER_APPROVAL", "DRAFT_REJECTED"].includes(e.error_code))
+          setReconcileRequired(true);
+        handleError(e);
+      }
     } finally {
       if (current()) setBusy(false);
     }
@@ -457,11 +498,15 @@ export function OrderDetail({
     "APPROVE_AND_GENERATE_DO",
   );
   const ownerAction = draft.allowed_actions.includes("SUBMIT_FOR_OWNER");
-  const savedCount = draft.lines.length - deleted.length;
+  const savedCount = draft.lines.length - deleted.length + manualLines.length;
   const invalid = invalidQuantities(
-    inputs.filter((line) => !deleted.includes(line.line_id)),
+    [...inputs.filter((line) => !deleted.includes(line.line_id)), ...manualLines],
+  );
+  const productMustBeSavedFirst = manualLines.length > 0 || inputs.some((input) =>
+    draft.lines.some((line) => line.line_id === input.line_id && line.sku_id !== input.sku_id),
   );
   const canApprove = (approveAction || ownerAction) && !edit;
+  const checksNeedRefresh = edit || !draft.lines.length || !draft.totals.is_complete;
   return (
     <>
       <button className="back-button" onClick={() => navigate("inbox")}>
@@ -576,7 +621,7 @@ export function OrderDetail({
           }}>Review checks <ArrowRight size={14} /></button>
         </div>
       )}
-      <fieldset className="review-fields" disabled={busy}>
+      <fieldset className="review-fields" disabled={busy || reconcileRequired}>
         <div className="review-layout">
           <div className="review-main">
             <section className="panel original-message">
@@ -615,6 +660,12 @@ export function OrderDetail({
                     const selected = line.candidate_skus.find(
                       (c) => c.sku_id === input.sku_id,
                     );
+                    const manualProduct = catalogChoices[line.line_id]?.sku_id === input.sku_id
+                      ? catalogChoices[line.line_id] : undefined;
+                    const changedSku = input.sku_id !== line.sku_id;
+                    const invalidExisting = invalid.some(
+                      (item) => "line_id" in item && item.line_id === line.line_id,
+                    );
                     const issue = draft.issues.find(
                       (i) =>
                         i.line_id === line.line_id && i.blocking && !i.resolved,
@@ -632,11 +683,12 @@ export function OrderDetail({
                           </span>
                           <div>
                             <h3>
-                              {selected?.display_name ??
+                              {manualProduct?.display_name ?? selected?.display_name ??
                                 line.description ??
                                 "Unrecognized item"}
                             </h3>
-                            <p>“{line.source_span}”</p>
+                            {line.source_span && <p>“{line.source_span}”</p>}
+                            {manualProduct && changedSku && <p>{manualProduct.pack_size ?? "No pack size"}{manualProduct.grade ? ` · Grade ${manualProduct.grade}` : ""} · {manualProduct.base_unit}</p>}
                           </div>
                           {issue && (
                             <span className="check-label">
@@ -659,6 +711,8 @@ export function OrderDetail({
                               onClick={() => {
                                 mark();
                                 setDeleted((old) => [...old, line.line_id]);
+                                setResolutions((old) => clearPriceResolutions(old, draft.conditions));
+                                setConditionEpoch((old) => old + 1);
                               }}
                             >
                               <Trash2 size={15} />
@@ -695,6 +749,15 @@ export function OrderDetail({
                             ))}
                           </div>
                         )}
+                        {editable && service.mode === "live" && !service.fixture && line.candidate_skus.length === 0 && (
+                          <div className="manual-recovery-entry">
+                            <button type="button" className="button secondary small" disabled={busy}
+                              onClick={() => setPickerTarget({ kind: "existing", lineId: line.line_id })}>
+                              {input.sku_id ? "Change product from directory" : "Choose from product directory"}
+                            </button>
+                            <small>Only product identity and unit appear here. Save to check price and stock.</small>
+                          </div>
+                        )}
                         <div className="line-fields">
                           <label>
                             Quantity
@@ -711,14 +774,10 @@ export function OrderDetail({
                               }
                               aria-label={`Quantity for ${line.description}`}
                               aria-invalid={
-                                invalid.some(
-                                  (item) => item.line_id === line.line_id,
-                                ) || undefined
+                                invalidExisting || undefined
                               }
                               aria-describedby={
-                                invalid.some(
-                                  (item) => item.line_id === line.line_id,
-                                )
+                                invalidExisting
                                   ? `quantity-error-${line.line_id}`
                                   : undefined
                               }
@@ -731,9 +790,7 @@ export function OrderDetail({
                                 })
                               }
                             />
-                            {invalid.some(
-                              (item) => item.line_id === line.line_id,
-                            ) && (
+                            {invalidExisting && (
                               <small
                                 className="inline-error"
                                 id={`quantity-error-${line.line_id}`}
@@ -745,7 +802,7 @@ export function OrderDetail({
                           </label>
                           <label>
                             Unit
-                            {editable && !line.uom ? (
+                            {editable && !line.uom && !input.sku_id ? (
                               <UnitSelect
                                 label={`Unit for ${line.description}`}
                                 value={input.uom ?? ""}
@@ -788,19 +845,13 @@ export function OrderDetail({
                             <span
                               className={`readonly-field ${issue?.code === "INSUFFICIENT_STOCK" ? "amber-text" : ""}`}
                             >
-                              {selected?.available_qty ??
-                                line.available_qty ??
-                                "—"}{" "}
-                              {input.uom ?? ""}
+                              {changedSku ? "Save to check" : `${selected?.available_qty ?? line.available_qty ?? "—"} ${input.uom ?? ""}`}
                             </span>
                           </label>
                           <label>
                             Tier unit price
                             <span className="readonly-field">
-                              {money(
-                                selected?.tier_unit_price ??
-                                  line.tier_unit_price,
-                              )}
+                              {changedSku ? "Save to check" : money(selected?.tier_unit_price ?? line.tier_unit_price)}
                             </span>
                           </label>
                           <label className="line-subtotal">
@@ -812,7 +863,7 @@ export function OrderDetail({
                             </span>
                           </label>
                         </div>
-                        {editable && input.sku_id && (
+                        {editable && input.sku_id && !changedSku && (
                           <details className="price-details">
                             <summary>
                               Price adjustment <ChevronDown size={12} />
@@ -866,7 +917,7 @@ export function OrderDetail({
                         )}
                         {editable &&
                           input.match_source === "MANUAL_SELECTED" &&
-                          input.sku_id && (
+                          input.sku_id && !changedSku && (
                             <label className="checkbox-label">
                               <input
                                 type="checkbox"
@@ -891,7 +942,52 @@ export function OrderDetail({
                       </article>
                     );
                   })}
+                {manualLines.map((line, index) => {
+                  const product = catalogChoices[line.client_line_ref];
+                  const invalidNew = invalid.some((item) => "client_line_ref" in item && item.client_line_ref === line.client_line_ref);
+                  return (
+                    <article className="product-row manual-new-product" key={line.client_line_ref}>
+                      <div className="product-topline">
+                        <span className="line-number">{String(draft.lines.length + index + 1).padStart(2, "0")}</span>
+                        <div>
+                          <h3>{product?.display_name ?? line.sku_id}</h3>
+                          <p>Manually added · {product?.pack_size ?? "No pack size"}{product?.grade ? ` · Grade ${product.grade}` : ""}</p>
+                        </div>
+                        <button type="button" className="icon-button delete-line" title="Remove unsaved product"
+                          aria-label={`Remove unsaved ${product?.display_name ?? line.sku_id}`} disabled={busy}
+                          onClick={() => { mark(); setManualLines((old) => old.filter((item) => item.client_line_ref !== line.client_line_ref)); }}>
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                      <div className="line-fields">
+                        <label>Confirmed quantity
+                          <input type="number" min={1} max={100000} step={1} disabled={busy}
+                            value={Number.isNaN(line.confirmed_qty) ? "" : line.confirmed_qty}
+                            aria-invalid={invalidNew || undefined}
+                            aria-describedby={invalidNew ? `quantity-error-${line.client_line_ref}` : undefined}
+                            onChange={(event) => { mark(); setManualLines((old) => old.map((item) => item.client_line_ref === line.client_line_ref ? { ...item, confirmed_qty: event.target.value === "" ? Number.NaN : Number(event.target.value) } : item)); }} />
+                          {invalidNew && <small className="inline-error" id={`quantity-error-${line.client_line_ref}`} role="alert">Enter a whole quantity from 1 to 100,000.</small>}
+                        </label>
+                        <label>Unit<span className="readonly-field">{line.uom}</span></label>
+                        <label>Available stock<span className="readonly-field">Save to check</span></label>
+                        <label>Tier unit price<span className="readonly-field">Save to check</span></label>
+                        <label className="line-subtotal">Subtotal<span className="readonly-field">Save to check</span></label>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
+              {editable && service.mode === "live" && !service.fixture && (
+                <div className="manual-recovery-entry">
+                  <button type="button" className="button secondary" disabled={busy}
+                    onClick={() => setPickerTarget({ kind: "new" })}>
+                    <Plus size={16} /> Add a confirmed product
+                  </button>
+                  <small>{draft.lines.length === 0
+                    ? "No product was extracted. Confirm a product and quantity with the customer, or use the clarification/close-draft path."
+                    : "Confirm the additional product and quantity with the customer before saving."}</small>
+                </div>
+              )}
               {deleted.length > 0 && (
                 <div className="deleted-note">
                   {deleted.length} product{deleted.length === 1 ? "" : "s"} will
@@ -942,11 +1038,14 @@ export function OrderDetail({
                       <h2>Customer conditions</h2>
                     </div>
                   </div>
-                  {draft.conditions
+                  {productMustBeSavedFirst && <p className="manual-recovery-uncertain">
+                    Save the selected product first. Then review this order’s updated price and bind any price condition to the saved line.
+                  </p>}
+                  {!productMustBeSavedFirst && draft.conditions
                     .filter((i) => i.condition_kind !== "STOCK" && !i.resolved)
                     .map((issue) => (
                       <ConditionEditor
-                        key={issue.issue_id}
+                        key={`${issue.issue_id}-${conditionEpoch}`}
                         issue={issue}
                         draft={draft}
                         inputs={inputs}
@@ -975,10 +1074,12 @@ export function OrderDetail({
                 <ShieldCheck size={18} aria-hidden="true" /><h2>Approval checks</h2>
               </div>
               <div
-                className={`check-summary ${unresolved.length ? "amber-text" : "mint-text"}`}
+                className={`check-summary ${unresolved.length || checksNeedRefresh ? "amber-text" : "mint-text"}`}
               >
                 {unresolved.length ? (
                   <PendingChecks count={unresolved.length} />
+                ) : checksNeedRefresh ? (
+                  <div><strong>{edit ? "Save changes to refresh checks" : !draft.lines.length ? "No saved products to check" : "Product checks incomplete"}</strong></div>
                 ) : (
                   <>
                     <CircleCheck size={22} aria-hidden="true" />
@@ -1064,7 +1165,7 @@ export function OrderDetail({
                   </div>
                 </div>
               ))}
-              {!draft.issues.length && (
+              {!draft.issues.length && !edit && draft.lines.length > 0 && draft.totals.is_complete && (
                 <div className="all-clear">
                   <Check size={15} /> Products, quantities and stock checked.
                 </div>
@@ -1108,8 +1209,8 @@ export function OrderDetail({
         <ErrorNotice
           error={error}
           retry={
-            error instanceof ApiError &&
-            ["STALE_VERSION", "STOCK_CHANGED"].includes(error.error_code)
+            (reconcileRequired || (error instanceof ApiError &&
+            ["STALE_VERSION", "STOCK_CHANGED"].includes(error.error_code)))
               ? () => {
                   setConflictError(undefined);
                   setConflictOpen(true);
@@ -1119,6 +1220,11 @@ export function OrderDetail({
           retryLabel="Review latest version"
         />
       )}
+      {reconcileRequired && <div className="manual-recovery-uncertain" role="alert">
+        {error instanceof ApiError && ["PENDING_OWNER_APPROVAL", "DRAFT_REJECTED"].includes(error.error_code)
+          ? "This draft is locked on the server. Load its latest status before continuing."
+          : "The save may have reached the API. Check the latest saved version before retrying; a new manual line must not be sent twice."}
+      </div>}
       {editable && (
         <div className="review-actions">
           <div className={`save-state ${edit ? "amber-text" : ""}`} role="status" aria-live="polite">
@@ -1141,9 +1247,11 @@ export function OrderDetail({
             {edit && (
               <button
                 className="button ghost"
-                disabled={busy}
+                disabled={busy || reconcileRequired}
                 onClick={() => {
                   setInputs(draft.lines.map(toInput));
+                  setManualLines([]);
+                  setCatalogChoices({});
                   setDeleted([]);
                   setResolutions([]);
                   setEdit(false);
@@ -1156,7 +1264,7 @@ export function OrderDetail({
             {edit && (
               <button
                 className="button primary"
-                disabled={busy || !!invalid.length}
+                disabled={busy || !!invalid.length || reconcileRequired || savedCount === 0}
                 onClick={save}
               >
                 {busy ? <Spinner /> : <Save size={15} />}Save changes
@@ -1205,9 +1313,9 @@ export function OrderDetail({
           onClose={() => !busy && setConflictOpen(false)}
         >
           <p className="modal-copy">
-            This saved order has changed. Keep your edits for review against the
-            latest version, or discard them and load the saved order. Nothing is
-            saved or approved automatically.
+            Check the latest saved order before continuing. Keep unsaved edits only if
+            they are not already present, or discard them and load the saved order.
+            Nothing is saved or approved automatically.
           </p>
           {!!conflictError && <ErrorNotice error={conflictError} />}
           <div className="modal-actions">
@@ -1230,9 +1338,14 @@ export function OrderDetail({
                   try {
                     const latest = await service.draft(id);
                     if (!current()) return;
+                    const savedRefs = new Set(latest.lines.map((line) => line.client_line_ref).filter(Boolean));
+                    if (keep && manualLines.some((line) => savedRefs.has(line.client_line_ref)))
+                      throw new Error("A manual line from these edits is already saved. Discard edits and review the saved order before changing it again.");
                     if (keep)
                       retained.current = {
                         inputs: rebaseInputs(draft, latest, inputs),
+                        manualLines,
+                        catalogChoices,
                         deleted: deleted.filter((lineId) =>
                           latest.lines.some((line) => line.line_id === lineId),
                         ),
@@ -1244,7 +1357,9 @@ export function OrderDetail({
                           ),
                         ),
                       };
+                    else retained.current = null;
                     resource.setValue(latest);
+                    setReconcileRequired(false);
                     setRecovered(keep);
                     setConflictOpen(false);
                     setError(undefined);
@@ -1324,6 +1439,10 @@ export function OrderDetail({
           id={id}
           onClose={() => setHistory(false)}
         />
+      )}
+      {pickerTarget && editable && service.mode === "live" && !service.fixture && (
+        <ManualCatalogPicker service={service} onSelect={chooseFromCatalog}
+          onClose={() => setPickerTarget(null)} />
       )}
     </>
   );
@@ -1455,13 +1574,14 @@ function ConditionEditor({
   onPrice: (targets: string[], price: string, note: string) => void;
 }) {
   const [choice, setChoice] = useState<"tier" | "accept" | "false">("tier");
+  const activeLines = draft.lines.filter((line) => !deleted.includes(line.line_id));
+  const candidateTargets = issue.candidate_line_ids.filter((id) => activeLines.some((line) => line.line_id === id));
   const [targets, setTargets] = useState<string[]>(
-    issue.candidate_line_ids.length === 1 ? issue.candidate_line_ids : [],
+    candidateTargets.length === 1 ? candidateTargets : [],
   );
   const [price, setPrice] = useState("");
   const [note, setNote] = useState("");
   const [validation, setValidation] = useState("");
-  const activeLines = draft.lines.filter((l) => !deleted.includes(l.line_id));
   return (
     <div className="condition-editor">
       <div className="condition-title">

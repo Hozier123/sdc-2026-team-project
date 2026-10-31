@@ -46,6 +46,7 @@ export interface Alias {
 }
 export interface Line {
   line_id: string;
+  client_line_ref?: string | null;
   sku_id: string | null;
   family_id: string;
   description: string | null;
@@ -88,6 +89,17 @@ export interface LineInput {
   match_source: Source;
   save_to_alias_cache?: boolean;
   alias_scope?: "CUSTOMER" | "TENANT";
+}
+export interface ManualLineInput {
+  client_line_ref: string;
+  sku_id: string;
+  confirmed_qty: number;
+  uom: string;
+  pack_size: string | null;
+  grade: string | null;
+  match_source: "MANUAL_SELECTED";
+  unit_price_override?: string | null;
+  override_reason?: string | null;
 }
 export type ResolutionChoice = Gate0["ResolutionChoice"];
 export interface Resolution {
@@ -178,7 +190,7 @@ export interface DraftSummary {
 }
 export interface SaveRequest {
   expected_version: number;
-  lines: LineInput[];
+  lines: (LineInput | ManualLineInput)[];
   deleted_line_ids: string[];
   resolutions: Resolution[];
 }
