@@ -1,0 +1,42 @@
+{
+  "algorithm": "SHA-256",
+  "method": "Git staged canonical bytes; this manifest excludes itself",
+  "files": {
+    "README.md": {
+      "bytes": 17805,
+      "sha256": "52dc83152e14f5176e0b39a9bf2873ac705ab415c0915f157d30d496b798ea31"
+    },
+    "docs/ops/b06-runbook.md": {
+      "bytes": 17081,
+      "sha256": "5bccd6433ca29f18cfdb74d4d4d6709c581f977652aa7564a90b1d4e6416a240"
+    },
+    "docs/ops/public-deployment-checklist.md": {
+      "bytes": 2678,
+      "sha256": "4e8e282e588a8f3994369943bdbbb16821fd37583cc2e35d0c88eec68ad3de51"
+    },
+    "docs/ops/public-deployment-decision.md": {
+      "bytes": 3907,
+      "sha256": "2ca79a0ffe97f4fa8ac654b03192d1eafe0687c583681a05917b7b4b1a792047"
+    },
+    "evidence/b06/2026-10-31/README.md": {
+      "bytes": 1031,
+      "sha256": "692c6fef610df27592b950e19a9fbb5c98fd7e5c092e0562513a79e0ecaf3129"
+    },
+    "evidence/b06/2026-10-31/acceptance.json": {
+      "bytes": 3030,
+      "sha256": "f3fded2f8a1a90d8862fdc8e036cce228d8d0ab74d71349ef4d75b18af2d47fd"
+    },
+    "evidence/b06/2026-10-31/preflight.json": {
+      "bytes": 18148,
+      "sha256": "f52524d3e0aed1d83891586d4712bab6a378bc032317de7a190cd1059d5dc903"
+    },
+    "evidence/b06/2026-10-31/source-observations.json": {
+      "bytes": 3965,
+      "sha256": "1f79fe0d2bfebc4ff99a88fef67353d27a0475f452e8f192c4b34b03c2d36993"
+    },
+    "scripts/b06_preflight.py": {
+      "bytes": 10144,
+      "sha256": "aef22e78aa4c4df200944d4454c9da253c3f66a50c34e73973dbcfaf67c3527a"
+    }
+  }
+}

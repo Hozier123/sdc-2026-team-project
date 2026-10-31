@@ -1,5 +1,7 @@
 # Public deployment decision
 
+> Historical decision dated 2026-10-23. Its undeployed status and Replit frontend plan are retained as history. For the current GitHub Pages/Replit runtime, versions, startup and rollback, use the [B06 runbook (2026-10-31)](b06-runbook.md).
+
 日期：2026-10-23  
 状态：**已定架构，未部署**  
 范围：Stub 预发布环境；不含真实 AI 验收
