@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]
+    branches: [main, codex/c13-dev0511-probe-20261031]
 
 permissions:
   contents: read
