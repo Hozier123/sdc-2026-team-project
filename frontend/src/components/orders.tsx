@@ -502,7 +502,17 @@ export function OrderDetail({
         notify("The saved order is now with the owner.");
       }
     } catch (e) {
-      if (current()) handleError(e);
+      if (current()) {
+        handleError(e);
+        if (
+          service.mode === "demo" &&
+          e instanceof ApiError &&
+          e.error_code === "STOCK_CHANGED"
+        ) {
+          resource.refresh();
+          changed();
+        }
+      }
     } finally {
       if (current()) setBusy(false);
     }

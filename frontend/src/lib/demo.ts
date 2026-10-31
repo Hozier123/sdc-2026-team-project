@@ -326,6 +326,14 @@ export class DemoService implements Service {
     result.allowed_actions = this.actions(d);
     return result;
   }
+  private currentDraft(d: Draft): Draft {
+    const result = this.projected(d);
+    if (
+      ["DISAMBIGUATION_REQUIRED", "READY_FOR_APPROVAL"].includes(result.status)
+    )
+      this.recalc(result);
+    return result;
+  }
   private actions(d: Draft): Action[] {
     if (this.role === "WAREHOUSE") return [];
     const base: Action[] = ["VIEW_ACTIVITY"];
@@ -929,17 +937,27 @@ export class DemoService implements Service {
     );
     return a;
   }
+  private refreshApprovalStock(a: Approval) {
+    if (a.stock_check) {
+      const requested = new Map<string, number>();
+      for (const l of a.stock_check.lines)
+        requested.set(
+          l.sku_id,
+          (requested.get(l.sku_id) ?? 0) + l.effective_qty,
+        );
+      for (const l of a.stock_check.lines) {
+        l.available_qty = this.state.stock[l.sku_id] ?? 0;
+        l.sufficient = l.available_qty >= (requested.get(l.sku_id) ?? 0);
+      }
+    }
+  }
   private approvalView(a: Approval) {
     const v = clone(a);
     v.allowed_actions =
       this.role === "OWNER" && a.status === "PENDING"
         ? ["OWNER_APPROVE", "OWNER_REJECT"]
         : [];
-    if (v.stock_check)
-      for (const l of v.stock_check.lines) {
-        l.available_qty = this.state.stock[l.sku_id] ?? 0;
-        l.sufficient = l.available_qty >= l.effective_qty;
-      }
+    if (v.status === "PENDING") this.refreshApprovalStock(v);
     return v;
   }
   async me(): Promise<Me> {
@@ -972,28 +990,31 @@ export class DemoService implements Service {
   async drafts(): Promise<DraftSummary[]> {
     this.sync();
     this.require(["CLERK", "OWNER"]);
-    return this.state.drafts.map((d) => ({
-      draft_id: d.draft_id,
-      version: d.version,
-      status: d.status,
-      do_number: d.do_number,
-      customer_name: d.customer.name,
-      message_preview: d.masked_message,
-      open_blocking_issue_count: d.issues.filter(
-        (i) => i.blocking && !i.resolved,
-      ).length,
-      owner_escalation_count: d.escalation_preview.length,
-      extraction_sources: [...new Set(d.lines.map((l) => l.match_source))],
-      allowed_actions: this.actions(d),
-      created_at: d.created_at,
-      updated_at: d.updated_at,
-      order_total: d.totals.order_total,
-    }));
+    return this.state.drafts.map((saved) => {
+      const d = this.currentDraft(saved);
+      return {
+        draft_id: d.draft_id,
+        version: d.version,
+        status: d.status,
+        do_number: d.do_number,
+        customer_name: d.customer.name,
+        message_preview: d.masked_message,
+        open_blocking_issue_count: d.issues.filter(
+          (i) => i.blocking && !i.resolved,
+        ).length,
+        owner_escalation_count: d.escalation_preview.length,
+        extraction_sources: [...new Set(d.lines.map((l) => l.match_source))],
+        allowed_actions: d.allowed_actions,
+        created_at: d.created_at,
+        updated_at: d.updated_at,
+        order_total: d.totals.order_total,
+      };
+    });
   }
   async draft(id: string) {
     this.sync();
     this.require(["CLERK", "OWNER"]);
-    return this.projected(this.get(id));
+    return this.currentDraft(this.get(id));
   }
   async parse(customerId: string, text: string, lang: string) {
     this.sync();
@@ -1265,7 +1286,15 @@ export class DemoService implements Service {
         "STALE_VERSION",
         "Refresh to approve the latest saved version.",
       );
+    const stockChanged = d.lines.some(
+      (l) => l.sku_id && l.available_qty !== (this.state.stock[l.sku_id] ?? 0),
+    );
     this.recalc(d);
+    if (stockChanged && d.blocking_issues.includes("INSUFFICIENT_STOCK"))
+      throw new ApiError(
+        "STOCK_CHANGED",
+        "Available stock changed. Review the updated checks and adjust the quantity before approving.",
+      );
     if (d.blocking_issues.length)
       throw new ApiError(
         "DISAMBIGUATION_UNRESOLVED",
@@ -1321,6 +1350,7 @@ export class DemoService implements Service {
         "STALE_VERSION",
         "The saved order no longer matches this approval snapshot.",
       );
+    this.refreshApprovalStock(a);
     let result: DeliveryOrder | Approval;
     if (decision === "REJECT") {
       if (!note.trim())
