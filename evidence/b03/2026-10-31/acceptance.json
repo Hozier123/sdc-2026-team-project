@@ -1,0 +1,50 @@
+{
+  "task": "B03",
+  "status": "IMPLEMENTED_LOCAL_API_ACCEPTANCE_PASS",
+  "checked_at_utc": "2026-10-31T02:49:09.911626+00:00",
+  "base_sha": "ff630d5060566b0b823b3b435f9dc6900ad10099",
+  "source_binding": "Base commit plus SHA256 of the changed application and test files; not an assertion that the base commit contains these edits.",
+  "source_sha256": {
+    "backend/app/drafts.py": "49f3b4fe5d2027adcd7f0a35fe4d10112e313fbb952a10e45f67e65e11b0c043",
+    "backend/tests/test_b03_manual_recovery.py": "f0596c60001baa0c72f3354e0acb7677f9e3d3166f619649adf44e815742488c",
+    "backend/tests/test_b03_canonical_recovery.py": "3505a0ab7c09a91a0901e68c0aff6634f14d38453f66dfe61d1da4ef6117207d"
+  },
+  "local_validation": {
+    "related_regression": 147,
+    "canonical_tenant_flows": 4,
+    "total_passed": 151,
+    "b03_new_cases": 34,
+    "postgresql": "17.10",
+    "python": "3.13.5",
+    "ruff_check": "PASS",
+    "ruff_format": "PASS",
+    "pip_check": "PASS"
+  },
+  "scenarios": [
+    "existing line without candidates",
+    "zero-line manual recovery",
+    "original source and immutable versions preserved",
+    "new row needs SKU/integer quantity/nonblank ref/manual provenance",
+    "deleted-line correction and explicit price rebinding",
+    "below-tier price requires owner approval",
+    "customer tier and live price recheck",
+    "combined SKU stock and approval stock recheck",
+    "stale version, role, tenant and terminal-state rejection with public-table equality",
+    "T1/T2 CLERK/OWNER directory-save-approve-DO-warehouse"
+  ],
+  "side_effects": {
+    "disposable_postgres_only": true,
+    "production_database_writes": false,
+    "gpu_calls": 0,
+    "frozen_contract_changes": false,
+    "new_routes": false,
+    "schema_changes": false
+  },
+  "boundaries": {
+    "frontend_F03": "Separate UI integration; manual picker/add-row/unsaved/browser acceptance not claimed by backend tests",
+    "formal_TEST32": "Not executed by this task",
+    "independent_signoff": "Not claimed",
+    "production_publication": "Not yet performed",
+    "github_ci": "Pending PR"
+  }
+}

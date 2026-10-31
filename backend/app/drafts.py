@@ -375,6 +375,30 @@ def _line(
         raise InvalidQuantityError(
             details={"fields": [{"path": "lines.confirmed_qty", "reason": "new line needs qty"}]}
         )
+    if old is None:
+        if not (item.client_line_ref or "").strip():
+            raise RequestValidationFailedError(
+                details={
+                    "fields": [{"path": "lines.client_line_ref", "reason": "must not be blank"}]
+                }
+            )
+        if not (item.sku_id or "").strip():
+            raise RequestValidationFailedError(
+                details={"fields": [{"path": "lines.sku_id", "reason": "new line needs SKU"}]}
+            )
+    if ((old is None or item.sku_id != old.sku_id) and item.match_source != "MANUAL_SELECTED") or (
+        old is not None and item.match_source not in {old.match_source, "MANUAL_SELECTED"}
+    ):
+        raise RequestValidationFailedError(
+            details={
+                "fields": [
+                    {
+                        "path": "lines.match_source",
+                        "reason": "manual additions and SKU changes require MANUAL_SELECTED",
+                    }
+                ]
+            }
+        )
 
     qty = (
         item.confirmed_qty
@@ -1203,21 +1227,33 @@ def _apply_save_lines(conn, user, order, body):
     )
     by_id = {line.line_id: line for line in lines}
     for condition in conditions:
-        if condition.line_id and condition.line_id not in line_ids:
-            condition.line_id = None
-            condition.condition_scope = "UNKNOWN"
-            condition.resolved = False
-        if condition.resolved and condition.resolution == "ACCEPT_REQUESTED_PRICE":
+        missing_source_line = condition.line_id and condition.line_id not in line_ids
+        missing_targets = any(target not in line_ids for target in condition.target_line_ids)
+        price_changed = condition.resolved and condition.resolution == "ACCEPT_REQUESTED_PRICE"
+        if price_changed:
             price = condition.data_used.get("confirmed_unit_price")
-            if not condition.target_line_ids or any(
+            price_changed = not condition.target_line_ids or any(
                 target not in by_id
                 or by_id[target].unit_price_override != price
                 or target not in old_by_id
                 or by_id[target].sku_id != old_by_id[target].sku_id
                 for target in condition.target_line_ids
-            ):
-                condition.resolved = False
-                condition.resolution = None
+            )
+        if missing_source_line:
+            condition.line_id = None
+            condition.condition_scope = "UNKNOWN"
+        condition.candidate_line_ids = [
+            candidate for candidate in condition.candidate_line_ids if candidate in line_ids
+        ]
+        condition.target_line_ids = [
+            target for target in condition.target_line_ids if target in line_ids
+        ]
+        if missing_source_line or missing_targets or price_changed:
+            condition.resolved = False
+            condition.resolution = None
+            condition.resolution_note = None
+            condition.auto_resolved_by = None
+            condition.data_used.pop("confirmed_unit_price", None)
         if condition.condition_kind == "STOCK":
             condition.blocking = False
             condition.resolved = bool(lines) and all(
