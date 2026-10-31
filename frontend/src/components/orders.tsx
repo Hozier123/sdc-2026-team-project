@@ -39,6 +39,7 @@ import {
 import { useRequestScope, useResource } from "../lib/hooks";
 import type { CatalogProduct } from "../lib/catalog";
 import { issueCopy, issueGuidance } from "../lib/issueCopy";
+import { r08Diagnostics, tierPriceLabel } from "../lib/r08";
 import { EXTRACTION } from "../lib/extraction";
 import { clearPriceResolutions, createManualLine, selectCatalogProduct } from "../lib/manualRecovery";
 import {
@@ -280,6 +281,37 @@ export function NewOrder({
           )}
         </aside>
       </div>
+    </div>
+  );
+}
+export function R08IdentityCandidates({ issue }: { issue: Issue }) {
+  if (issue.resolved) return null;
+  const r08 = r08Diagnostics(issue);
+  if (!r08 || r08.identity_candidates.length === 0) return null;
+  return (
+    <div className="r08-identity">
+      <p className="r08-identity-heading">
+        Compatible products identified · identity check, read-only and not
+        selectable
+      </p>
+      <ul className="r08-identity-list">
+        {r08.identity_candidates.map((candidate) => (
+          <li key={candidate.sku_id}>
+            <strong title={candidate.display_name}>{candidate.display_name}</strong>
+            <span>
+              {candidate.pack_size}
+              {` · Grade ${candidate.grade ?? "—"}`}
+              {candidate.base_unit ? ` · per ${candidate.base_unit}` : ""}
+              {` · ${candidate.available_qty} in stock`}
+            </span>
+            <span
+              className={candidate.tier_unit_price ? "mint-text" : "amber-text"}
+            >
+              Tier price {tierPriceLabel(candidate.tier_unit_price)}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -1140,6 +1172,7 @@ export function OrderDetail({
                         {issueGuidance(issue, editable)}
                       </p>
                     )}
+                    <R08IdentityCandidates issue={issue} />
                     {issue.code === "INSUFFICIENT_STOCK" && (
                       <small className="amber-text">
                         Requested {String(issue.data_used.effective_qty)} ·

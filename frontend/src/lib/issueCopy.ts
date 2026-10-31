@@ -1,4 +1,10 @@
 import type { Issue } from "./types";
+import {
+  r08Diagnostics,
+  MISSING_TIER_PRICE,
+  MISSING_TIER_PRICE_TITLE,
+  MISSING_TIER_PRICE_FALLBACK_BODY,
+} from "./r08";
 
 const ISSUE_COPY: Record<string, { title: string; body: string }> = {
   MULTIPLE_PACK_SIZES: {
@@ -72,6 +78,13 @@ const MATCH_REASON_COPY: Record<string, { title: string; body: string }> = {
 };
 
 export function issueCopy(issue: Issue): { title: string; body: string } | undefined {
+  const r08 = r08Diagnostics(issue);
+  if (!issue.resolved && r08?.problem_kind === MISSING_TIER_PRICE) {
+    return {
+      title: MISSING_TIER_PRICE_TITLE,
+      body: r08.explanation || MISSING_TIER_PRICE_FALLBACK_BODY,
+    };
+  }
   if (issue.code === "LOW_CONFIDENCE_MATCH" && issue.reason_code) {
     return Object.hasOwn(MATCH_REASON_COPY, issue.reason_code)
       ? MATCH_REASON_COPY[issue.reason_code] : ISSUE_COPY[issue.code];
