@@ -1,0 +1,103 @@
+{
+  "task": "R06",
+  "public_archive_kind": "reviewed_manual_data_patch_and_redacted_closeout",
+  "candidate_acceptance_status": "CLOSED_WITH_LIMITATIONS",
+  "online_demo_delivery_status": "NOT_COMPLETED_BY_R06",
+  "data_version": "TRILINGUAL-2026-10-31-v001",
+  "execution_revision": "r2",
+  "third_family": "FAM_GARAM",
+  "run_id": "r06-20261031T174246Z-3e990b",
+  "application_source_sha": "f347ed6af235bc4018ca811936f860a6586f4758",
+  "executed_at_utc8": "2026-11-01 01:42:46–01:42:54",
+  "within_submission_time_window": true,
+  "submission_upload_confirmed": false,
+  "environment_kind": "isolated_local_candidate",
+  "application_code_changed": false,
+  "live_or_shared_deployment_performed": false,
+  "model_calls_performed": false,
+  "local_validation": {
+    "status": "PASS",
+    "assertions_passed": 109,
+    "assertions_total": 109,
+    "sequence": [
+      {
+        "operation": "up",
+        "affected_rows": 6
+      },
+      {
+        "operation": "repeat_up",
+        "affected_rows": 0
+      },
+      {
+        "operation": "down",
+        "affected_rows": 6
+      },
+      {
+        "operation": "repeat_down",
+        "affected_rows": 0
+      },
+      {
+        "operation": "replay_up",
+        "affected_rows": 6
+      }
+    ]
+  },
+  "data_scope": {
+    "new_family_aliases": 6,
+    "affected_T1_families": [
+      "FAM_GULA",
+      "FAM_BERAS",
+      "FAM_GARAM"
+    ],
+    "T1_aliases_before": 50,
+    "T1_aliases_after": 56,
+    "T2_aliases_before": 30,
+    "T2_aliases_after": 30,
+    "T1_active_families_preserved": 25,
+    "T2_active_families_preserved": 10,
+    "unchanged_other_tables": 19,
+    "sku_price_stock_and_memory_unchanged": true
+  },
+  "guard_evidence": {
+    "method": "actual_backend_guard_with_manual_fixed_family_fixtures",
+    "new_six_phrases_before": "UNKNOWN",
+    "new_six_phrases_after": "matching_T1_family",
+    "existing_families_preserved": true,
+    "same_T1_fixtures_in_T2": "UNKNOWN",
+    "formal_R05_or_LLM_claim": false
+  },
+  "reviews": {
+    "He_implementation": "DONE",
+    "Xiong_technical_review": "PASS_WITH_LIMITATIONS",
+    "Xiong_interface_receipt": "ACCEPTED",
+    "Zhou_semantic_review": "PASS",
+    "Zhou_independent_acceptance": "PASS",
+    "Ye_original_directory_compatibility_and_bounded_UI_review": "PASS_WITH_LIMITATIONS",
+    "Zhan_receipt": "FULL_RECEIPT",
+    "Zhan_full_receipt_source": "complete_reply_forwarded_by_user"
+  },
+  "version_history": {
+    "v001_SQL": "archive_only_superseded_for_execution_by_r2; six_insert_tuples_unchanged",
+    "Zhou_acceptance_current_version": "v3",
+    "Zhou_v2_reference": "superseded_process_version; original_not_available; not_a_current_acceptance_reference",
+    "Zhou_v3_historical_pending_fields": "preserved_unchanged; later_Xiong_and_Ye_receipts_appended_privately"
+  },
+  "private_artifact_hash_references": {
+    "implementation_zip_sha256": "87d62603a7ae0f761ffb8197c729aa952b57a32da5f3755d148fcdaac8913e66",
+    "Zhou_v3_acceptance_sha256": "dc865f6b12830a503fc5afe754b0f7f1d506e7e910128427dfcdbdacea40d1cb",
+    "Zhou_v3_acceptance_bytes": 15431,
+    "Xiong_review_sha256": "2fa4e66f938e2c1fe3239e09e18b4015fd8e6a2abdd935bce448f402def41a18",
+    "Ye_bounded_UI_review_sha256": "c32530d1e4ea9654c56dfcb361db93ef674ecfa727c9ad7ce9424782850e108d"
+  },
+  "retained_limits": [
+    "r2 target post-state checks phrase_norm/family without jointly asserting alias_id/language; reviewed six rows correct",
+    "Xiong review was SQL/hash/snapshot review without a direct second DB connection",
+    "Ye reviewed supplied narrow-screen UI evidence, not direct API/DB re-execution or all rows/breakpoints/roles",
+    "new alias search, recommendation popup and line-level source tracking not accepted by this task",
+    "109 checks are developer assertions, not formal business case results",
+    "R06 conflict negative has a different fixture from R05 E08a; no E08a PASS inferred",
+    "database unique-constraint execution path not demonstrated",
+    "no R07, E01-E09, R11, LLM, online loading or overall READY conclusion"
+  ],
+  "public_archive_contents": "original_r2_SQL_and_redacted_summary_only; no_credentials_private_answers_local_paths_raw_snapshots_or_private_ZIPs"
+}
