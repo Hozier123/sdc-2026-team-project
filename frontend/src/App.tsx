@@ -86,7 +86,7 @@ import {
 
 import type { Navigate, Notify } from "./lib/types";
 import { PageHeading } from "./components/ui";
-export const APP_VERSION = "1.5.1";
+export const APP_VERSION = "1.5.2";
 const links = [
   { path: "workspace", label: "Overview", Icon: LayoutDashboard },
   { path: "new", label: "New order", Icon: Plus },
