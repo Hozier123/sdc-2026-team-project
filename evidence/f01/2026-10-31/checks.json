@@ -1,0 +1,112 @@
+{
+  "task": "F01",
+  "observed_date": "2026-10-31",
+  "timezone": "Asia/Shanghai",
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "plan_sha256": "aafe15560a9994f50b7876c9aed94bc9d9231c47c10e3481f4ba1d0e8b31b950",
+  "private_source_manifest_sha256": "1b8f8240230790f1d2afc77b46bce426b9d063c7435d4bc5d6257bc4c815186c",
+  "production_default_api": "https://kiraorder-api.replit.app/api/v1",
+  "first_load": {
+    "version": "v1.5.1",
+    "mode": "LOCAL DEMO",
+    "token_empty": true,
+    "intro_video_or_3d_requested": false,
+    "all_recorded_resource_statuses_200": true
+  },
+  "cors": {
+    "preflight_status": 200,
+    "allowed_origin_matches_pages": true,
+    "authorization_allowed": true,
+    "request_id_readable_in_browser": true
+  },
+  "real_sessions": [
+    {
+      "tenant": "T1",
+      "role": "CLERK",
+      "me_status": 200,
+      "tenant_matches": true,
+      "request_id_present": true
+    },
+    {
+      "tenant": "T1",
+      "role": "OWNER",
+      "me_status": 200,
+      "tenant_matches": true,
+      "request_id_present": true,
+      "warehouse_route": null
+    },
+    {
+      "tenant": "T1",
+      "role": "WAREHOUSE",
+      "me_status": 200,
+      "tenant_matches": true,
+      "request_id_present": true,
+      "warehouse_route": true
+    },
+    {
+      "tenant": "T2",
+      "role": "CLERK",
+      "me_status": 200,
+      "tenant_matches": true,
+      "request_id_present": true,
+      "warehouse_route": null
+    },
+    {
+      "tenant": "T2",
+      "role": "OWNER",
+      "me_status": 200,
+      "tenant_matches": true,
+      "request_id_present": true,
+      "warehouse_route": null
+    },
+    {
+      "tenant": "T2",
+      "role": "WAREHOUSE",
+      "me_status": 200,
+      "tenant_matches": true,
+      "request_id_present": true,
+      "warehouse_route": true
+    }
+  ],
+  "errors": {
+    "invalid_session_401_code_and_request_id_visible": true,
+    "warehouse_drafts_403_code": "FORBIDDEN_ACTION",
+    "warehouse_403_request_id_present": true,
+    "controlled_network_error_kept_reconnect": true
+  },
+  "role_change": {
+    "live_demo_switcher_absent": true,
+    "new_session_token_field_empty": true
+  },
+  "refresh": {
+    "requires_reconnect": true,
+    "no_api_before_token": true,
+    "token_field_empty": true,
+    "reconnected_to_live_api": true,
+    "drafts_read_status": 200
+  },
+  "fallback": {
+    "invalid_reconnect_remained_required": true,
+    "explicit_return_to_local_demo": true
+  },
+  "credential_persistence": {
+    "local_storage_contains_session": false,
+    "session_storage_contains_session": false,
+    "url_contains_session": false
+  },
+  "automatic_ai_wake": {
+    "request_count": 5,
+    "all_status_200": true
+  },
+  "localhost_helpers": {
+    "assertions": 9,
+    "result": "PASS",
+    "source_sha256": "2cebef7149de2e209b6434c213988dd415df37e24933a5d481d48388d3082bcf"
+  },
+  "scope": {
+    "business_order_writes": 0,
+    "independent_review_signed": false,
+    "backend_build_sha_known": false,
+    "public_source_provenance_confirmed": false
+  }
+}
