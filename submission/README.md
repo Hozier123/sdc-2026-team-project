@@ -7,14 +7,16 @@ Domain 2 (Orbyte Smart SME Challenge) · SDG 8 (targets 8.2, 8.3)
 
 The final-round Final Solution Report, Updated PRD and refreshed Technical & Tools Declaration are the submission copies in this folder. Internal review markers (`CONFIRM`, `DO NOT pre-fill`, `Draft` footers and the PRD open-items table) were removed from these copies; no substantive claim, metric or limitation was upgraded. The Phase 1 preliminary proposal is retained for reference.
 
+**Status refresh (2026-11-01).** These copies were refreshed against repository `main` at `809832b` and the live GitHub Pages build `1985f0bc`, published 2026-10-31 20:20 UTC+8 from `f347ed6`. The refresh corrected repository and deployment status only - the declaration's Pages reference, the report's readiness and release notes, and the PRD's deployment limitation. No evaluation claim or metric was upgraded and no limitation was removed. The merged review-display changes `d4915e7` (100/100 tests) are recorded as not deployed.
+
 | File | Contents | SHA-256 |
 | --- | --- | --- |
-| [SDC2026_Falcons_Final.pdf](SDC2026_Falcons_Final.pdf) | Final Solution Report v2, 10 pages | `27adc846866941c2db7e1618bfc18b247877ae292b0a3db13fc1b4354bdf0ef9` |
-| [SDC2026_Falcons_PRD.pdf](SDC2026_Falcons_PRD.pdf) | Updated Product Requirements Document v2.0, 15 pages | `e414b0845856f726d9f5c511e3064fd38f61136a7b312dde9b221e3f91f2d048` |
-| [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | Technical & Tools Declaration, 15-page final-round refresh with Appendices A–E | `7c355f6e8c95b8ea4a4810207265da527c29dd9ef7ba42d25ddb78e772717271` |
+| [SDC2026_Falcons_Final.pdf](SDC2026_Falcons_Final.pdf) | Final Solution Report v2, 10 pages | `f7f15d7a3eb697f822aaad8ad5d047b645b38d73b747337689ba8d54f16736f6` |
+| [SDC2026_Falcons_PRD.pdf](SDC2026_Falcons_PRD.pdf) | Updated Product Requirements Document v2.0, 15 pages | `d7379e87b8e68bd1e3deaa2b3a755f79d203f989f88b9fc8263e67e92b805066` |
+| [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | Technical & Tools Declaration, 15-page final-round refresh with Appendices A–E | `c747169ce73f476e37755e9d2588da85291b91676e2a287f1b798c7c2f8ae9ad` |
 | [SDC2026_Falcons_Preliminary.pdf](SDC2026_Falcons_Preliminary.pdf) | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `5cb6985f9b7868c2253d2ffde99d5fff84ba2e0c98d298c56486ab0bf1baf66d` |
 
-The Final Solution Report and the Technical & Tools Declaration carry the team leader's signature dated 2026-11-01; the previous 17-page Phase 1 edition remains recoverable from Git history. The final-round copies are the documents packaged for submission; this folder does not contain a final-round portal receipt.
+The Final Solution Report and the Technical & Tools Declaration carry the team leader's signature dated 2026-11-01. The signed copies were then refreshed the same day with the repository and deployment status above; their signature blocks are unchanged. The previous 17-page Phase 1 edition remains recoverable from Git history. The final-round copies are the documents packaged for submission; this folder does not contain a final-round portal receipt.
 
 ## Final-round deck (2026-11-01)
 
