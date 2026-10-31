@@ -19,9 +19,10 @@ The final-round deck supersedes the 15-slide preliminary deck, whose PDF and PPT
 | File | Contents | SHA-256 |
 | --- | --- | --- |
 | [SDC2026_Falcons_PitchDeck.pptx](SDC2026_Falcons_PitchDeck.pptx) | 17 slides; the deck built for the 10-minute final pitch - problem, product, architecture, evidence, business | `ce06174cde0a39c28ac31492bca03ed8edeb565dd10761c7e1c5da8d643e6515` |
+| [SDC2026_Falcons_PitchDeck.html](SDC2026_Falcons_PitchDeck.html) | 17-page live build used on stage; one self-contained file with every screenshot embedded, so it opens without the `img/` folder | `409d7be2a2e8b367a71ff59c102589b8a8f5294a98a7e1299a9c746533275ff6` |
 | [SDC2026_Falcons_Deck_Appendix.pptx](SDC2026_Falcons_Deck_Appendix.pptx) | 28 slides; long-form technical dossier - stack, data layer, AI contract, rules, approval, evidence pages | `29aa5ad6c70b265593c771cb1ac7446ab77f2956886e451b1bc792c779ac71de` |
 
-The live presentation is delivered from an HTML build of the same 17 pages; the `.pptx` above is the offline-checkable rendering of that same narrative. The appendix deck is a technical record and was not shown on stage. Both files were opened and slide-checked before this commit.
+The live presentation is delivered from the HTML file above: open it in any browser and use the arrow keys (`N` shows the speaker notes). All screenshots are embedded as data URIs, so the single file is portable and does not depend on this repository. The `.pptx` is the offline-checkable rendering of the same 17 pages. The appendix deck is a technical record and was not shown on stage. Both files were opened and slide-checked before this commit.
 
 The proposal and Technical & Tools Declaration PDFs are also the documents to be uploaded to the official submission portal (`sdchack.my`). Publishing them in this repository is **not** a substitute for submitting through the portal.
 

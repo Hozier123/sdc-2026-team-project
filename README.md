@@ -10,7 +10,7 @@ Explore the workflow through the browser-only Local Demo, using synthetic data w
 
 - [Open the review workspace](https://hozier123.github.io/sdc-2026-team-project/#/workspace) - Local Demo needs no login.
 - [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
-- Pitch deck: [Download editable PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx).
+- Pitch deck: [Live HTML deck](submission/SDC2026_Falcons_PitchDeck.html) · [Download editable PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx).
 - [Submission documents, platform proofs and file hashes](submission/README.md).
 
 ## Prototype status
