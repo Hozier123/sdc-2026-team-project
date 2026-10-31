@@ -15,6 +15,7 @@ import {
   type FieldDiff,
   type Issue,
   type Line,
+  type LineInput,
   type Me,
   type Reason,
   type Role,
@@ -1004,6 +1005,10 @@ export class DemoService implements Service {
   async save(draftId: string, req: SaveRequest) {
     this.sync();
     this.require(["CLERK", "OWNER"]);
+    // The local demo has no zero-line recovery contract. Never simulate a live catalog save.
+    const lines = req.lines.filter((line): line is LineInput => "line_id" in line);
+    if (lines.length !== req.lines.length)
+      throw new ApiError("NOT_SUPPORTED", "Manual line recovery requires the live API.");
     const original = this.get(draftId);
     if (original.version !== req.expected_version)
       throw new ApiError(
@@ -1019,12 +1024,12 @@ export class DemoService implements Service {
         "ORDER_LOCKED",
         "This order is locked after submission.",
       );
-    if (!req.lines.length)
+    if (!lines.length)
       throw new ApiError(
         "EMPTY_ORDER",
         "Keep at least one product in the order.",
       );
-    const ids = req.lines.map((l) => l.line_id),
+    const ids = lines.map((l) => l.line_id),
       deleted = req.deleted_line_ids ?? [];
     if (
       new Set([...ids, ...deleted]).size !== ids.length + deleted.length ||
@@ -1043,7 +1048,7 @@ export class DemoService implements Service {
     const aliasWrites: { customer: string; alias: Alias }[] = [];
     d.lines = d.lines.filter((l) => !deleted.includes(l.line_id));
     for (const l of d.lines) {
-      const input = req.lines.find((i) => i.line_id === l.line_id)!;
+      const input = lines.find((i) => i.line_id === l.line_id)!;
       const allowed = [
         "line_id",
         "sku_id",

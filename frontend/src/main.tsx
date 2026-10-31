@@ -16,6 +16,7 @@ import "./styles/theme.css";
 import "./styles/theme-transition.css";
 import "./styles/connection.css";
 import "./styles/review.css";
+import "./styles/manual-recovery.css";
 import "./styles/receipt.css";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -40,7 +40,7 @@ export function pickingItems(items: WarehouseOrder["items"]) {
   return [...groups.values()];
 }
 
-export function invalidQuantities(lines: LineInput[]) {
+export function invalidQuantities<T extends { confirmed_qty: number | null }>(lines: T[]): T[] {
   return lines.filter(
     (line) =>
       line.confirmed_qty !== null &&
@@ -50,7 +50,7 @@ export function invalidQuantities(lines: LineInput[]) {
   );
 }
 
-export function assertQuantities(lines: LineInput[]) {
+export function assertQuantities<T extends { confirmed_qty: number | null }>(lines: T[]) {
   if (invalidQuantities(lines).length)
     throw new ApiError(
       "REQUEST_VALIDATION_FAILED",
