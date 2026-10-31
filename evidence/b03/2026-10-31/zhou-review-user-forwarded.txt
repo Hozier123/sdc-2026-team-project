@@ -1,0 +1,9 @@
+B03 后端复核通过。
+
+核了：PR #104 head 2d1bdcd → merge 99ee169；drafts.py Git 哈希 944d007c…985c 与 99ee169 一致，CRLF 版 49f3b4fe…b043 与 acceptance 的 tested_worktree_sha256 一致；CI 双绿。人工恢复、价格重绑定、低价老板审批三条都成立。
+
+B03 的限制与 P3：
+1. 151 个本地测试是自报，我没独立连 PG 复跑；Replit 6d6bafd8 未独立验证；F03 页面不在本 PR；非 TEST32。
+2. 已有行保存省略 sku_id 会被当成改选 SKU（除非 MANUAL_SELECTED）→ 422。前端和 B04 driver 都带 sku_id，所以现在不断；建议改成“只有显式提供且不同才算改选”，或在 runbook 写明。
+3. 重绑清掉了 confirmed_unit_price，但 price_basis 还留 UNIT；SEPARATE_ADD_ON 的 data_used.related_do_number 也不清。没有审批绕过，但元数据没清干净。
+4. acceptance.json 的 github_ci 还是 Pending PR，建议更新。
