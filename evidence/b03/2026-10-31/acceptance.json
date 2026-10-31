@@ -18,7 +18,8 @@
     "python": "3.13.5",
     "ruff_check": "PASS",
     "ruff_format": "PASS",
-    "pip_check": "PASS"
+    "pip_check": "PASS",
+    "independently_rerun_by_zhou": false
   },
   "scenarios": [
     "existing line without candidates",
@@ -43,14 +44,34 @@
   "boundaries": {
     "frontend_F03": "Separate UI integration; manual picker/add-row/unsaved/browser acceptance not claimed by backend tests",
     "formal_TEST32": "Not executed by this task",
-    "independent_signoff": "Not claimed",
-    "production_publication": "Not yet performed",
-    "github_ci": "Pending PR"
+    "independent_signoff": "Zhou PASS_BACKEND_SCOPE via user-forwarded reply; see zhou-review.json and its limitations",
+    "production_publication": "Replit 6d6bafd8 deployed; author public GET smoke passed, not independently verified by Zhou",
+    "github_ci": "PASS: 636 backend / 74 frontend and build on application merge 99ee169; see ci_evidence"
   },
   "tested_worktree_sha256": {
     "backend/app/drafts.py": "49f3b4fe5d2027adcd7f0a35fe4d10112e313fbb952a10e45f67e65e11b0c043",
     "backend/tests/test_b03_manual_recovery.py": "f0596c60001baa0c72f3354e0acb7677f9e3d3166f619649adf44e815742488c",
     "backend/tests/test_b03_canonical_recovery.py": "3505a0ab7c09a91a0901e68c0aff6634f14d38453f66dfe61d1da4ef6117207d"
   },
-  "source_hash_newlines": "source_sha256 hashes Git blob bytes (LF); tested_worktree_sha256 hashes the actual Windows test inputs. They are equal after CRLF-to-LF normalization."
+  "source_hash_newlines": "source_sha256 hashes Git blob bytes (LF); tested_worktree_sha256 hashes the actual Windows test inputs. They are equal after CRLF-to-LF normalization.",
+  "last_updated_at_utc": "2026-10-31T03:49:37.725690+00:00",
+  "ci_evidence": [
+    {
+      "conclusion": "success",
+      "databaseId": 41161883682,
+      "headSha": "99ee169ef01527587312c82beaba41858f47b9e4",
+      "status": "completed",
+      "url": "https://github.com/Hozier123/sdc-2026-team-project/actions/runs/41161883682"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 41161883368,
+      "headSha": "99ee169ef01527587312c82beaba41858f47b9e4",
+      "status": "completed",
+      "url": "https://github.com/Hozier123/sdc-2026-team-project/actions/runs/41161883368"
+    }
+  ],
+  "independent_review": "zhou-review.json",
+  "closeout_status": "CLOSED_BACKEND_SCOPE",
+  "historical_snapshot": "history/acceptance-before-zhou-closeout.json"
 }

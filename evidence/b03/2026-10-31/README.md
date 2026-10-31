@@ -1,6 +1,6 @@
 # B03 后端交付
 
-**B03 后端已实现、合入并发布。** 应用 [PR #104](https://github.com/Hozier123/sdc-2026-team-project/pull/104)，merge `99ee169`；Replit `6d6bafd8` 已显示 Live，前版为 `3e568d26`。
+**B03 后端已结项。** 实施、合并、发布与另一位相关成员复核均已完成，必做待办为 0。应用 [PR #104](https://github.com/Hozier123/sdc-2026-team-project/pull/104)，merge `99ee169`；Replit `6d6bafd8` 的原部署记录保留，前版为 `3e568d26`。
 
 人工恢复复用原保存/批准接口：新行必须确认 SKU、整数数量和人工来源；改选不能冒充 AI 结果；删行或变更价格目标后原条件保留，失效的确认和行引用清除，需重新确认。新增行先保存取得服务端行 ID，再按新版本绑定价格条件。低价仍需老板审批。
 
@@ -9,6 +9,10 @@
 - 发布后 18 次公开 GET、58/58 检查通过；六角色身份、目录权限、401/403、租户伪造保护、健康状态均正常，检查前后 T1/T2 业务表一致。该轮无业务写入、复位或 GPU 调用。
 - 无新增接口、迁移、依赖、种子或冻结契约变更。发布只同步本次 `drafts.py`，Replit 后端应用及依赖与已测 merge 的 diff 为空。
 
-最新机器记录：[release.json](release.json)。[acceptance.json](acceptance.json) 是部署前的本地验收历史快照，其中 pending/not-yet-published 由本记录接续，原件不回写。
+最新机器记录：[release.json](release.json)。[acceptance.json](acceptance.json) 的 CI、发布和复核状态已接续更新；部署前原件按 Git 原始字节保存在 [history](history/)，源码哈希和历史本地测试数字未改写。
 
-F03 页面选择器、补行入口、未保存保护和浏览器交互仍是独立前端任务；不把后端 API 通过称作 F03 通过，也不代替 Ye/Zhou 独立签收或正式 TEST32。[接入契约与错误恢复](../../../docs/ops/b03-manual-recovery.md) 已提供。B03 当前后端实施、合并和发布没有剩余必做事项。
+Zhou 经用户转交的回复明确“B03 后端复核通过”，核对 PR head/merge、两种源码哈希与 CI，并确认人工恢复、价格重绑定、低价老板审批成立。[回执摘录](zhou-review-user-forwarded.txt) 与 [来源/限制/P3 处置](zhou-review.json) 已归档。该复核在合并后收到，未倒填为合并前批准。
+
+Zhou 未独立重跑自报的 151 项本地 PG 测试，也未独立验证 Replit `6d6bafd8`；F03 页面和正式 TEST32 不在本次通过范围。其 P3 中 `sku_id` 省略行为已写入 runbook，CI Pending 状态已更新；元数据残留记为非阻塞后续项（复核结论明确无审批绕过），本轮不变更已复核应用。
+
+F03 页面选择器、补行入口、未保存保护和浏览器交互仍是独立前端任务；C11 的未通过结论不纳入 B03 通过，也不阻塞 B03 原范围结项。[接入契约与错误恢复](../../../docs/ops/b03-manual-recovery.md) 已提供。本次收件仅更新文档与状态，没有新部署、业务写入、复位或 GPU 调用。
