@@ -44,3 +44,7 @@
 ## 签收
 
 - Zhou Jingxi 2026-10-31 签收；Zhan Zhengrong 形式 PASS，索引 `ZR-C11-20261031-01`；入库路径 `evidence/e2e/c11/2026-10-31/`。
+
+## 入库
+
+- PR #111 squash merged；merge commit `8365c928a00a3a0df59aebaed9a6c18e380fcb25`（2026-10-31T04:22:21Z）。

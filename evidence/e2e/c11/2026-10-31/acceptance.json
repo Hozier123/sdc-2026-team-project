@@ -4,7 +4,7 @@
   "result": "PASS_CANDIDATE_MEMORY_PENDING_REVIEW",
   "overall_status": "SIGNED_OFF",
   "independent_review_status": "SIGNED_OFF",
-  "repo_status": "PENDING_COMMIT",
+  "repo_status": "MERGED",
   "scope_version": "1.1",
   "scope_locked_at": "2026-10-31T02:15:00+08:00",
   "scope_revised_at": "2026-10-31T03:00:00+08:00",
@@ -560,5 +560,14 @@
       "not TEST32/Gate A; UOM 24/31 unchanged",
       "demo: CUS_ALI + Milo 2 bag is permanently ALIAS_ONLY; use Milo 3 bag or another customer"
     ]
+  },
+  "pr_number": 111,
+  "pr_url": "https://github.com/Hozier123/sdc-2026-team-project/pull/111",
+  "merge_commit": "8365c928a00a3a0df59aebaed9a6c18e380fcb25",
+  "merged_at": "2026-10-31T04:22:21Z",
+  "post_merge": {
+    "merged_by": "nbomb8138-cyber",
+    "merge_method": "squash",
+    "note": "Business evidence unchanged; this metadata update records repo_status=MERGED and the merge commit."
   }
 }

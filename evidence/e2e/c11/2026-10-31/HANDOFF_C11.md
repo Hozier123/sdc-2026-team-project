@@ -10,7 +10,7 @@
 | 依赖-模型 | 3/3 次 `ai_mode=LLM`（2.1–2.3 s）；未打插桩补丁；provider/model 属部署配置 |
 | 依赖-语义 | D02 PR #91 在途；本包不纳入 UOM 7 缺口 |
 | 独立复核 | **Zhou Jingxi 2026-10-31 签收 `SIGNED_OFF`**；Zhan 形式 `PASS`，索引 `ZR-C11-20261031-01` |
-| 入库 | `PENDING_COMMIT` → `evidence/e2e/c11/2026-10-31/`（只拷 `evidence/` + `HANDOFF_C11.md`） |
+| 入库 | **`MERGED`**：PR #111 / merge `8365c928a00a3a0df59aebaed9a6c18e380fcb25`（2026-10-31T04:22:21Z）；路径 `evidence/e2e/c11/2026-10-31/` |
 | Gate A | **无关**；C11 不是 Gate A v5（C01/C04/C05/C08）的项 |
 
 受控目录：`03_交接与提交包\C11_candidate_memory_evidence_2026-10-31`（本地绝对路径不公开）
@@ -127,7 +127,7 @@ C11 只补三块，不重复 C02 的完整批准/DO 链：
 
 ## 9. 结论
 
-生产 API 主线已执行并补齐截图：第 1/2/3/4/5/7/10 条 PASS，第 6 条 NOT_A_DEFECT，第 8/9 条 LIMITATION。**当前 `PASS_CANDIDATE_MEMORY_PENDING_REVIEW` / `SIGNED_OFF`（Zhou 2026-10-31；Zhan `ZR-C11-20261031-01`）。** 逐条证据见 `evidence/execution_log.md`、`evidence/raw/`、`evidence/screenshots/`；全表 alias count 仍缺生产只读 DSN（C11-LIM-07）。签收完成；下一步按 `evidence/e2e/c11/2026-10-31/` 开 Draft PR。
+生产 API 主线已执行并补齐截图：第 1/2/3/4/5/7/10 条 PASS，第 6 条 NOT_A_DEFECT，第 8/9 条 LIMITATION。**当前 `PASS_CANDIDATE_MEMORY_PENDING_REVIEW` / `SIGNED_OFF`（Zhou 2026-10-31；Zhan `ZR-C11-20261031-01`）。** 逐条证据见 `evidence/execution_log.md`、`evidence/raw/`、`evidence/screenshots/`；全表 alias count 仍缺生产只读 DSN（C11-LIM-07）。签收完成并已入库（PR #111，merge `8365c92`）。本包进入结项状态。
 
 ## 10. 发布卫生（2026-10-31 12:00）
 
