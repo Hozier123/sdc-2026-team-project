@@ -1,0 +1,14 @@
+{
+  "algorithm": "SHA-256",
+  "method": "Canonical Git bytes of new closeout files; original SHA256.json is preserved; this manifest excludes itself",
+  "files": {
+    "docs/ops/b06-closeout.md": {
+      "bytes": 2886,
+      "sha256": "50569437b4b1cff386367409746dd8c11970d6ef916bf9e81914a4892814f941"
+    },
+    "evidence/b06/2026-10-31/closeout.json": {
+      "bytes": 2356,
+      "sha256": "3a2463f75b847374721c21efd914710227478f305b54ffa2a01a21c05f40ddbb"
+    }
+  }
+}
