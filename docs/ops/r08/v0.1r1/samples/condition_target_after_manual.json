@@ -1,0 +1,285 @@
+{
+  "sample_id": "condition_target_after_manual",
+  "contract_version": "R08-CONTRACT-v0.1r1",
+  "classification": "INTERFACE_SAMPLE",
+  "execution_mode": "NOT_LIVE",
+  "source": "HAND_AUTHORED_SYNTHETIC",
+  "ai_mode_provenance": "REQUIRED_WIRE_ENUM_PLACEHOLDER_NOT_OBSERVED",
+  "catalog_provenance": "SYNTHETIC_WITHIN_FAM_GULA_BERAS_GARAM",
+  "runtime_execution_status": "NOT_RUN",
+  "phase": "after_manual",
+  "notes": "",
+  "draft": {
+    "draft_id": "SAMPLE_R08_CONDITION",
+    "version": 2,
+    "status": "READY_FOR_APPROVAL",
+    "customer_id": "SAMPLE_CUSTOMER",
+    "customer": {
+      "customer_id": "SAMPLE_CUSTOMER",
+      "name": "Interface sample customer",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "masked_message": "🙂 2 bag Gula 1kg\n2 bag Garam 1kg\nkalau RM8.40 boleh?",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "SAMPLE_L01",
+        "client_line_ref": null,
+        "sku_id": "SAMPLE_GULA_1KG",
+        "family_id": "FAM_GULA",
+        "description": "Interface sample GULA_1KG",
+        "requested_qty": 2,
+        "confirmed_qty": 2,
+        "effective_qty": 2,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "tier_unit_price": "7.10",
+        "unit_price_override": "8.40",
+        "override_reason": "Synthetic customer confirmation: unit price 8.40 applies to the selected Gula line only.",
+        "effective_unit_price": "8.40",
+        "subtotal_rm": "16.80",
+        "match_source": "MANUAL_SELECTED",
+        "source_span": "2 bag Gula 1kg",
+        "span_start": 2,
+        "span_end": 16,
+        "field_evidence": [
+          {
+            "field": "qty",
+            "raw_text": "2",
+            "start": 2,
+            "end": 3,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "uom",
+            "raw_text": "bag",
+            "start": 4,
+            "end": 7,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "pack_size",
+            "raw_text": "1kg",
+            "start": 13,
+            "end": 16,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 30
+      },
+      {
+        "line_id": "SAMPLE_L02",
+        "client_line_ref": null,
+        "sku_id": "SAMPLE_GARAM_1KG",
+        "family_id": "FAM_GARAM",
+        "description": "Interface sample GARAM_1KG",
+        "requested_qty": 2,
+        "confirmed_qty": 2,
+        "effective_qty": 2,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "tier_unit_price": "4.60",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "4.60",
+        "subtotal_rm": "9.20",
+        "match_source": "MANUAL_SELECTED",
+        "source_span": "2 bag Garam 1kg",
+        "span_start": 17,
+        "span_end": 32,
+        "field_evidence": [
+          {
+            "field": "qty",
+            "raw_text": "2",
+            "start": 17,
+            "end": 18,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "uom",
+            "raw_text": "bag",
+            "start": 19,
+            "end": 22,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "pack_size",
+            "raw_text": "1kg",
+            "start": 29,
+            "end": 32,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 30
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "SAMPLE_I01",
+        "code": "CUSTOMER_CONDITION",
+        "line_id": null,
+        "span": "kalau RM8.40 boleh?",
+        "span_start": 33,
+        "span_end": 52,
+        "candidate_line_ids": [
+          "SAMPLE_L01",
+          "SAMPLE_L02"
+        ],
+        "target_line_ids": [
+          "SAMPLE_L01"
+        ],
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "requested_amount": "8.40",
+          "confirmed_unit_price": "8.40"
+        },
+        "blocking": true,
+        "resolved": true,
+        "resolution": "ACCEPT_REQUESTED_PRICE",
+        "resolution_note": "Synthetic customer confirmation: unit price 8.40 applies to the selected Gula line only.",
+        "auto_resolved_by": null,
+        "condition_kind": "PRICE",
+        "condition_scope": "UNKNOWN",
+        "price_basis": "UNIT",
+        "requested_unit_price": null,
+        "condition_id": "CND_6BAFF2E046E11A9F84B97079"
+      }
+    ],
+    "conditions": [
+      {
+        "issue_id": "SAMPLE_I01",
+        "code": "CUSTOMER_CONDITION",
+        "line_id": null,
+        "span": "kalau RM8.40 boleh?",
+        "span_start": 33,
+        "span_end": 52,
+        "candidate_line_ids": [
+          "SAMPLE_L01",
+          "SAMPLE_L02"
+        ],
+        "target_line_ids": [
+          "SAMPLE_L01"
+        ],
+        "reason_code": null,
+        "ask": "CLERK",
+        "data_used": {
+          "requested_amount": "8.40",
+          "confirmed_unit_price": "8.40"
+        },
+        "blocking": true,
+        "resolved": true,
+        "resolution": "ACCEPT_REQUESTED_PRICE",
+        "resolution_note": "Synthetic customer confirmation: unit price 8.40 applies to the selected Gula line only.",
+        "auto_resolved_by": null,
+        "condition_kind": "PRICE",
+        "condition_scope": "UNKNOWN",
+        "price_basis": "UNIT",
+        "requested_unit_price": null,
+        "condition_id": "CND_6BAFF2E046E11A9F84B97079"
+      }
+    ],
+    "blocking_issues": [],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "26.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "APPROVE_AND_GENERATE_DO",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {},
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-11-01T03:30:00+08:00",
+    "updated_at": "2026-11-01T03:30:00+08:00",
+    "do_number": null
+  },
+  "save_request": {
+    "expected_version": 1,
+    "lines": [
+      {
+        "line_id": "SAMPLE_L01",
+        "sku_id": "SAMPLE_GULA_1KG",
+        "family_id": "FAM_GULA",
+        "confirmed_qty": 2,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "match_source": "MANUAL_SELECTED",
+        "save_to_alias_cache": false,
+        "alias_scope": "CUSTOMER",
+        "unit_price_override": "8.40",
+        "override_reason": "Synthetic customer confirmation: unit price 8.40 applies to the selected Gula line only."
+      },
+      {
+        "line_id": "SAMPLE_L02",
+        "sku_id": "SAMPLE_GARAM_1KG",
+        "family_id": "FAM_GARAM",
+        "confirmed_qty": 2,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "match_source": "MANUAL_SELECTED",
+        "save_to_alias_cache": false,
+        "alias_scope": "CUSTOMER"
+      }
+    ],
+    "deleted_line_ids": [],
+    "resolutions": [
+      {
+        "issue_id": "SAMPLE_I01",
+        "choice": "ACCEPT_REQUESTED_PRICE",
+        "target_line_ids": [
+          "SAMPLE_L01"
+        ],
+        "confirmed_unit_price": "8.40",
+        "price_basis": "UNIT",
+        "note": "Synthetic customer confirmation: unit price 8.40 applies to the selected Gula line only."
+      }
+    ]
+  },
+  "save_expectation": {
+    "http_status": 200,
+    "error_code": null,
+    "actual_result": "NOT_RUN",
+    "actual_http_status": null,
+    "draft_version_before": 1,
+    "draft_version_after": 2,
+    "stored_draft_behavior": "NEW_SAVED_VERSION"
+  },
+  "negative_example": null,
+  "approval_expectation": {
+    "execution_status": "NOT_RUN",
+    "expected_if_unresolved": null,
+    "approval_performed": false,
+    "actual_http_status": null
+  },
+  "side_effects": {
+    "evidence_kind": "ILLUSTRATIVE_ONLY",
+    "database_contacted": false,
+    "do_created": false,
+    "inventory_read": false,
+    "inventory_written": false,
+    "actual_inventory_before": null,
+    "actual_inventory_after": null
+  }
+}

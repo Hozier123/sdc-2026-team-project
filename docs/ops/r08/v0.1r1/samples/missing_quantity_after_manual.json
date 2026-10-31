@@ -1,0 +1,134 @@
+{
+  "sample_id": "missing_quantity_after_manual",
+  "contract_version": "R08-CONTRACT-v0.1r1",
+  "classification": "INTERFACE_SAMPLE",
+  "execution_mode": "NOT_LIVE",
+  "source": "HAND_AUTHORED_SYNTHETIC",
+  "ai_mode_provenance": "REQUIRED_WIRE_ENUM_PLACEHOLDER_NOT_OBSERVED",
+  "catalog_provenance": "SYNTHETIC_WITHIN_FAM_GULA_BERAS_GARAM",
+  "runtime_execution_status": "NOT_RUN",
+  "phase": "after_manual",
+  "notes": "Illustrative saved version 2; no save/approval call was made.",
+  "draft": {
+    "draft_id": "SAMPLE_R08_MISSING_QTY",
+    "version": 2,
+    "status": "READY_FOR_APPROVAL",
+    "customer_id": "SAMPLE_CUSTOMER",
+    "customer": {
+      "customer_id": "SAMPLE_CUSTOMER",
+      "name": "Interface sample customer",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "masked_message": "Garam 1kg",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "SAMPLE_L01",
+        "client_line_ref": "SAMPLE_MANUAL_01",
+        "sku_id": "SAMPLE_GARAM_1KG",
+        "family_id": "FAM_GARAM",
+        "description": "Interface sample GARAM_1KG",
+        "requested_qty": 3,
+        "confirmed_qty": 3,
+        "effective_qty": 3,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "tier_unit_price": "4.60",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "4.60",
+        "subtotal_rm": "13.80",
+        "match_source": "MANUAL_SELECTED",
+        "source_span": "Garam 1kg",
+        "span_start": 0,
+        "span_end": 9,
+        "field_evidence": [
+          {
+            "field": "pack_size",
+            "raw_text": "1kg",
+            "start": 6,
+            "end": 9,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 30
+      }
+    ],
+    "issues": [],
+    "conditions": [],
+    "blocking_issues": [],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "13.80",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "APPROVE_AND_GENERATE_DO",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {},
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-11-01T03:30:00+08:00",
+    "updated_at": "2026-11-01T03:30:00+08:00",
+    "do_number": null
+  },
+  "save_request": {
+    "expected_version": 1,
+    "lines": [
+      {
+        "client_line_ref": "SAMPLE_MANUAL_01",
+        "sku_id": "SAMPLE_GARAM_1KG",
+        "family_id": "FAM_GARAM",
+        "confirmed_qty": 3,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "match_source": "MANUAL_SELECTED",
+        "save_to_alias_cache": false,
+        "alias_scope": "CUSTOMER"
+      }
+    ],
+    "deleted_line_ids": [],
+    "resolutions": []
+  },
+  "save_expectation": {
+    "http_status": 200,
+    "error_code": null,
+    "actual_result": "NOT_RUN",
+    "actual_http_status": null,
+    "draft_version_before": 1,
+    "draft_version_after": 2,
+    "stored_draft_behavior": "NEW_SAVED_VERSION"
+  },
+  "negative_example": null,
+  "approval_expectation": {
+    "execution_status": "NOT_RUN",
+    "expected_if_unresolved": null,
+    "approval_performed": false,
+    "actual_http_status": null
+  },
+  "side_effects": {
+    "evidence_kind": "ILLUSTRATIVE_ONLY",
+    "database_contacted": false,
+    "do_created": false,
+    "inventory_read": false,
+    "inventory_written": false,
+    "actual_inventory_before": null,
+    "actual_inventory_after": null
+  }
+}

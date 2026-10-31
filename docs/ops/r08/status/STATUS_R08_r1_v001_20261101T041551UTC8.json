@@ -1,0 +1,103 @@
+{
+  "task": "R08",
+  "version": "R08-CONTRACT-v0.1r1",
+  "recorded_at": "2026-11-01T04:15:51.309295+08:00",
+  "status": "INTERFACE_REVIEW_COMPLETED_FREEZE_PENDING_DOWNSTREAM",
+  "scope": [
+    "GULA",
+    "BERAS",
+    "GARAM"
+  ],
+  "excluded": [
+    "TELUR",
+    "S03",
+    "C13",
+    "B05 actual trials"
+  ],
+  "prior_version": "R08-CONTRACT-v0.1",
+  "prior_zip_sha256": "5c18e25c6eaa6b1b8df84ab17211a0df379d884e4327c1e6ae53795f2dd8605d",
+  "stages": {
+    "He_specified_corrections": "IMPLEMENTED_IN_REVISION",
+    "Ye_v0_1_consumption_review": "CONSUMABLE_WITH_MODIFICATIONS",
+    "Ye_original_receipt_hash": "MATCHED",
+    "Ye_A_condition_id": "CORRECTED",
+    "Ye_B_deprecated_issue_source_span": "REMOVED_FROM_NEW_SAMPLES",
+    "Ye_C_snapshot_vs_worktree": "CLARIFIED",
+    "Ye_delta_closure": "PASS_CODE_ONLY_ALL_SPECIFIED_CORRECTIONS_AND_CLERK_ENTRY",
+    "Zhou_v0_1_contract_semantics": "PASS",
+    "Zhou_v0_1_samples": "PASS_WITH_CONDITIONS",
+    "Zhou_independent_tsc": "NOT_RERUN_BY_ZHOU_RELIED_ON_HE",
+    "Zhou_P3_1_save_expectation": "ADDED",
+    "Zhou_P3_2_missing_price_routing": "REQUIRED_IN_CONTRACT_R10_NOT_IMPLEMENTED",
+    "Zhou_P3_3_clerk_entry_and_configuration": "ASK_CLERK_AND_RESPONSIBILITIES_SPECIFIED",
+    "Zhou_delta_closure": "PASS_ALL_THREE_P3_CLOSED",
+    "Xiong_v0_1_boundary": "ACCEPTED_STATE_CORRECTION_REQUESTED",
+    "Xiong_state_correction": "APPLIED_EXACT_REQUEST_TO_NEW_DRAFT_AND_STATUS",
+    "final_freeze": "PENDING_R10_IMPLEMENTATION_R09_R11_RUNTIME_PER_CURRENT_REVIEWERS",
+    "R08_closeout": "NOT_CLOSED",
+    "external_messages": "NOT_SENT_BY_ASSISTANT",
+    "platform_release": "NOT_APPLICABLE_TO_INTERFACE_REVISION",
+    "Ye_consumption_current": "CONSUMABLE_WITH_MODIFICATIONS_R10_FIVE_ITEMS_REMAIN",
+    "Zhou_r1_interface_samples": "PASS_INTERFACE_SAMPLE_NOT_LIVE",
+    "Xiong_r1_boundary": "ACCEPTED_NO_NEW_INTERFACE_OBJECTIONS_STATE_CORRECTION_CONFIRMED"
+  },
+  "R07_state_current_reported": "R07 TESTED_OFFLINE + one live preflight observed (v2 evidence; P-2 not signed)",
+  "R07_preflight": {
+    "reported_time": "2026-11-01 03:28 UTC+8",
+    "evidence_version_reported": "v2",
+    "source": "USER_FORWARDED_XIONG_BOUNDARY_RECEIPT",
+    "original_evidence_received": false,
+    "independently_verified_by_He": false,
+    "P2": "NOT_SIGNED",
+    "R07_acceptance": "NOT_SIGNED_BY_THIS_TASK"
+  },
+  "R07_historical_attachment_sha256": "06290c423b5514e757d820d13c05140f9fcbbe322761c91ec66217cd42587c90",
+  "Ye_original_receipt_sha256": "a21b4aa74c7386053bb2e4ea7400be54ee0d541e6a7efb64feaaa5155397bea2",
+  "R10_missing_price_display": "FIVE_ITEMS_PENDING_IMPLEMENTATION_BY_YE",
+  "R09_R11_runtime": "NOT_RUN_BY_THIS_TASK",
+  "formal_E_tests": "NOT_RUN",
+  "actual_approval_rejection": "NOT_RUN",
+  "model_requests_by_this_task": 0,
+  "database_connections_by_this_task": 0,
+  "sample_count": 18,
+  "primary_boundary": "FINAL_API_ORDER_DRAFT",
+  "upstream_boundary": "RAW_EXTRACTION_TO_BACKEND_R09",
+  "archive_paths": "ASCII_ONLY",
+  "state_record_version": "R08-R1-RECEIPTS-v001_20261101T041551UTC8",
+  "contract_version": "R08-CONTRACT-v0.1r1",
+  "contract_zip_sha256": "27c9aaa335edbaaa4a57ce1f4f2dbf450f38428ed33f9c29f7e1a261de625381",
+  "contract_zip_bytes": 109878,
+  "sidecar_only": true,
+  "contract_bytes_modified": false,
+  "Ye_delta_receipt_sha256": "77e35ab11e203821abf7fe81d50f8fb827d266b62958aff80d37c0febdbf9b7b",
+  "limited_scope_completion": "CONTRACT_SEMANTICS_AND_INTERFACE_SAMPLES_REVIEW_COMPLETED",
+  "formal_closeout": "NOT_CLOSED_PER_CURRENT_REVIEW_RECEIPTS",
+  "dependency_interpretation": "R09/R10 can use accepted r1 as implementation reference; final freeze waits downstream evidence under latest reviewer terms, not a start gate",
+  "mandatory_joint_task_closeout": false,
+  "remaining_work": [
+    {
+      "module": "R10",
+      "owner": "Ye",
+      "status": "FIVE_ITEMS_PENDING_IMPLEMENTATION",
+      "items": [
+        "typed r08 diagnostic accessor",
+        "missing-price title and explanation override",
+        "read-only identity summary with Not configured and no click-selection",
+        "clear 422 MISSING_TIER_PRICE mapping",
+        "wire passthrough compatibility without gate0 or enum change"
+      ]
+    },
+    {
+      "module": "R09",
+      "owner": "He",
+      "status": "IMPLEMENTATION_AND_RUNTIME_EVIDENCE_NOT_ESTABLISHED_BY_THIS_REVIEW",
+      "scope": "identity-before-price matching, compatible blocking issue generation, save revalidation, missing-price override rejection, versions/conditions/tenant boundaries; C13 excluded"
+    },
+    {
+      "module": "R11",
+      "owner": "Zhou",
+      "status": "RUNTIME_INDEPENDENT_ACCEPTANCE_PENDING",
+      "scope": "real API/model/role flow and no-wrong-approval/DO/inventory evidence under actual prerequisites; no interface sample substitution"
+    }
+  ]
+}

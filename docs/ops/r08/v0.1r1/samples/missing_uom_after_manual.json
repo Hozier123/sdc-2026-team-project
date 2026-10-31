@@ -1,0 +1,141 @@
+{
+  "sample_id": "missing_uom_after_manual",
+  "contract_version": "R08-CONTRACT-v0.1r1",
+  "classification": "INTERFACE_SAMPLE",
+  "execution_mode": "NOT_LIVE",
+  "source": "HAND_AUTHORED_SYNTHETIC",
+  "ai_mode_provenance": "REQUIRED_WIRE_ENUM_PLACEHOLDER_NOT_OBSERVED",
+  "catalog_provenance": "SYNTHETIC_WITHIN_FAM_GULA_BERAS_GARAM",
+  "runtime_execution_status": "NOT_RUN",
+  "phase": "after_manual",
+  "notes": "Illustrative saved version 2; no save/approval call was made.",
+  "draft": {
+    "draft_id": "SAMPLE_R08_MISSING_UOM",
+    "version": 2,
+    "status": "READY_FOR_APPROVAL",
+    "customer_id": "SAMPLE_CUSTOMER",
+    "customer": {
+      "customer_id": "SAMPLE_CUSTOMER",
+      "name": "Interface sample customer",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "masked_message": "2 Beras 5kg",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "SAMPLE_L01",
+        "client_line_ref": null,
+        "sku_id": "SAMPLE_BERAS_5KG",
+        "family_id": "FAM_BERAS",
+        "description": "Interface sample BERAS_5KG",
+        "requested_qty": 2,
+        "confirmed_qty": 2,
+        "effective_qty": 2,
+        "uom": "bag",
+        "pack_size": "5kg",
+        "grade": null,
+        "tier_unit_price": "21.30",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "21.30",
+        "subtotal_rm": "42.60",
+        "match_source": "MANUAL_SELECTED",
+        "source_span": "2 Beras 5kg",
+        "span_start": 0,
+        "span_end": 11,
+        "field_evidence": [
+          {
+            "field": "qty",
+            "raw_text": "2",
+            "start": 0,
+            "end": 1,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "pack_size",
+            "raw_text": "5kg",
+            "start": 8,
+            "end": 11,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 30
+      }
+    ],
+    "issues": [],
+    "conditions": [],
+    "blocking_issues": [],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "42.60",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "APPROVE_AND_GENERATE_DO",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {},
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-11-01T03:30:00+08:00",
+    "updated_at": "2026-11-01T03:30:00+08:00",
+    "do_number": null
+  },
+  "save_request": {
+    "expected_version": 1,
+    "lines": [
+      {
+        "line_id": "SAMPLE_L01",
+        "sku_id": "SAMPLE_BERAS_5KG",
+        "family_id": "FAM_BERAS",
+        "confirmed_qty": 2,
+        "uom": "bag",
+        "pack_size": "5kg",
+        "grade": null,
+        "match_source": "MANUAL_SELECTED",
+        "save_to_alias_cache": false,
+        "alias_scope": "CUSTOMER"
+      }
+    ],
+    "deleted_line_ids": [],
+    "resolutions": []
+  },
+  "save_expectation": {
+    "http_status": 200,
+    "error_code": null,
+    "actual_result": "NOT_RUN",
+    "actual_http_status": null,
+    "draft_version_before": 1,
+    "draft_version_after": 2,
+    "stored_draft_behavior": "NEW_SAVED_VERSION"
+  },
+  "negative_example": null,
+  "approval_expectation": {
+    "execution_status": "NOT_RUN",
+    "expected_if_unresolved": null,
+    "approval_performed": false,
+    "actual_http_status": null
+  },
+  "side_effects": {
+    "evidence_kind": "ILLUSTRATIVE_ONLY",
+    "database_contacted": false,
+    "do_created": false,
+    "inventory_read": false,
+    "inventory_written": false,
+    "actual_inventory_before": null,
+    "actual_inventory_after": null
+  }
+}
