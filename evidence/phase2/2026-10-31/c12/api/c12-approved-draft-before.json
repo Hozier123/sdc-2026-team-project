@@ -1,0 +1,86 @@
+{
+  "captured_at": "2026-10-30T22:37:39.179494+00:00",
+  "method": "GET",
+  "path": "/orders/drafts/DRF_D66F2FAEEF82493E8F30D8C0FC8DC8CD",
+  "role": "CLERK",
+  "status": 200,
+  "request_id": "edee9933-d2b4-46f7-8108-d7f2edc3052a",
+  "body": {
+    "draft_id": "DRF_D66F2FAEEF82493E8F30D8C0FC8DC8CD",
+    "version": 1,
+    "status": "READY_FOR_APPROVAL",
+    "customer_id": "CUS_AMAN",
+    "customer": {
+      "customer_id": "CUS_AMAN",
+      "name": "Kantin Aman",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": "[REDACTED]"
+    },
+    "masked_message": "Milo 1kg 1 bag",
+    "ai_mode": "LLM",
+    "lines": [
+      {
+        "line_id": "LNE_DB12D66D709848D98C28724E1E0443E0",
+        "client_line_ref": "ai-1",
+        "sku_id": "SKU_MILO_1KG",
+        "family_id": "FAM_MILO",
+        "description": "Milo \u7f8e\u7984",
+        "requested_qty": 1,
+        "confirmed_qty": null,
+        "effective_qty": 1,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "tier_unit_price": "18.00",
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": "18.00",
+        "subtotal_rm": "18.00",
+        "match_source": "LLM_EXTRACTED",
+        "source_span": "Milo 1kg 1 bag",
+        "span_start": 0,
+        "span_end": 14,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "1",
+            "start": 5,
+            "end": 6,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 28
+      }
+    ],
+    "issues": [],
+    "conditions": [],
+    "blocking_issues": [],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": "18.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "APPROVE_AND_GENERATE_DO",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {},
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-10-30T22:37:13.875865Z",
+    "updated_at": "2026-10-30T22:37:13.875865Z",
+    "do_number": null
+  }
+}

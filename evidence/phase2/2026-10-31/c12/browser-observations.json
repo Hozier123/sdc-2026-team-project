@@ -1,0 +1,58 @@
+{
+  "scope": "Successful UI observations supporting hard reload and role switches; credential entry is excluded.",
+  "observations": [
+    {
+      "observation_id": "c12-hard-reload",
+      "status": "succeeded",
+      "url": "https://hozier123.github.io/sdc-2026-team-project/#/delivery/DO_20261030_D8ED6398",
+      "observed": {
+        "url": "https://hozier123.github.io/sdc-2026-team-project/#/delivery/DO_20261030_D8ED6398",
+        "buttons": [
+          "KiraOrderFor Orbyte",
+          "BWYour workspaceDemo company",
+          "Overview",
+          "Order inbox",
+          "Product directory",
+          "Owner approvals",
+          "Delivery orders",
+          "Activity log",
+          "Connect API",
+          "Roles & permissions",
+          "Privacy & data",
+          "About KiraOrder"
+        ],
+        "main": "Reconnect to your orders\n\nYour session token was cleared on reload. Reconnect to read your saved backend orders, approvals and logs.\n\nReconnect API\nUse local demo"
+      }
+    },
+    {
+      "observation_id": "c12-owner-open-do",
+      "status": "succeeded",
+      "url": "https://hozier123.github.io/sdc-2026-team-project/#/delivery/DO_20261030_D8ED6398",
+      "observed": {
+        "banner": "Workspace\n/\nDelivery order\nDark mode\nService ready\nBT\nBoss Tan\nOwner",
+        "dialog": "The decisions behind this order\n\nDO_20261030_D8ED6398 \u00b7 saved version 1 \u00b7 Extraction: LLM\n\nEXTRACTION \u2192 HUMAN CONFIRMATION\nNo product fields changed after initial extraction.\nTHE APPROVAL TRAIL\nApprove\n\napprove\n\nUSR_T1_CLERK \u00b7 CLERK \u00b7 31 Oct 2026 \u00b7 06:37 MYT\nInventory deduct\n\ninventory deduct\n\nUSR_T1_CLERK \u00b7 CLERK \u00b7 31 Oct 2026 \u00b7 06:37 MYT"
+      }
+    },
+    {
+      "observation_id": "c12-reload-rejected-log",
+      "status": "succeeded",
+      "url": "https://hozier123.github.io/sdc-2026-team-project/#/activity/DRF_D9F88405F74547A99C14A73AE6BE3390",
+      "observed": {
+        "dialogs": [
+          "Reconnect your API sessionConnect to the backend for orders, approvals and activity records. Your company, role and permissions are verified by the API session.Session requiredAPI base URLSession tokenThe token stays in memory. After a reload, reconnect with your session token to read saved backend orders. To change role or company, connect with that role\u2019s session token. Return to local demo Connect API"
+        ],
+        "main": "Reconnect to your orders\n\nYour session token was cleared on reload. Reconnect to read your saved backend orders, approvals and logs.\n\nReconnect API\nUse local demo"
+      }
+    },
+    {
+      "observation_id": "inspect-clerk-activity-page",
+      "status": "succeeded",
+      "url": "https://hozier123.github.io/sdc-2026-team-project/#/activity/DRF_D9F88405F74547A99C14A73AE6BE3390",
+      "observed": {
+        "banner": "Workspace\n/\nActivity log\nDark mode\nService ready\nS\nSiti\nOrder clerk",
+        "main": "LIVE API\n\nSinaran Food Supply \u00b7 CLERK \u00b7 Backend orders and activity records.\n\nRefresh records\nChange API session\nActivity log\nWORKSPACE\nRecent events\nFiltered by DRF_D9F88405F74547A99C14A73AE6BE3390\nClear filter\nOwner rejected\nRestoran Melati\n\nC12 synthetic test: owner rejects RM17.00 below the RM19.00 tier; verify this decision persists after reload and role change.\n\nUSR_T1_OWNER \u00b7 OWNER\n06:43 MYT\n31 Oct 2026\nOwner approval requested\nRestoran Melati\n\nowner approval requested\n\nUSR_T1_CLERK \u00b7 CLERK\n06:42 MYT\n31 Oct 2026\nDraft version created\nRestoran Melati\n\ndraft version created\n\nUSR_T1_CLERK \u00b7 CLERK\n06:42 MYT\n31 Oct 2026",
+        "dialogs": []
+      }
+    }
+  ]
+}

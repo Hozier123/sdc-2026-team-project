@@ -1,0 +1,48 @@
+{
+  "case_id": "C12",
+  "screenshots": [
+    {
+      "file": "screenshots/c12-approval-after-reload-owner.png",
+      "bytes": 299023,
+      "sha256": "623a90f4e7f6a585ce7971f9116cf7c3994463755c817a457de5b7f705cce960"
+    },
+    {
+      "file": "screenshots/c12-approval-trail-clerk.png",
+      "bytes": 297840,
+      "sha256": "01fba157b7044011d3cbd546dc4870f775f2a01918bb94e224105e7435e1cbd0"
+    },
+    {
+      "file": "screenshots/c12-approved-do.png",
+      "bytes": 380809,
+      "sha256": "82d87511a0b591583c23f8e7f607757301f6d5aa1c82d207a39e7e6b0eeaa0ea"
+    },
+    {
+      "file": "screenshots/c12-before-approval.png",
+      "bytes": 310815,
+      "sha256": "3d6c29b1491eb6805471e98fc028d19e02e5b3ac0007dc65d69fd388ac62de79"
+    },
+    {
+      "file": "screenshots/c12-clerk-rejection-log-after-reload.png",
+      "bytes": 285920,
+      "sha256": "3b13b79f4f13b25d2c8bc33559fe3531523d1bb298dfb98c2f0cdcc30cf3157e"
+    },
+    {
+      "file": "screenshots/c12-open-closed-draft-after-reload.png",
+      "bytes": 356770,
+      "sha256": "523dd45132974f59f9c31f963ab5025a3b0b63d6371e981a1f938f120929f69f"
+    },
+    {
+      "file": "screenshots/c12-owner-rejected.png",
+      "bytes": 421942,
+      "sha256": "f8e08d4f68ce68b147b194351976ed6991d996edf8d3a90ea02f569ca75bfe46"
+    },
+    {
+      "file": "screenshots/c12-owner-rejection-log.png",
+      "bytes": 247101,
+      "sha256": "4902f31176c01dc0d4d3f9be29b2cdee4fed6855230ce07d6e763e7dcc9b8d04"
+    }
+  ],
+  "original_png_bytes_preserved": true,
+  "image_edits": "NONE",
+  "api_capture_note": "Structured JSON responses retain HTTP status, request ID and capture timestamp. Phone/contact values are redacted; these are not byte-for-byte raw network dumps."
+}

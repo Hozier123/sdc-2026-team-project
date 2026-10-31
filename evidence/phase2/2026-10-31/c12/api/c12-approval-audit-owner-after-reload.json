@@ -1,0 +1,147 @@
+{
+  "captured_at": "2026-10-30T22:39:30.835581+00:00",
+  "method": "GET",
+  "path": "/orders/DO_20261030_D8ED6398/audit-detail",
+  "role": "OWNER",
+  "status": 200,
+  "request_id": "1965a555-43de-4ea3-88be-91b465d29961",
+  "body": {
+    "do_number": "DO_20261030_D8ED6398",
+    "draft_id": "DRF_D66F2FAEEF82493E8F30D8C0FC8DC8CD",
+    "draft_version": 1,
+    "ai_initial_snapshot": {
+      "lines": [
+        {
+          "uom": "bag",
+          "grade": null,
+          "sku_id": "SKU_MILO_1KG",
+          "line_id": "LNE_DB12D66D709848D98C28724E1E0443E0",
+          "span_end": 14,
+          "family_id": "FAM_MILO",
+          "pack_size": "1kg",
+          "span_start": 0,
+          "description": "Milo \u7f8e\u7984",
+          "saved_alias": null,
+          "source_span": "Milo 1kg 1 bag",
+          "subtotal_rm": "18.00",
+          "match_source": "LLM_EXTRACTED",
+          "available_qty": 28,
+          "confirmed_qty": null,
+          "effective_qty": 1,
+          "requested_qty": 1,
+          "candidate_skus": [],
+          "field_evidence": [
+            {
+              "end": 6,
+              "field": "requested_qty",
+              "start": 5,
+              "raw_text": "1",
+              "normalizer_version": "field-evidence-v2"
+            }
+          ],
+          "client_line_ref": "ai-1",
+          "override_reason": null,
+          "tier_unit_price": "18.00",
+          "unit_price_override": null,
+          "effective_unit_price": "18.00"
+        }
+      ],
+      "issues": [],
+      "status": "READY_FOR_APPROVAL",
+      "totals": {
+        "currency": "MYR",
+        "is_complete": true,
+        "order_total": "18.00"
+      },
+      "ai_mode": "LLM",
+      "version": 1,
+      "customer": {
+        "name": "Kantin Aman",
+        "tier": "A",
+        "phone_e164": "[REDACTED]",
+        "credit_flag": "NONE",
+        "customer_id": "CUS_AMAN",
+        "has_credit_notice": false
+      },
+      "draft_id": "DRF_D66F2FAEEF82493E8F30D8C0FC8DC8CD",
+      "do_number": null,
+      "conditions": [],
+      "created_at": "2026-10-30T22:37:13.791939Z",
+      "updated_at": "2026-10-30T22:37:13.791939Z",
+      "customer_id": "CUS_AMAN",
+      "ignored_spans": [],
+      "masked_message": "Milo 1kg 1 bag",
+      "allowed_actions": [
+        "EDIT_DRAFT",
+        "RESOLVE_ISSUE",
+        "APPROVE_AND_GENERATE_DO"
+      ],
+      "blocked_actions": {},
+      "blocking_issues": [],
+      "disambiguations": [],
+      "termination_note": null,
+      "clarification_lang": null,
+      "escalation_preview": [],
+      "termination_reason": null,
+      "clarification_draft": null,
+      "terminated_by_user_id": null
+    },
+    "final_snapshot": {
+      "do_number": "DO_20261030_D8ED6398",
+      "draft_id": "DRF_D66F2FAEEF82493E8F30D8C0FC8DC8CD",
+      "draft_version": 1,
+      "customer_id": "CUS_AMAN",
+      "customer_name": "Kantin Aman",
+      "lines": [
+        {
+          "line_id": "LNE_DB12D66D709848D98C28724E1E0443E0",
+          "sku_id": "SKU_MILO_1KG",
+          "display_name": "Milo \u7f8e\u7984",
+          "quantity": 1,
+          "unit": "bag",
+          "tier_unit_price": "18.00",
+          "applied_unit_price": "18.00",
+          "subtotal_rm": "18.00",
+          "override_reason": null,
+          "picking_note": null
+        }
+      ],
+      "final_total_rm": "18.00",
+      "prepared_by": "USR_T1_CLERK",
+      "approved_by": "USR_T1_CLERK",
+      "escalation_reasons": [],
+      "approval_mode": "DIRECT",
+      "reply_draft": {
+        "language": "en",
+        "message": "Order DO_20261030_D8ED6398 confirmed: Milo \u7f8e\u7984 1 bag @ RM 18.00. Total RM 18.00. Thank you!",
+        "do_number": "DO_20261030_D8ED6398",
+        "warnings": []
+      },
+      "related_do_number": null,
+      "approved_at": "2026-10-30T22:37:57.052827Z"
+    },
+    "field_diffs": [],
+    "events": [
+      {
+        "event_type": "APPROVE",
+        "actor_user_id": "USR_T1_CLERK",
+        "actor_role": "CLERK",
+        "created_at": "2026-10-30T22:37:57.018398Z",
+        "payload": {
+          "mode": "DIRECT",
+          "do_number": "DO_20261030_D8ED6398",
+          "customer_name": "Kantin Aman"
+        }
+      },
+      {
+        "event_type": "INVENTORY_DEDUCT",
+        "actor_user_id": "USR_T1_CLERK",
+        "actor_role": "CLERK",
+        "created_at": "2026-10-30T22:37:57.018398Z",
+        "payload": {
+          "do_number": "DO_20261030_D8ED6398"
+        }
+      }
+    ]
+  }
+}
