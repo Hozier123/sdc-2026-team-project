@@ -8,7 +8,7 @@ Explore the workflow through the browser-only Local Demo, using synthetic data w
 
 ## Project links
 
-- [Interactive Local Demo](https://hozier123.github.io/sdc-2026-team-project/) - no login required.
+- [Open the review workspace](https://hozier123.github.io/sdc-2026-team-project/#/workspace) - Local Demo needs no login.
 - [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
 - Pitch deck: [View PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) · [Download editable PowerPoint](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx).
 - [Submission documents, platform proofs and file hashes](submission/README.md).
@@ -30,7 +30,7 @@ Explore the workflow through the browser-only Local Demo, using synthetic data w
 | Team leader and university | Zhou Jingxi, Xiamen University Malaysia |
 | Members and roles | He Minghao (backend, rules, deployment); Xiong Peicheng (AI, RunPod, deployment); Ye Lianghui (frontend); Zhou Jingxi (data, quality, evaluation); Zhan Zhengrong (manual baseline, materials, submission integration) |
 | Repository | https://github.com/Hozier123/sdc-2026-team-project |
-| Frontend | https://hozier123.github.io/sdc-2026-team-project/ |
+| Frontend | https://hozier123.github.io/sdc-2026-team-project/#/workspace |
 | Backend API | https://kiraorder-api.replit.app/api/v1 |
 | Backend health check | https://kiraorder-api.replit.app/readyz |
 
@@ -38,7 +38,7 @@ Explore the workflow through the browser-only Local Demo, using synthetic data w
 
 ### Open the current prototype
 
-Open the [current frontend](https://hozier123.github.io/sdc-2026-team-project/), then click or tap the introduction, or press **Enter / Space**, to enter. To skip the introduction, [open the workspace directly](https://hozier123.github.io/sdc-2026-team-project/#/workspace). On a phone, use the top-left menu to open the sidebar.
+Start the review at the [workspace](https://hozier123.github.io/sdc-2026-team-project/#/workspace). The [introduction](https://hozier123.github.io/sdc-2026-team-project/) remains available separately. On a phone, use the top-left menu to open the sidebar.
 
 Start with **LOCAL DEMO**. It requires no account, password, token, installation, backend connection, or running GPU. The Replit backend URL is an API, and the legacy Replit frontend is an older UI; use GitHub Pages for this walkthrough.
 
@@ -92,6 +92,12 @@ Requests awaiting owner approval cannot be edited directly. A rejected order is 
 3. Click **Find picking list** and check the product, quantity, unit, and picking requirements. Use **Print picking list** if needed.
 
 Warehouse checkboxes are temporary on-page checks. They do not submit shipment, deduct stock again, or persist picking progress after refresh.
+
+### Trace the decision and delivery order
+
+After an owner decision, check the approval request's **Awaiting decision**, **Approved**, or **Rejected** state. Rejection requires a reason, closes the order, and produces no DO. Open **View order activity** from the decision, or use **Activity log** in the workspace navigation. The log shows the actor, time, decision, and result. On a generated DO, use **Open order activity**; click its DO number in the log to return to the document.
+
+For a server-side warehouse redaction check, connect a **LIVE API** warehouse session and inspect the raw `GET /warehouse/delivery-orders/{do_number}` response. Its root fields are `do_number`, `customer_name`, `items`, and `approved_at`; each item contains only `sku_id`, `display_name`, `quantity`, `unit`, and `picking_note`. The Local Demo picking list does not prove what the server returned.
 
 ### Local Demo boundaries and recovery
 

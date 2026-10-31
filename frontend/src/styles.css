@@ -2741,24 +2741,17 @@ a {
   border-top: 1px solid var(--tone-293b47);
 }
 .event-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 7px;
-  background: var(--tone-1f303e);
-  border: 1px solid var(--tone-344b5e);
+  width: 20px;
+  height: 20px;
   display: grid;
   place-items: center;
   color: var(--tone-8eabc4);
   flex-shrink: 0;
 }
 .event-icon.mint {
-  background: var(--tone-203b2e);
-  border-color: var(--tone-3c5c49);
   color: var(--tone-a1c6ac);
 }
 .event-icon.blue {
-  background: var(--tone-21334b);
-  border-color: var(--tone-405574);
   color: var(--tone-a4bddc);
 }
 .activity-event > div {
@@ -2775,6 +2768,10 @@ a {
 .activity-event p {
   color: var(--tone-8ca8ba);
   margin-top: 6px;
+}
+.activity-event .activity-result {
+  color: var(--tone-c4d8e3);
+  font-weight: 600;
 }
 .activity-event small {
   color: var(--tone-7d9aab);

@@ -302,9 +302,13 @@ function Workspace() {
     [service, revision, me?.role],
     business,
   );
+  const activityEntity =
+    route.startsWith("activity/") && validRoute(route)
+      ? route.slice("activity/".length)
+      : undefined;
   const activityResource = useResource(
-    () => service.activity(),
-    [service, revision, me?.role],
+    () => service.activity(activityEntity),
+    [service, revision, me?.role, activityEntity],
     business,
   );
   const aiResource = useResource(() => service.aiStatus(), [service], !!me);
@@ -775,7 +779,7 @@ function Workspace() {
                           activity={activity}
                           drafts={draftsResource.value ?? []}
                           navigate={navigate}
-                          initialQuery={route.split("/")[1] ?? ""}
+                          scopeId={activityEntity}
                         />
                       )}
                     </ResourceView>

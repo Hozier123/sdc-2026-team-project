@@ -41,22 +41,41 @@ test("all four extraction modes come from the order snapshot, unknown stays unkn
   assert.equal(validRoute("activity/one/two"), false);
 });
 
-test("HTTP activity preserves backend actor, rejection reason and delivery linkage", async () => {
+test("scoped HTTP activity preserves actor, rejection reason and result", async () => {
   const original = globalThis.fetch;
-  globalThis.fetch = async () => new Response(JSON.stringify({ items: [{ activity_id: 1, draft_id: "DRF_SYNTHETIC", event_type: "OWNER_REJECTED", actor_user_id: "synthetic-owner", actor_role: "OWNER", created_at: "2026-10-29T08:00:00Z", payload: { note: "Synthetic rejection reason", do_number: "DO-SYNTHETIC" } }], next_cursor: null }));
+  let requestUrl = "";
+  globalThis.fetch = async (input) => {
+    requestUrl = String(input);
+    return new Response(JSON.stringify({ items: [{ activity_id: 1, draft_id: "DRF_SYNTHETIC", event_type: "OWNER_REJECTED", actor_user_id: "synthetic-owner", actor_role: "OWNER", created_at: "2026-10-29T08:00:00Z", payload: { note: "Synthetic rejection reason" } }], next_cursor: null }));
+  };
   try {
-    const activity = await new HttpService("http://localhost:8000/api/v1", "synthetic").activity();
+    const activity = await new HttpService("http://localhost:8000/api/v1", "synthetic").activity("DRF_SYNTHETIC");
+    assert.equal(requestUrl, "http://localhost:8000/api/v1/activity?entity_id=DRF_SYNTHETIC&limit=50");
     assert.equal(activity[0].actor, "synthetic-owner");
     assert.equal(activity[0].actor_role, "OWNER");
     assert.equal(activity[0].entity_id, "DRF_SYNTHETIC");
-    assert.equal(activity[0].do_number, "DO-SYNTHETIC");
+    assert.equal(activity[0].do_number, null);
     assert.equal(activity[0].detail, "Synthetic rejection reason");
-    const markup = renderToStaticMarkup(createElement(ActivityPage, { activity, drafts: [], navigate() {}, initialQuery: "DRF_SYNTHETIC" }));
+    const markup = renderToStaticMarkup(createElement(ActivityPage, { activity, drafts: [], navigate() {}, scopeId: "DRF_SYNTHETIC" }));
     assert.ok(markup.includes("Synthetic rejection reason"));
-    assert.ok(markup.includes("DO-SYNTHETIC"));
+    assert.ok(markup.includes("Closed without a delivery order"));
     assert.ok(markup.includes("synthetic-owner · OWNER"));
     assert.ok(markup.includes("2026-10-29T08:00:00Z"));
   } finally { globalThis.fetch = original; }
+});
+
+test("DO activity exposes its generated result and DO lookup", () => {
+  const markup = renderToStaticMarkup(createElement(ActivityPage, {
+    activity: [{
+      activity_id: "2", entity_id: "DRF_SYNTHETIC", action: "DO_CREATED",
+      actor: "synthetic-clerk", actor_role: "CLERK", do_number: "DO-SYNTHETIC",
+      created_at: "2026-10-29T08:01:00Z", detail: "do created",
+    }],
+    drafts: [], navigate() {}, scopeId: "DRF_SYNTHETIC",
+  }));
+  assert.ok(markup.includes("Delivery order generated"));
+  assert.ok(markup.includes("DO-SYNTHETIC"));
+  assert.ok(markup.includes("synthetic-clerk · CLERK"));
 });
 
 test("warehouse adapter rejects commercial and contact fields in the raw server response", async () => {

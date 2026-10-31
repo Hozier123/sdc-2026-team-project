@@ -444,6 +444,17 @@ def test_owner_rejects_with_note(seeded_db):
         assert rejected.status_code == 200, rejected.text
         assert rejected.json()["status"] == "REJECTED"
         assert rejected.json()["termination_reason"] == "OWNER_REJECTED"
+        assert rejected.json()["decision_note"] == "price is wrong"
+
+        activity = client.get(
+            "/api/v1/activity", params={"entity_id": "DRF_T1"}, headers=_headers(CLERK)
+        )
+        assert activity.status_code == 200, activity.text
+        decision = next(
+            item for item in activity.json()["items"] if item["event_type"] == "OWNER_REJECTED"
+        )
+        assert decision["actor_user_id"] == "USR_T1_OWNER"
+        assert decision["payload"]["note"] == "price is wrong"
 
         no_note = client.post(
             f"/api/v1/approvals/{approval['approval_id']}/decide",
@@ -452,6 +463,12 @@ def test_owner_rejects_with_note(seeded_db):
         )
         assert no_note.status_code == 422
         assert no_note.json()["error_code"] == "REJECTION_REASON_REQUIRED"
+
+    with connect(seeded_db) as conn:
+        assert conn.execute("SELECT count(*) FROM delivery_orders").fetchone() == (0,)
+        assert conn.execute(
+            "SELECT available_qty FROM inventory WHERE product_id='SKU_MILO_1KG'"
+        ).fetchone() == (10,)
 
 
 def test_contract_read_endpoints_after_do(seeded_db):
@@ -494,8 +511,11 @@ def test_contract_read_endpoints_after_do(seeded_db):
         assert warehouse.status_code == 200, warehouse.text
         body = warehouse.json()
         assert body["items"][0]["sku_id"] == "SKU_MILO_1KG"
-        assert "final_total_rm" not in body
-        assert "applied_unit_price" not in body
+        assert set(body) == {"do_number", "customer_name", "items", "approved_at"}
+        assert all(
+            set(item) == {"sku_id", "display_name", "quantity", "unit", "picking_note"}
+            for item in body["items"]
+        )
 
         status = client.get("/api/v1/ai/status", headers=_headers(CLERK))
         assert status.status_code == 200

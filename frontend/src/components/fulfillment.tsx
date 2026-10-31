@@ -194,7 +194,7 @@ export function ApprovalDetail({
     setBusy(true);
     setError(undefined);
     try {
-      const result = await service.decide(id, decision, note);
+      const result = await service.decide(id, decision, decision === "REJECT" ? note : "");
       changed();
       if (!current()) return;
       setReject(false);
@@ -814,16 +814,27 @@ function AuditModal({
     </Modal>
   );
 }
+const ACTIVITY_RESULTS: Record<string, string> = {
+  OWNER_REQUESTED: "Awaiting owner decision",
+  OWNER_REJECTED: "Closed without a delivery order",
+  OWNER_APPROVED: "Approved and delivery order generated",
+  DO_CREATED: "Delivery order generated",
+  DO_GENERATED: "Delivery order generated",
+  INVENTORY_DEDUCTED: "Stock deducted",
+};
+
 export function ActivityPage({
   activity,
   drafts,
   navigate,
   initialQuery = "",
+  scopeId,
 }: {
   activity: Activity[];
   drafts: DraftSummary[];
   navigate: Navigate;
   initialQuery?: string;
+  scopeId?: string;
 }) {
   const [query, setQuery] = useState(initialQuery);
   const filtered = activity.filter((a) =>
@@ -833,11 +844,15 @@ export function ActivityPage({
   );
   return (
     <>
-      <PageHeading title="Activity log" />
+      <PageHeading
+        title={scopeId ? "Order activity" : "Activity log"}
+        description={scopeId ? `Order #${shortId(scopeId)} · actions, decisions and results` : undefined}
+      >
+        {scopeId && <button className="button secondary small" onClick={() => navigate("activity")}>All activity</button>}
+      </PageHeading>
       <section className="panel activity-panel">
         <div className="panel-heading">
           <div>
-            <span className="section-kicker">WORKSPACE</span>
             <h2>Recent events</h2>
           </div>
           <label className="search-field">
@@ -856,6 +871,7 @@ export function ActivityPage({
             {filtered.map((a) => {
               const d = drafts.find((d) => d.draft_id === a.entity_id || (!!a.do_number && d.do_number === a.do_number));
               const deliveryNumber = a.do_number ?? d?.do_number;
+              const result = ACTIVITY_RESULTS[a.action];
               return (
                 <div className="activity-event" key={a.activity_id}>
                   <span
@@ -887,7 +903,8 @@ export function ActivityPage({
                         </button>
                       )}
                     </strong>
-                    <p>{a.detail}</p>
+                    {a.detail && <p>{a.detail}</p>}
+                    {result && <p className="activity-result">Result: {result}</p>}
                     <small>{a.actor}{a.actor_role ? ` · ${a.actor_role}` : ""}</small>
                   </div>
                   <time dateTime={a.created_at}>
