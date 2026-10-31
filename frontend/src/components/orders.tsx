@@ -308,6 +308,25 @@ const ISSUE_COPY: Record<string, { title: string; body: string }> = {
     body: "Choose an add-on or close this duplicate before approval.",
   },
 };
+function issueGuidance(issue: Issue, editable: boolean): string {
+  const known = ISSUE_COPY[issue.code]?.body;
+  if (known) return known;
+  if (issue.condition_kind === "STOCK")
+    return "Stock availability is checked automatically. Resolve any stock shortage in the product lines.";
+  if (issue.condition_kind === "PRICE") {
+    if (issue.ask === "OWNER")
+      return "An owner must review this price request before approval.";
+    return editable
+      ? "In Customer conditions, confirm the tier price or record a requested discount, then save changes."
+      : "This price request still needs a decision before approval.";
+  }
+  if (issue.condition_kind) {
+    return editable
+      ? "Review this customer condition, record the outcome, then save changes."
+      : "This customer condition still needs a decision before approval.";
+  }
+  return "Review and resolve this item before approval.";
+}
 export function OrderDetail({
   id,
   service,
@@ -1069,15 +1088,20 @@ export function OrderDetail({
               )}
           </div>
           <aside className="review-rail">
-            <section className={`panel checks-panel ${unresolved.length ? "has-blockers" : ""}`} id="approval-checks" tabIndex={-1} aria-label="Approval checks">
+            <section className={`panel checks-panel ${unresolved.length ? "has-blockers" : ""}`} id="approval-checks" tabIndex={-1} aria-label={unresolved.length ? "Items needing attention" : "Order checks"}>
               <div className="checks-heading">
-                <ShieldCheck size={18} aria-hidden="true" /><h2>Approval checks</h2>
+                <ShieldCheck size={18} aria-hidden="true" /><h2>{unresolved.length ? "Items needing attention" : "Order checks"}</h2>
               </div>
               <div
                 className={`check-summary ${unresolved.length || checksNeedRefresh ? "amber-text" : "mint-text"}`}
               >
                 {unresolved.length ? (
-                  <PendingChecks count={unresolved.length} />
+                  <PendingChecks
+                    count={unresolved.length}
+                    label={unresolved.every((issue) => issue.condition_kind === "PRICE")
+                      ? unresolved.length === 1 ? "price request" : "price requests"
+                      : undefined}
+                  />
                 ) : checksNeedRefresh ? (
                   <div><strong>{edit ? "Save changes to refresh checks" : !draft.lines.length ? "No saved products to check" : "Product checks incomplete"}</strong></div>
                 ) : (
@@ -1087,7 +1111,7 @@ export function OrderDetail({
                   </>
                 )}
               </div>
-              {unresolved.length > 0 && <p className="checks-instruction">Resolve these checks before approval.</p>}
+              {unresolved.length > 0 && <p className="checks-instruction">Review and resolve these items before approval.</p>}
               {draft.issues.map((issue) => (
                 <div
                   className={`check-item ${issue.resolved ? "resolved" : ""}`}
@@ -1112,15 +1136,15 @@ export function OrderDetail({
                             ? "Ask the customer"
                             : issue.ask === "OWNER"
                               ? "Ask the owner"
-                              : "Your decision"}
+                              : "Decision needed"}
                     </span>
                     <strong>
                       {issue.condition_kind === "STOCK"
                         ? issue.resolved
                           ? "The stock condition is met"
-                          : "Stock condition checked"
+                          : "Stock availability pending"
                         : issue.condition_kind === "PRICE"
-                          ? "A price was requested"
+                          ? "Customer price request"
                           : issue.condition_kind
                             ? "A delivery condition"
                             : (ISSUE_COPY[issue.code]?.title ??
@@ -1128,8 +1152,7 @@ export function OrderDetail({
                     </strong>
                     {!issue.resolved && (
                       <p>
-                        {ISSUE_COPY[issue.code]?.body ??
-                          "Confirm the condition below, then save your decision."}
+                        {issueGuidance(issue, editable)}
                       </p>
                     )}
                     {issue.code === "INSUFFICIENT_STOCK" && (

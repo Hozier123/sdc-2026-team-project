@@ -13,6 +13,7 @@ import {
 import { useWorkbenchMotion } from "./components/useWorkbenchMotion";
 import {
   ArrowDownLeft,
+  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Bell,
@@ -20,7 +21,6 @@ import {
   Check,
   CheckCheck,
   ChevronDown,
-  CircleHelp,
   ClipboardCheck,
   FileCheck2,
   Inbox,
@@ -197,6 +197,7 @@ function Workspace() {
   const [pending, setPending] = useState<string | null>(null);
   const [sidebar, setSidebar] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
+  const [showSidebarScrollCue, setShowSidebarScrollCue] = useState(false);
   useEffect(() => {
     if (!sidebar) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -291,6 +292,25 @@ function Workspace() {
   }, [notice]);
   const identity = useResource(() => service.me(), [service], !needsConnection);
   const me = identity.value;
+  useEffect(() => {
+    const panel = sidebarRef.current;
+    if (!panel) return;
+    const updateScrollCue = () => {
+      setShowSidebarScrollCue(
+        panel.scrollHeight - panel.clientHeight - panel.scrollTop > 8,
+      );
+    };
+    updateScrollCue();
+    panel.addEventListener("scroll", updateScrollCue, { passive: true });
+    const observer = new ResizeObserver(updateScrollCue);
+    observer.observe(panel);
+    window.addEventListener("resize", updateScrollCue);
+    return () => {
+      panel.removeEventListener("scroll", updateScrollCue);
+      observer.disconnect();
+      window.removeEventListener("resize", updateScrollCue);
+    };
+  }, [route, sidebar, me?.role]);
   const business = !!me && me.role !== "WAREHOUSE";
   const draftsResource = useResource(
     () => service.drafts(),
@@ -528,10 +548,9 @@ function Workspace() {
             <ShieldCheck size={18} />
             <span>Privacy & data</span>
           </button>
-          <button className="nav-item" onClick={() => navigate("intro")}>
-            <CircleHelp size={18} />
-            <span>About KiraOrder</span>
-            <ArrowUpRight size={14} />
+          <button className="nav-item back-to-intro" onClick={() => navigate("intro")}>
+            <ArrowLeft size={18} />
+            <span>Back to introduction</span>
           </button>
           <div className="sidebar-footer">
             <span>For Orbyte</span>
@@ -539,6 +558,12 @@ function Workspace() {
               v{APP_VERSION}
             </span>
           </div>
+        </div>
+        <div
+          className={`sidebar-scroll-cue ${showSidebarScrollCue ? "is-visible" : ""}`}
+          aria-hidden="true"
+        >
+          <ChevronDown size={20} />
         </div>
       </aside>
       <div className="app-main" inert={sidebar || undefined}>

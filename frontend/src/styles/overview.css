@@ -7,7 +7,7 @@
   margin-bottom: 28px;
 }
 .desk-heading p { color: var(--muted); font-size: var(--type-caption); }
-.desk-heading .desk-summary strong { color: var(--text); font-weight: 400; }
+.desk-heading .desk-summary strong { color: var(--text); font-weight: 700; }
 .desk-heading p > span { margin-inline: 7px; }
 .desk-heading .desk-summary {
   max-width: 58ch;
@@ -17,6 +17,7 @@
 }
 .desk-stats { margin: 0 0 24px; }
 .desk-stats .stat-card { padding: 19px 20px 16px; }
+.desk-stats .stat-card > div { color: var(--text); font-weight: 600; }
 .desk-stats .stat-card > strong { margin: 12px 0 0; font-size: 40px; }
 .overview-grid.desk-grid {
   display: grid;

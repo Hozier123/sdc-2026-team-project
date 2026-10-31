@@ -140,7 +140,7 @@
     padding-top: 18px;
   }
 }
-@media screen and (max-width: 380px) {
+@media screen and (max-width: 430px) {
   /* The page h1 already names this view; keep the task and identity controls. */
   .app-shell .breadcrumb strong { display: none; }
 }

@@ -59,12 +59,12 @@ export function Status({ status }: { status: DraftStatus }) {
     </Pill>
   );
 }
-export function PendingChecks({ count }: { count: number }) {
+export function PendingChecks({ count, label }: { count: number; label?: string }) {
   return (
     <span className="pending-checks">
       <AlertCircle size={14} aria-hidden="true" />
       <strong>{count}</strong>
-      <span>{count === 1 ? "pending check" : "pending checks"}</span>
+      <span>{label ?? (count === 1 ? "pending check" : "pending checks")}</span>
     </span>
   );
 }
