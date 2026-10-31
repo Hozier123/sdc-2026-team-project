@@ -1,0 +1,85 @@
+{
+  "case_id": "C11",
+  "environment_plan": "PRODUCTION_API_MAIN_LINE",
+  "b05": {
+    "environment_id": "b05-env-ea709a8e70d0",
+    "state_file": "b05-env-ea709a8e70d0/environment.json (private local)",
+    "firstuse_port": 51394,
+    "firstuse_pg_port": 51393,
+    "protected_port": 51391,
+    "protected_pg_port": 51390,
+    "source_commit": "c8848efce1ccbe31e1dead315816c14d313e7a0f",
+    "source_commit_note": "per C06 handoff; verify against environment state before run",
+    "mode": "isolated loopback; firstuse side only for writes",
+    "production_connection": false
+  },
+  "instrumentation": {
+    "status": "NOT_APPLIED",
+    "reason": "production #2 already ai_mode=LLM; Zhou 10:25: patch not required by matrix"
+  },
+  "ai": {
+    "provider": "runpod_adapter",
+    "model": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+    "vllm": "0.32.0",
+    "llm_timeout_s": 4.1,
+    "endpoint_id": "lx22t9308hc10c",
+    "key_source": "private local file; never written to evidence"
+  },
+  "production_reference": {
+    "base_url": "https://kiraorder-api.replit.app/api/v1",
+    "frontend": "f8ff1d7",
+    "pages_deploy": "12ff95f",
+    "backend_deploy": "9cff61ed",
+    "backend_source": "9dfee33",
+    "used_for": "production main line (2026-10-31 10:25); only one CUS_ALI CUSTOMER alias written"
+  },
+  "alias_cache": {
+    "table": "alias_cache",
+    "scope_written": "CUSTOMER",
+    "key": {
+      "tenant_id": "T1",
+      "customer_id": "CUS_ALI",
+      "phrase_norm": "milo 2 bag"
+    },
+    "rows_before": 0,
+    "rows_after_check4": 1,
+    "rows_after_check7": 1,
+    "full_table_count": "NOT_AVAILABLE_NO_PRODUCTION_DSN",
+    "alias_id": "ALI_398DB0744E6F44B985643D81979F4456"
+  },
+  "run": {
+    "started_at": "2026-10-31T10:42:57+08:00",
+    "finished_at": "2026-10-31T10:45:08+08:00",
+    "operator": "He/DSH",
+    "ai_mode_observed_at_check2": "LLM,LLM,LLM",
+    "provider_calls_baseline": null,
+    "provider_calls_after_check5": null,
+    "cold_state_at_check5": "DEGRADED 10:44:37"
+  },
+  "scope_locked_at": "2026-10-31T03:00:00+08:00",
+  "production_main": {
+    "base_url": "https://kiraorder-api.replit.app/api/v1",
+    "frontend": "f8ff1d7",
+    "pages_deploy": "12ff95f",
+    "backend_deploy": "9cff61ed",
+    "backend_source": "9dfee33",
+    "window_utc8": "2026-10-31 10:42:57 - 10:45:08",
+    "role": "C11 main line"
+  },
+  "b05_optional_supplement": {
+    "environment_id": "b05-env-ea709a8e70d0",
+    "source_commit": "c8848efce1ccbe31e1dead315816c14d313e7a0f",
+    "status": "NOT_USED",
+    "note": "optional local supplement only; not the C11 main line"
+  },
+  "hygiene": {
+    "phone_redaction": "raw/*.body.json: +60... -> [REDACTED_PHONE]",
+    "set_cookie_removed": "raw/*.headers.txt: response Cookie lines removed",
+    "absolute_paths_removed": "environment.json / HANDOFF use environment ID or relative path"
+  },
+  "signoff": {
+    "reviewer": "Zhou Jingxi",
+    "signed_at": "2026-10-31",
+    "index_id": "ZR-C11-20261031-01"
+  }
+}

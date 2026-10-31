@@ -76,6 +76,16 @@ class Resolution:
     issue_code: str | None = None
 
 
+# Bulk products are sold by weight, so the weight in the message is a quantity,
+# not a pack specification. Seed data uses "散装"; "bulk"/"loose"/"timbang" are
+# accepted aliases so tests and future tenants do not need the Chinese literal.
+_BULK_PACK_SIZES = {"散装", "bulk", "loose", "timbang"}
+
+
+def _is_bulk_pack(pack_size: str | None) -> bool:
+    return bool(pack_size) and normalize(pack_size) in _BULK_PACK_SIZES
+
+
 def load_catalog(conn, tenant: str, customer_id: str, tier: str) -> Catalog:
     rows = conn.execute(
         "SELECT p.product_id, p.family_id, p.name, p.pack_size, p.grade, p.base_unit, "
@@ -155,11 +165,21 @@ def resolve_row(row: RawRow, catalog: Catalog) -> Resolution:
         products = [product for product in products if product.base_unit == wanted]
     if row.pack_size:
         wanted = normalize(row.pack_size)
-        products = [
+        exact = [
             product
             for product in products
             if product.pack_size and normalize(product.pack_size) == wanted
         ]
+        if exact:
+            products = exact
+        elif row.uom:
+            # Explicit unit plus a bulk SKU: "Bawang 10kg" with uom=kg is
+            # 10 kg of loose stock, not a 10 kg bag. Keep the bulk product even
+            # though its pack_size is "散装"/"bulk". A wrong explicit pack for a
+            # non-bulk SKU still matches nothing and remains NO_CANDIDATE.
+            products = [product for product in products if _is_bulk_pack(product.pack_size)]
+        else:
+            products = []
     grades = _grade_in_span(products, row.span)
     if grades:
         products = [product for product in products if product.grade in grades]

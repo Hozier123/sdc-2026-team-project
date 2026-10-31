@@ -1,0 +1,31 @@
+{
+  "task": "F02",
+  "observed_date": "2026-10-31",
+  "timezone": "Asia/Shanghai",
+  "review_status": "PENDING_INDEPENDENT_REVIEW",
+  "implementation_pr": 74,
+  "implementation_commit": "9628dd387d6c1037afab687a55bc575d186cf6d3",
+  "tested_main_commit": "7bf4b4742b24d40ed319d704d304ea601aee6665",
+  "generated_file_blob_before_and_after_implementation": "9ebc57c45d189612c084ade21b997f3be8df1b71",
+  "generated_file_attribute": "text eol=lf",
+  "protected_paths_text_unset": [
+    "gate0/**",
+    "frontend/contracts/**",
+    "frontend/tests/fixtures/**"
+  ],
+  "autocrlf_true_checkout": {
+    "simulated_on_macos": true,
+    "same_bytes_as_worktree": true,
+    "bytes": 49995,
+    "crlf_count": 0,
+    "sha256": "19b0fef6b07b2c6241aafffe3afe37d9ca8298fe60c1a910c3219a8c283d80bd"
+  },
+  "node_version": "22.22.1",
+  "npm_test": { "passed": 74, "failed": 0 },
+  "npm_build": "PASS_INCLUDING_TYPES_CHECK",
+  "frontend_ci_implementation": "https://github.com/Hozier123/sdc-2026-team-project/actions/runs/41094362543",
+  "frontend_ci_tested_main": "https://github.com/Hozier123/sdc-2026-team-project/actions/runs/41162542438",
+  "windows_native_checkout_tested": false,
+  "implementation_pr_had_review_record": false,
+  "application_source_changed_in_this_review_pr": false
+}

@@ -117,6 +117,8 @@ For implementation details and historical evidence, see the [AI sample runbook](
 
 ## Architecture and deployment
 
+Current operator handoff: [B06 runbook and verified deployment snapshot (2026-10-31)](docs/ops/b06-runbook.md), covering startup, real API access, role sessions, rollback targets and owners.
+
 The React/TypeScript frontend runs on GitHub Pages. FastAPI runs on Replit and connects to Neon PostgreSQL for workflow records. A separately configured extraction path uses the in-process RunPod adapter to call Qwen2.5-7B-Instruct-AWQ through vLLM.
 
 Local Demo is an independent browser-only mode; the deployment and evaluation records below describe separate system components.
