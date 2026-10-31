@@ -682,7 +682,7 @@ export function OrderDetail({
                                 </span>
                                 <div>
                                   <strong>{c.display_name}</strong>
-                                  <span>
+                                  <span className="candidate-specification">
                                     {c.pack_size}
                                     {c.grade ? ` · Grade ${c.grade}` : ""}
                                   </span>
