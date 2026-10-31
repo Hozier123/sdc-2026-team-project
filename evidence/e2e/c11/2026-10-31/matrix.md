@@ -22,7 +22,7 @@
 
 - 1–5、7、10 全 PASS → **`PASS_CANDIDATE_MEMORY_PENDING_REVIEW`**。
 - 第 6 条 `NOT_A_DEFECT`；第 8/9 条 `LIMITATION_RECORDED`，不参与 PASS 分母。
-- 始终 `NOT_SIGNED_OFF`，直到 Zhou 签字。
+- `SIGNED_OFF`（Zhou 2026-10-31）；Zhan 形式 `PASS`，索引 `ZR-C11-20261031-01`。
 
 ## 备注
 

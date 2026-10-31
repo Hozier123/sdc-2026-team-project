@@ -36,7 +36,7 @@ C11 只补三块，不重复 C02 的完整批准/DO 链：
 3. **C02 依赖**：C02 待补证/参考，不得写成已证。
 4. **隔离与记忆范围**：环境 ID、版本、无 C04/C08 写入/reset；alias 只写 CUSTOMER；键级行数 0→1 足够（Zhou 11:53）。
 
-**结论上限**：`PASS_CANDIDATE_MEMORY_PENDING_REVIEW` / `NOT_SIGNED_OFF`；没有 raw output / provider 计数不再降级。
+**结论上限**：`PASS_CANDIDATE_MEMORY_PENDING_REVIEW` / `SIGNED_OFF`（Zhou 2026-10-31）；没有 raw output / provider 计数不再降级。
 
 ## 1. 判定标准（10 条，按 Zhou 条件修订）
 
@@ -88,13 +88,13 @@ C11 只补三块，不重复 C02 的完整批准/DO 链：
 
 | 文件 | 说明 |
 |---|---|
-| `evidence/README.md` | 范围、判定、方法、边界（执行后补结果） |
+| `evidence/README.md` | 范围、判定、方法、边界、签收与入库 |
 | `evidence/acceptance.json` | 10 条检查、样本、环境、限制、Zhou 条件 |
 | `evidence/matrix.md` | 10 条逐条期望/实际/证据 |
-| `evidence/environment.json` | B05 环境 ID、源码 commit、插桩补丁 hash、AI 状态 |
-| `evidence/sample.json` | 样本、alias 行数、provider 计数期望 |
+| `evidence/environment.json` | 生产环境、版本、运行时间、alias 键级行数 |
+| `evidence/sample.json` | 样本与期望值 |
 | `evidence/raw/` | 脱敏后的原始 API 响应、请求 ID、截图索引 |
-| `evidence/screenshots/` | 候选卡片、记忆勾选、saved_alias、复用 ALIAS_ONLY、两条限制 |
+| `evidence/screenshots/` | 9 张 JPG（6 主 + 3 上下文） |
 | `evidence/SHA256.txt` / `PACK_SHA256.txt` | 逐文件哈希 |
 | `scripts/hash_pack.py` | 重算哈希 + 打包 |
 
@@ -122,12 +122,12 @@ C11 只补三块，不重复 C02 的完整批准/DO 链：
 - [x] 第 7 条：403 `FORBIDDEN_ACTION`，draft 仍 v2，alias 未变；
 - [x] 第 8/9 条：`NO_CANDIDATE` / 0 行，只记 LIMITATION；
 - [x] 第 3 条：选中 1kg 未保存 → Unsaved changes + Approve 置灰（`c11_02_unsaved.jpg`）；
-- [x] 第 10 条：8 组 raw + 9 张截图 + 哈希已齐；全表 alias count 无 DSN（C11-LIM-07）；
-- [x] 汇总：`PASS_CANDIDATE_MEMORY_PENDING_REVIEW`；始终 `NOT_SIGNED_OFF`，等 Zhou 签字。
+- [x] 第 10 条：8 组 raw + 9 张截图 + 哈希已齐；电话已脱敏、响应 Cookie 头已删、无绝对路径；
+- [x] 汇总：`PASS_CANDIDATE_MEMORY_PENDING_REVIEW` / `SIGNED_OFF`（Zhou 2026-10-31；Zhan `ZR-C11-20261031-01`）。
 
 ## 9. 结论
 
-生产 API 主线已执行并补齐截图：第 1/2/3/4/5/7/10 条 PASS，第 6 条 NOT_A_DEFECT，第 8/9 条 LIMITATION。**当前 `PASS_CANDIDATE_MEMORY_PENDING_REVIEW` / `SIGNED_OFF`（Zhou 2026-10-31；Zhan `ZR-C11-20261031-01`）。** 逐条证据见 `evidence/execution_log.md`、`evidence/raw/`、`evidence/screenshots/`；全表 alias count 仍缺生产只读 DSN（C11-LIM-07）。签收完成并已入库（PR #111，merge `8365c92`）。本包进入结项状态。
+生产 API 主线已执行并补齐截图：第 1/2/3/4/5/7/10 条 PASS，第 6 条 NOT_A_DEFECT，第 8/9 条 LIMITATION。**当前 `PASS_CANDIDATE_MEMORY_PENDING_REVIEW` / `SIGNED_OFF`（Zhou 2026-10-31；Zhan `ZR-C11-20261031-01`）。** 逐条证据见 `evidence/execution_log.md`、`evidence/raw/`、`evidence/screenshots/`。已入库：PR #111 / merge `8365c92`；结项记录 PR #112 / merge `42919b4`。
 
 ## 10. 发布卫生（2026-10-31 12:00）
 
