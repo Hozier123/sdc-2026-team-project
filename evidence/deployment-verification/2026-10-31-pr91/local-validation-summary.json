@@ -1,0 +1,17 @@
+{
+  "started_at_utc": "2026-10-31T06:38:16.311680+00:00",
+  "tests_exit": 0,
+  "source_commit": "520556cd64a7e6e6a17dfe84d0cdd386d0fef94e",
+  "test_selection": [
+    "tests/test_d02_uom_blocking.py",
+    "tests/test_resolver_missing_uom.py",
+    "tests/test_uom_save_approve.py",
+    "tests/test_b03_manual_recovery.py",
+    "tests/test_b03_canonical_recovery.py",
+    "tests/test_uom_pack_disambiguation.py"
+  ],
+  "test_elapsed_seconds": 67.263,
+  "postgres_stop_exit": 0,
+  "finished_at_utc": "2026-10-31T06:39:26.531949+00:00",
+  "tests_passed": 67
+}

@@ -1,0 +1,49 @@
+{
+  "task": "PR91 deployment verification; separate closeout, no B/C reopen or B05 trial",
+  "verified_at_utc8": "2026-10-31 14:44:43+08:00",
+  "old_deployment": "6d6bafd8",
+  "old_application_sha": "99ee169ef01527587312c82beaba41858f47b9e4",
+  "reviewed_pr": "https://github.com/Hozier123/sdc-2026-team-project/pull/91",
+  "reviewed_fix_sha": "436eec684eb25a0ef1c9286e21917ff2adba2821",
+  "application_source_sha": "520556cd64a7e6e6a17dfe84d0cdd386d0fef94e",
+  "replit_source_commit": "7ebf8e7f611de9eba5dbefb4196090f6eda6b531",
+  "replit_post_publish_commit_short": "26c9450",
+  "current_deployment": "5cae3434",
+  "platform_status": "Live / five deploy stages successful",
+  "application_tree": "675d4c8bcaee22c56ee1c940acec00fd08d9a6b4",
+  "editor_application_and_dependency_diff_empty": true,
+  "replit_configuration_unchanged": true,
+  "latest_main_deployed": false,
+  "changed_files_from_previous_application": [
+    "backend/app/drafts.py",
+    "backend/app/extraction/evidence.py",
+    "backend/app/parse.py",
+    "backend/app/read_models.py",
+    "backend/app/resolver.py",
+    "backend/tests/test_d02_uom_blocking.py",
+    "backend/tests/test_resolver_missing_uom.py",
+    "backend/tests/test_uom_save_approve.py",
+    "docs/audit/d02-uom-blocking-2026-10-31.md"
+  ],
+  "canonical_git_file_sha256": {
+    "backend/app/drafts.py": "d5490ecbf37efd580b550eef0f2f0c127b980d6bafa276353ea98ec71d98effd",
+    "backend/app/extraction/evidence.py": "0a02a2bb7f9de34272c281ac63e6675037fd8b759c0c490e4fcd55dea4828bfa",
+    "backend/app/parse.py": "3b7ddfa7bd08314afa10d372592ed0faee7750bb80c123a1bcf7af94d8d5f170",
+    "backend/app/read_models.py": "319fb977cba528fd2f2f6d479c1dcdb79cf2def31a40129e3e081a0bc1290edb",
+    "backend/app/resolver.py": "1cd5d772458e2800ed080a5264e5b131613c6107cc9cc334ed13e69bff4dfc5d"
+  },
+  "validation": {
+    "local_targeted_tests": 67,
+    "local_targeted_failures": 0,
+    "ruff": "PASS",
+    "pre_release_read_only_checks": "58/58 PASS",
+    "post_release_live_guard": "16/16 PASS",
+    "post_release_read_only_checks": "58/58 PASS"
+  },
+  "account_requirement_status": "WAITING_ZHOU_OFFICIAL_CONFIRMATION",
+  "account_source_trace": "Original 2026-10-25 He team confirmation located; no organiser written source attached",
+  "permissions_changed": false,
+  "b05_actual_trials_started": false,
+  "closed_bc_statuses_changed": false,
+  "evidence_limit": "Platform deployment record + exact editor source binding + live behavior; no direct deployed-container file readback"
+}

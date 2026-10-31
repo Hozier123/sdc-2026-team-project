@@ -1,0 +1,31 @@
+{
+  "batch": "pr91-live-ab61d5f06c40",
+  "deployment": "5cae3434",
+  "source_commit": "520556cd64a7e6e6a17dfe84d0cdd386d0fef94e",
+  "draft_id": "DRF_BFADF855DB5A48B2947ECF5C22D8D4C2",
+  "test_kind": "one synthetic deployment regression; not B05",
+  "status": "PASS",
+  "checks_passed": 16,
+  "checks_total": 16,
+  "checks": {
+    "01-parse:request_id": true,
+    "parse_completed": true,
+    "parse_missing_uom_blocks": true,
+    "02-save-selected-sku-without-unit:request_id": true,
+    "save_retains_null_unit": true,
+    "save_names_missing_uom_blocker": true,
+    "03-approve-blocked:request_id": true,
+    "03-approve-blocked": true,
+    "04-confirmed-items-cannot-bypass:request_id": true,
+    "04-confirmed-items-cannot-bypass": true,
+    "05-readback:request_id": true,
+    "blocked_approvals_do_not_mutate_version": true,
+    "06-discard-synthetic-draft:request_id": true,
+    "synthetic_draft_discarded": true,
+    "inventory_alias_catalog_price_unchanged": true,
+    "no_delivery_order_generated": true
+  },
+  "http_requests": 6,
+  "successful_approvals": 0,
+  "finished_at_utc": "2026-10-31T06:44:20.978093+00:00"
+}
