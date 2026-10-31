@@ -105,6 +105,24 @@ def _unresolved_issue() -> dict[str, Any]:
     }
 
 
+def _quantity_from_pack_size(row: RawRow) -> bool:
+    """An order quantity cannot use the same source digits as a pack size."""
+    quantities = (
+        item for item in row.field_evidence if item.get("field") in {"qty", "requested_qty"}
+    )
+    packs = [item for item in row.field_evidence if item.get("field") == "pack_size"]
+    return any(
+        isinstance(q.get("start"), int)
+        and isinstance(q.get("end"), int)
+        and isinstance(p.get("start"), int)
+        and isinstance(p.get("end"), int)
+        and q["start"] < p["end"]
+        and p["start"] < q["end"]
+        for q in quantities
+        for p in packs
+    )
+
+
 def _ai_draft(
     *,
     customer: dict[str, Any],
@@ -216,14 +234,18 @@ def _ai_draft(
         end = start + len(row.span) if start >= 0 else None
         line_id = None
         row_conditions.extend((cond, row.span) for cond in row.conds)
-        if row.invalid_reason:
+        qty_from_pack = _quantity_from_pack_size(row)
+        if row.invalid_reason or qty_from_pack:
             add_issue(
                 code="LOW_CONFIDENCE_MATCH",
                 line_id=None,
                 span=row.span or None,
                 start=start if start >= 0 else None,
                 end=end,
-                reason_code=row.invalid_reason,
+                reason_code=row.invalid_reason or "FIELD_NOT_EVIDENCED",
+                data_used={"extractor": "AI", "guard": "QTY_FROM_PACK_SIZE"}
+                if qty_from_pack
+                else None,
             )
             continue
         qty, qty_reason, qty_start, qty_end = quantity_evidence(row.span)
