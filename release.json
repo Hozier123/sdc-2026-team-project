@@ -1,26 +1,22 @@
 {
-  "task": "Final frontend 1.5.2 synchronization",
+  "task": "Publish frontend 1.5.2 viewport fixes from PR #120",
   "version": "1.5.2",
-  "source_sha": "2a313fb534bf6c17a5ac6ec295d9dfd5ad2f37ac",
-  "validated_head_sha": "508089d0d0fe3f21560fc6dbe3f02d1dda90cbba",
-  "pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/119",
-  "published_at_utc": "2026-10-31T07:51:48.277129+00:00",
+  "source_sha": "27f1a1a0cde37a2e3f0428e50081fe5730503f25",
+  "validated_head_sha": "27f1a1a0cde37a2e3f0428e50081fe5730503f25",
+  "pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/120",
+  "published_at_utc": "2026-10-31T08:48:20.771+00:00",
   "api_origin": "https://kiraorder-api.replit.app",
   "base_path": "/sdc-2026-team-project/",
-  "index_sha256": "f0817960b8bb5fc3c6319bcb671d7c06bfe838dcce34e45275ab6f15a1f93d25",
-  "previous_pages_sha": "c78c96fdf969d2d26bfafcf6aff0320c40d4ebab",
-  "build_runtime": "Node 24.22.1 (local); Node 22 (frontend CI)",
+  "index_sha256": "d41bbdbd151df5f352011fc837b20ec1b6ed30d2f01477dc792dfbc1c6223226",
+  "previous_pages_sha": "68546461b38f93403d28ebcc4bfa8be13db9283d",
+  "build_runtime": "Node 22.22.1 (local); Node 22 (frontend CI)",
   "asset_manifest": "asset-manifest.json",
   "backend_application_source": "520556cd64a7e6e6a17dfe84d0cdd386d0fef94e",
   "backend_redeployed": false,
   "validation": {
     "frontend_tests_passed": 79,
-    "backend_ci_tests_passed": 662,
-    "backend_selected_local_pg_passed": 112,
-    "live_readonly_checks_passed": 52,
-    "actual_http_service_checks_passed": 8,
+    "frontend_build": "PASS",
     "pages_build_files": 31,
     "manifest_status": "PASS"
-  },
-  "ai_state_at_verification": "OFFLINE"
+  }
 }
