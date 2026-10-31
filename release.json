@@ -1,22 +1,25 @@
 {
-  "task": "Publish contextual product matching options from PR #124",
+  "task": "Publish R10 R08 missing-tier-price diagnostics (five items) from PR #128",
   "version": "1.5.2",
-  "source_sha": "f347ed6af235bc4018ca811936f860a6586f4758",
-  "validated_head_sha": "f347ed6af235bc4018ca811936f860a6586f4758",
-  "pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/124",
-  "published_at_utc": "2026-10-31T12:19:37.939928+00:00",
+  "source_sha": "d4915e74bee260defa651307cb9c5873b4954f93",
+  "validated_head_sha": "d4915e74bee260defa651307cb9c5873b4954f93",
+  "pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/128",
+  "published_at_utc": "2026-10-31T23:12:46+00:00",
   "api_origin": "https://kiraorder-api.replit.app",
   "base_path": "/sdc-2026-team-project/",
-  "index_sha256": "8bd0cf81b2bcaa43ad5597f63879f5d7a4e389d7e3dba49a06f3084ac4ca2305",
-  "previous_pages_sha": "0905ccf8aa835798be7222048c26dcc7638a8fdd",
-  "build_runtime": "Node 22.22.1 (local); Node 22 (frontend CI)",
+  "index_sha256": "4102cc292afb8c908e9fde8189a9b9a0a2fb2a15e9dad9b8b89e953c8c0e1724",
+  "previous_pages_sha": "1985f0bc6a26d7d8637c9bacf8243f76b6ac5e11",
+  "build_runtime": "Node 22.22.1 (local rebuild from merge SHA)",
   "asset_manifest": "asset-manifest.json",
   "backend_application_source": "520556cd64a7e6e6a17dfe84d0cdd386d0fef94e",
+  "backend_live_release": "5cae3434",
   "backend_redeployed": false,
   "validation": {
-    "frontend_tests_passed": 85,
+    "frontend_tests_passed": 100,
     "frontend_build": "PASS",
     "pages_build_files": 31,
+    "static_http_files_passed": 31,
     "manifest_status": "PASS"
-  }
+  },
+  "notes": "Frontend-only release; backend unchanged. R08 diagnostic display is dormant until a backend returns data_used.r08."
 }
