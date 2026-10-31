@@ -7,16 +7,16 @@ Domain 2 (Orbyte Smart SME Challenge) · SDG 8 (targets 8.2, 8.3)
 
 The final-round Final Solution Report, Updated PRD and refreshed Technical & Tools Declaration are the submission copies in this folder. Internal review markers (`CONFIRM`, `DO NOT pre-fill`, `Draft` footers and the PRD open-items table) were removed from these copies; no substantive claim, metric or limitation was upgraded. The Phase 1 preliminary proposal is retained for reference.
 
-**Status refresh (2026-11-01).** These copies were refreshed against repository `main` at `809832b` and the live GitHub Pages build `1985f0bc`, published 2026-10-31 20:20 UTC+8 from `f347ed6`. The refresh corrected repository and deployment status only - the declaration's Pages reference, the report's readiness and release notes, and the PRD's deployment limitation. No evaluation claim or metric was upgraded and no limitation was removed. The merged review-display changes `d4915e7` (100/100 tests) are recorded as not deployed.
+**Status refresh (2026-11-01, second same-day refresh).** These copies were prepared from repository `main` at `5ed535e` (before this documentation commit) and the live GitHub Pages build `4f3656e`, published 2026-11-01 07:12 UTC+8 from source `d4915e7`. The refresh records the Pages release and its public-check scope; the isolated real-model attempt on 1 November, which passed on candidate R06 data but failed live parity for sugar and salt (`FAMILY_NOT_EVIDENCED`) and was not released; and the unchanged backend `5cae3434`, with R08 diagnostics dormant. No evaluation claim or metric was upgraded and no limitation was removed. E09-B and authenticated role flows remain `NOT_RUN`. A pre-existing blank separator page was removed from the Final report, which is now 9 pages; no other text was deleted.
 
 | File | Contents | SHA-256 |
 | --- | --- | --- |
-| [SDC2026_Falcons_Final.pdf](SDC2026_Falcons_Final.pdf) | Final Solution Report v2, 10 pages | `f7f15d7a3eb697f822aaad8ad5d047b645b38d73b747337689ba8d54f16736f6` |
-| [SDC2026_Falcons_PRD.pdf](SDC2026_Falcons_PRD.pdf) | Updated Product Requirements Document v2.0, 15 pages | `cd71ddcca8cffdd53d0ae36efd80e56bc4e3420b9a4f2b11bbc47c304c9b5f4a` |
-| [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | Technical & Tools Declaration, 15-page final-round refresh with Appendices A–E | `c747169ce73f476e37755e9d2588da85291b91676e2a287f1b798c7c2f8ae9ad` |
+| [SDC2026_Falcons_Final.pdf](SDC2026_Falcons_Final.pdf) | Final Solution Report v2, 9 pages | `91c349469f96ab56190f9625b8d23ecc8eca315e15d83948f59286574ee964e4` |
+| [SDC2026_Falcons_PRD.pdf](SDC2026_Falcons_PRD.pdf) | Updated Product Requirements Document v2.0, 15 pages | `b9a124c02336d933313b7ff26652fddfa621db0d799f295de5bf59704ec75615` |
+| [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | Technical & Tools Declaration, 15-page final-round refresh with Appendices A–E | `3d072b9f2be829554203d4f4e33eb91f7f83e38c339c55ac2776edd34e34ca3b` |
 | [SDC2026_Falcons_Preliminary.pdf](SDC2026_Falcons_Preliminary.pdf) | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `5cb6985f9b7868c2253d2ffde99d5fff84ba2e0c98d298c56486ab0bf1baf66d` |
 
-The Final Solution Report and the Technical & Tools Declaration carry the team leader's signature dated 2026-11-01. The signed copies were then refreshed the same day with the repository and deployment status above; their signature blocks are unchanged. The previous 17-page Phase 1 edition remains recoverable from Git history. The final-round copies are the documents packaged for submission; this folder does not contain a final-round portal receipt.
+The Final Solution Report and the Technical & Tools Declaration carry the team leader's signature dated 2026-11-01. The signed copies were then refreshed twice the same day with the repository, release and real-model evidence above; their signature blocks are unchanged. The previous 17-page Phase 1 edition remains recoverable from Git history. The final-round portal submission was completed before this second refresh; this folder records the refreshed repository copies and does not contain a second portal receipt.
 
 ## Final-round deck (2026-11-01)
 
