@@ -1,0 +1,103 @@
+{
+  "task": "B06",
+  "observed_at_utc": "2026-10-31T04:46:00.896113+00:00",
+  "main_snapshot": "15f6138926d2090c00f405f419cf41fad93195cf",
+  "pages_commit": "ae5a0d7c7dc4cc663c96fee39fbf14dcb62e0fab",
+  "replit": {
+    "source_url": "https://replit.com/@dsc2509046/kiraorder-api",
+    "method": "Read-only browser UI: Publishing overview, current View deploy logs, and .replit editor",
+    "overview_status": "Live",
+    "current_deployment": "6d6bafd8",
+    "current_deploy_log_text": "Dsc2509046 published 6d6bafd8",
+    "deploy_stage_icons": "five success",
+    "history_visible": [
+      "3e568d26",
+      "9cff61ed",
+      "b4de7c09 (failed)",
+      "72258e1f"
+    ],
+    "config": {
+      "deploymentTarget": "autoscale",
+      "localPort": 8000,
+      "externalPort": 80,
+      "AI_PROVIDER": "runpod_adapter",
+      "RUNPOD_MODEL_NAME": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+      "LLM_TIMEOUT_S": "4.1",
+      "build": "cd backend && python3.13 -I -m venv .venv313 && PIP_CONFIG_FILE=/dev/null .venv313/bin/python -m pip install -c requirements.lock -e '.[test]'",
+      "run": "cd backend && .venv313/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000",
+      "cors_origins": [
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "https://kiraorder-web.replit.app",
+        "https://hozier123.github.io"
+      ]
+    },
+    "source_binding_origin": "evidence/b03/2026-10-31/release.json; inherited historical binding plus new UI deployment observation; not server filesystem readback",
+    "application_source": "99ee169ef01527587312c82beaba41858f47b9e4",
+    "replit_source_commit": "9e9ae24",
+    "replit_post_publish_head": "b156e6a"
+  },
+  "frontend_ui": {
+    "url": "https://hozier123.github.io/sdc-2026-team-project/#/workspace",
+    "version_label": "v1.5.1",
+    "default_mode": "LOCAL DEMO",
+    "connection_dialog": "Your workspace connection",
+    "fields": [
+      "API base URL",
+      "Session token"
+    ],
+    "default_api_base": "https://kiraorder-api.replit.app/api/v1",
+    "token_entry_or_api_connection_performed": false
+  },
+  "source_differences": {
+    "main_backend_app_tree": "675d4c8bcaee22c56ee1c940acec00fd08d9a6b4",
+    "deployed_baseline_backend_app_tree": "3199cf343ab0f3a53dbca900de0014761ad7b6dd",
+    "main_backend_changes_since_deployed_baseline": [
+      "backend/app/drafts.py",
+      "backend/app/extraction/evidence.py",
+      "backend/app/parse.py",
+      "backend/app/read_models.py",
+      "backend/app/resolver.py"
+    ],
+    "main_frontend_tree": "a22539fa36b01e9250e71badaf58f6a2925227fb",
+    "published_frontend_source_tree": "4b3cb163d40e060db594d065994214793b54723f",
+    "main_frontend_changes_since_published_source": [
+      "frontend/DESIGN.md",
+      "frontend/docs/READABILITY_1.5.1_2026-10-31.md",
+      "frontend/src/components/orders.tsx",
+      "frontend/src/styles/review.css"
+    ]
+  },
+  "historical_metadata_conflicts": [
+    {
+      "source": "Pages release.json",
+      "backend_deployment": "3e568d26",
+      "meaning": "B02 build-time backend binding; current Live is 6d6bafd8"
+    },
+    {
+      "source": "evidence/e2e/c11/2026-10-31/environment.json",
+      "backend_deployment": "9cff61ed",
+      "frontend_source": "f8ff1d7",
+      "meaning": "Historical C11 evidence metadata retained; not adopted as current B06 deployment"
+    }
+  ],
+  "c11_closeout": {
+    "source": "docs/ops/c11-closeout.md",
+    "status": "SIGNED_OFF",
+    "index": "ZR-C11-20261031-01",
+    "application_release_required_by_closeout": false
+  },
+  "mutations": {
+    "application_deployments": 0,
+    "database_writes": 0,
+    "credential_changes": 0,
+    "messages_sent": 0
+  },
+  "limitations": [
+    "No new whole-server bytewise source readback",
+    "No rollback execution or failure injection",
+    "No model readiness or inference check",
+    "No new independent member signature",
+    "No official organizer account exemption or new judge review window established"
+  ]
+}

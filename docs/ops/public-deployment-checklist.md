@@ -1,5 +1,7 @@
 # Public deployment readiness checklist
 
+> Historical pre-deployment checklist dated 2026-10-23. The unchecked items below are not current runtime findings. Use the [verified B06 runbook (2026-10-31)](b06-runbook.md) for the current operational handoff.
+
 日期：2026-10-23  
 状态：**未部署**。本清单只定义部署前必须完成的事项，不代表已有公开链接。
 

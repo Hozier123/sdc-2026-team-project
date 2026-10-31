@@ -1,0 +1,95 @@
+{
+  "task": "B06",
+  "status": "COMPLETED_REQUESTED_RUNBOOK_SCOPE",
+  "requested_six_items_complete": true,
+  "new_application_release_required": false,
+  "verified_at_utc": "2026-10-31T04:42:52.142409+00:00",
+  "main_source_snapshot": "15f6138926d2090c00f405f419cf41fad93195cf",
+  "requested_items": [
+    {
+      "item": "frontend_backend_versions",
+      "complete": true,
+      "runbook_section": "1",
+      "evidence": [
+        "preflight.json",
+        "source-observations.json"
+      ]
+    },
+    {
+      "item": "startup_order",
+      "complete": true,
+      "runbook_section": "3",
+      "evidence": [
+        "source-observations.json",
+        "docs/ops/replit-c07-deployment.toml"
+      ]
+    },
+    {
+      "item": "real_entry_points",
+      "complete": true,
+      "runbook_section": "2",
+      "evidence": [
+        "preflight.json",
+        "source-observations.json"
+      ]
+    },
+    {
+      "item": "role_session_acquisition",
+      "complete": true,
+      "runbook_section": "4",
+      "evidence": [
+        "preflight.json"
+      ],
+      "roles_verified": 6,
+      "secrets_published": false
+    },
+    {
+      "item": "rollback_versions_and_steps",
+      "complete": true,
+      "runbook_section": "5",
+      "rollback_executed": false
+    },
+    {
+      "item": "owners",
+      "complete": true,
+      "runbook_section": "6",
+      "new_duty_window_or_signature_claimed": false
+    }
+  ],
+  "public_preflight": {
+    "result": "PASS",
+    "checks_passed": 19,
+    "checks_total": 19,
+    "published_files_verified": 34
+  },
+  "rollback_targets": {
+    "pages": "ae5a0d7c7dc4cc663c96fee39fbf14dcb62e0fab",
+    "backend_previous_deployment": "3e568d26",
+    "backend_previous_application": "f767e7b738613efe7872549757cdc00b3c64be6c",
+    "backend_current_recovery_deployment": "6d6bafd8",
+    "backend_current_recovery_application": "99ee169ef01527587312c82beaba41858f47b9e4",
+    "database_reset": false
+  },
+  "owners": {
+    "backend_sessions_database": "He Minghao",
+    "frontend_pages": "Ye Lianghui",
+    "ai_resources": "Xiong Peicheng",
+    "data_review_team_coordination": "Zhou Jingxi",
+    "materials_organizer_coordination": "Zhan Zhengrong"
+  },
+  "access_mode": {
+    "public": "Local Demo",
+    "real_api": "Privately arranged role-bound session; team-driven by default",
+    "review_window": "Agreed per session; no new window committed by this task",
+    "automatic_one_time_token_ttl": false,
+    "official_github_account_or_exemption": "Not established by this technical delivery; no exemption inferred"
+  },
+  "c11": "Closed per repository record; no reacceptance performed; learned CUS_ALI phrase retained",
+  "independent_review": "No new member signature claimed",
+  "business_e2e": "NOT_RERUN",
+  "model_inference": "NOT_RUN",
+  "rollback_drill": "NOT_RUN",
+  "historical_checker_issue": "Initial local checker expected nested error.code; corrected to contract top-level error_code; original retained locally, not an API defect",
+  "messages_sent": 0,
+  "production_changes": 0
+}

@@ -1,0 +1,482 @@
+{
+  "task": "B06",
+  "started_at_utc": "2026-10-31T04:42:43.293297+00:00",
+  "finished_at_utc": "2026-10-31T04:42:52.142409+00:00",
+  "result": "PASS",
+  "checks_passed": 19,
+  "checks_total": 19,
+  "checks": {
+    "pages_release_matches_git": true,
+    "pages_assets_match_git": true,
+    "index_matches_release_manifest": true,
+    "backend_ready": true,
+    "missing_token_rejected": true,
+    "invalid_token_rejected": true,
+    "pages_cors": true,
+    "T1_CLERK_identity": true,
+    "T1_CLERK_catalog_access": true,
+    "T1_OWNER_identity": true,
+    "T1_OWNER_catalog_access": true,
+    "T1_WAREHOUSE_identity": true,
+    "T1_WAREHOUSE_catalog_access": true,
+    "T2_CLERK_identity": true,
+    "T2_CLERK_catalog_access": true,
+    "T2_OWNER_identity": true,
+    "T2_OWNER_catalog_access": true,
+    "T2_WAREHOUSE_identity": true,
+    "T2_WAREHOUSE_catalog_access": true
+  },
+  "sources": {
+    "main_at_check": "15f6138926d2090c00f405f419cf41fad93195cf",
+    "pages_commit": "ae5a0d7c7dc4cc663c96fee39fbf14dcb62e0fab"
+  },
+  "scope": {
+    "methods": [
+      "GET",
+      "OPTIONS"
+    ],
+    "business_writes": 0,
+    "deployments": 0,
+    "migrations": 0,
+    "resets": 0,
+    "model_calls": 0,
+    "ai_status_or_wake_calls": 0,
+    "runtime_deployment_verification": "SEPARATE_REPLIT_UI_OBSERVATION",
+    "business_e2e": "NOT_RERUN"
+  },
+  "evidence": {
+    "pages": {
+      "commit": "ae5a0d7c7dc4cc663c96fee39fbf14dcb62e0fab",
+      "release": {
+        "task": "B02",
+        "version": "1.5.1",
+        "source_sha": "befac4c33e723559f1f9a4d0ef05b66f0ba4f8ef",
+        "validated_head_sha": "76ddff4dd77932c948f47a6c03deb953e4e0527a",
+        "pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/98",
+        "built_at_utc": "2026-10-30T18:32:19.740686+00:00",
+        "api_origin": "https://kiraorder-api.replit.app",
+        "base_path": "/sdc-2026-team-project/",
+        "index_sha256": "95a7d4786c72f16a251c683122f8dbc4b2dbc43243216c71337f4d43840e6eb8",
+        "asset_normalization": "Git text normalization to LF",
+        "backend_deployment": "3e568d26",
+        "directory_route": "#/catalog",
+        "build_runtime": "Node 22.23.4"
+      },
+      "assets": [
+        {
+          "path": "assets/PlanetGreeting-38HLtBUG.js",
+          "http_status": 200,
+          "expected_sha256": "9135aa6c8782cda0b23125fbd5ec28620f0c9cde65b4b95fd7a0ed0032c66f12",
+          "actual_sha256": "9135aa6c8782cda0b23125fbd5ec28620f0c9cde65b4b95fd7a0ed0032c66f12",
+          "pass": true
+        },
+        {
+          "path": "assets/PlanetGreeting-CZtFtjdN.css",
+          "http_status": 200,
+          "expected_sha256": "96adcf896a002730b7e466ceaf0cec3c4332be848b5f760c7147030530525a38",
+          "actual_sha256": "96adcf896a002730b7e466ceaf0cec3c4332be848b5f760c7147030530525a38",
+          "pass": true
+        },
+        {
+          "path": "assets/PlanetGreeting-DiKoaEF5.js",
+          "http_status": 200,
+          "expected_sha256": "1dae8df3028135fa1204b397304b65070ba65a11a8f6173ff2f932cc9988156b",
+          "actual_sha256": "1dae8df3028135fa1204b397304b65070ba65a11a8f6173ff2f932cc9988156b",
+          "pass": true
+        },
+        {
+          "path": "assets/PlanetGreeting-Sjij7eHY.js",
+          "http_status": 200,
+          "expected_sha256": "7b50252988190bc5c472f64920304251b9affa528f701ef545d8e61e97487646",
+          "actual_sha256": "7b50252988190bc5c472f64920304251b9affa528f701ef545d8e61e97487646",
+          "pass": true
+        },
+        {
+          "path": "assets/_commonjsHelpers-CqkleIqs.js",
+          "http_status": 200,
+          "expected_sha256": "4c81dcd54e7e877a79145c4c6fde30ac0e8d857f412b73f48f6970e5d7eab938",
+          "actual_sha256": "4c81dcd54e7e877a79145c4c6fde30ac0e8d857f412b73f48f6970e5d7eab938",
+          "pass": true
+        },
+        {
+          "path": "assets/cinzel.css",
+          "http_status": 200,
+          "expected_sha256": "8f1d9ca8053f52ff91dd55d2848a88da0989391b9d49b1a91eed15343493e0f7",
+          "actual_sha256": "8f1d9ca8053f52ff91dd55d2848a88da0989391b9d49b1a91eed15343493e0f7",
+          "pass": true
+        },
+        {
+          "path": "assets/extends-7F6pTuIq.js",
+          "http_status": 200,
+          "expected_sha256": "a52e00a4698707d7496b4074daf193be529c02d29aaeafe5d3e942496b2b0abd",
+          "actual_sha256": "a52e00a4698707d7496b4074daf193be529c02d29aaeafe5d3e942496b2b0abd",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/Cinzel-OFL.txt",
+          "http_status": 200,
+          "expected_sha256": "f2b3029aba64c378bf0963b62945eee15e564fe4330b934c8f2eb058282b5e83",
+          "actual_sha256": "f2b3029aba64c378bf0963b62945eee15e564fe4330b934c8f2eb058282b5e83",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/Cinzel-Variable.ttf",
+          "http_status": 200,
+          "expected_sha256": "f4d83d34d1f6c741193e4acf4b3dff9531e5a67b6aa65228d00a7db72a4e0f34",
+          "actual_sha256": "f4d83d34d1f6c741193e4acf4b3dff9531e5a67b6aa65228d00a7db72a4e0f34",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/Marcellus-OFL.txt",
+          "http_status": 200,
+          "expected_sha256": "715ba72697e14daa9b29a333545f69bde7c497b9f77d0a2a4c4a5a752d961801",
+          "actual_sha256": "715ba72697e14daa9b29a333545f69bde7c497b9f77d0a2a4c4a5a752d961801",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/Marcellus-Regular.ttf",
+          "http_status": 200,
+          "expected_sha256": "1cf0cd10b17d35e852729962cc1ffaffed94514895972458345e2df34abb2f81",
+          "actual_sha256": "1cf0cd10b17d35e852729962cc1ffaffed94514895972458345e2df34abb2f81",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/cormorant-300-italic-085cc047a9.woff",
+          "http_status": 200,
+          "expected_sha256": "085cc047a9c0ee0bf8172ad1c2ded15a74e51b3513b796dc4b695777af3996ed",
+          "actual_sha256": "085cc047a9c0ee0bf8172ad1c2ded15a74e51b3513b796dc4b695777af3996ed",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/cormorant-300-normal-11103aa9a8.woff",
+          "http_status": 200,
+          "expected_sha256": "11103aa9a8fca34f2592dddf5f1ae8df1450fe8cf74eb713247ec5fd035d3c2e",
+          "actual_sha256": "11103aa9a8fca34f2592dddf5f1ae8df1450fe8cf74eb713247ec5fd035d3c2e",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/cormorant-400-italic-7df07e2269.woff",
+          "http_status": 200,
+          "expected_sha256": "7df07e2269d2fd52fccb72c4020ef13eace47960aafdb793facc826a2ab4be8f",
+          "actual_sha256": "7df07e2269d2fd52fccb72c4020ef13eace47960aafdb793facc826a2ab4be8f",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/cormorant-400-normal-2eaa35e911.woff",
+          "http_status": 200,
+          "expected_sha256": "2eaa35e911ba220f93ecd8a8c931e00444f58a99428585f7d95f16d9ffc45b67",
+          "actual_sha256": "2eaa35e911ba220f93ecd8a8c931e00444f58a99428585f7d95f16d9ffc45b67",
+          "pass": true
+        },
+        {
+          "path": "assets/fonts/cormorant-500-normal-d126a2eb8d.woff",
+          "http_status": 200,
+          "expected_sha256": "d126a2eb8dafea6f4c1c83867a94600460977e29094f9c0357378328363dfdf1",
+          "actual_sha256": "d126a2eb8dafea6f4c1c83867a94600460977e29094f9c0357378328363dfdf1",
+          "pass": true
+        },
+        {
+          "path": "assets/icons-DU2a_GaL.js",
+          "http_status": 200,
+          "expected_sha256": "b7aa04ec86767f6a2f9ec2fd6eaf280ee49a0dc82d76c2b9275741f92d3589dd",
+          "actual_sha256": "b7aa04ec86767f6a2f9ec2fd6eaf280ee49a0dc82d76c2b9275741f92d3589dd",
+          "pass": true
+        },
+        {
+          "path": "assets/icons-ShuOUesi.js",
+          "http_status": 200,
+          "expected_sha256": "5e5909da9e5f80b9a417cbf195610e17701e79c5f4dd6fdfcfdb3f9bf0a582c4",
+          "actual_sha256": "5e5909da9e5f80b9a417cbf195610e17701e79c5f4dd6fdfcfdb3f9bf0a582c4",
+          "pass": true
+        },
+        {
+          "path": "assets/index-1JJf9gpg.js",
+          "http_status": 200,
+          "expected_sha256": "691752f114070c9558ab36673f1cc23dee148979ab36cfd9ccf97cfe254ff9fc",
+          "actual_sha256": "691752f114070c9558ab36673f1cc23dee148979ab36cfd9ccf97cfe254ff9fc",
+          "pass": true
+        },
+        {
+          "path": "assets/index-BztthgSD.js",
+          "http_status": 200,
+          "expected_sha256": "36317b77bca8d0f49f34fac2d1af7be20bd4d9edbf67646ee2a6fbfeef0b79c8",
+          "actual_sha256": "36317b77bca8d0f49f34fac2d1af7be20bd4d9edbf67646ee2a6fbfeef0b79c8",
+          "pass": true
+        },
+        {
+          "path": "assets/index-CV6UI6Pp.js",
+          "http_status": 200,
+          "expected_sha256": "93265a9d244f5ee07d736f09234b4a5a1cbe94347e68716bb064c48675035670",
+          "actual_sha256": "93265a9d244f5ee07d736f09234b4a5a1cbe94347e68716bb064c48675035670",
+          "pass": true
+        },
+        {
+          "path": "assets/index-DjubgMF7.css",
+          "http_status": 200,
+          "expected_sha256": "27b1c37e9d75ccbb3d8010c7b101c35c4ceecd4b28a1485ea7584273a7b77358",
+          "actual_sha256": "27b1c37e9d75ccbb3d8010c7b101c35c4ceecd4b28a1485ea7584273a7b77358",
+          "pass": true
+        },
+        {
+          "path": "assets/index-QLvvEU2G.css",
+          "http_status": 200,
+          "expected_sha256": "ade92343467b811ebee09faeda28fcf4ff5545dafa115f64ecef1c299ae71a00",
+          "actual_sha256": "ade92343467b811ebee09faeda28fcf4ff5545dafa115f64ecef1c299ae71a00",
+          "pass": true
+        },
+        {
+          "path": "assets/intro-fonts.css",
+          "http_status": 200,
+          "expected_sha256": "9a1ee60d69e72e041f8fdc339e102528f58786632a2da545fe2efb09a19e3f86",
+          "actual_sha256": "9a1ee60d69e72e041f8fdc339e102528f58786632a2da545fe2efb09a19e3f86",
+          "pass": true
+        },
+        {
+          "path": "assets/legacy-intro-47392d5399.js",
+          "http_status": 200,
+          "expected_sha256": "47392d5399a1b3fbbbb417efebc2c404c13db796fcddcf7ccd607646937dc907",
+          "actual_sha256": "47392d5399a1b3fbbbb417efebc2c404c13db796fcddcf7ccd607646937dc907",
+          "pass": true
+        },
+        {
+          "path": "assets/legacy-intro-921f6ed987.css",
+          "http_status": 200,
+          "expected_sha256": "921f6ed9873780b7dc73682e2e778518ceace9e74775eb9141508653a8984c5f",
+          "actual_sha256": "921f6ed9873780b7dc73682e2e778518ceace9e74775eb9141508653a8984c5f",
+          "pass": true
+        },
+        {
+          "path": "assets/marcellus.css",
+          "http_status": 200,
+          "expected_sha256": "4ee99be39126e3893e9aa9703434f8d1c28af249656989abf6bf05dcf23238be",
+          "actual_sha256": "4ee99be39126e3893e9aa9703434f8d1c28af249656989abf6bf05dcf23238be",
+          "pass": true
+        },
+        {
+          "path": "assets/nebula.png",
+          "http_status": 200,
+          "expected_sha256": "742dfad438323565da2932fa2eb93afb7164d67d1d6dd64ce8d7f9990e151b97",
+          "actual_sha256": "742dfad438323565da2932fa2eb93afb7164d67d1d6dd64ce8d7f9990e151b97",
+          "pass": true
+        },
+        {
+          "path": "assets/night-background-mobile.jpg",
+          "http_status": 200,
+          "expected_sha256": "e94c155c551752ad8f47c0add9513a6bcc3ba78c69be1bfbb7cc1bb18bf1a301",
+          "actual_sha256": "e94c155c551752ad8f47c0add9513a6bcc3ba78c69be1bfbb7cc1bb18bf1a301",
+          "pass": true
+        },
+        {
+          "path": "assets/night-background-mobile.mp4",
+          "http_status": 200,
+          "expected_sha256": "6fc533cc31f9af161e20bc08ded86a3572ed91227d5514d1940c7df559620a57",
+          "actual_sha256": "6fc533cc31f9af161e20bc08ded86a3572ed91227d5514d1940c7df559620a57",
+          "pass": true
+        },
+        {
+          "path": "assets/react-vendor-Cx61a2LQ.js",
+          "http_status": 200,
+          "expected_sha256": "1f61b646771e25d2ec31d6886445d8ea95426c449cef78e9dd076baa557e4882",
+          "actual_sha256": "1f61b646771e25d2ec31d6886445d8ea95426c449cef78e9dd076baa557e4882",
+          "pass": true
+        },
+        {
+          "path": "assets/three-CVxG3KS0.js",
+          "http_status": 200,
+          "expected_sha256": "c653ce303a08b1cd1a0a6eeb8a3439135098c2e28a09f6a918d00c124db01d8f",
+          "actual_sha256": "c653ce303a08b1cd1a0a6eeb8a3439135098c2e28a09f6a918d00c124db01d8f",
+          "pass": true
+        },
+        {
+          "path": "assets/three-CvbWAUne.js",
+          "http_status": 200,
+          "expected_sha256": "34049ed72fdd983a6754c331205c0b09536106a1ec4ad49593115438e9175d64",
+          "actual_sha256": "34049ed72fdd983a6754c331205c0b09536106a1ec4ad49593115438e9175d64",
+          "pass": true
+        },
+        {
+          "path": "index.html",
+          "http_status": 200,
+          "expected_sha256": "95a7d4786c72f16a251c683122f8dbc4b2dbc43243216c71337f4d43840e6eb8",
+          "actual_sha256": "95a7d4786c72f16a251c683122f8dbc4b2dbc43243216c71337f4d43840e6eb8",
+          "pass": true
+        }
+      ]
+    },
+    "readyz": {
+      "http_status": 200,
+      "request_id": "b06-b66b6aa4e9514a8cb5b9b5e0093cf145",
+      "allow_origin": null,
+      "allow_headers": null,
+      "status": "ready"
+    },
+    "missing_token": {
+      "http_status": 401,
+      "request_id": "b06-9ca24748873f4097af2f20cd7f172328",
+      "allow_origin": null,
+      "allow_headers": null,
+      "error_code": "INVALID_TOKEN"
+    },
+    "invalid_token": {
+      "http_status": 401,
+      "request_id": "b06-7c11b3207da34ee1a3ad4b8c0a66d32d",
+      "allow_origin": null,
+      "allow_headers": null,
+      "error_code": "INVALID_TOKEN"
+    },
+    "cors": {
+      "http_status": 200,
+      "request_id": "b06-8eb8cfb7503043ef9a775ea80dc77636",
+      "allow_origin": "https://hozier123.github.io",
+      "allow_headers": "authorization,x-request-id"
+    },
+    "roles": [
+      {
+        "http_status": 200,
+        "request_id": "b06-23af35dac8f044c5b02aae180667ce21",
+        "allow_origin": "https://hozier123.github.io",
+        "allow_headers": null,
+        "tenant_id": "T1",
+        "role": "CLERK",
+        "user_id": "USR_T1_CLERK",
+        "permissions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "COPY_CLARIFICATION",
+          "APPROVE_AND_GENERATE_DO",
+          "SUBMIT_FOR_OWNER",
+          "VIEW_ACTIVITY",
+          "WAKE_AI"
+        ],
+        "catalog": {
+          "http_status": 200,
+          "request_id": "b06-d8998785da224cafbfa963d10d15df60",
+          "allow_origin": null,
+          "allow_headers": null,
+          "pass": true,
+          "count": 40
+        }
+      },
+      {
+        "http_status": 200,
+        "request_id": "b06-c5574f0446114d2389033df8b7a04b23",
+        "allow_origin": "https://hozier123.github.io",
+        "allow_headers": null,
+        "tenant_id": "T1",
+        "role": "OWNER",
+        "user_id": "USR_T1_OWNER",
+        "permissions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "COPY_CLARIFICATION",
+          "APPROVE_AND_GENERATE_DO",
+          "SUBMIT_FOR_OWNER",
+          "VIEW_ACTIVITY",
+          "WAKE_AI",
+          "OWNER_APPROVE",
+          "OWNER_REJECT",
+          "CANCEL_DRAFT"
+        ],
+        "catalog": {
+          "http_status": 200,
+          "request_id": "b06-e39d2789676d477e9a600e57aaaf2290",
+          "allow_origin": null,
+          "allow_headers": null,
+          "pass": true,
+          "count": 40
+        }
+      },
+      {
+        "http_status": 200,
+        "request_id": "b06-c876bda768754345a5fbb66cf3502d48",
+        "allow_origin": "https://hozier123.github.io",
+        "allow_headers": null,
+        "tenant_id": "T1",
+        "role": "WAREHOUSE",
+        "user_id": "USR_T1_WAREHOUSE",
+        "permissions": [],
+        "catalog": {
+          "http_status": 403,
+          "request_id": "b06-62e61bd3c0f84f869538c41c36804d2b",
+          "allow_origin": null,
+          "allow_headers": null,
+          "pass": true,
+          "count": null
+        }
+      },
+      {
+        "http_status": 200,
+        "request_id": "b06-5bc033888d224b208a9459c99426e82e",
+        "allow_origin": "https://hozier123.github.io",
+        "allow_headers": null,
+        "tenant_id": "T2",
+        "role": "CLERK",
+        "user_id": "USR_T2_CLERK",
+        "permissions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "COPY_CLARIFICATION",
+          "APPROVE_AND_GENERATE_DO",
+          "SUBMIT_FOR_OWNER",
+          "VIEW_ACTIVITY",
+          "WAKE_AI"
+        ],
+        "catalog": {
+          "http_status": 200,
+          "request_id": "b06-3e20af7e2a754f9882eeaf19305f39c2",
+          "allow_origin": null,
+          "allow_headers": null,
+          "pass": true,
+          "count": 16
+        }
+      },
+      {
+        "http_status": 200,
+        "request_id": "b06-98f5602a7e454974ac95eb9a2e264a48",
+        "allow_origin": "https://hozier123.github.io",
+        "allow_headers": null,
+        "tenant_id": "T2",
+        "role": "OWNER",
+        "user_id": "USR_T2_OWNER",
+        "permissions": [
+          "EDIT_DRAFT",
+          "RESOLVE_ISSUE",
+          "COPY_CLARIFICATION",
+          "APPROVE_AND_GENERATE_DO",
+          "SUBMIT_FOR_OWNER",
+          "VIEW_ACTIVITY",
+          "WAKE_AI",
+          "OWNER_APPROVE",
+          "OWNER_REJECT",
+          "CANCEL_DRAFT"
+        ],
+        "catalog": {
+          "http_status": 200,
+          "request_id": "b06-11efcdc4f74f492492f7d823dc0ac016",
+          "allow_origin": null,
+          "allow_headers": null,
+          "pass": true,
+          "count": 16
+        }
+      },
+      {
+        "http_status": 200,
+        "request_id": "b06-901aa40742314bfababeaad4cc6fbd1d",
+        "allow_origin": "https://hozier123.github.io",
+        "allow_headers": null,
+        "tenant_id": "T2",
+        "role": "WAREHOUSE",
+        "user_id": "USR_T2_WAREHOUSE",
+        "permissions": [],
+        "catalog": {
+          "http_status": 403,
+          "request_id": "b06-9fd03c06296a4e5baed0c13518cffd54",
+          "allow_origin": null,
+          "allow_headers": null,
+          "pass": true,
+          "count": null
+        }
+      }
+    ]
+  }
+}
