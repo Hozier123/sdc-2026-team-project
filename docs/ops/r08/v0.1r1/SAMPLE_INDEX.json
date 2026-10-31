@@ -1,0 +1,26 @@
+{
+  "contract_version": "R08-CONTRACT-v0.1r1",
+  "classification": "INTERFACE_SAMPLE",
+  "execution_mode": "NOT_LIVE",
+  "count": 18,
+  "samples": [
+    "unknown_blocked",
+    "unknown_after_manual",
+    "unknown_negative",
+    "multiple_variants_blocked",
+    "multiple_variants_after_manual",
+    "multiple_variants_negative",
+    "missing_uom_blocked",
+    "missing_uom_after_manual",
+    "missing_uom_negative",
+    "missing_quantity_blocked",
+    "missing_quantity_after_manual",
+    "missing_quantity_negative",
+    "missing_price_blocked",
+    "missing_price_after_manual",
+    "missing_price_negative",
+    "condition_target_blocked",
+    "condition_target_after_manual",
+    "condition_target_negative"
+  ]
+}
