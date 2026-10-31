@@ -3,14 +3,18 @@
 Team: **Falcons** — Project: **KiraOrder for Orbyte**
 Domain 2 (Orbyte Smart SME Challenge) · SDG 8 (targets 8.2, 8.3)
 
-## Completed deliverables
+## Final-round documents (2026-11-01)
 
-The proposal and Technical & Tools Declaration follow the official SDC templates, are signed by the team leader and dated 2026/10/25.
+The final-round Final Solution Report, Updated PRD and refreshed Technical & Tools Declaration are the submission copies in this folder. Internal review markers (`CONFIRM`, `DO NOT pre-fill`, `Draft` footers and the PRD open-items table) were removed from these copies; no substantive claim, metric or limitation was upgraded. The Phase 1 preliminary proposal is retained for reference.
 
 | File | Contents | SHA-256 |
 | --- | --- | --- |
+| [SDC2026_Falcons_Final.pdf](SDC2026_Falcons_Final.pdf) | Final Solution Report v2, 10 pages | `27adc846866941c2db7e1618bfc18b247877ae292b0a3db13fc1b4354bdf0ef9` |
+| [SDC2026_Falcons_PRD.pdf](SDC2026_Falcons_PRD.pdf) | Updated Product Requirements Document v2.0, 15 pages | `e414b0845856f726d9f5c511e3064fd38f61136a7b312dde9b221e3f91f2d048` |
+| [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | Technical & Tools Declaration, 15-page final-round refresh with Appendices A–E | `7c355f6e8c95b8ea4a4810207265da527c29dd9ef7ba42d25ddb78e772717271` |
 | [SDC2026_Falcons_Preliminary.pdf](SDC2026_Falcons_Preliminary.pdf) | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `5cb6985f9b7868c2253d2ffde99d5fff84ba2e0c98d298c56486ab0bf1baf66d` |
-| [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | 17-page Technical & Tools Declaration, supplied ChecklistConfirmed_Final edition, incl. Appendices A–F | `14c46ddce9619cb7786de29f3a185ae7aed9d206bcf2ff7a010428f7eb4a2a51` |
+
+The Final Solution Report and the Technical & Tools Declaration carry the team leader's signature dated 2026-11-01; the previous 17-page Phase 1 edition remains recoverable from Git history. The final-round copies are the documents packaged for submission; this folder does not contain a final-round portal receipt.
 
 ## Final-round deck (2026-11-01)
 
@@ -24,13 +28,9 @@ The final-round deck supersedes the 15-slide preliminary deck, whose PDF and PPT
 
 The live presentation is delivered from the HTML file above: open it in any browser and use the arrow keys (`N` shows the speaker notes). All screenshots are embedded as data URIs, so the single file is portable and does not depend on this repository. The `.pptx` is the offline-checkable rendering of the same 17 pages. The appendix deck is a technical record and was not shown on stage. Both files were opened and slide-checked before this commit.
 
-The proposal and Technical & Tools Declaration PDFs are also the documents to be uploaded to the official submission portal (`sdchack.my`). Publishing them in this repository is **not** a substitute for submitting through the portal.
-
-The pitch deck PDF is provided for convenient viewing. The original PowerPoint is retained as the editable presentation source.
-
 ## Platform-use evidence
 
-Existing Replit deployment and RunPod screenshots remain reproduced inside `SDC2026_Falcons_TechDeclaration.pdf` (Appendices B–D); related evidence records are archived under [`../evidence/`](../evidence/), with Replit screenshots in [`../evidence/replit/2026-10-24/`](../evidence/replit/2026-10-24/) and RunPod screenshots in [`../evidence/runpod/2026-10-24/`](../evidence/runpod/2026-10-24/).
+Existing Replit and RunPod screenshots are reproduced inside `SDC2026_Falcons_TechDeclaration.pdf` (Appendices B and C); related evidence records are archived under [`../evidence/`](../evidence/), with Replit screenshots in [`../evidence/replit/2026-10-24/`](../evidence/replit/2026-10-24/) and RunPod screenshots in [`../evidence/runpod/2026-10-24/`](../evidence/runpod/2026-10-24/).
 
 The following standalone usage-proof PDFs were added on 2026/10/25. They are byte-for-byte copies of the supplied Revision 2 files, with only the `(1)` filename suffix removed. SHA-256 values below were calculated from the uploaded files.
 
@@ -41,17 +41,17 @@ The following standalone usage-proof PDFs were added on 2026/10/25. They are byt
 
 Scope matters: the Replit attachment does **not** contain Ye Lianghui's separate US$6.31 sponsored Agent Usage screenshot; its Section 5.2 explicitly records that gap. Neither attachment proves a complete live-AI end-to-end demonstration.
 
-On 2026/10/25, the declaration was replaced with the supplied `SDC2026_Falcons_TechDeclaration_ChecklistConfirmed_Final.pdf`, published under the required `SDC2026_Falcons_TechDeclaration.pdf` filename. Its bytes match the supplied file; no PDF content or signatures were altered during this upload. The previous edition remains recoverable from Git history. The proposal hash above was also refreshed to match the proposal already on `main`; the proposal itself was not changed in this update.
+On 2026-11-01 the declaration in this folder was refreshed to the 15-page final-round edition; the 17-page `SDC2026_Falcons_TechDeclaration_ChecklistConfirmed_Final.pdf` Phase 1 edition remains recoverable from Git history. The usage proofs are unchanged. The previous declaration hash applied to the Phase 1 edition only.
 
-The usage proofs remain separate supporting attachments, not replacements for declaration pages, and retain the evidence boundaries stated above. Publication of this declaration revision and these attachments in GitHub does not by itself establish that the same files were uploaded to the official portal.
+The usage proofs remain separate supporting attachments, not replacements for declaration pages, and retain the evidence boundaries stated above.
 
 ## Pitch video
 
 - [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
 
-The supplied slide deck and video are linked here. The official portal entry is registered via `sdchack.my` (GitHub link accepted; API integration confirmed); see [`PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png`](PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png).
+The supplied slide deck and video are linked here. The Phase 1 preliminary entry was registered via `sdchack.my` (GitHub link accepted; API integration confirmed); see [`PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png`](PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png). The screenshot below is the preliminary-round confirmation, not a final-round receipt.
 
-## Portal submission confirmation
+## Portal submission confirmation (preliminary round, 2026-10-25)
 
 ![Portal submission confirmation](PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png)
 
