@@ -19,6 +19,7 @@ export function CatalogResult({ result, mode }: {
       {!result.items.length ? (
         <Empty title="No active products" description="This workspace has no active products in its directory." />
       ) : (
+        <>
         <div className="catalog-scroll">
           <table className="catalog-table" aria-label="Product directory">
             <thead><tr><th>Product</th><th>SKU</th><th>Pack size</th><th>Grade</th><th>Unit</th></tr></thead>
@@ -33,6 +34,20 @@ export function CatalogResult({ result, mode }: {
             ))}</tbody>
           </table>
         </div>
+        <ul className="catalog-mobile-list" aria-label="Product directory">
+          {result.items.map((product) => (
+            <li className="catalog-mobile-item" key={product.sku_id}>
+              <strong>{product.display_name}</strong>
+              <code>{product.sku_id}</code>
+              <dl>
+                <div><dt>Pack size</dt><dd>{product.pack_size ?? "—"}</dd></div>
+                <div><dt>Grade</dt><dd>{product.grade ?? "—"}</dd></div>
+                <div><dt>Unit</dt><dd>{product.base_unit}</dd></div>
+              </dl>
+            </li>
+          ))}
+        </ul>
+        </>
       )}
     </>
   );

@@ -17,6 +17,8 @@ export function useIntroMotion(
       dot = dotRef.current;
     if (!root || !ring || !dot) return;
     const media = matchMedia("(hover: hover) and (pointer: fine)");
+    // Fixed cursor layers sit inside the zoomed body; pointer coordinates do not.
+    const screenZoom = Number.parseFloat(getComputedStyle(document.body).zoom) || 1;
     const x = { value: 0, velocity: 0 },
       y = { value: 0, velocity: 0 };
     const px = { value: 0, velocity: 0 },
@@ -60,7 +62,7 @@ export function useIntroMotion(
         root.dataset.cursorVisible = "true";
         ring.dataset.visible = dot.dataset.visible = "true";
       }
-      dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
+      dot.style.transform = `translate3d(${targetX / screenZoom}px, ${targetY / screenZoom}px, 0)`;
     };
     const press = () => {
       down = true;
@@ -103,7 +105,7 @@ export function useIntroMotion(
       const ny = visible ? (targetY / innerHeight) * 2 - 1 : 0;
       pointer.current.x = advanceSpring(px, nx, dt, 65, 14);
       pointer.current.y = advanceSpring(py, ny, dt, 65, 14);
-      ring.style.transform = `translate3d(${sx}px, ${sy}px, 0) scale(${scale})`;
+      ring.style.transform = `translate3d(${sx / screenZoom}px, ${sy / screenZoom}px, 0) scale(${scale})`;
       if (atmosphereRef.current)
         atmosphereRef.current.style.transform = `translate3d(${-pointer.current.x * 20}px, ${-pointer.current.y * 14}px, 0)`;
       let mx = 0,

@@ -60,6 +60,7 @@
   position: relative;
   display: flex;
   min-width: 0;
+  max-width: 180px;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
@@ -67,6 +68,10 @@
 .identity-meta > strong {
   display: block;
   margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 13px;
   line-height: 18px;
   font-weight: 500;
@@ -131,7 +136,7 @@
   .top-divider, .ai-indicator small, .role-trigger-demo { display: none; }
   .ai-indicator { gap: 4px; font-size: 11px; }
   .identity { gap: 8px; }
-  .identity-meta { min-height: 44px; }
+  .identity-meta { min-height: 44px; max-width: 128px; }
   .identity-meta > strong { font-size: var(--type-meta); line-height: 18px; }
   .role-trigger {
     gap: 3px;
@@ -143,4 +148,18 @@
 @media screen and (max-width: 430px) {
   /* The page h1 already names this view; keep the task and identity controls. */
   .app-shell .breadcrumb strong { display: none; }
+}
+@media screen and (max-width: 400px) {
+  .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "navigation theme" "status identity";
+    gap: 4px 8px;
+    padding-block: 8px;
+  }
+  .breadcrumb { grid-area: navigation; }
+  .topbar-actions { display: contents; }
+  .topbar-actions .theme-toggle { grid-area: theme; justify-self: end; }
+  .topbar-actions .ai-indicator { grid-area: status; justify-self: start; min-width: 0; }
+  .topbar-actions .identity { grid-area: identity; justify-self: end; }
 }

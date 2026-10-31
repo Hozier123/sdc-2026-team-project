@@ -470,6 +470,27 @@
     max-width: none;
   }
 }
+@media screen and (max-width: 900px) {
+  .app-shell .order-inbox-panel .queue-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .app-shell .order-inbox-panel .queue-toolbar .tabs {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    padding-bottom: 4px;
+  }
+  .app-shell .order-inbox-panel .queue-toolbar .tabs button {
+    flex: none;
+  }
+}
 @media screen and (max-width: 760px) {
   .app-shell .queue-toolbar .tabs {
     gap: 8px;

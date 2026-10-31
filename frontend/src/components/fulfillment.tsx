@@ -496,7 +496,7 @@ export function DeliveriesPage({
           <Plus size={16} /> New order
         </button>
       </PageHeading>
-      <section className="panel">
+      <section className="panel delivery-orders-panel">
         <div className="panel-heading">
           <div>
             <h2>Approved orders</h2>
@@ -624,24 +624,31 @@ export function DeliveryPage({
               </span>
             </div>
           </div>
-          <div className="do-table">
-            <div className="do-table-head">
-              <span>ITEM / DESCRIPTION</span>
-              <span>QTY</span>
-              <span>UNIT PRICE</span>
-              <span>AMOUNT</span>
+          <div className="do-table" role="table" aria-label="Delivery order items">
+            <div className="do-table-head" role="row">
+              <span role="columnheader">ITEM / DESCRIPTION</span>
+              <span role="columnheader">QTY</span>
+              <span role="columnheader">UNIT PRICE</span>
+              <span role="columnheader">AMOUNT</span>
             </div>
             {d.lines.map((l, i) => (
-              <div className="do-line" key={l.line_id}>
-                <span>
+              <div className="do-line" role="row" key={l.line_id}>
+                <span role="cell">
                   <small>{String(i + 1).padStart(2, "0")}</small>
                   <strong>{l.display_name}</strong>
                 </span>
-                <span>
+                <span role="cell">
+                  <small className="do-mobile-label" aria-hidden="true">QTY</small>
                   {l.quantity} {l.unit}
                 </span>
-                <span>{money(l.applied_unit_price)}</span>
-                <strong>{money(l.subtotal_rm)}</strong>
+                <span role="cell">
+                  <small className="do-mobile-label" aria-hidden="true">UNIT PRICE</small>
+                  {money(l.applied_unit_price)}
+                </span>
+                <strong role="cell">
+                  <small className="do-mobile-label" aria-hidden="true">AMOUNT</small>
+                  {money(l.subtotal_rm)}
+                </strong>
               </div>
             ))}
           </div>

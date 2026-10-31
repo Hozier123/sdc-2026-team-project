@@ -5,6 +5,7 @@ import {
   Suspense,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -645,7 +646,7 @@ function Workspace() {
                   .join("") ?? "S"}
               </button>
               <div className="identity-meta">
-                <strong>{me?.display_name ?? (needsConnection ? "Reconnect session" : "Loading")}</strong>
+                <strong title={me?.display_name}>{me?.display_name ?? (needsConnection ? "Reconnect session" : "Loading")}</strong>
                 {!needsConnection && service.mode === "demo" ? (
                   <RoleSwitcher role={demoRole} onChange={setRole} />
                 ) : (
@@ -1193,6 +1194,27 @@ function InboxPage({
   filter: string;
 }) {
   const [query, setQuery] = useState("");
+  const filterTabs = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const tabs = filterTabs.current;
+    const active = tabs?.querySelector<HTMLButtonElement>('[aria-pressed="true"]');
+    if (!tabs || !active) return;
+    const keepActiveVisible = () => {
+      const viewport = tabs.getBoundingClientRect();
+      const selected = active.getBoundingClientRect();
+      // Scroll only the filter strip; scrolling into view would move the page.
+      const zoom = Number.parseFloat(getComputedStyle(document.body).zoom) || 1;
+      if (selected.left < viewport.left) {
+        tabs.scrollLeft += (selected.left - viewport.left) / zoom;
+      } else if (selected.right > viewport.right) {
+        tabs.scrollLeft += (selected.right - viewport.right) / zoom;
+      }
+    };
+    keepActiveVisible();
+    const observer = new ResizeObserver(keepActiveVisible);
+    observer.observe(tabs);
+    return () => observer.disconnect();
+  }, [filter]);
   const filterMap: Record<string, string> = {
     needs: "DISAMBIGUATION_REQUIRED",
     ready: "READY_FOR_APPROVAL",
@@ -1214,9 +1236,9 @@ function InboxPage({
           <Plus size={17} /> New order
         </button>
       </PageHeading>
-      <section className="panel">
+      <section className="panel order-inbox-panel">
         <div className="queue-toolbar">
-          <div className="tabs" role="group" aria-label="Filter orders">
+          <div ref={filterTabs} className="tabs" role="group" aria-label="Filter orders">
             {[
               ["all", "All orders"],
               ["needs", "Needs review"],
