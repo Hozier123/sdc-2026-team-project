@@ -115,6 +115,33 @@ test("stock check aggregates repeated SKU lines", async () => {
     fail("DISAMBIGUATION_UNRESOLVED"),
   );
 });
+test("saved demo drafts show current stock and checks after another approval", async () => {
+  const store = memory();
+  const clerk = new DemoService("CLERK", "T1", store);
+  const ready = await clerk.parse("CUS_001", "Tepung 4 ctn", "en");
+  assert.equal(ready.status, "READY_FOR_APPROVAL");
+  assert.equal(ready.lines[0].available_qty, 22);
+
+  const other = await clerk.parse("CUS_001", "Tepung 20 ctn", "en");
+  await new DemoService("OWNER", "T1", store).approve(other.draft_id, other.version);
+
+  const summary = (await clerk.drafts()).find((d) => d.draft_id === ready.draft_id);
+  assert.equal(summary?.status, "DISAMBIGUATION_REQUIRED");
+  assert.equal(summary?.open_blocking_issue_count, 1);
+  assert.ok(!summary?.allowed_actions.includes("APPROVE_AND_GENERATE_DO"));
+
+  const current = await clerk.draft(ready.draft_id);
+  assert.equal(current.version, ready.version);
+  assert.equal(current.lines[0].available_qty, 2);
+  assert.ok(current.blocking_issues.includes("INSUFFICIENT_STOCK"));
+  assert.ok(!current.allowed_actions.includes("APPROVE_AND_GENERATE_DO"));
+  await assert.rejects(clerk.approve(ready.draft_id, ready.version), fail("STOCK_CHANGED"));
+
+  const saved = JSON.parse(store.map.get("kiraorder.demo.v1.T1")!) as { drafts: Draft[] };
+  const savedDraft = saved.drafts.find((d) => d.draft_id === ready.draft_id);
+  assert.equal(savedDraft?.version, ready.version);
+  assert.equal(savedDraft?.status, "READY_FOR_APPROVAL");
+});
 test("price evidence never automatically changes tier price; target and override must agree", async () => {
   const s = new DemoService();
   let d = await s.parse("CUS_001", "Tepung 5 ctn, kalau RM95 boleh?", "ms");
@@ -217,6 +244,35 @@ test("owner cannot bypass a stock change between submission and approval", async
     fail("STOCK_CHANGED"),
   );
   assert.equal((await owner.approval(a.approval_id)).status, "PENDING");
+});
+test("owner stock check uses combined quantity for repeated SKU lines", async () => {
+  const store = memory();
+  const clerk = new DemoService("CLERK", "T1", store);
+  const order = await clerk.parse("CUS_002", "Tepung 2 ctn\nTepung 2 ctn", "en");
+  const request = await clerk.approve(order.draft_id, order.version);
+  assert.ok("approval_id" in request);
+
+  const other = await clerk.parse("CUS_001", "Tepung 20 ctn", "en");
+  const owner = new DemoService("OWNER", "T1", store);
+  await owner.approve(other.draft_id, other.version);
+  const pending = await owner.approval(request.approval_id);
+  assert.equal(pending.stock_check?.lines.length, 2);
+  assert.ok(pending.stock_check?.lines.every((line) => line.available_qty === 2 && !line.sufficient));
+});
+test("decided approval keeps the stock seen before its delivery order was generated", async () => {
+  const store = memory();
+  const clerk = new DemoService("CLERK", "T1", store);
+  const order = await clerk.parse("CUS_002", "Tepung 20 ctn", "en");
+  const request = await clerk.approve(order.draft_id, order.version);
+  assert.ok("approval_id" in request);
+
+  const owner = new DemoService("OWNER", "T1", store);
+  const delivery = await owner.decide(request.approval_id, "APPROVE", "");
+  assert.ok("do_number" in delivery);
+  const decided = await owner.approval(request.approval_id);
+  assert.equal(decided.status, "APPROVED");
+  assert.equal(decided.stock_check?.lines[0].available_qty, 22);
+  assert.equal(decided.stock_check?.lines[0].sufficient, true);
 });
 test("warehouse receives a cropped object, cannot read raw deliveries or drafts", async () => {
   const store = memory();
