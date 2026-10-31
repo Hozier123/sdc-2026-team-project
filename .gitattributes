@@ -28,3 +28,6 @@ backend/tools/run_workflow.py text eol=lf
 backend/tools/verify_t2_local.py text eol=lf
 docs/ops/b04-cases/*.json text eol=lf
 backend/tests/fixtures/b04-audit-direct.zip binary
+
+# R06 reviewed SQL hashes bind exact LF bytes on every platform.
+data/patches/r06/*.sql text eol=lf
