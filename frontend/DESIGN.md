@@ -74,3 +74,9 @@ Desktop and mobile viewport checks prove rendered layout, not physical touch, Sa
 - `src/styles/review.css` owns the product field contrast, 14px price labels, 16px values, and the responsive 320–380px approval rail. Product field labels use full text ink. Same-day editors use the full panel width without a second inset and keep 44px action targets.
 - Pending checks use an amber panel edge and clear heading. Tablet and phone views expose a compact reminder and focusable jump to the checks panel. Respect reduced motion for that jump.
 - Taste verification, permitted logo/dialog exceptions and remaining warnings are recorded in `docs/FRONTEND_UPGRADE_INTEGRATION_2026-10-30.md`.
+
+## Candidate and field readability · 2026-10-31
+
+- Keep candidate pack sizes/grades at 18px in `.candidate-specification`, including selected and unselected cards. Retain Marcellus Regular, full text ink and wrapping.
+- Quantity, unit, stock, tier price and subtotal values use 18px and a 46px row height; labels retain 14px. Preserve right-aligned subtotals and amber insufficient-stock values.
+- These follow-up changes use release number **1.5.1**, matching the existing project/app version. Existing catalog, approval-context and backend integration work stays in place.
