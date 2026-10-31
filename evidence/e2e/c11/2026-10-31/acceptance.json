@@ -16,7 +16,7 @@
       "5 scope boundaries accepted",
       "UOM not in scope",
       "NO_CANDIDATE and 0-row recorded as LIMITATION",
-      "result ceiling PASS_CANDIDATE_MEMORY_PENDING_REVIEW / NOT_SIGNED_OFF",
+      "result ceiling PASS_CANDIDATE_MEMORY_PENDING_REVIEW at approval; signed SIGNED_OFF on 2026-10-31",
       "no revoke required"
     ],
     "required_evidence": [
@@ -29,7 +29,9 @@
       "use B05 isolated or disposable environment (or production with a new synthetic customer and anchor proof)",
       "add provider/model, request ID, raw model output to check 2; add provider count=0 to check 5",
       "check 7 must be mandatory; otherwise only PARTIAL_PENDING_REVIEW"
-    ]
+    ],
+    "superseded_at": "2026-10-31T10:25:00+08:00",
+    "superseded_note": "The B05/new-synthetic-customer environment condition and the raw-model-output / provider-count requirements were superseded by Zhou at 10:25. Production main line and key-level alias 0->1 were accepted; they remain as historical review notes only."
   },
   "executed_at": "2026-10-31T10:45:08+08:00",
   "operator": "He",
@@ -204,7 +206,7 @@
       8,
       9
     ],
-    "always": "overall_status=NOT_SIGNED_OFF until Zhou signs",
+    "always": "overall_status=SIGNED_OFF (Zhou Jingxi 2026-10-31); MERGED (PR #111 / 8365c92)",
     "note": "After Zhou 2026-10-31 10:25, raw model output and provider call count are NOT required by the matrix; the earlier B05/instrumentation conditions are supplementary only."
   },
   "samples": {
@@ -331,7 +333,7 @@
     9,
     10
   ],
-  "result_ceiling": "PASS_CANDIDATE_MEMORY_PENDING_REVIEW",
+  "result_ceiling": "PASS_CANDIDATE_MEMORY_PENDING_REVIEW / SIGNED_OFF",
   "known_issues": [
     {
       "id": "C11-LIM-01",
