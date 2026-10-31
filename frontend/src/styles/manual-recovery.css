@@ -1,3 +1,4 @@
+.manual-catalog-modal { max-height: calc(90.9dvh - 70px); }
 .manual-catalog-modal .modal-copy { font-size: 14px; line-height: 1.6; }
 .manual-catalog-views { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; border-bottom: 1px solid var(--border); }
 .manual-catalog-views button { min-height: 44px; padding: 8px 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; }
@@ -27,6 +28,9 @@
 .manual-new-product p { color: var(--muted); font-size: 14px; }
 .manual-new-product .line-fields { margin: 18px 0 0; }
 .manual-recovery-uncertain { margin: 14px 0; padding: 14px 18px; border: 1px solid var(--status-amber-border); border-radius: 8px; background: var(--status-amber-bg); color: var(--amber); font-size: 14px; line-height: 1.5; }
+@media (max-width: 760px) {
+  .manual-catalog-modal { max-height: calc(90.9dvh - 40px); }
+}
 @media (max-width: 640px) {
   .manual-catalog-item { grid-template-columns: minmax(0, 1fr); gap: 3px; }
   .manual-catalog-list { max-height: 42vh; }

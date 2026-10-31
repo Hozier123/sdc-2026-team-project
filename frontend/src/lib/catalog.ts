@@ -32,8 +32,7 @@ export function matchingCatalogProducts(
   const text = sourceSpan.toLocaleLowerCase();
   const matches = products.map((product) => {
     const terms = product.display_name.match(/[\p{Script=Han}]{2,}|[\p{Script=Latin}]{3,}/gu) ?? [];
-    const phrase = terms
-      .filter((term) => {
+    const matchedTerms = terms.filter((term) => {
         const lower = term.toLocaleLowerCase();
         if (!text.includes(lower)) return false;
         if (/\p{Script=Han}/u.test(term)) return true;
@@ -43,12 +42,15 @@ export function matchingCatalogProducts(
           if (!/[\p{L}\p{N}]/u.test(before) && !/[\p{L}\p{N}]/u.test(after)) return true;
         }
         return false;
-      })
-      .sort((a, b) => b.length - a.length)[0];
-    return { product, phrase, score: phrase?.length ?? 0 };
+      });
+    return {
+      product,
+      phrase: matchedTerms.join(" "),
+      score: matchedTerms.reduce((total, term) => total + term.length ** 2, 0),
+    };
   });
   const best = Math.max(0, ...matches.map((match) => match.score));
   if (!best) return { items: [], phrase: null };
   const bestMatches = matches.filter((match) => match.score === best);
-  return { items: bestMatches.map((match) => match.product), phrase: bestMatches[0].phrase ?? null };
+  return { items: bestMatches.map((match) => match.product), phrase: bestMatches[0].phrase || null };
 }

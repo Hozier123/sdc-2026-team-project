@@ -778,19 +778,24 @@ export function OrderDetail({
                             ))}
                           </div>
                         )}
-                        {editable && service.mode === "live" && !service.fixture && line.candidate_skus.length === 0 && (
+                        {editable && service.mode === "live" && !service.fixture &&
+                          (line.candidate_skus.length === 0 || (line.candidate_skus.length > 1 && !input.sku_id)) && (
                           <div className="manual-recovery-entry">
-                            {!input.sku_id && line.source_span && (
+                            {!input.sku_id && (line.source_span || line.candidate_skus.length > 1) && (
                               <button type="button" className="button secondary small" disabled={busy}
                                 onClick={() => setPickerTarget({ kind: "existing", lineId: line.line_id, view: "matched" })}>
                                 Review matching options
                               </button>
                             )}
-                            <button type="button" className="button secondary small" disabled={busy}
-                              onClick={() => setPickerTarget({ kind: "existing", lineId: line.line_id, view: "all" })}>
-                              {input.sku_id ? "Change product from directory" : "Choose from product directory"}
-                            </button>
-                            <small>Only product identity and unit appear here. Save to check price and stock.</small>
+                            {line.candidate_skus.length === 0 && (
+                              <>
+                                <button type="button" className="button secondary small" disabled={busy}
+                                  onClick={() => setPickerTarget({ kind: "existing", lineId: line.line_id, view: "all" })}>
+                                  {input.sku_id ? "Change product from directory" : "Choose from product directory"}
+                                </button>
+                                <small>Only product identity and unit appear here. Save to check price and stock.</small>
+                              </>
+                            )}
                           </div>
                         )}
                         <div className="line-fields">

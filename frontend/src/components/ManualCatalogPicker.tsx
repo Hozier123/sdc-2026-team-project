@@ -5,12 +5,13 @@ import { useResource } from "../lib/hooks";
 import type { Service } from "../lib/types";
 import { Empty, ErrorNotice, Loading, Modal } from "./ui";
 
-export function CatalogChoices({ result, query, onSelect, items = result.items, notice }: {
+export function CatalogChoices({ result, query, onSelect, items = result.items, notice, onBrowseAll }: {
   result: CatalogProductsResponse;
   query: string;
   onSelect: (product: CatalogProduct) => void;
   items?: CatalogProduct[];
   notice?: string;
+  onBrowseAll?: () => void;
 }) {
   const normalized = query.trim().toLocaleLowerCase();
   const products = items.filter((product) =>
@@ -25,7 +26,14 @@ export function CatalogChoices({ result, query, onSelect, items = result.items, 
       </p>
       {!products.length ? (
         <Empty title={result.items.length ? "No matching products" : "No active products"}
-          description={result.items.length ? "Try the product name, SKU, pack size or unit." : "Ask the customer or close this draft with a reason."} />
+          description={result.items.length
+            ? onBrowseAll ? "The message did not match a directory name. Browse all products or clarify the item with the customer."
+              : "Try the product name, SKU, pack size or unit."
+            : "Ask the customer or close this draft with a reason."}>
+          {onBrowseAll && result.items.length > 0 && (
+            <button type="button" className="button secondary" onClick={onBrowseAll}>Browse all products</button>
+          )}
+        </Empty>
       ) : (
         <div className="manual-catalog-list" role="list" aria-label="Tenant products">
           {products.map((product) => (
@@ -68,7 +76,7 @@ export function ManualCatalogPicker({ service, onSelect, onClose, sourceSpan = "
         Confirm the exact grade, pack and unit with the customer. Enter the quantity after choosing;
         price and stock checks appear after saving.
       </p>
-      {sourceSpan && (
+      {(sourceSpan || candidateSkuIds.length > 0) && (
         <div className="manual-catalog-views" aria-label="Product list">
           <button type="button" className={view === "matched" ? "active" : ""}
             aria-pressed={view === "matched"} onClick={() => { setView("matched"); setQuery(""); }}>
@@ -80,25 +88,26 @@ export function ManualCatalogPicker({ service, onSelect, onClose, sourceSpan = "
           </button>
         </div>
       )}
-      {view === "matched" && resource.value && (
+      {view === "matched" && resource.value && matches.items.length > 0 && (
         <p className="manual-catalog-context" role="status">
-          {matches.items.length
-            ? `${matches.phrase ? `Found “${matches.phrase}” in the message. ` : "These options came from the draft. "}Select only after confirming the variant with the customer.`
-            : "No matching options found in this directory. Browse all products or clarify the item with the customer."}
+          {`${matches.phrase ? `Found “${matches.phrase}” in the message. ` : "These options came from the draft. "}Select only after confirming the variant with the customer.`}
         </p>
       )}
-      <label className="manual-catalog-search">
-        Search products
-        <span><Search size={17} aria-hidden="true" />
-          <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
-            placeholder="Name, SKU, pack size or unit" />
-        </span>
-      </label>
+      {(view === "all" || !resource.value || matches.items.length > 0) && (
+        <label className="manual-catalog-search">
+          Search products
+          <span><Search size={17} aria-hidden="true" />
+            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+              placeholder="Name, SKU, size, unit" />
+          </span>
+        </label>
+      )}
       {resource.error ? <ErrorNotice error={resource.error} retry={resource.refresh} />
         : resource.value === undefined ? <Loading label="Loading live directory…" />
         : <CatalogChoices result={resource.value} items={view === "matched" ? matches.items : undefined}
             notice={view === "matched" ? `${matches.items.length} matching options · ${catalogNotice(resource.value)}` : undefined}
-            query={query} onSelect={onSelect} />}
+            query={query} onSelect={onSelect}
+            onBrowseAll={view === "matched" && !matches.items.length ? () => { setView("all"); setQuery(""); } : undefined} />}
       <div className="modal-actions">
         <button type="button" className="button secondary" onClick={onClose}>Cancel</button>
       </div>
