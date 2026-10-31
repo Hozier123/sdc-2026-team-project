@@ -5,6 +5,16 @@
 - 范围：Resolver、parse-draft、save-lines、approve 四条后端路径；不改种子、不改 Gate 0、不改 AI 侧 prompt。
 - 实现：He（backend）
 
+## 2026-10-31 收口补充
+
+- 状态：**DONE_WITH_KNOWN_LIMITATIONS**。下文保留原执行方记录；本补充由 Kilo 核对引用与仓库状态，不代 Zhou 新签收。
+- [PR #91](https://github.com/Hozier123/sdc-2026-team-project/pull/91) 已于 2026-10-31 12:04:52（UTC+8）合并，merge `a0628d37bc9d90c2a12e808da9632b3359343dc1`；后端 `postgres` 与前端 `test-and-build` CI 均成功。不再等待重复合并。
+- guard 结论限于已核的混合 base-unit / 歧义缺口；单一 base-unit 家族仍保留既有解析路径。不能概括为所有输入都绝不推断单位，也不能把后端阻断当作模型识别修复。
+- 原文的“真实 T1 种子 7/7”等为执行方记录；Zhou 原复核未独立复现该项，不因本补充或 CI 自动升级为独立复验通过。原测试输出与缺口数不改。
+- UOM 仍 **24/31**，七个模型质量缺口保留。[#92](https://github.com/Hozier123/sdc-2026-team-project/issues/92) 和 [#93](https://github.com/Hozier123/sdc-2026-team-project/issues/93) 仍 OPEN；本轮不改 adapter、不重跑模型、不关闭 Issue。条件 span 问题与单位识别分开跟踪。
+- 后续[限定部署验证](../ops/pr91-deployment-verification-2026-10-31.md)另绑定应用 `520556cd64a7e6e6a17dfe84d0cdd386d0fef94e` / Replit `5cae3434`；已有单合成草稿 FALLBACK guard 记录不替代模型准确率、完整 TEST32 或受试计时。新引用仍待 Zhou 确认。
+- 公开部署 JSON 的 LF/CRLF 哈希口径及引用限制见 [D06 公开索引](d06-public-citation-index-2026-10-31.md)。未修改 seed/Gate 0 或任何原始证据。
+
 ## 一、结论
 
 1. **parse 路径 7/7 阻断**。逐条跑真实 T1 种子：`status=DISAMBIGUATION_REQUIRED`、`lines[0].sku_id=NULL`、`lines[0].uom=NULL`、两/两个候选 SKU、`blocking_issues=["MISSING_UOM"]`、`blocked_actions={"APPROVE_AND_GENERATE_DO": ["MISSING_UOM"]}`。
