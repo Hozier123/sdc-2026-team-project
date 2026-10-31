@@ -1,0 +1,117 @@
+{
+  "case_id": "C11",
+  "note": "Planned samples and expected evidence (v1.1, Zhou conditions). Actual IDs/values are filled after execution; nothing here is evidence yet.",
+  "preflight_alias": {
+    "customer_id": "CUS_RASA",
+    "customer_name": "Kedai Rasa",
+    "tier": "B",
+    "message": "老规矩辣椒酱 2",
+    "uom_assertion": "none",
+    "expected": {
+      "http": 200,
+      "ai_mode": "ALIAS_ONLY",
+      "lines": 1,
+      "sku_id": "SKU_CILI_1KG",
+      "alias_id": "ALS_CACHE_RASA_001",
+      "alias_scope": "CUSTOMER",
+      "candidate_skus": 0,
+      "alias_cache_rows_unchanged": true
+    }
+  },
+  "candidate_memory": {
+    "customer_id": "CUS_ALI",
+    "customer_name": "Restoran Ali",
+    "tier": "A",
+    "message": "Milo 2 bag",
+    "expected": {
+      "http": 200,
+      "ai_mode": "LLM",
+      "provider": "runpod_adapter",
+      "model": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+      "request_id_header": "X-Request-ID",
+      "raw_model_output_required": true,
+      "status": "DISAMBIGUATION_REQUIRED",
+      "lines": 1,
+      "sku_id": null,
+      "candidate_skus": [
+        {"sku_id": "SKU_MILO_1KG", "pack_size": "1kg", "tier_unit_price": "18.00", "available_qty": 30},
+        {"sku_id": "SKU_MILO_2KG", "pack_size": "2kg", "tier_unit_price": "34.00", "available_qty": 24}
+      ],
+      "blocking_issues": ["MULTIPLE_PACK_SIZES"],
+      "clarification_contains": ["1kg", "2kg", "RM"]
+    },
+    "save": {
+      "chosen_sku": "SKU_MILO_1KG",
+      "qty": 2,
+      "uom": "bag",
+      "pack_size": "1kg",
+      "match_source": "MANUAL_SELECTED",
+      "save_to_alias_cache": true,
+      "alias_scope": "CUSTOMER",
+      "expected_version": 2,
+      "expected_total_rm": "36.00",
+      "expected_alias_scope": "CUSTOMER",
+      "alias_cache_rows_delta": 1
+    }
+  },
+  "replay": {
+    "customer_id": "CUS_ALI",
+    "message": "Milo 2 bag",
+    "expected": {
+      "http": 200,
+      "ai_mode": "ALIAS_ONLY",
+      "lines": 1,
+      "sku_id": "SKU_MILO_1KG",
+      "same_alias_id": true,
+      "candidate_skus": 0,
+      "match_source": "SUGGESTED_DEFAULT",
+      "provider_calls_delta": 0
+    }
+  },
+  "qty_boundary": {
+    "customer_id": "CUS_ALI",
+    "message": "Milo 3 bag",
+    "expected": {
+      "ai_mode_not": "ALIAS_ONLY",
+      "reason": "alias phrase includes the original quantity",
+      "recorded_as": "NOT_A_DEFECT",
+      "alias_write_if_any": "record phrase/SKU/scope and row delta"
+    }
+  },
+  "tenant_negative": {
+    "customer_id": "CUS_ALI",
+    "expected": {
+      "http": 403,
+      "error_code": "FORBIDDEN_ACTION",
+      "alias_written": false,
+      "alias_cache_rows_unchanged": true
+    },
+    "note": "Mandatory. Use the replay draft's selected line; do not write another alias"
+  },
+  "no_candidate": {
+    "customer_id": "CUS_ALI",
+    "message": "Milo 5kg 2 bag",
+    "expected": {
+      "http": 200,
+      "lines": 1,
+      "sku_id": null,
+      "candidate_skus": 0,
+      "issue_reason": "NO_CANDIDATE",
+      "ui_sku_picker": false,
+      "recorded_as": "LIMITATION_RECORDED"
+    }
+  },
+  "zero_rows": {
+    "customer_id": "CUS_ALI",
+    "message": "ok thanks",
+    "expected": {
+      "http": 200,
+      "lines": 0,
+      "status": "DISAMBIGUATION_REQUIRED",
+      "blocking_issues": ["LOW_CONFIDENCE_MATCH"],
+      "clarification_not_null": true,
+      "ui_add_line": false,
+      "recorded_as": "LIMITATION_RECORDED"
+    }
+  }
+}

@@ -1,0 +1,564 @@
+{
+  "case_id": "C11",
+  "title": "候选确认与记忆：LLM 候选、CUSTOMER 记忆写入与同句复用",
+  "result": "PASS_CANDIDATE_MEMORY_PENDING_REVIEW",
+  "overall_status": "SIGNED_OFF",
+  "independent_review_status": "SIGNED_OFF",
+  "repo_status": "PENDING_COMMIT",
+  "scope_version": "1.1",
+  "scope_locked_at": "2026-10-31T02:15:00+08:00",
+  "scope_revised_at": "2026-10-31T03:00:00+08:00",
+  "zhou_review": {
+    "reviewer": "Zhou Jingxi",
+    "reviewed_at": "2026-10-31T02:45:00+08:00",
+    "decision": "APPROVED_WITH_CONDITIONS",
+    "agreed": [
+      "5 scope boundaries accepted",
+      "UOM not in scope",
+      "NO_CANDIDATE and 0-row recorded as LIMITATION",
+      "result ceiling PASS_CANDIDATE_MEMORY_PENDING_REVIEW / NOT_SIGNED_OFF",
+      "no revoke required"
+    ],
+    "required_evidence": [
+      "LLM binding: ai_mode=LLM, provider/model, run_id/request ID, raw model output; no FALLBACK/STUB",
+      "ALIAS_ONLY no model call: match_source=ALIAS_ONLY plus provider call count = 0 or equivalent no-model log",
+      "C02 is pending evidence / unsigned; do not claim C02 proved",
+      "isolation and memory scope: environment ID, source commit, no production C04/C08 write/reset, alias_cache rows before/after, CUSTOMER only"
+    ],
+    "corrections": [
+      "use B05 isolated or disposable environment (or production with a new synthetic customer and anchor proof)",
+      "add provider/model, request ID, raw model output to check 2; add provider count=0 to check 5",
+      "check 7 must be mandatory; otherwise only PARTIAL_PENDING_REVIEW"
+    ]
+  },
+  "executed_at": "2026-10-31T10:45:08+08:00",
+  "operator": "He",
+  "environment_plan": {
+    "primary": "production API main line (Zhou approved 2026-10-31 10:25)",
+    "base_url": "https://kiraorder-api.replit.app/api/v1",
+    "production_write_scope": "one CUSTOMER alias for CUS_ALI, phrase 'Milo 2 bag', alias ALI_398DB0744E6F44B985643D81979F4456",
+    "production_write_accepted_by": "Zhou Jingxi",
+    "production_write_accepted_at": "2026-10-31T10:25:00+08:00",
+    "c04_c08_writes": "none",
+    "reset": false,
+    "b05_supplement": "NOT_USED (optional local supplement only; not the main line)"
+  },
+  "production_reference": {
+    "base_url": "https://kiraorder-api.replit.app/api/v1",
+    "frontend": "f8ff1d7",
+    "pages_deploy": "12ff95f",
+    "backend_deploy": "9cff61ed",
+    "backend_source": "9dfee33",
+    "role": "production main line (2026-10-31 10:25); only one CUS_ALI CUSTOMER alias written"
+  },
+  "scope": {
+    "in": [
+      "LLM 模式下的候选确认（C02 是 FALLBACK，且 C02 待补证）",
+      "CUSTOMER 级记忆写入与同句复用 ALIAS_ONLY",
+      "无候选 / 零行死路的限制记录"
+    ],
+    "out": [
+      "UOM 7 缺口与 D02 修复（#91/#92/#93）",
+      "TENANT 作用域管理与别名撤销",
+      "Gate A（C01/C04/C05/C08）、TEST32、真实受试者",
+      "C02 已覆盖的完整批准/DO 链"
+    ],
+    "c02_status": "PENDING_EVIDENCE / NOT_INDEPENDENTLY_SIGNED",
+    "c02_usage": "reference only; C11 check 2 carries its own minimal candidate evidence"
+  },
+  "numbers": {
+    "checks_total": 10,
+    "checks_passed": 7,
+    "checks_failed": 0,
+    "not_a_defect": 1,
+    "limitations_recorded": 2,
+    "pending_ui": 0,
+    "raw_api_responses": 8,
+    "raw_model_outputs": 0,
+    "screenshots": 9,
+    "phone_values_redacted": 15,
+    "set_cookie_headers_removed": 18
+  },
+  "checks": [
+    {
+      "id": 1,
+      "name": "种子别名读路径",
+      "expected": "CUS_RASA 老规矩辣椒酱 2 -> ALIAS_ONLY / SKU_CILI_1KG / ALS_CACHE_RASA_001 / candidates=[]; uom not asserted",
+      "required_evidence": [
+        "raw response",
+        "X-Request-ID",
+        "environment ID",
+        "source commit",
+        "alias_cache row count"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": 2,
+      "name": "LLM 候选 + LLM 绑定",
+      "expected": "CUS_ALI Milo 2 bag -> LLM / 2 candidates / MULTIPLE_PACK_SIZES",
+      "required_evidence": [
+        "raw response",
+        "X-Request-ID",
+        "3/3 LLM runs",
+        "two candidates"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": 3,
+      "name": "未保存保护",
+      "expected": "select 1kg without save -> approval disabled",
+      "required_evidence": [
+        "screenshot"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": 4,
+      "name": "保存 + 记忆写入",
+      "expected": "remember -> v2 / saved_alias CUSTOMER / 18.00 x 2 = 36.00",
+      "required_evidence": [
+        "raw response",
+        "saved_alias",
+        "alias_cache rows before/after",
+        "screenshot"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": 5,
+      "name": "同句复用 + 不调模型",
+      "expected": "new draft same phrase -> ALIAS_ONLY / same alias_id / candidates=[]; provider count 0",
+      "required_evidence": [
+        "raw response",
+        "X-Request-ID",
+        "DEGRADED/OFFLINE before replay",
+        "same alias_id",
+        "candidates=[]"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": 6,
+      "name": "数量变化边界",
+      "expected": "Milo 3 bag -> not ALIAS_ONLY; phrase includes qty; NOT_A_DEFECT",
+      "required_evidence": [
+        "raw response",
+        "alias write record if any"
+      ],
+      "status": "NOT_A_DEFECT"
+    },
+    {
+      "id": 7,
+      "name": "TENANT 负例",
+      "expected": "CLERK alias_scope=TENANT -> 403 FORBIDDEN_ACTION; no alias row",
+      "required_evidence": [
+        "raw response",
+        "error code",
+        "alias_cache rows unchanged"
+      ],
+      "mandatory": true,
+      "status": "PASS"
+    },
+    {
+      "id": 8,
+      "name": "无候选死路",
+      "expected": "Milo 5kg -> candidates=[] + NO_CANDIDATE; no SKU picker; LIMITATION_RECORDED",
+      "required_evidence": [
+        "raw response",
+        "screenshot"
+      ],
+      "status": "LIMITATION_RECORDED"
+    },
+    {
+      "id": 9,
+      "name": "零行死路",
+      "expected": "ok thanks -> 0 lines; no add-line UI; LIMITATION_RECORDED",
+      "required_evidence": [
+        "raw response",
+        "screenshot"
+      ],
+      "status": "LIMITATION_RECORDED"
+    },
+    {
+      "id": 10,
+      "name": "证据完整性",
+      "expected": "redacted raw (phone -> [REDACTED_PHONE]), no response Cookie header, no absolute paths, screenshots, key-level alias rows, hashes, no credentials",
+      "status": "PASS",
+      "required_evidence": [
+        "redacted raw (phone -> [REDACTED_PHONE])",
+        "no response Cookie header",
+        "no absolute local paths",
+        "hashes recomputed",
+        "screenshots"
+      ]
+    }
+  ],
+  "result_rules": {
+    "pass": "checks 1-5, 7, 10 all PASS -> PASS_CANDIDATE_MEMORY_PENDING_REVIEW",
+    "not_a_defect": [
+      6
+    ],
+    "limitations": [
+      8,
+      9
+    ],
+    "always": "overall_status=NOT_SIGNED_OFF until Zhou signs",
+    "note": "After Zhou 2026-10-31 10:25, raw model output and provider call count are NOT required by the matrix; the earlier B05/instrumentation conditions are supplementary only."
+  },
+  "samples": {
+    "preflight_alias": {
+      "customer_id": "CUS_RASA",
+      "customer_name": "Kedai Rasa",
+      "tier": "B",
+      "message": "老规矩辣椒酱 2",
+      "uom_assertion": "none",
+      "expected": {
+        "ai_mode": "ALIAS_ONLY",
+        "sku_id": "SKU_CILI_1KG",
+        "alias_id": "ALS_CACHE_RASA_001",
+        "scope": "CUSTOMER",
+        "candidate_skus": 0
+      }
+    },
+    "candidate_memory": {
+      "customer_id": "CUS_ALI",
+      "customer_name": "Restoran Ali",
+      "tier": "A",
+      "message": "Milo 2 bag",
+      "expected": {
+        "ai_mode": "LLM",
+        "provider_model": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+        "candidates": [
+          {
+            "sku_id": "SKU_MILO_1KG",
+            "pack_size": "1kg",
+            "tier_unit_price": "18.00"
+          },
+          {
+            "sku_id": "SKU_MILO_2KG",
+            "pack_size": "2kg",
+            "tier_unit_price": "34.00"
+          }
+        ],
+        "chosen_sku": "SKU_MILO_1KG",
+        "qty": 2,
+        "uom": "bag",
+        "total_rm": "36.00"
+      }
+    },
+    "replay": {
+      "customer_id": "CUS_ALI",
+      "message": "Milo 2 bag",
+      "expected": {
+        "ai_mode": "ALIAS_ONLY",
+        "sku_id": "SKU_MILO_1KG",
+        "same_alias_id": true,
+        "candidate_skus": 0,
+        "provider_calls": 0
+      }
+    },
+    "qty_boundary": {
+      "customer_id": "CUS_ALI",
+      "message": "Milo 3 bag",
+      "expected": {
+        "ai_mode_not": "ALIAS_ONLY",
+        "reason": "alias phrase contains quantity"
+      }
+    },
+    "tenant_negative": {
+      "customer_id": "CUS_ALI",
+      "expected_http": 403,
+      "expected_code": "FORBIDDEN_ACTION",
+      "alias_rows_unchanged": true
+    },
+    "no_candidate": {
+      "customer_id": "CUS_ALI",
+      "message": "Milo 5kg 2 bag",
+      "expected": {
+        "candidate_skus": 0,
+        "issue_reason": "NO_CANDIDATE",
+        "ui_sku_picker": false
+      }
+    },
+    "zero_rows": {
+      "customer_id": "CUS_ALI",
+      "message": "ok thanks",
+      "expected": {
+        "lines": 0,
+        "blocking": "LOW_CONFIDENCE_MATCH",
+        "ui_add_line": false
+      }
+    }
+  },
+  "preflight_drafts": [
+    {
+      "draft_id": "DRF_124C222C32364B408CFC97A221EDD7B3",
+      "customer": "CUS_ALI",
+      "message": "Milo 2 bag",
+      "ai_mode": "LLM",
+      "candidates": 2,
+      "status": "v1 unsaved",
+      "raw_model_output": "NOT_CAPTURED"
+    },
+    {
+      "draft_id": "DRF_231D314608ED4926B09929C5613D83B6",
+      "customer": "CUS_RASA",
+      "message": "老规矩辣椒酱 2 btl",
+      "ai_mode": "ALIAS_ONLY",
+      "candidates": 0,
+      "status": "v1 unsaved"
+    },
+    {
+      "draft_id": "DRF_D604F28837D1434AAC012585A42BDB57",
+      "customer": "CUS_ALI",
+      "message": "Milo 2 bag",
+      "ai_mode": "FALLBACK",
+      "candidates": 2,
+      "status": "v1 unsaved"
+    }
+  ],
+  "run_order": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "result_ceiling": "PASS_CANDIDATE_MEMORY_PENDING_REVIEW",
+  "known_issues": [
+    {
+      "id": "C11-LIM-01",
+      "severity": "P3",
+      "summary": "NO_CANDIDATE 行页面没有 SKU 选择器，属未开发死路。",
+      "impact": "只记录 LIMITATION_RECORDED，不判 PASS，不为 C11 开发新功能。"
+    },
+    {
+      "id": "C11-LIM-02",
+      "severity": "P3",
+      "summary": "0 行草稿没有补行入口（stub-public-parse-gap.md）。",
+      "impact": "只记录 LIMITATION_RECORDED。"
+    },
+    {
+      "id": "C11-LIM-03",
+      "severity": "P3",
+      "summary": "别名 phrase = 当前 masked span（含数量），同句才命中。",
+      "impact": "第 6 条是设计边界，不是缺陷；如 Zhou 要求数量可变，另立需求。"
+    },
+    {
+      "id": "C11-LIM-04",
+      "severity": "P2",
+      "summary": "无别名撤销接口，写入不可逆。",
+      "impact": "第 4 条前确认 phrase/SKU；重跑换客户或换说法。"
+    },
+    {
+      "id": "C11-LIM-05",
+      "severity": "P3",
+      "summary": "预检草稿 3 条，均未保存/未批准/未写别名；DRF_124C 无 raw output。",
+      "impact": "只作 runbook 参考，不计正式检查。"
+    },
+    {
+      "id": "C11-LIM-06",
+      "severity": "P2",
+      "summary": "10:25 口径已豁免 raw model output / provider 计数；本包未采，不降级。",
+      "impact": "check 2/5 不再因此降为 PARTIAL；与 matrix 一致。"
+    }
+  ],
+  "boundaries": [
+    "C11 main line runs on the production API; only one CUSTOMER alias for CUS_ALI was written.",
+    "C04's PENDING approval and C08's DO were read-only checked before/after; no reset, no writes to those objects, no deployment.",
+    "Key-level alias_cache rows 0 -> 1 is the agreed evidence; full-table count is not required (Zhou 2026-10-31 11:53).",
+    "UOM 7 gaps, D02/#91/#92/#93, TENANT management, revoke, Gate A, TEST32 and real participants are out of scope.",
+    "Published raw bodies have phone values replaced with [REDACTED_PHONE]; response Cookie headers removed; no absolute local paths or credentials."
+  ],
+  "review": {
+    "technical": {
+      "reviewer": "Zhou Jingxi",
+      "status": "SIGNED_OFF",
+      "signed_at": "2026-10-31"
+    },
+    "form": {
+      "reviewer": "Zhan Zhengrong",
+      "status": "PASS",
+      "index_id": "ZR-C11-20261031-01",
+      "reviewed_at": "2026-10-31"
+    }
+  },
+  "execution": {
+    "window_utc8": "2026-10-31 10:42:57 - 10:45:08",
+    "base_url": "https://kiraorder-api.replit.app/api/v1",
+    "environment": "production",
+    "request_ids": {
+      "check1": "ebb3cb6d-6bfc-48ba-86de-361bee5d96a3",
+      "check2a": "b21f824a-916c-44aa-8167-cf56b44da0d6",
+      "check2b": "159cc5ae-ea66-4d3c-971e-9be117ed7986",
+      "check2c": "7d22dfc1-72d6-4b2a-aa44-44fb6fc1506d",
+      "check4": "8204ce31-e506-45b6-814c-860ac3daabb1",
+      "check5": "38b607fe-e99e-4bab-ad04-d3fcfbb7f82b",
+      "check6": "16b6f3f4-094e-4263-9cba-13c02a08e021",
+      "check7": "190af066-6e52-4f9d-bea7-986b22cff62d",
+      "check8": "5c212af9-9278-4d8d-acd4-e4d9c440250c",
+      "check9": "3f9a078f-5d40-431d-aefe-be26b2a9639f"
+    },
+    "drafts": {
+      "check1": "DRF_880B83679D994BBE943FA913E7D99287",
+      "check2a": "DRF_220516E8AC554F49AC2B45775AA69AA0",
+      "check2b": "DRF_90F128495E5842D0A95ADF09FB63D8C7",
+      "check2c_saved": "DRF_448F5FF1388841458BF6D6B9BE0B53FC",
+      "check5": "DRF_9651CF71B1954C0D9BE00BB77F8CCA62",
+      "check6": "DRF_D23633252AD0471BB5E441F7E44FDAEC",
+      "check8": "DRF_E47E0444470D407285C59C5663DC9340",
+      "check9": "DRF_EF74C92677A34036894846F725612725"
+    },
+    "alias": {
+      "alias_id": "ALI_398DB0744E6F44B985643D81979F4456",
+      "phrase": "Milo 2 bag",
+      "sku_id": "SKU_MILO_1KG",
+      "scope": "CUSTOMER",
+      "key_level_rows_before": 0,
+      "key_level_rows_after": 1,
+      "full_table_rows": "NOT_AVAILABLE_NO_PRODUCTION_DSN"
+    },
+    "cold_state": {
+      "poll": [
+        "READY 10:43:19",
+        "READY 10:43:30",
+        "READY 10:43:41",
+        "READY 10:43:52",
+        "READY 10:44:03",
+        "READY 10:44:15",
+        "READY 10:44:25",
+        "DEGRADED 10:44:37"
+      ],
+      "replay_at": "10:44:38"
+    },
+    "anchors": {
+      "c04": {
+        "before": "200 PENDING 34.00",
+        "after": "200 PENDING 34.00"
+      },
+      "c08": {
+        "before": "200 DO_20261029_453C4BC2",
+        "after": "200 DO_20261029_453C4BC2"
+      }
+    },
+    "notes": [
+      "check 2: 3/3 LLM, 2 candidates each, MULTIPLE_PACK_SIZES",
+      "check 4: v2 READY_FOR_APPROVAL, no blocking, 36.00",
+      "check 5: ALIAS_ONLY in DEGRADED state, same alias_id, 0 candidates",
+      "check 7: 403 FORBIDDEN_ACTION, draft remained v2, alias unchanged",
+      "check 8: initial Milo 5kg/Milo 3kg attempts returned 0 lines; NO_CANDIDATE constructed with Sos tiram 2 btl",
+      "check 9: 0 lines, DISAMBIGUATION_REQUIRED, LOW_CONFIDENCE_MATCH, clarification present"
+    ]
+  },
+  "pending": {
+    "screenshots": [],
+    "alias_full_table_count": "NOT_REQUIRED (Zhou 2026-10-31 11:53)"
+  },
+  "screenshots_added_at": "2026-10-31T11:16:00+08:00",
+  "screenshots": [
+    {
+      "file": "c11_01_candidates.jpg",
+      "bytes": 252800,
+      "sha256": "F1CAAFF293B94B9D22BE04833E94C2AA60E71FD6E02584B23347CB953F88B4FA"
+    },
+    {
+      "file": "c11_01_candidates_context.jpg",
+      "bytes": 234019,
+      "sha256": "771D65513480B7A9B8926E08E99D6B6832050712A49BF12482249F0E5A88AD66"
+    },
+    {
+      "file": "c11_02_unsaved.jpg",
+      "bytes": 264143,
+      "sha256": "FF3B7447AA7E98E117C151C8FB372FD0531389DD61647814CB6BCC24816105CB"
+    },
+    {
+      "file": "c11_03_memory_saved.jpg",
+      "bytes": 211057,
+      "sha256": "D4C557983D1AB2D040B40857E67AA9A69F66995D70F6DB55CAA5AD122985C51E"
+    },
+    {
+      "file": "c11_03_memory_saved_context.jpg",
+      "bytes": 236327,
+      "sha256": "7043F25D8B7B3FC67A28D9D446B253777E8E1A94CA5BD6B6CC9FBFE4EFCCEA25"
+    },
+    {
+      "file": "c11_04_alias_only.jpg",
+      "bytes": 218800,
+      "sha256": "F015D8AE8218690C0A511C1FFBF98820F77D806627AAB9CBBEA1D2E104485802"
+    },
+    {
+      "file": "c11_04_alias_only_context.jpg",
+      "bytes": 233368,
+      "sha256": "B5EFCD1119C07381927D493A89891CEF3CDBAD378C32D1B9BBC0BE4A0BF34913"
+    },
+    {
+      "file": "c11_05_no_candidate.jpg",
+      "bytes": 236595,
+      "sha256": "468C91D4850960BF2E5D3DB5F7D54266C466414B3B89093BD4F503D721C4F10A"
+    },
+    {
+      "file": "c11_06_zero_rows.jpg",
+      "bytes": 239786,
+      "sha256": "7FC07A101744318C03C1C6CF25E300C80471D3ABA46B72A57A70E67F1CE26B43"
+    }
+  ],
+  "scope_change_2026_10_31_1025": {
+    "approved_by": "Zhou Jingxi",
+    "decision": "C11 main line is the production API; local instrumented B05 evidence is supplementary only; the single CUS_ALI CUSTOMER alias write on production is accepted.",
+    "supersedes": "previous B05-isolated primary plan / new-synthetic-customer fallback"
+  },
+  "alias_key_level_note": "Key-level alias_cache rows 0 -> 1 is sufficient for C11 (Zhou 2026-10-31 11:53); full-table count not required.",
+  "alias_irreversible": {
+    "alias_id": "ALI_398DB0744E6F44B985643D81979F4456",
+    "customer_id": "CUS_ALI",
+    "phrase": "Milo 2 bag",
+    "consequence": "CUS_ALI + 'Milo 2 bag' is now permanently ALIAS_ONLY; it will not produce LLM candidates again.",
+    "demo_guidance": "For an LLM-candidate demo, use 'Milo 3 bag' or another customer; do not promise LLM candidates for this phrase/customer again."
+  },
+  "hygiene": {
+    "phone_values_redacted": 15,
+    "phone_redaction": "raw/*.body.json: +60... -> [REDACTED_PHONE]",
+    "set_cookie_headers_removed": 18,
+    "set_cookie_removed": "raw/*.headers.txt: response Cookie lines removed",
+    "absolute_paths_removed": "environment.json and HANDOFF use environment ID or relative path",
+    "hash_recomputed": true,
+    "zip_rebuilt": true
+  },
+  "repack": {
+    "repacked_at": "2026-10-31T12:10:00+08:00",
+    "reason": "Zhou/Zhan review: redact phone, remove response Cookie headers, remove absolute paths, sync 10:25 scope, remove raw-output/provider-count hard requirements",
+    "phone_values_redacted": 15,
+    "set_cookie_headers_removed": 18,
+    "absolute_paths_removed": 2,
+    "hash_recomputed": true
+  },
+  "repo_path": "evidence/e2e/c11/2026-10-31/",
+  "index_id": "ZR-C11-20261031-01",
+  "signoff": {
+    "reviewer": "Zhou Jingxi",
+    "signed_at": "2026-10-31",
+    "result": "PASS_CANDIDATE_MEMORY_PENDING_REVIEW",
+    "signed_zip": "C11_candidate_memory_evidence_2026-10-31.zip",
+    "signed_zip_bytes": 1539150,
+    "signed_zip_sha256": "DA9E606A84A73D78796289D89083DC03248C097EF7F1338D19335B497C08621F",
+    "form_review": {
+      "reviewer": "Zhan Zhengrong",
+      "result": "PASS",
+      "index_id": "ZR-C11-20261031-01"
+    },
+    "notes": [
+      "business checks 1-7 hold; 8/9 LIMITATION; 6 NOT_A_DEFECT",
+      "production write: one CUSTOMER alias for CUS_ALI; C04/C08 read-only anchors unchanged; no reset",
+      "no raw model output / provider count (10:25 waiver); key-level alias 0->1 only",
+      "not TEST32/Gate A; UOM 24/31 unchanged",
+      "demo: CUS_ALI + Milo 2 bag is permanently ALIAS_ONLY; use Milo 3 bag or another customer"
+    ]
+  }
+}
