@@ -1,0 +1,75 @@
+{
+  "decision_date": "2026-11-01",
+  "timezone": "Asia/Shanghai",
+  "recorded_at_utc": "2026-10-31T23:24:25Z",
+  "authority": "USER_EXPLICIT_CURRENT_ROUND_CLOSEOUT_WITH_REDUCED_SCOPE",
+  "supersedes": "Earlier R08 instruction to wait for original-standard R11 before closing",
+  "current_round_closed": true,
+  "current_round_remaining_required_actions": [],
+  "further_work_requires_new_task": true,
+  "overall_ready": false,
+  "tasks": {
+    "C10": {
+      "current_round_closed": true,
+      "closeout": "CLOSED_WITH_LIMITATIONS",
+      "technical_result": "PARTIAL",
+      "deferred": [
+        "corresponding fallback/recovery page evidence",
+        "full independent recovery verification"
+      ]
+    },
+    "C13": {
+      "current_round_closed": true,
+      "closeout": "CLOSED_THIS_ROUND_REPAIR_DEFERRED",
+      "technical_result": "FAIL_KNOWN_LIMITATION",
+      "candidate_pr": 123,
+      "candidate_merged": false,
+      "candidate_deployed": false,
+      "responsibility": "v5 original owner; not reassigned to He"
+    },
+    "R08": {
+      "current_round_closed": true,
+      "closeout": "CLOSED_WITH_LIMITATIONS",
+      "scope": "Reviewed interface, samples, archive and existing downstream evidence",
+      "contract_version": "R08-CONTRACT-v0.1r1",
+      "contract_zip_sha256": "27c9aaa335edbaaa4a57ce1f4f2dbf450f38428ed33f9c29f7e1a261de625381",
+      "archive_pr": 126,
+      "archive_merged": true,
+      "original_standard_R11_accepted": false,
+      "deferred": [
+        "original-standard R11",
+        "final runtime consumption/freeze acceptance",
+        "team final acceptance/index"
+      ]
+    },
+    "R12": {
+      "current_round_closed": true,
+      "closeout": "CLOSED_NO_RELEASE",
+      "release_decision": "NO_GO_KEEP_EXISTING_BACKEND",
+      "candidate_commit": "a317fd9f21f0e0b4b5d7d5347f4dfdebeb7ed163",
+      "candidate_pushed": false,
+      "candidate_deployed": false,
+      "production_data_patched": false
+    },
+    "R13": {
+      "current_round_closed": true,
+      "closeout": "CLOSED_WITH_LIMITATIONS",
+      "frontend_published": true,
+      "source_sha": "d4915e74bee260defa651307cb9c5873b4954f93",
+      "published_at_utc8": "2026-11-01T07:12:46+08:00",
+      "backend_release": "5cae3434",
+      "backend_application_source": "520556cd64a7e6e6a17dfe84d0cdd386d0fef94e",
+      "r08_display_active_on_live": false,
+      "deferred": [
+        "new-backend dependent functionality",
+        "full public-entry business acceptance"
+      ]
+    }
+  },
+  "new_independent_acceptance_claimed": false,
+  "other_owners_notified": false,
+  "team_R14_receipt_claimed": false,
+  "application_deployment_performed_by_this_closeout": false,
+  "production_database_changed": false
+}
+
