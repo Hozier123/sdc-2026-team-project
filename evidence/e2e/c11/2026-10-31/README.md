@@ -92,3 +92,8 @@ Zhou 签字前始终 `NOT_SIGNED_OFF`；逐条证据见 `execution_log.md`、`ra
 - 技术：Zhou Jingxi，2026-10-31，`SIGNED_OFF`；签收的传输包 SHA-256 `DA9E606A84A73D78796289D89083DC03248C097EF7F1338D19335B497C08621F`（1,539,150 B）。
 - 形式：Zhan Zhengrong，`PASS`，索引号 `ZR-C11-20261031-01`，入库路径 `evidence/e2e/c11/2026-10-31/`。
 - 本目录的 `SHA256.txt` / `PACK_SHA256.txt` 在签收元数据更新后重算；业务证据（raw/screenshots）未改。
+
+## 10. 入库
+
+- PR #111 squash merged；merge commit `8365c928a00a3a0df59aebaed9a6c18e380fcb25`（2026-10-31T04:22:21Z）。
+- 路径 `evidence/e2e/c11/2026-10-31/`；业务证据未改，本页仅补入库元数据。

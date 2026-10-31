@@ -86,3 +86,8 @@
 - Zhou Jingxi：`SIGNED_OFF`，结果 `PASS_CANDIDATE_MEMORY_PENDING_REVIEW`；签收传输包 SHA-256 `DA9E606A84A73D78796289D89083DC03248C097EF7F1338D19335B497C08621F`。
 - Zhan Zhengrong：形式 `PASS`，索引 `ZR-C11-20261031-01`，入库路径 `evidence/e2e/c11/2026-10-31/`。
 - 业务证据（raw/screenshots）未改；仅签收元数据与 P3 文案更新。
+
+## 9. 入库（2026-10-31）
+
+- PR #111 squash merged；merge commit `8365c928a00a3a0df59aebaed9a6c18e380fcb25`（2026-10-31T04:22:21Z）。
+- 路径 `evidence/e2e/c11/2026-10-31/`；业务证据未改，仅补入库元数据。
