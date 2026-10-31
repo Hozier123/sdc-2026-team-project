@@ -1,0 +1,144 @@
+{
+  "captured_at": "2026-10-30T22:43:52.539227+00:00",
+  "method": "GET",
+  "path": "/approvals/APR_03CD078FA6B740D89903D80968052FA6",
+  "role": "OWNER",
+  "status": 200,
+  "request_id": "3953aee0-c6c0-497c-ab09-8a9ee54be2f2",
+  "body": {
+    "approval_id": "APR_03CD078FA6B740D89903D80968052FA6",
+    "draft_id": "DRF_D9F88405F74547A99C14A73AE6BE3390",
+    "draft_version": 2,
+    "status": "REJECTED",
+    "customer": {
+      "customer_id": "CUS_MELATI",
+      "name": "Restoran Melati",
+      "tier": "B",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": "[REDACTED]"
+    },
+    "total_rm": "17.00",
+    "line_count": 1,
+    "reasons": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "detail": {
+          "tier_unit_price": "19.00",
+          "effective_unit_price": "17.00"
+        },
+        "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED"
+      }
+    ],
+    "requested_by": "USR_T1_CLERK",
+    "requested_at": "2026-10-30T22:42:31.784902Z",
+    "allowed_actions": [],
+    "decided_by": "USR_T1_OWNER",
+    "decided_at": "2026-10-30T22:43:39.584808Z",
+    "decision_note": "C12 synthetic test: owner rejects RM17.00 below the RM19.00 tier; verify this decision persists after reload and role change.",
+    "snapshot": {
+      "customer_id": "CUS_MELATI",
+      "customer_name": "Restoran Melati",
+      "masked_customer_text": "Milo 1kg 1 bag",
+      "lines": [
+        {
+          "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED",
+          "client_line_ref": null,
+          "sku_id": "SKU_MILO_1KG",
+          "family_id": "FAM_MILO",
+          "description": "Milo \u7f8e\u7984",
+          "requested_qty": 1,
+          "confirmed_qty": null,
+          "effective_qty": 1,
+          "uom": "bag",
+          "pack_size": "1kg",
+          "grade": null,
+          "tier_unit_price": "19.00",
+          "unit_price_override": "17.00",
+          "override_reason": "C12 synthetic log persistence test: request RM17.00 per bag for owner decision.",
+          "effective_unit_price": "17.00",
+          "subtotal_rm": "17.00",
+          "match_source": "LLM_EXTRACTED",
+          "source_span": "Milo 1kg 1 bag",
+          "span_start": 0,
+          "span_end": 14,
+          "field_evidence": [
+            {
+              "field": "requested_qty",
+              "raw_text": "1",
+              "start": 5,
+              "end": 6,
+              "normalizer_version": "field-evidence-v2"
+            }
+          ],
+          "candidate_skus": [],
+          "saved_alias": null,
+          "available_qty": 27
+        }
+      ],
+      "total_rm": "17.00",
+      "reasons": [
+        {
+          "code": "PRICE_OVERRIDE_BELOW_TIER",
+          "detail": {
+            "tier_unit_price": "19.00",
+            "effective_unit_price": "17.00"
+          },
+          "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED"
+        }
+      ]
+    },
+    "field_diffs": [
+      {
+        "draft_version": 2,
+        "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED",
+        "field_path": "unit_price_override",
+        "before_value": null,
+        "after_value": "17.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED",
+        "field_path": "override_reason",
+        "before_value": null,
+        "after_value": "C12 synthetic log persistence test: request RM17.00 per bag for owner decision.",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED",
+        "field_path": "effective_unit_price",
+        "before_value": "19.00",
+        "after_value": "17.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      },
+      {
+        "draft_version": 2,
+        "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED",
+        "field_path": "subtotal_rm",
+        "before_value": "19.00",
+        "after_value": "17.00",
+        "source": "PUT_LINES",
+        "reason_code": "USER_EDIT"
+      }
+    ],
+    "stock_check": {
+      "state": "PASSED",
+      "checked_at": "2026-10-30T22:42:31.784902Z",
+      "lines": [
+        {
+          "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED",
+          "sku_id": "SKU_MILO_1KG",
+          "requested_qty": 1,
+          "available_qty": 27,
+          "sufficient": true,
+          "effective_qty": 1
+        }
+      ]
+    }
+  }
+}

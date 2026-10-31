@@ -1,0 +1,92 @@
+{
+  "captured_at": "2026-10-30T22:44:49.631809+00:00",
+  "method": "GET",
+  "path": "/orders/drafts/DRF_D9F88405F74547A99C14A73AE6BE3390",
+  "role": "CLERK",
+  "status": 200,
+  "request_id": "eca54bc6-7641-4e0a-b241-fdf4156af79c",
+  "body": {
+    "draft_id": "DRF_D9F88405F74547A99C14A73AE6BE3390",
+    "version": 2,
+    "status": "REJECTED",
+    "customer_id": "CUS_MELATI",
+    "customer": {
+      "customer_id": "CUS_MELATI",
+      "name": "Restoran Melati",
+      "tier": "B",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": "[REDACTED]"
+    },
+    "masked_message": "Milo 1kg 1 bag",
+    "ai_mode": "LLM",
+    "lines": [
+      {
+        "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED",
+        "client_line_ref": null,
+        "sku_id": "SKU_MILO_1KG",
+        "family_id": "FAM_MILO",
+        "description": "Milo \u7f8e\u7984",
+        "requested_qty": 1,
+        "confirmed_qty": null,
+        "effective_qty": 1,
+        "uom": "bag",
+        "pack_size": "1kg",
+        "grade": null,
+        "tier_unit_price": "19.00",
+        "unit_price_override": "17.00",
+        "override_reason": "C12 synthetic log persistence test: request RM17.00 per bag for owner decision.",
+        "effective_unit_price": "17.00",
+        "subtotal_rm": "17.00",
+        "match_source": "LLM_EXTRACTED",
+        "source_span": "Milo 1kg 1 bag",
+        "span_start": 0,
+        "span_end": 14,
+        "field_evidence": [
+          {
+            "field": "requested_qty",
+            "raw_text": "1",
+            "start": 5,
+            "end": 6,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": 27
+      }
+    ],
+    "issues": [],
+    "conditions": [],
+    "blocking_issues": [],
+    "escalation_preview": [
+      {
+        "code": "PRICE_OVERRIDE_BELOW_TIER",
+        "detail": {
+          "tier_unit_price": "19.00",
+          "effective_unit_price": "17.00"
+        },
+        "line_id": "LNE_B4023F0EC5DA481589CB9A42E62EFCED"
+      }
+    ],
+    "totals": {
+      "order_total": "17.00",
+      "currency": "MYR",
+      "is_complete": true
+    },
+    "allowed_actions": [
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {},
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": "OWNER_REJECTED",
+    "terminated_by_user_id": "USR_T1_OWNER",
+    "termination_note": "C12 synthetic test: owner rejects RM17.00 below the RM19.00 tier; verify this decision persists after reload and role change.",
+    "created_at": "2026-10-30T22:39:44.422983Z",
+    "updated_at": "2026-10-30T22:43:39.584808Z",
+    "do_number": null
+  }
+}
