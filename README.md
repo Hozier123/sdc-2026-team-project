@@ -10,6 +10,7 @@ Explore the workflow through the browser-only Local Demo, using synthetic data w
 
 - [Open the review workspace](https://hozier123.github.io/sdc-2026-team-project/#/workspace) - Local Demo needs no login.
 - [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
+- [Backup demo recording](https://youtu.be/4M-0Qu3xSg4) - fallback video for the on-stage demo; same prototype, synthetic data only.
 - Pitch deck: [Live HTML deck](submission/SDC2026_Falcons_PitchDeck.html) · [PDF](submission/SDC2026_Falcons_PitchDeck.pdf) · [Download editable PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx).
 - [Submission documents, platform proofs and file hashes](submission/README.md).
 
@@ -206,6 +207,7 @@ The [evidence index](evidence/EVIDENCE_INDEX.md) links the evaluation records. T
 | Phase 1 signed preliminary proposal (retained for reference) | [SDC2026_Falcons_Preliminary.pdf](submission/SDC2026_Falcons_Preliminary.pdf) |
 | Pitch deck | [PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Live HTML](submission/SDC2026_Falcons_PitchDeck.html) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx) |
 | Pitch and prototype video | [YouTube](https://youtu.be/TyrASSJDIpM) |
+| Backup demo video (fallback recording, 2026-11-01) | [YouTube](https://youtu.be/4M-0Qu3xSg4) |
 | Replit usage proof | [Replit_Usage_Proof_Falcons.pdf](submission/Replit_Usage_Proof_Falcons.pdf) · [screenshots](evidence/replit/2026-10-24/README.md) |
 | RunPod usage proof | [RunPod_Usage_Proof_Falcons.pdf](submission/RunPod_Usage_Proof_Falcons.pdf) |
 | Final file inventory and SHA-256 hashes | [submission/README.md](submission/README.md) |

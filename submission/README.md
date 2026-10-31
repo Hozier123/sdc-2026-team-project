@@ -51,6 +51,7 @@ The usage proofs remain separate supporting attachments, not replacements for de
 ## Pitch video
 
 - [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
+- [Backup demo recording](https://youtu.be/4M-0Qu3xSg4) - fallback if the live on-stage demo fails; recorded from the same prototype with synthetic data only, and it adds no claim beyond the recorded evidence.
 
 The supplied slide deck and video are linked here. The Phase 1 preliminary entry was registered via `sdchack.my` (GitHub link accepted; API integration confirmed); see [`PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png`](PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png). The screenshot below is the preliminary-round confirmation, not a final-round receipt.
 
