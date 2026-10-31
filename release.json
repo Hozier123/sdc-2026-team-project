@@ -1,15 +1,16 @@
 {
-  "task": "B02",
+  "task": "PR118 Pages refresh",
   "version": "1.5.1",
-  "source_sha": "befac4c33e723559f1f9a4d0ef05b66f0ba4f8ef",
-  "validated_head_sha": "76ddff4dd77932c948f47a6c03deb953e4e0527a",
-  "pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/98",
-  "built_at_utc": "2026-10-30T18:32:19.740686+00:00",
+  "source_sha": "e0094f573ab00dde05402bc67a26b15f9d5d9f01",
+  "pull_request": "https://github.com/Hozier123/sdc-2026-team-project/pull/118",
+  "built_at_utc": "2026-10-31T07:26:18.747968+00:00",
   "api_origin": "https://kiraorder-api.replit.app",
   "base_path": "/sdc-2026-team-project/",
-  "index_sha256": "95a7d4786c72f16a251c683122f8dbc4b2dbc43243216c71337f4d43840e6eb8",
-  "asset_normalization": "Git text normalization to LF",
-  "backend_deployment": "3e568d26",
-  "directory_route": "#/catalog",
-  "build_runtime": "Node 22.23.4"
+  "index_sha256": "75bd97a6f8a5ec7bc1ebd55a68e5e957ec935d01b45e7b71acc4aa746efa5dec",
+  "previous_pages_sha": "ae5a0d7c7dc4cc663c96fee39fbf14dcb62e0fab",
+  "build_runtime": "Node 22.22.1",
+  "validation": {
+    "frontend_tests_passed": 79,
+    "manifest_status": "PASS"
+  }
 }
