@@ -80,9 +80,7 @@ def test_exact_old_model_output_is_blocked_end_to_end():
 
 def test_adjacent_ignored_quantity_blocks_even_without_adapter_warning():
     raw = adapter_output_to_raw(
-        AdapterOutput(
-            lines=[_line()], conditions=[], ai_mode="LLM", ignored_spans=["2 bag"]
-        ),
+        AdapterOutput(lines=[_line()], conditions=[], ai_mode="LLM", ignored_spans=["2 bag"]),
         "Milo 1kg 2 bag",
     )
     assert raw.rows[0].invalid_reason == "FIELD_NOT_EVIDENCED"

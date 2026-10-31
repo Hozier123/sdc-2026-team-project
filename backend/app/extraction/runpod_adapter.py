@@ -63,16 +63,13 @@ def _adjacent_ignored_quantity(
         if start < 0 or end <= start:
             continue
         if any(
-            other is not line
-            and other.span_start <= start
-            and end <= other.span_end
+            other is not line and other.span_start <= start and end <= other.span_end
             for other in lines
         ):
             continue
         next_to_line = (
-            (line.span_end <= start and masked_text[line.span_end:start].isspace())
-            or (end <= line.span_start and masked_text[end:line.span_start].isspace())
-        )
+            line.span_end <= start and masked_text[line.span_end : start].isspace()
+        ) or (end <= line.span_start and masked_text[end : line.span_start].isspace())
         if not next_to_line:
             continue
         qty, reason, _, _ = parse_quantity_h1(item["text"])
