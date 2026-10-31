@@ -10,7 +10,7 @@ Explore the workflow through the browser-only Local Demo, using synthetic data w
 
 - [Open the review workspace](https://hozier123.github.io/sdc-2026-team-project/#/workspace) - Local Demo needs no login.
 - [Pitch video and prototype demonstration](https://youtu.be/TyrASSJDIpM).
-- Pitch deck: [View PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) · [Download editable PowerPoint](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx).
+- Pitch deck: [Download editable PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx).
 - [Submission documents, platform proofs and file hashes](submission/README.md).
 
 ## Prototype status
@@ -105,7 +105,7 @@ For a server-side warehouse redaction check, connect a **LIVE API** warehouse se
 - Saved demo orders and stock changes remain in the current browser; they do not sync to other devices. Unsaved edits may be lost on refresh. Use a new private/incognito session for a fresh demo, and allow site storage.
 - Use **A specification to clarify** to inspect an ambiguous product, or **Check before promising** to inspect insufficient stock. Follow the displayed issues before approving.
 - Messages are pasted manually. Clarifications and customer replies are copied drafts, not automatic WhatsApp messages. Use synthetic data only.
-- If the prototype cannot be reached, the [pitch and demonstration video](https://youtu.be/TyrASSJDIpM) and [pitch deck PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) provide supporting material; they do not replace an interactive review.
+- If the prototype cannot be reached, the [pitch and demonstration video](https://youtu.be/TyrASSJDIpM) and the [pitch deck](submission/SDC2026_Falcons_PitchDeck.pptx) provide supporting material; they do not replace an interactive review.
 
 ### Controlled access to the real API
 
@@ -202,7 +202,7 @@ The [evidence index](evidence/EVIDENCE_INDEX.md) links the evaluation records. T
 | --- | --- |
 | Signed official proposal | [SDC2026_Falcons_Preliminary.pdf](submission/SDC2026_Falcons_Preliminary.pdf) |
 | Signed technical and tools declaration | [SDC2026_Falcons_TechDeclaration.pdf](submission/SDC2026_Falcons_TechDeclaration.pdf) |
-| Pitch deck | [PDF](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pdf) · [Editable PowerPoint](submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) |
+| Pitch deck | [PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx) |
 | Pitch and prototype video | [YouTube](https://youtu.be/TyrASSJDIpM) |
 | Replit usage proof | [Replit_Usage_Proof_Falcons.pdf](submission/Replit_Usage_Proof_Falcons.pdf) · [screenshots](evidence/replit/2026-10-24/README.md) |
 | RunPod usage proof | [RunPod_Usage_Proof_Falcons.pdf](submission/RunPod_Usage_Proof_Falcons.pdf) |

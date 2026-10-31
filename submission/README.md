@@ -11,12 +11,10 @@ The proposal and Technical & Tools Declaration follow the official SDC templates
 | --- | --- | --- |
 | [SDC2026_Falcons_Preliminary.pdf](SDC2026_Falcons_Preliminary.pdf) | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `5cb6985f9b7868c2253d2ffde99d5fff84ba2e0c98d298c56486ab0bf1baf66d` |
 | [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | 17-page Technical & Tools Declaration, supplied ChecklistConfirmed_Final edition, incl. Appendices A–F | `14c46ddce9619cb7786de29f3a185ae7aed9d206bcf2ff7a010428f7eb4a2a51` |
-| [KiraOrder_Falcons_PitchDeck_SDC2026.pdf](KiraOrder_Falcons_PitchDeck_SDC2026.pdf) | 15-page PDF export of the pitch deck for review | `89fd9b1b45920cc01782f9ee2a82ab381a03474503b08b59046b37a6a7c21ebb` |
-| [KiraOrder_Falcons_PitchDeck_SDC2026.pptx](KiraOrder_Falcons_PitchDeck_SDC2026.pptx) | 15-slide pitch deck | `690fd3c9912bc8ed8ddce3a69838fae886b4439e5715e14e178813450c08f988` |
 
 ## Final-round deck (2026-11-01)
 
-The final-round deck supersedes the 15-slide preliminary deck above. Two files are published: the deck that matches the live pitch, and the long-form technical record.
+The final-round deck supersedes the 15-slide preliminary deck, whose PDF and PPTX were removed from this folder on 2026-11-01 to avoid two competing pitch decks; both files remain recoverable from Git history. Two files are published: the deck that matches the live pitch, and the long-form technical record.
 
 | File | Contents | SHA-256 |
 | --- | --- | --- |
