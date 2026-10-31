@@ -14,6 +14,56 @@
 .app-shell .delivery-document .document-signatures span,
 .app-shell .delivery-document .document-parties span { font-size: 13px; }
 .app-shell .delivery-document .do-table-head { color: #4b6254; font-variant-numeric: tabular-nums; }
+.app-shell .delivery-document .do-mobile-label { display: none; }
+@media screen and (max-width: 480px) {
+  /* Keep the printed four-column receipt intact while giving phone values room. */
+  .app-shell .delivery-document .do-table-head {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  .app-shell .delivery-document .do-line {
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: start;
+    gap: 12px 8px;
+    padding-block: 16px;
+  }
+  .app-shell .delivery-document .do-line > span:first-child {
+    grid-column: 1 / -1;
+    min-width: 0;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .app-shell .delivery-document .do-line > span:first-child > strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .app-shell .delivery-document .do-line > :nth-child(n + 2) {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-wrap: anywhere;
+  }
+  .app-shell .delivery-document .do-line > :last-child {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .app-shell .delivery-document .do-mobile-label {
+    display: block;
+    margin-bottom: 3px;
+    color: #4b6254;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+}
 @media print {
   .app-shell .delivery-document .do-line,
   .app-shell .delivery-document .do-line > span,

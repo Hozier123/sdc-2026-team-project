@@ -88,21 +88,31 @@ export function useChoiceMenu(
         setOpen(false);
         return;
       }
-      const width = Math.min(matchTrigger ? anchor.width : maxWidth, maxWidth, innerWidth - 32);
+      // The menus are portalled into body, whose 110% CSS zoom scales fixed
+      // offsets as well as their size. Convert viewport rectangles back to the
+      // body's layout coordinates before positioning any of the shared menus.
+      const scale = Number.parseFloat(getComputedStyle(document.body).zoom) || 1;
+      const viewportWidth = innerWidth / scale;
+      const viewportHeight = innerHeight / scale;
+      const anchorLeft = anchor.left / scale;
+      const anchorRight = anchor.right / scale;
+      const anchorTop = anchor.top / scale;
+      const anchorBottom = anchor.bottom / scale;
+      const width = Math.min(matchTrigger ? anchor.width / scale : maxWidth, maxWidth, Math.max(0, viewportWidth - 32));
       const height = Math.min((menu.current?.scrollHeight ?? 258) + 2, 420);
-      const below = Math.max(0, innerHeight - anchor.bottom - 20);
-      const above = Math.max(0, anchor.top - 20);
+      const below = Math.max(0, viewportHeight - anchorBottom - 20);
+      const above = Math.max(0, anchorTop - 20);
       const down = below >= height || (above < height && (below >= Math.min(height, 200) || below >= above));
       const maxHeight = Math.min(420, down ? below : above);
       setPosition({
         left: Math.max(
           16,
           Math.min(
-            align === "end" ? anchor.right - width : anchor.left,
-            innerWidth - width - 16,
+            align === "end" ? anchorRight - width : anchorLeft,
+            viewportWidth - width - 16,
           ),
         ),
-        top: down ? anchor.bottom + 8 : anchor.top - Math.min(height, maxHeight) - 8,
+        top: down ? anchorBottom + 8 : anchorTop - Math.min(height, maxHeight) - 8,
         width,
         maxHeight,
       });

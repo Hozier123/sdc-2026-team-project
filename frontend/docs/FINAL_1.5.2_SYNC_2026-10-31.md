@@ -2,9 +2,9 @@
 
 Date: 2026-10-31 (Asia/Shanghai).
 
-The supplied [frontend change summary](../../docs/CHANGELOG_1.4.0_TO_1.5.2_2026-10-31.md)
-is an intake snapshot. Its statements about uncommitted version numbers and deployment
-describe the sender's working tree at handoff; they are not a current deployment record.
+At the #119 handoff, the supplied [frontend change summary](../../docs/CHANGELOG_1.4.0_TO_1.5.2_2026-10-31.md)
+was an intake snapshot. It has since been updated with the later 1.5.2 responsive fixes.
+This source note and the summary are not a GitHub Pages deployment record.
 
 ## Source alignment
 

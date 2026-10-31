@@ -29,6 +29,7 @@ evidence/reset/
 
 # Local scratch / private review artifacts
 .tmp/
+.taste-skill/
 evidence/ai-samples/
 
 # B04 raw/local evidence and private review assets; publish only b04-public summaries.

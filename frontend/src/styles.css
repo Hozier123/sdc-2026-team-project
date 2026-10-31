@@ -1251,6 +1251,17 @@ a {
   color: var(--tone-8ba2b3);
   padding: 0;
 }
+@media screen and (max-width: 480px) {
+  .delivery-orders-panel .panel-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .delivery-orders-panel .search-field {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+}
 .back-button {
   display: inline-flex;
   align-items: center;
@@ -5657,7 +5668,18 @@ a {
 .catalog-table th, .catalog-table td { padding: 14px 22px; border-top: 1px solid var(--border); white-space: nowrap; }
 .catalog-table th { color: var(--muted); font-size: 12px; font-weight: 500; }
 .catalog-table code { font-size: 12px; }
+.catalog-mobile-list { display: none; margin: 0; padding: 0; list-style: none; }
 @media (max-width: 760px) { .catalog-toolbar { align-items: flex-start; flex-wrap: wrap; } }
+@media screen and (max-width: 650px) {
+  .catalog-scroll { display: none; }
+  .catalog-mobile-list { display: block; }
+  .catalog-mobile-item { display: grid; gap: 5px; min-width: 0; padding: 17px 18px; border-top: 1px solid var(--border); }
+  .catalog-mobile-item strong { font-size: 16px; line-height: 1.4; overflow-wrap: anywhere; }
+  .catalog-mobile-item code { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+  .catalog-mobile-item dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0 0; }
+  .catalog-mobile-item dt { color: var(--muted); font-size: 12px; line-height: 1.4; }
+  .catalog-mobile-item dd { margin: 3px 0 0; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+}
 
 /* v1.3.0 — 移动端可读性底线:手机/平板下工作台内容文字不再低于以下标度。 */
 @media (max-width: 760px) {
