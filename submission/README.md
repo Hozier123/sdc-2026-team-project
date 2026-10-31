@@ -14,6 +14,17 @@ The proposal and Technical & Tools Declaration follow the official SDC templates
 | [KiraOrder_Falcons_PitchDeck_SDC2026.pdf](KiraOrder_Falcons_PitchDeck_SDC2026.pdf) | 15-page PDF export of the pitch deck for review | `89fd9b1b45920cc01782f9ee2a82ab381a03474503b08b59046b37a6a7c21ebb` |
 | [KiraOrder_Falcons_PitchDeck_SDC2026.pptx](KiraOrder_Falcons_PitchDeck_SDC2026.pptx) | 15-slide pitch deck | `690fd3c9912bc8ed8ddce3a69838fae886b4439e5715e14e178813450c08f988` |
 
+## Final-round deck (2026-11-01)
+
+The final-round deck supersedes the 15-slide preliminary deck above. Two files are published: the deck that matches the live pitch, and the long-form technical record.
+
+| File | Contents | SHA-256 |
+| --- | --- | --- |
+| [SDC2026_Falcons_PitchDeck.pptx](SDC2026_Falcons_PitchDeck.pptx) | 17 slides; the deck built for the 10-minute final pitch - problem, product, architecture, evidence, business | `ce06174cde0a39c28ac31492bca03ed8edeb565dd10761c7e1c5da8d643e6515` |
+| [SDC2026_Falcons_Deck_Appendix.pptx](SDC2026_Falcons_Deck_Appendix.pptx) | 28 slides; long-form technical dossier - stack, data layer, AI contract, rules, approval, evidence pages | `29aa5ad6c70b265593c771cb1ac7446ab77f2956886e451b1bc792c779ac71de` |
+
+The live presentation is delivered from an HTML build of the same 17 pages; the `.pptx` above is the offline-checkable rendering of that same narrative. The appendix deck is a technical record and was not shown on stage. Both files were opened and slide-checked before this commit.
+
 The proposal and Technical & Tools Declaration PDFs are also the documents to be uploaded to the official submission portal (`sdchack.my`). Publishing them in this repository is **not** a substitute for submitting through the portal.
 
 The pitch deck PDF is provided for convenient viewing. The original PowerPoint is retained as the editable presentation source.
