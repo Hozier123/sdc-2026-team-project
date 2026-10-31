@@ -43,13 +43,16 @@ sdc-2026-team-project/
 |   `-- .gitkeep
 |-- submission/                 # Official competition submission materials
 |   |-- README.md
-|   |-- SDC2026_Falcons_Preliminary.pdf  # Signed preliminary proposal
-|   |-- SDC2026_Falcons_TechDeclaration.pdf  # Signed tools declaration and platform evidence
-|   |-- KiraOrder_Falcons_PitchDeck_SDC2026.pdf   # Pitch deck for review
-|   |-- KiraOrder_Falcons_PitchDeck_SDC2026.pptx  # Editable pitch deck
+|   |-- SDC2026_Falcons_Final.pdf            # Signed final solution report (Phase 2)
+|   |-- SDC2026_Falcons_PRD.pdf              # Updated PRD (Phase 2)
+|   |-- SDC2026_Falcons_TechDeclaration.pdf  # Signed final tools declaration and platform evidence
+|   |-- SDC2026_Falcons_Preliminary.pdf      # Phase 1 signed proposal (reference)
+|   |-- SDC2026_Falcons_PitchDeck.pptx       # Editable final pitch deck
+|   |-- SDC2026_Falcons_PitchDeck.html       # Self-contained live pitch deck
+|   |-- SDC2026_Falcons_Deck_Appendix.pptx   # Technical appendix deck
 |   |-- Replit_Usage_Proof_Falcons.pdf
 |   |-- RunPod_Usage_Proof_Falcons.pdf
-|   `-- PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png
+|   `-- PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png  # Phase 1 portal receipt
 |-- tests/                      # Test code, test data, and frozen-set records
 |   `-- .gitkeep
 |-- .env.example                # Configuration variable names with empty values

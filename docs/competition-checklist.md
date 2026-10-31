@@ -2,6 +2,8 @@
 
 更新日期：2026-10-25。材料核查基线：`main` 提交 `4250ae6840bc5b4dae63a0d4df6c7fcc27e8bd50`。
 
+> **2026-11-01 Phase 2 材料更新**：决赛签字版 Final Solution Report、Updated PRD 和 Tools Declaration 已替换到 `submission/`，当前索引与 SHA-256 见 [submission/README.md](../submission/README.md)。本清单的核验日期与勾选状态仍为 2026-10-25 Phase 1 基线；下文表格中的 Phase 1 旧文件名已失效，材料入口以索引为准。
+
 **当前状态：实际代码、正式提案、工具声明和 Pitch deck 已入库，演示视频已登记，仓库已公开。这里不再是目录模板清单；但材料入库不等于官网提交成功，也不等于完整业务验收通过。**
 
 勾选只表示该项明确描述的事实已有证据；未核实的访问效果、视频时长、官网提交和质量验收不自动勾选。
@@ -22,9 +24,10 @@
 
 | 材料 | 当前状态与入口 |
 | --- | --- |
-| 正式提案 | 已入库：[SDC2026_Falcons_Preliminary.pdf](../submission/SDC2026_Falcons_Preliminary.pdf)；材料索引记录签字日期为 2026/10/25 |
-| 技术与工具声明 | 已入库：[SDC2026_Falcons_TechDeclaration.pdf](../submission/SDC2026_Falcons_TechDeclaration.pdf)；材料索引记录签字日期为 2026/10/25 |
-| Pitch deck | 已入库：[KiraOrder_Falcons_PitchDeck_SDC2026.pptx](../submission/KiraOrder_Falcons_PitchDeck_SDC2026.pptx) |
+| 正式提案（Phase 1） | 已入库：[SDC2026_Falcons_Preliminary.pdf](../submission/SDC2026_Falcons_Preliminary.pdf)；签字日期 2026/10/25。Phase 2 决赛报告见 [SDC2026_Falcons_Final.pdf](../submission/SDC2026_Falcons_Final.pdf) |
+| 技术与工具声明 | 已更新为 [15 页决赛签字版](../submission/SDC2026_Falcons_TechDeclaration.pdf)（2026-11-01）；Phase 1 的 17 页版仅存 Git 历史 |
+| 更新版 PRD（Phase 2） | 已入库：[SDC2026_Falcons_PRD.pdf](../submission/SDC2026_Falcons_PRD.pdf) |
+| Pitch deck | Phase 2 入口：[SDC2026_Falcons_PitchDeck.pptx](../submission/SDC2026_Falcons_PitchDeck.pptx) · [HTML](../submission/SDC2026_Falcons_PitchDeck.html)；旧的 `KiraOrder_Falcons_PitchDeck_SDC2026.pptx` 已不在当前材料中 |
 | 路演与原型演示视频 | 已登记：[YouTube 视频](https://youtu.be/TyrASSJDIpM)；本次未重新核验播放权限、时长和内容 |
 | 当前前端入口 | 已登记：[GitHub Pages](https://hozier123.github.io/sdc-2026-team-project/)；旧 Replit 前端不是最终评审入口 |
 | 后端服务 | 已登记：[Replit API](https://kiraorder-api.replit.app/api/v1)；[就绪检查](https://kiraorder-api.replit.app/readyz) |

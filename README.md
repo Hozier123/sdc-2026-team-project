@@ -200,15 +200,17 @@ The [evidence index](evidence/EVIDENCE_INDEX.md) links the evaluation records. T
 
 | Material | Link |
 | --- | --- |
-| Signed official proposal | [SDC2026_Falcons_Preliminary.pdf](submission/SDC2026_Falcons_Preliminary.pdf) |
-| Signed technical and tools declaration | [SDC2026_Falcons_TechDeclaration.pdf](submission/SDC2026_Falcons_TechDeclaration.pdf) |
-| Pitch deck | [PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx) |
+| Final Solution Report (signed, 2026-11-01) | [SDC2026_Falcons_Final.pdf](submission/SDC2026_Falcons_Final.pdf) |
+| Updated PRD (final round) | [SDC2026_Falcons_PRD.pdf](submission/SDC2026_Falcons_PRD.pdf) |
+| Signed technical and tools declaration (final, 2026-11-01) | [SDC2026_Falcons_TechDeclaration.pdf](submission/SDC2026_Falcons_TechDeclaration.pdf) |
+| Phase 1 signed preliminary proposal (retained for reference) | [SDC2026_Falcons_Preliminary.pdf](submission/SDC2026_Falcons_Preliminary.pdf) |
+| Pitch deck | [PowerPoint](submission/SDC2026_Falcons_PitchDeck.pptx) · [Live HTML](submission/SDC2026_Falcons_PitchDeck.html) · [Technical appendix](submission/SDC2026_Falcons_Deck_Appendix.pptx) |
 | Pitch and prototype video | [YouTube](https://youtu.be/TyrASSJDIpM) |
 | Replit usage proof | [Replit_Usage_Proof_Falcons.pdf](submission/Replit_Usage_Proof_Falcons.pdf) · [screenshots](evidence/replit/2026-10-24/README.md) |
 | RunPod usage proof | [RunPod_Usage_Proof_Falcons.pdf](submission/RunPod_Usage_Proof_Falcons.pdf) |
 | Final file inventory and SHA-256 hashes | [submission/README.md](submission/README.md) |
 
-The project’s GitHub repository link has been registered in the official submission portal. A [confirmation screenshot](submission/PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png) is archived. This records repository-link registration; runtime API validation is documented separately.
+The Final Solution Report supersedes the Phase 1 preliminary proposal; the preliminary file is retained for reference. The project’s GitHub repository link was registered in the official submission portal for Phase 1. A [confirmation screenshot](submission/PORTAL_SUBMISSION_CONFIRMATION_2026-10-25.png) is archived. This records Phase 1 repository-link registration, not a final-round receipt; runtime API validation is documented separately.
 
 Use the [competition checklist](docs/competition-checklist.md) to verify that the portal repository link and linked submission materials match the intended final version.
 
