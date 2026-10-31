@@ -13,6 +13,7 @@ from dataclasses import asdict
 from typing import Any, Sequence
 
 from app.ai.adapter import AdapterOutput, OrderAiAdapter
+from app.ai.fallback import parse_quantity_h1, parse_uom_h1
 from app.extraction.base import RawExtraction, RawRow
 
 
@@ -47,6 +48,39 @@ def _ignored_span_dict(masked_text: str, value: str, cursor: int) -> tuple[dict[
     }, end
 
 
+def _adjacent_ignored_quantity(
+    line, ignored: list[dict[str, Any]], lines: Sequence, masked_text: str
+) -> bool:
+    """Flag an order quantity that the model left next to a product span.
+
+    This only blocks a suspect row. It never adds text to the span or changes
+    the model's quantity, so the original extraction remains auditable.
+    """
+    if line.match_source != "LLM_EXTRACTED" or not (0 <= line.span_start < line.span_end):
+        return False
+    for item in ignored:
+        start, end = item["start"], item["end"]
+        if start < 0 or end <= start:
+            continue
+        if any(
+            other is not line
+            and other.span_start <= start
+            and end <= other.span_end
+            for other in lines
+        ):
+            continue
+        next_to_line = (
+            (line.span_end <= start and masked_text[line.span_end:start].isspace())
+            or (end <= line.span_start and masked_text[end:line.span_start].isspace())
+        )
+        if not next_to_line:
+            continue
+        qty, reason, _, _ = parse_quantity_h1(item["text"])
+        if qty is not None and reason is None and parse_uom_h1(item["text"]) is not None:
+            return True
+    return False
+
+
 def adapter_output_to_raw(output: AdapterOutput, masked_text: str) -> RawExtraction:
     """Pure conversion used by the provider and by mock tests."""
     conditions = tuple(_condition_dict(condition) for condition in output.conditions)
@@ -62,6 +96,13 @@ def adapter_output_to_raw(output: AdapterOutput, masked_text: str) -> RawExtract
             condition for condition in conditions if condition["span"] in line.span
         )
         evidence = tuple(asdict(item) for item in line.field_evidence)
+        invalid_reason = (
+            line.reason_code or "FIELD_NOT_EVIDENCED"
+            if line.issue_code == "LOW_CONFIDENCE_MATCH"
+            else None
+        )
+        if _adjacent_ignored_quantity(line, ignored, output.lines, masked_text):
+            invalid_reason = "FIELD_NOT_EVIDENCED"
         rows.append(
             RawRow(
                 span=line.span,
@@ -72,6 +113,7 @@ def adapter_output_to_raw(output: AdapterOutput, masked_text: str) -> RawExtract
                 conds=line_conditions,
                 source=line.match_source,
                 field_evidence=evidence,
+                invalid_reason=invalid_reason,
             )
         )
     return RawExtraction(
