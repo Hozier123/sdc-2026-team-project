@@ -1,24 +1,26 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { catalogNotice, type CatalogProduct, type CatalogProductsResponse } from "../lib/catalog";
+import { catalogNotice, matchingCatalogProducts, type CatalogProduct, type CatalogProductsResponse } from "../lib/catalog";
 import { useResource } from "../lib/hooks";
 import type { Service } from "../lib/types";
 import { Empty, ErrorNotice, Loading, Modal } from "./ui";
 
-export function CatalogChoices({ result, query, onSelect }: {
+export function CatalogChoices({ result, query, onSelect, items = result.items, notice }: {
   result: CatalogProductsResponse;
   query: string;
   onSelect: (product: CatalogProduct) => void;
+  items?: CatalogProduct[];
+  notice?: string;
 }) {
   const normalized = query.trim().toLocaleLowerCase();
-  const products = result.items.filter((product) =>
+  const products = items.filter((product) =>
     [product.display_name, product.sku_id, product.pack_size, product.grade, product.base_unit]
       .some((part) => part?.toLocaleLowerCase().includes(normalized)),
   );
   return (
     <>
       <p className="manual-catalog-count" role={result.truncated ? "alert" : "status"}>
-        {catalogNotice(result)}
+        {notice ?? catalogNotice(result)}
         {result.truncated && " Selection is unavailable until the full tenant directory loads."}
       </p>
       {!products.length ? (
@@ -30,7 +32,7 @@ export function CatalogChoices({ result, query, onSelect }: {
             <div role="listitem" key={product.sku_id}>
             <button type="button"
               className="manual-catalog-item" disabled={result.truncated}
-              aria-label={`Choose ${product.display_name}, ${product.pack_size ?? "no pack size"}, ${product.base_unit}`}
+              aria-label={`Choose ${product.display_name}, ${product.pack_size ?? "no pack size"}${product.grade ? `, grade ${product.grade}` : ""}, ${product.base_unit}`}
               onClick={() => onSelect(product)}>
               <span className="manual-catalog-name">{product.display_name}</span>
               <span className="manual-catalog-spec">
@@ -46,19 +48,45 @@ export function CatalogChoices({ result, query, onSelect }: {
   );
 }
 
-export function ManualCatalogPicker({ service, onSelect, onClose }: {
+export function ManualCatalogPicker({ service, onSelect, onClose, sourceSpan = "", candidateSkuIds = [], initialView = "all" }: {
   service: Service;
   onSelect: (product: CatalogProduct) => void;
   onClose: () => void;
+  sourceSpan?: string;
+  candidateSkuIds?: string[];
+  initialView?: "matched" | "all";
 }) {
   const resource = useResource(() => service.catalogProducts(), [service]);
   const [query, setQuery] = useState("");
+  const [view, setView] = useState<"matched" | "all">(initialView);
+  const matches = resource.value
+    ? matchingCatalogProducts(resource.value.items, sourceSpan, candidateSkuIds)
+    : { items: [], phrase: null };
   return (
-    <Modal title="Choose a product" onClose={onClose} wide className="manual-catalog-modal">
+    <Modal title={view === "matched" ? "Choose a matching product" : "Choose a product"} onClose={onClose} wide className="manual-catalog-modal">
       <p className="modal-copy">
-        Choose from this tenant’s complete live directory. Confirm quantity before saving;
-        customer price, stock and approval checks appear only after the save response.
+        Confirm the exact grade, pack and unit with the customer. Enter the quantity after choosing;
+        price and stock checks appear after saving.
       </p>
+      {sourceSpan && (
+        <div className="manual-catalog-views" aria-label="Product list">
+          <button type="button" className={view === "matched" ? "active" : ""}
+            aria-pressed={view === "matched"} onClick={() => { setView("matched"); setQuery(""); }}>
+            Matching options
+          </button>
+          <button type="button" className={view === "all" ? "active" : ""}
+            aria-pressed={view === "all"} onClick={() => { setView("all"); setQuery(""); }}>
+            All products
+          </button>
+        </div>
+      )}
+      {view === "matched" && resource.value && (
+        <p className="manual-catalog-context" role="status">
+          {matches.items.length
+            ? `${matches.phrase ? `Found “${matches.phrase}” in the message. ` : "These options came from the draft. "}Select only after confirming the variant with the customer.`
+            : "No matching options found in this directory. Browse all products or clarify the item with the customer."}
+        </p>
+      )}
       <label className="manual-catalog-search">
         Search products
         <span><Search size={17} aria-hidden="true" />
@@ -68,7 +96,9 @@ export function ManualCatalogPicker({ service, onSelect, onClose }: {
       </label>
       {resource.error ? <ErrorNotice error={resource.error} retry={resource.refresh} />
         : resource.value === undefined ? <Loading label="Loading live directory…" />
-        : <CatalogChoices result={resource.value} query={query} onSelect={onSelect} />}
+        : <CatalogChoices result={resource.value} items={view === "matched" ? matches.items : undefined}
+            notice={view === "matched" ? `${matches.items.length} matching options · ${catalogNotice(resource.value)}` : undefined}
+            query={query} onSelect={onSelect} />}
       <div className="modal-actions">
         <button type="button" className="button secondary" onClick={onClose}>Cancel</button>
       </div>

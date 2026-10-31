@@ -1,4 +1,9 @@
 .manual-catalog-modal .modal-copy { font-size: 14px; line-height: 1.6; }
+.manual-catalog-views { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; border-bottom: 1px solid var(--border); }
+.manual-catalog-views button { min-height: 44px; padding: 8px 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; }
+.manual-catalog-views button.active { border-bottom-color: var(--mint); color: var(--text); }
+.manual-catalog-views button:focus-visible { outline: 2px solid var(--mint); outline-offset: -2px; }
+.manual-catalog-context { margin: 0 0 14px; color: var(--muted); font-size: 14px; line-height: 1.5; }
 .manual-catalog-search { display: grid; gap: 8px; color: var(--text); font-size: 14px; }
 .manual-catalog-search > span { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 12px; border: 1px solid var(--border); border-radius: 8px; }
 .manual-catalog-search input { min-width: 0; width: 100%; min-height: 44px; background: transparent; border: 0; color: var(--text); font-size: 16px; }

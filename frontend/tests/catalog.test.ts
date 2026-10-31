@@ -4,8 +4,9 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { HttpService } from "../src/lib/api";
 import { DemoService } from "../src/lib/demo";
-import { catalogNotice, type CatalogProductsResponse } from "../src/lib/catalog";
+import { catalogNotice, matchingCatalogProducts, type CatalogProductsResponse } from "../src/lib/catalog";
 import { CatalogResult } from "../src/components/CatalogPage";
+import { CatalogChoices } from "../src/components/ManualCatalogPicker";
 import { ApiError, type Service } from "../src/lib/types";
 import { validRoute } from "../src/lib/review";
 
@@ -69,4 +70,27 @@ test("empty directory is complete and local demo is clearly labelled", async () 
 test("catalog has an explicit route without allowing arbitrary nested paths", () => {
   assert.equal(validRoute("catalog"), true);
   assert.equal(validRoute("catalog/edit"), false);
+});
+
+test("contextual choices show all egg grades and packs without silently selecting one", () => {
+  const eggs = ["A", "B", "C"].flatMap((grade) => ["papan", "ctn"].map((unit) => ({
+    sku_id: `SKU_TELUR_${grade}_${unit}`,
+    display_name: "Telur 鸡蛋",
+    pack_size: unit === "papan" ? "30枚" : "12托×30枚",
+    grade,
+    base_unit: unit,
+  })));
+  const chicken = { sku_id: "SKU_AYAM", display_name: "Ayam 鸡肉", pack_size: "10kg", grade: "A", base_unit: "ctn" };
+  const directory = [chicken, ...eggs];
+  const result = matchingCatalogProducts(directory, "来一个鸡蛋");
+  assert.equal(result.phrase, "鸡蛋");
+  assert.deepEqual(result.items, eggs);
+  const markup = renderToStaticMarkup(createElement(CatalogChoices, {
+    result: { items: directory, limit: 100, truncated: false },
+    items: result.items, query: "", onSelect: () => {},
+  }));
+  assert.match(markup, /Choose Telur 鸡蛋, 30枚, grade A, papan/);
+  assert.doesNotMatch(markup, /Ayam 鸡肉/);
+  assert.deepEqual(matchingCatalogProducts(directory, "来一个鸡").items, []);
+  assert.deepEqual(matchingCatalogProducts(directory, "来一个鸡蛋", [chicken.sku_id]).items, [chicken]);
 });
