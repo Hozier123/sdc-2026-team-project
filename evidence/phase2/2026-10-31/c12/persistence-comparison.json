@@ -1,0 +1,8 @@
+{
+  "approved_audit_events_equal_across_clerk_owner_reads": true,
+  "rejection_activity_equal_across_owner_clerk_reads": true,
+  "approval_actor_and_timestamp_preserved": true,
+  "rejection_actor_and_timestamp_preserved": true,
+  "direct_db_verified": false,
+  "independent_review": "PENDING"
+}

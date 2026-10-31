@@ -1,0 +1,44 @@
+{
+  "case_id": "C12",
+  "execution_result": "PASS",
+  "independent_review": "PENDING",
+  "independent_reviewer": "Zhou",
+  "execution_date": "2026-10-31",
+  "frontend_version_observed": "1.5.1",
+  "frontend_deployment_sha": null,
+  "backend_deployment_sha": null,
+  "scope": "Fresh synthetic operations via live UI/API; hard browser reload, reconnect with another role, UI readback and separate authenticated backend rereads. No DB inspection or cross-browser claim.",
+  "approval": {
+    "draft_id": "DRF_D66F2FAEEF82493E8F30D8C0FC8DC8CD",
+    "do_number": "DO_20261030_D8ED6398",
+    "actor": "USR_T1_CLERK",
+    "actor_role": "CLERK",
+    "time_utc": "2026-10-30T22:37:57.018398Z",
+    "time_myt": "2026-10-31 06:37:57",
+    "quantity": 1,
+    "unit": "bag",
+    "total_rm": "18.00",
+    "persistence": "Same APPROVE/INVENTORY_DEDUCT events after hard reload and OWNER reconnect; independently reread over API."
+  },
+  "rejection": {
+    "draft_id": "DRF_D9F88405F74547A99C14A73AE6BE3390",
+    "approval_id": "APR_03CD078FA6B740D89903D80968052FA6",
+    "actor": "USR_T1_OWNER",
+    "actor_role": "OWNER",
+    "time_utc": "2026-10-30T22:43:39.584808Z",
+    "time_myt": "2026-10-31 06:43:39",
+    "status": "REJECTED",
+    "do_number": null,
+    "persistence": "Same activity IDs, actor, timestamp and note after hard reload and CLERK reconnect; closed draft and no DO reread over API."
+  },
+  "comparison": "persistence-comparison.json",
+  "request_id_capture": true,
+  "private_fields": "Token values never saved in evidence; phone/contact fields in API captures are redacted.",
+  "test_cleanup": "One approved synthetic DO intentionally retained. One rejected C12 draft retained as terminal evidence. Reserved C06 samples were not changed.",
+  "evidence": {
+    "screenshots": 8,
+    "api_response_captures": 9,
+    "checkpoints": "CHECKPOINTS.md",
+    "manifest": "source-manifest.json"
+  }
+}

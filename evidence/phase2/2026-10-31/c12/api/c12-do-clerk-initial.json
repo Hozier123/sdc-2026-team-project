@@ -1,0 +1,42 @@
+{
+  "captured_at": "2026-10-30T22:38:20.215743+00:00",
+  "method": "GET",
+  "path": "/delivery-orders/DO_20261030_D8ED6398",
+  "role": "CLERK",
+  "status": 200,
+  "request_id": "6fef2677-1f58-409c-b75d-182fcafc68ff",
+  "body": {
+    "do_number": "DO_20261030_D8ED6398",
+    "draft_id": "DRF_D66F2FAEEF82493E8F30D8C0FC8DC8CD",
+    "draft_version": 1,
+    "customer_id": "CUS_AMAN",
+    "customer_name": "Kantin Aman",
+    "lines": [
+      {
+        "line_id": "LNE_DB12D66D709848D98C28724E1E0443E0",
+        "sku_id": "SKU_MILO_1KG",
+        "display_name": "Milo \u7f8e\u7984",
+        "quantity": 1,
+        "unit": "bag",
+        "tier_unit_price": "18.00",
+        "applied_unit_price": "18.00",
+        "subtotal_rm": "18.00",
+        "override_reason": null,
+        "picking_note": null
+      }
+    ],
+    "final_total_rm": "18.00",
+    "prepared_by": "USR_T1_CLERK",
+    "approved_by": "USR_T1_CLERK",
+    "escalation_reasons": [],
+    "approval_mode": "DIRECT",
+    "reply_draft": {
+      "language": "en",
+      "message": "Order DO_20261030_D8ED6398 confirmed: Milo \u7f8e\u7984 1 bag @ RM 18.00. Total RM 18.00. Thank you!",
+      "do_number": "DO_20261030_D8ED6398",
+      "warnings": []
+    },
+    "related_do_number": null,
+    "approved_at": "2026-10-30T22:37:57.052827Z"
+  }
+}
