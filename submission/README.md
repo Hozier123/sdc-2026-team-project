@@ -12,7 +12,7 @@ The final-round Final Solution Report, Updated PRD and refreshed Technical & Too
 | File | Contents | SHA-256 |
 | --- | --- | --- |
 | [SDC2026_Falcons_Final.pdf](SDC2026_Falcons_Final.pdf) | Final Solution Report v2, 10 pages | `f7f15d7a3eb697f822aaad8ad5d047b645b38d73b747337689ba8d54f16736f6` |
-| [SDC2026_Falcons_PRD.pdf](SDC2026_Falcons_PRD.pdf) | Updated Product Requirements Document v2.0, 15 pages | `d7379e87b8e68bd1e3deaa2b3a755f79d203f989f88b9fc8263e67e92b805066` |
+| [SDC2026_Falcons_PRD.pdf](SDC2026_Falcons_PRD.pdf) | Updated Product Requirements Document v2.0, 15 pages | `cd71ddcca8cffdd53d0ae36efd80e56bc4e3420b9a4f2b11bbc47c304c9b5f4a` |
 | [SDC2026_Falcons_TechDeclaration.pdf](SDC2026_Falcons_TechDeclaration.pdf) | Technical & Tools Declaration, 15-page final-round refresh with Appendices A–E | `c747169ce73f476e37755e9d2588da85291b91676e2a287f1b798c7c2f8ae9ad` |
 | [SDC2026_Falcons_Preliminary.pdf](SDC2026_Falcons_Preliminary.pdf) | Phase 1 preliminary project proposal (official submission template, 8 pages incl. Appendix A architecture) | `5cb6985f9b7868c2253d2ffde99d5fff84ba2e0c98d298c56486ab0bf1baf66d` |
 
