@@ -4,15 +4,16 @@
   font-family: var(--font-ui);
   color: #dce3e9;
   background: #090e15;
-  font-synthesis: none;
+  /* Marcellus ships at 400 only; allow weight synthesis for key workbench facts. */
+  font-synthesis: weight;
   font-size: 14px;
   --bg: #090e15;
   --panel: #101720;
   --panel2: #121b25;
   --border: #26313e;
   --border-soft: #202b37;
-  --muted: #97a6b5;
-  --faint: #748598;
+  --muted: #b3c0cc;
+  --faint: #9eafbe;
   --text: #e1e8ed;
   --mint: #94e3bd;
   --blue: #97bfe9;
@@ -29,7 +30,7 @@
   --type-caption: 12.5px;
   --type-meta: 12px;
   --type-input: 16px;
-  --text-placeholder: #8b9cab;
+  --text-placeholder: #a3b3c1;
   --target-touch: 44px;
   --space-section: 28px;
   --space-panel: 24px;

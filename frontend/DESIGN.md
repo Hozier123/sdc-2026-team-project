@@ -4,7 +4,7 @@
 
 The current interface and user decisions are the visual authority. This is a refinement of that system. Preserve the dark navy surfaces, mint primary actions, amber decision state, blue owner state, four concise statistic cards and the immersive animated introduction.
 
-The user selected **Marcellus** for default interface text, including navigation, buttons, forms, descriptions and statistic labels. **Cormorant Garamond** remains the display face for existing headings and large counts. Keep natural case in descriptive copy. Marcellus Regular is self-hosted; distinguish hierarchy with scale, space and tone rather than unavailable bold weights.
+The user selected **Marcellus** for default interface text, including navigation, buttons, forms, descriptions and statistic labels. **Cormorant Garamond** remains the display face for existing headings and large counts. Keep natural case in descriptive copy. Marcellus Regular is self-hosted; use synthesized weight for key facts, with scale, space and tone providing the rest of the hierarchy.
 
 ## Tokens and ownership
 
@@ -80,3 +80,16 @@ Desktop and mobile viewport checks prove rendered layout, not physical touch, Sa
 - Keep candidate pack sizes/grades at 18px in `.candidate-specification`, including selected and unselected cards. Retain Marcellus Regular, full text ink and wrapping.
 - Quantity, unit, stock, tier price and subtotal values use 18px and a 46px row height; labels retain 14px. Preserve right-aligned subtotals and amber insufficient-stock values.
 - These follow-up changes use release number **1.5.1**, matching the existing project/app version. Existing catalog, approval-context and backend integration work stays in place.
+
+## Interface readability and scale · 2026-10-31
+
+- Screen presentation uses 110% CSS zoom across the site, including the introduction and workbench. Print layout remains at its document scale.
+- Secondary and placeholder text use stronger light/dark contrast. Important workbench facts, status counts, customer names and review values use bold emphasis.
+- Marcellus is available locally only at Regular weight, so synthesized weight is enabled for those emphasized facts while the established font families remain in place.
+- The narrow header hides the redundant breadcrumb label below 431px to prevent horizontal overflow at the larger scale.
+- Delivery and approval list rows use one full-width, neutral hover surface, matching the inbox. Their content stays in place; keyboard focus adds a visible inner outline.
+
+## Review copy · 2026-10-31
+
+- The order checks rail names unresolved items in everyday language while retaining the exact unresolved count. Its badge names price requests only when every unresolved item is a price condition; shared queue badges keep their generic count.
+- A customer price request is not described as a negotiated or agreed price. Guidance follows the actual next step: record a decision in Customer conditions while editable, or wait for owner review after a discount is submitted. Stock conditions describe the automatic check rather than instructing a manual decision.

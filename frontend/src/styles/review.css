@@ -14,13 +14,14 @@
     font-size: 16px;
     line-height: 1.5;
     color: var(--text);
+    font-weight: 600;
   }
   .app-shell .products-panel .candidate > div { min-width: 0; }
   .app-shell .products-panel .candidate-specification {
     color: var(--text);
     font-family: var(--font-ui);
     font-size: 18px;
-    font-weight: 400;
+    font-weight: 600;
     line-height: 1.5;
     letter-spacing: normal;
     font-variant-numeric: tabular-nums;
@@ -46,6 +47,7 @@
     padding: 8px 0;
     white-space: normal;
     overflow-wrap: anywhere;
+    font-weight: 600;
   }
   .app-shell .products-panel .line-fields .line-subtotal .readonly-field { justify-content: flex-end; }
   .app-shell .products-panel .line-fields .readonly-field.amber-text { color: var(--amber); }
@@ -83,7 +85,7 @@
   .app-shell .review-rail .checks-panel.has-blockers { border-top: 3px solid var(--amber); }
   .app-shell .checks-heading { display: flex; align-items: center; gap: 10px; }
   .app-shell .checks-heading > svg { color: var(--amber); flex-shrink: 0; }
-  .app-shell .checks-heading h2 { margin: 0; color: var(--text); font-family: var(--font-ui); font-size: 18px; font-weight: 400; line-height: 1.4; }
+  .app-shell .checks-heading h2 { margin: 0; color: var(--text); font-family: var(--font-ui); font-size: 18px; font-weight: 600; line-height: 1.4; }
   .app-shell .checks-panel .check-summary { padding: 16px 0; margin: 0; border: 0; }
   .app-shell .checks-panel .pending-checks { font-size: 14px; }
   .app-shell .checks-panel .pending-checks > strong { font-size: 18px; }
@@ -92,7 +94,7 @@
   .app-shell .checks-panel .check-item-icon { float: left; width: 18px; height: 20px; margin: 0 8px 0 0; background: none; border: 0; border-radius: 0; color: var(--amber); }
   .app-shell .checks-panel .check-item-icon.mint { color: var(--mint); }
   .app-shell .checks-panel .check-owner { margin: 0 0 10px; color: var(--amber); font-size: 13px; line-height: 20px; }
-  .app-shell .checks-panel .check-item strong { clear: both; color: var(--text); font-size: 16px; line-height: 1.5; }
+  .app-shell .checks-panel .check-item strong { clear: both; color: var(--text); font-size: 16px; font-weight: 600; line-height: 1.5; }
   .app-shell .checks-panel .check-item p { color: var(--muted); font-size: 14px; line-height: 1.65; }
   .app-shell .checks-panel .check-item.resolved .check-owner { color: var(--mint); }
   .app-shell .checks-panel .same-day-editor { margin-top: 16px; padding: 16px 0 0; }

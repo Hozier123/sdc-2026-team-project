@@ -5,6 +5,13 @@ body {
   margin: 0;
   min-width: 360px;
 }
+@media screen {
+  /* Scale the whole interface, including px-sized controls and the introduction. */
+  body {
+    min-width: 0;
+    zoom: 1.1;
+  }
+}
 button,
 input,
 textarea,
@@ -311,6 +318,46 @@ a {
   margin-top: auto;
   padding-top: 56px;
 }
+.sidebar-scroll-cue {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  height: 28px;
+  margin-top: -28px;
+  color: var(--mint);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition:
+    opacity 220ms ease,
+    transform 280ms var(--ease-response),
+    visibility 0s linear 280ms;
+}
+.sidebar-scroll-cue.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 280ms ease,
+    transform 320ms var(--ease-response),
+    visibility 0s;
+}
+.sidebar-scroll-cue svg {
+  animation: sidebar-scroll-hint 1.7s ease-in-out infinite;
+}
+@keyframes sidebar-scroll-hint {
+  0%, 100% { transform: translateY(-3px); }
+  50% { transform: translateY(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-scroll-cue { transition: none; transform: none; }
+  .sidebar-scroll-cue svg { animation: none; }
+}
 .quiet-card {
   border: 1px solid var(--tone-23312e);
   border-radius: 8px;
@@ -344,6 +391,19 @@ a {
 .sidebar-bottom .nav-item {
   font-size: 10px;
   min-height: 37px;
+}
+.sidebar-bottom .nav-item.back-to-intro {
+  min-height: 44px;
+  margin-top: 8px;
+  background: var(--text);
+  color: var(--bg);
+}
+.sidebar-bottom .nav-item.back-to-intro svg {
+  color: inherit;
+}
+.sidebar-bottom .nav-item.back-to-intro:hover {
+  background: color-mix(in srgb, var(--text) 88%, var(--bg));
+  color: var(--bg);
 }
 .back-intro {
   font-size: 9px;
@@ -2211,7 +2271,7 @@ a {
   line-height: 1.7;
 }
 .approval-list {
-  padding: 0 23px;
+  padding: 0;
 }
 .approval-card {
   display: flex;
@@ -2221,19 +2281,19 @@ a {
   background: transparent;
   border: 0;
   border-bottom: 1px solid var(--tone-2b3a46);
-  padding: 24px 4px;
+  padding: 24px 27px;
   text-align: left;
-  transition: background 0.18s, padding 0.18s;
+  transition: background 0.18s;
 }
 .approval-card:last-child {
   border-bottom: 0;
 }
-.approval-card:hover {
-  background: var(--tone-131f2a);
-  padding: 24px 10px;
+.approval-card:hover,
+.approval-card:focus-visible {
+  background: var(--panel2);
 }
-.approval-card:hover .approval-card-main h3 {
-  color: var(--tone-c1e8d3);
+.approval-card:focus-visible {
+  outline-offset: -3px;
 }
 .approval-icon {
   width: 46px;
@@ -2435,7 +2495,7 @@ a {
   margin-top: 4px;
 }
 .delivery-list {
-  padding: 0 24px;
+  padding: 0;
 }
 .delivery-list > button {
   display: flex;
@@ -2443,21 +2503,21 @@ a {
   gap: 18px;
   border: 0;
   border-bottom: 1px solid var(--tone-2b3b47);
-  padding: 23px 4px;
+  padding: 23px 28px;
   text-align: left;
   background: transparent;
   width: 100%;
-  transition: background 0.18s, padding 0.18s;
+  transition: background 0.18s;
 }
 .delivery-list > button:last-child {
   border-bottom: 0;
 }
-.delivery-list > button:hover {
-  background: var(--tone-12202a);
-  padding: 23px 10px;
+.delivery-list > button:hover,
+.delivery-list > button:focus-visible {
+  background: var(--panel2);
 }
-.delivery-list > button:hover strong {
-  color: var(--mint);
+.delivery-list > button:focus-visible {
+  outline-offset: -3px;
 }
 .delivery-icon {
   width: 42px;
@@ -3620,10 +3680,11 @@ a {
     padding-inline: 8px;
   }
   .approval-list {
-    padding-inline: 21px;
+    padding-inline: 0;
   }
   .approval-card {
     gap: 12px;
+    padding-inline: 25px;
   }
   .approval-card-main h3 {
     font-size: 12px;
@@ -4042,10 +4103,11 @@ a {
     margin-left: 30px;
   }
   .approval-list {
-    padding-inline: 19px;
+    padding-inline: 0;
   }
   .approval-card {
     gap: 12px;
+    padding-inline: 23px;
     align-items: flex-start;
     flex-wrap: wrap;
   }
@@ -4090,10 +4152,11 @@ a {
     font-size: 10px;
   }
   .delivery-list {
-    padding-inline: 19px;
+    padding-inline: 0;
   }
   .delivery-list > button {
     gap: 12px;
+    padding-inline: 23px;
     flex-wrap: wrap;
     position: relative;
   }
@@ -4103,12 +4166,12 @@ a {
   }
   .delivery-list > button .pill {
     position: absolute;
-    right: 22px;
+    right: 41px;
     top: 24px;
   }
   .delivery-list > button > svg {
     position: absolute;
-    right: 0;
+    right: 19px;
     top: 25px;
     width: 14px;
     margin: 0;

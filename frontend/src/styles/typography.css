@@ -54,7 +54,7 @@
   .app-shell .pending-checks > strong {
     font-family: var(--font-ui);
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
@@ -73,7 +73,7 @@
   .app-shell .brand > span:last-child > small { font-size: 11px; letter-spacing: 0.08em; }
   .app-shell .sidebar-footer { font-size: 11px; letter-spacing: 0; color: var(--muted); }
   .app-shell .check-owner { letter-spacing: 0; }
-  .app-shell .check-item strong { font-size: var(--type-body); line-height: 1.5; color: var(--text); }
+  .app-shell .check-item strong { font-size: var(--type-body); line-height: 1.5; color: var(--text); font-weight: 600; }
   .app-shell .inline-heading h2 { font-size: var(--type-body); line-height: 1.5; }
   .app-shell .detail-meta { font-size: 13px; }
   .app-shell .line-fields .readonly-field { font-size: var(--type-body); }
@@ -81,7 +81,7 @@
   .app-shell .sample-instruction { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
   .app-shell :is(.button, .icon-button, .numbered-icon, .check-item-icon, .radio-dot) > svg { display: block; }
   .app-shell .stat-card > div > svg { width: 17px; height: 17px; }
-  .app-shell .mini-activity strong { font-size: 13px; }
+  .app-shell .mini-activity strong { font-size: 13px; font-weight: 600; }
   .app-shell .mini-activity small { font-size: var(--type-meta); line-height: 1.6; }
   .app-shell .tabs button > span,
   .app-shell .approval-total > span,
