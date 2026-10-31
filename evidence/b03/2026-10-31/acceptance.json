@@ -5,7 +5,7 @@
   "base_sha": "ff630d5060566b0b823b3b435f9dc6900ad10099",
   "source_binding": "Base commit plus SHA256 of the changed application and test files; not an assertion that the base commit contains these edits.",
   "source_sha256": {
-    "backend/app/drafts.py": "49f3b4fe5d2027adcd7f0a35fe4d10112e313fbb952a10e45f67e65e11b0c043",
+    "backend/app/drafts.py": "944d007cdf1ceb6babe5d239f381f257181fe3b009acaefa1206a2e0339f985c",
     "backend/tests/test_b03_manual_recovery.py": "f0596c60001baa0c72f3354e0acb7677f9e3d3166f619649adf44e815742488c",
     "backend/tests/test_b03_canonical_recovery.py": "3505a0ab7c09a91a0901e68c0aff6634f14d38453f66dfe61d1da4ef6117207d"
   },
@@ -46,5 +46,11 @@
     "independent_signoff": "Not claimed",
     "production_publication": "Not yet performed",
     "github_ci": "Pending PR"
-  }
+  },
+  "tested_worktree_sha256": {
+    "backend/app/drafts.py": "49f3b4fe5d2027adcd7f0a35fe4d10112e313fbb952a10e45f67e65e11b0c043",
+    "backend/tests/test_b03_manual_recovery.py": "f0596c60001baa0c72f3354e0acb7677f9e3d3166f619649adf44e815742488c",
+    "backend/tests/test_b03_canonical_recovery.py": "3505a0ab7c09a91a0901e68c0aff6634f14d38453f66dfe61d1da4ef6117207d"
+  },
+  "source_hash_newlines": "source_sha256 hashes Git blob bytes (LF); tested_worktree_sha256 hashes the actual Windows test inputs. They are equal after CRLF-to-LF normalization."
 }
