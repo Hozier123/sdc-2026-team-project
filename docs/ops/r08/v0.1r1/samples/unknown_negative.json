@@ -1,0 +1,180 @@
+{
+  "sample_id": "unknown_negative",
+  "contract_version": "R08-CONTRACT-v0.1r1",
+  "classification": "INTERFACE_SAMPLE",
+  "execution_mode": "NOT_LIVE",
+  "source": "HAND_AUTHORED_SYNTHETIC",
+  "ai_mode_provenance": "REQUIRED_WIRE_ENUM_PLACEHOLDER_NOT_OBSERVED",
+  "catalog_provenance": "SYNTHETIC_WITHIN_FAM_GULA_BERAS_GARAM",
+  "runtime_execution_status": "NOT_RUN",
+  "phase": "negative",
+  "notes": "",
+  "draft": {
+    "draft_id": "SAMPLE_R08_UNKNOWN",
+    "version": 1,
+    "status": "DISAMBIGUATION_REQUIRED",
+    "customer_id": "SAMPLE_CUSTOMER",
+    "customer": {
+      "customer_id": "SAMPLE_CUSTOMER",
+      "name": "Interface sample customer",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "masked_message": "2 bag gula misteri",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "SAMPLE_L01",
+        "client_line_ref": null,
+        "sku_id": null,
+        "family_id": "UNKNOWN",
+        "description": "2 bag gula misteri",
+        "requested_qty": 2,
+        "confirmed_qty": null,
+        "effective_qty": 2,
+        "uom": "bag",
+        "pack_size": null,
+        "grade": null,
+        "tier_unit_price": null,
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": null,
+        "subtotal_rm": null,
+        "match_source": "RAPIDFUZZ_FALLBACK",
+        "source_span": "2 bag gula misteri",
+        "span_start": 0,
+        "span_end": 18,
+        "field_evidence": [
+          {
+            "field": "qty",
+            "raw_text": "2",
+            "start": 0,
+            "end": 1,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "uom",
+            "raw_text": "bag",
+            "start": 2,
+            "end": 5,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [],
+        "saved_alias": null,
+        "available_qty": null
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "SAMPLE_I01",
+        "code": "LOW_CONFIDENCE_MATCH",
+        "line_id": "SAMPLE_L01",
+        "span": "2 bag gula misteri",
+        "span_start": 0,
+        "span_end": 18,
+        "candidate_line_ids": [],
+        "target_line_ids": [],
+        "reason_code": "UNKNOWN_PRODUCT",
+        "ask": "CLERK",
+        "data_used": {},
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [],
+    "blocking_issues": [
+      "LOW_CONFIDENCE_MATCH"
+    ],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": null,
+      "currency": "MYR",
+      "is_complete": false
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "RESOLVE_ISSUE",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {
+      "APPROVE_AND_GENERATE_DO": [
+        "LOW_CONFIDENCE_MATCH"
+      ],
+      "SUBMIT_FOR_OWNER": [
+        "LOW_CONFIDENCE_MATCH"
+      ],
+      "OWNER_APPROVE": [
+        "LOW_CONFIDENCE_MATCH"
+      ]
+    },
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-11-01T03:30:00+08:00",
+    "updated_at": "2026-11-01T03:30:00+08:00",
+    "do_number": null
+  },
+  "save_request": null,
+  "save_expectation": null,
+  "negative_example": {
+    "kind": "FABRICATED_SKU_REJECT",
+    "request": {
+      "expected_version": 1,
+      "lines": [
+        {
+          "line_id": "SAMPLE_L01",
+          "sku_id": "SAMPLE_NONEXISTENT_SKU",
+          "family_id": "FAM_GULA",
+          "confirmed_qty": 2,
+          "uom": "bag",
+          "pack_size": "1kg",
+          "grade": null,
+          "match_source": "MANUAL_SELECTED",
+          "save_to_alias_cache": false,
+          "alias_scope": "CUSTOMER"
+        }
+      ],
+      "deleted_line_ids": [],
+      "resolutions": []
+    },
+    "expected": {
+      "http_status": 422,
+      "error_code": "REQUEST_VALIDATION_FAILED",
+      "behavior": "REJECT_AND_KEEP_CURRENT_DRAFT",
+      "draft_version_after": 1,
+      "do_created": false,
+      "inventory_mutation": false
+    },
+    "actual_result": "NOT_RUN",
+    "actual_http_status": null
+  },
+  "approval_expectation": {
+    "execution_status": "NOT_RUN",
+    "expected_if_unresolved": {
+      "http_status": 400,
+      "error_code": "DISAMBIGUATION_UNRESOLVED"
+    },
+    "approval_performed": false,
+    "actual_http_status": null
+  },
+  "side_effects": {
+    "evidence_kind": "ILLUSTRATIVE_ONLY",
+    "database_contacted": false,
+    "do_created": false,
+    "inventory_read": false,
+    "inventory_written": false,
+    "actual_inventory_before": null,
+    "actual_inventory_after": null
+  }
+}

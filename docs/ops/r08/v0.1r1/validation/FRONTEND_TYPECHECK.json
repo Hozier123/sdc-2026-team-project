@@ -1,0 +1,25 @@
+{
+  "version": "R08-CONTRACT-v0.1r1",
+  "started_at_utc": "2026-10-31T19:57:07.181497+00:00",
+  "completed_at_utc": "2026-10-31T19:57:07.531087+00:00",
+  "command": [
+    "node",
+    "C:\\Users\\n_bom\\Documents\\ChatGPT\\SDC HACKATHON\\.tmp\\frontend-final-1.5.2-sync\\frontend\\node_modules\\typescript\\bin\\tsc",
+    "--noEmit",
+    "--skipLibCheck",
+    "--strict",
+    "--target",
+    "ES2022",
+    "--moduleResolution",
+    "bundler",
+    "--module",
+    "ESNext",
+    "samples.typecheck.ts"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "scope": "OFFLINE_TYPESCRIPT_WIRE_COMPATIBILITY_ONLY",
+  "frontend_ref": "4f95dd8",
+  "runtime_or_ui_test": false
+}

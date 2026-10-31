@@ -1,0 +1,48 @@
+{
+  "recorded_at": "2026-11-01T03:36:19.686159+08:00",
+  "frontend_source": "Hozier123/sdc-2026-team-project@4f95dd8",
+  "backend_source_commit": "f347ed6af235bc4018ca811936f860a6586f4758",
+  "frontend_files": [
+    {
+      "file": "reference/frontend/wire.ts",
+      "source_ref": "4f95dd8",
+      "source_git_blob": "32862a900620e058a4b641d71922389a6c1fa157",
+      "snapshot_git_blob": "32862a900620e058a4b641d71922389a6c1fa157",
+      "byte_identical": true,
+      "sha256": "66f3eb3449531ef2728ba765f1eaf39456280971dc6195c750b0534981013330"
+    },
+    {
+      "file": "reference/frontend/types.ts",
+      "source_ref": "4f95dd8",
+      "source_git_blob": "d2cbda4f6efc404ca2d5172e22d1ac15259ce0f8",
+      "snapshot_git_blob": "d2cbda4f6efc404ca2d5172e22d1ac15259ce0f8",
+      "byte_identical": true,
+      "sha256": "dc86eac5d1d2ebc50f97d7d24cc25a43eecce6a6de8e99352a65aec09a7cf11b"
+    },
+    {
+      "file": "reference/frontend/gate0.generated.ts",
+      "source_ref": "4f95dd8",
+      "source_git_blob": "9ebc57c45d189612c084ade21b997f3be8df1b71",
+      "snapshot_git_blob": "9ebc57c45d189612c084ade21b997f3be8df1b71",
+      "byte_identical": true,
+      "sha256": "19b0fef6b07b2c6241aafffe3afe37d9ca8298fe60c1a910c3219a8c283d80bd"
+    },
+    {
+      "file": "reference/frontend/orders.tsx",
+      "source_ref": "4f95dd8",
+      "source_git_blob": "9146d367146ecf803bfda81162a918b42e574d66",
+      "snapshot_git_blob": "9146d367146ecf803bfda81162a918b42e574d66",
+      "byte_identical": true,
+      "sha256": "5c19fd4583c9c7419b7613e567141c49fdccbe2b4b3b3f9333a2f812c88bd8d1"
+    }
+  ],
+  "R07_attachment_sha256": "06290c423b5514e757d820d13c05140f9fcbbe322761c91ec66217cd42587c90",
+  "source_usage": "Read-only schema/source snapshots, no app modification or deployment.",
+  "revision": "R08-CONTRACT-v0.1r1",
+  "revision_recorded_at_utc": "2026-10-31T19:57:07.533686+00:00",
+  "original_v0_1_zip_sha256": "5c18e25c6eaa6b1b8df84ab17211a0df379d884e4327c1e6ae53795f2dd8605d",
+  "Ye_original_filename": "Ye_消费审核回执_20261101.md",
+  "Ye_receipt_sha256": "a21b4aa74c7386053bb2e4ea7400be54ee0d541e6a7efb64feaaa5155397bea2",
+  "Xiong_and_Zhou_review_source": "USER_FORWARDED_MESSAGES_NO_SEPARATE_ORIGINAL_FILES",
+  "R07_preflight_source": "USER_FORWARDED_XIONG_REPORT_V2_ORIGINAL_NOT_RECEIVED"
+}

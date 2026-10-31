@@ -1,0 +1,191 @@
+{
+  "sample_id": "missing_uom_negative",
+  "contract_version": "R08-CONTRACT-v0.1r1",
+  "classification": "INTERFACE_SAMPLE",
+  "execution_mode": "NOT_LIVE",
+  "source": "HAND_AUTHORED_SYNTHETIC",
+  "ai_mode_provenance": "REQUIRED_WIRE_ENUM_PLACEHOLDER_NOT_OBSERVED",
+  "catalog_provenance": "SYNTHETIC_WITHIN_FAM_GULA_BERAS_GARAM",
+  "runtime_execution_status": "NOT_RUN",
+  "phase": "negative",
+  "notes": "",
+  "draft": {
+    "draft_id": "SAMPLE_R08_MISSING_UOM",
+    "version": 1,
+    "status": "DISAMBIGUATION_REQUIRED",
+    "customer_id": "SAMPLE_CUSTOMER",
+    "customer": {
+      "customer_id": "SAMPLE_CUSTOMER",
+      "name": "Interface sample customer",
+      "tier": "A",
+      "credit_flag": "NONE",
+      "has_credit_notice": false,
+      "phone_e164": null
+    },
+    "masked_message": "2 Beras 5kg",
+    "ai_mode": "FALLBACK",
+    "lines": [
+      {
+        "line_id": "SAMPLE_L01",
+        "client_line_ref": null,
+        "sku_id": null,
+        "family_id": "FAM_BERAS",
+        "description": "2 Beras 5kg",
+        "requested_qty": 2,
+        "confirmed_qty": null,
+        "effective_qty": 2,
+        "uom": null,
+        "pack_size": "5kg",
+        "grade": null,
+        "tier_unit_price": null,
+        "unit_price_override": null,
+        "override_reason": null,
+        "effective_unit_price": null,
+        "subtotal_rm": null,
+        "match_source": "RAPIDFUZZ_FALLBACK",
+        "source_span": "2 Beras 5kg",
+        "span_start": 0,
+        "span_end": 11,
+        "field_evidence": [
+          {
+            "field": "qty",
+            "raw_text": "2",
+            "start": 0,
+            "end": 1,
+            "normalizer_version": "field-evidence-v2"
+          },
+          {
+            "field": "pack_size",
+            "raw_text": "5kg",
+            "start": 8,
+            "end": 11,
+            "normalizer_version": "field-evidence-v2"
+          }
+        ],
+        "candidate_skus": [
+          {
+            "sku_id": "SAMPLE_BERAS_5KG",
+            "family_id": "FAM_BERAS",
+            "display_name": "Interface sample BERAS_5KG",
+            "pack_size": "5kg",
+            "grade": null,
+            "base_unit": "bag",
+            "tier_unit_price": "21.30",
+            "available_qty": 30
+          }
+        ],
+        "saved_alias": null,
+        "available_qty": null
+      }
+    ],
+    "issues": [
+      {
+        "issue_id": "SAMPLE_I01",
+        "code": "MISSING_UOM",
+        "line_id": "SAMPLE_L01",
+        "span": "2 Beras 5kg",
+        "span_start": 0,
+        "span_end": 11,
+        "candidate_line_ids": [],
+        "target_line_ids": [],
+        "reason_code": "FIELD_NOT_EVIDENCED",
+        "ask": "CLERK",
+        "data_used": {},
+        "blocking": true,
+        "resolved": false,
+        "resolution": null,
+        "resolution_note": null,
+        "auto_resolved_by": null
+      }
+    ],
+    "conditions": [],
+    "blocking_issues": [
+      "MISSING_UOM"
+    ],
+    "escalation_preview": [],
+    "totals": {
+      "order_total": null,
+      "currency": "MYR",
+      "is_complete": false
+    },
+    "allowed_actions": [
+      "EDIT_DRAFT",
+      "RESOLVE_ISSUE",
+      "CANCEL_DRAFT",
+      "VIEW_ACTIVITY"
+    ],
+    "blocked_actions": {
+      "APPROVE_AND_GENERATE_DO": [
+        "MISSING_UOM"
+      ],
+      "SUBMIT_FOR_OWNER": [
+        "MISSING_UOM"
+      ],
+      "OWNER_APPROVE": [
+        "MISSING_UOM"
+      ]
+    },
+    "clarification_draft": null,
+    "clarification_lang": null,
+    "ignored_spans": [],
+    "disambiguations": [],
+    "termination_reason": null,
+    "terminated_by_user_id": null,
+    "termination_note": null,
+    "created_at": "2026-11-01T03:30:00+08:00",
+    "updated_at": "2026-11-01T03:30:00+08:00",
+    "do_number": null
+  },
+  "save_request": null,
+  "save_expectation": null,
+  "negative_example": {
+    "kind": "INCOMPATIBLE_UNIT_REJECT",
+    "request": {
+      "expected_version": 1,
+      "lines": [
+        {
+          "line_id": "SAMPLE_L01",
+          "sku_id": "SAMPLE_BERAS_5KG",
+          "family_id": "FAM_BERAS",
+          "confirmed_qty": 2,
+          "uom": "box",
+          "pack_size": "5kg",
+          "grade": null,
+          "match_source": "MANUAL_SELECTED",
+          "save_to_alias_cache": false,
+          "alias_scope": "CUSTOMER"
+        }
+      ],
+      "deleted_line_ids": [],
+      "resolutions": []
+    },
+    "expected": {
+      "http_status": 422,
+      "error_code": "REQUEST_VALIDATION_FAILED",
+      "behavior": "REJECT_AND_KEEP_CURRENT_DRAFT",
+      "draft_version_after": 1,
+      "do_created": false,
+      "inventory_mutation": false
+    },
+    "actual_result": "NOT_RUN",
+    "actual_http_status": null
+  },
+  "approval_expectation": {
+    "execution_status": "NOT_RUN",
+    "expected_if_unresolved": {
+      "http_status": 400,
+      "error_code": "DISAMBIGUATION_UNRESOLVED"
+    },
+    "approval_performed": false,
+    "actual_http_status": null
+  },
+  "side_effects": {
+    "evidence_kind": "ILLUSTRATIVE_ONLY",
+    "database_contacted": false,
+    "do_created": false,
+    "inventory_read": false,
+    "inventory_written": false,
+    "actual_inventory_before": null,
+    "actual_inventory_after": null
+  }
+}

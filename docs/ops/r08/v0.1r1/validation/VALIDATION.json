@@ -1,0 +1,178 @@
+{
+  "checked_at_utc": "2026-10-31T19:57:07.159719+00:00",
+  "status": "OFFLINE_ARTIFACT_CHECKS_PASSED",
+  "samples": [
+    {
+      "sample_id": "condition_target_after_manual",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "condition_target_blocked",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "condition_target_negative",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_price_after_manual",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_price_blocked",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_price_negative",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_quantity_after_manual",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_quantity_blocked",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_quantity_negative",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_uom_after_manual",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_uom_blocked",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "missing_uom_negative",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "multiple_variants_after_manual",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "multiple_variants_blocked",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "multiple_variants_negative",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "unknown_after_manual",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "unknown_blocked",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    },
+    {
+      "sample_id": "unknown_negative",
+      "backend_schema": "PASS",
+      "artifact_invariants": "PASS",
+      "runtime_behavior": "NOT_RUN",
+      "independent_acceptance": "PENDING"
+    }
+  ],
+  "negative_artifact_checks": [
+    {
+      "check": "contradictory approval flags",
+      "result": "EXPECTED_REJECTION_OBSERVED_OFFLINE"
+    },
+    {
+      "check": "null priced SkuCandidate",
+      "result": "EXPECTED_REJECTION_OBSERVED_OFFLINE"
+    },
+    {
+      "check": "emoji code-point evidence offset corruption",
+      "result": "EXPECTED_REJECTION_OBSERVED_OFFLINE"
+    },
+    {
+      "check": "zero expected_version",
+      "result": "EXPECTED_REJECTION_OBSERVED_OFFLINE"
+    },
+    {
+      "check": "placeholder condition_id",
+      "result": "EXPECTED_REJECTION_OBSERVED_OFFLINE"
+    },
+    {
+      "check": "version advance after rejected save",
+      "result": "EXPECTED_REJECTION_OBSERVED_OFFLINE"
+    },
+    {
+      "check": "generic NO_CANDIDATE without missing-price routing",
+      "result": "EXPECTED_REJECTION_OBSERVED_OFFLINE"
+    }
+  ],
+  "r07_document_example_coordinates": "PASS",
+  "frontend_typecheck": "PASS",
+  "api_requests": 0,
+  "database_connections": 0,
+  "model_requests": 0,
+  "actual_approval_rejection": "NOT_RUN",
+  "actual_inventory_before_after": "NOT_RUN",
+  "R08_review": "PRIOR_CONDITIONAL_REVIEWS_RECORDED_DELTA_CLOSURE_PENDING",
+  "R05_R11_E01_E09": "NO_CLAIM",
+  "version": "R08-CONTRACT-v0.1r1",
+  "frontend_typecheck_evidence": "FRONTEND_TYPECHECK.json",
+  "condition_id": "CND_6BAFF2E046E11A9F84B97079",
+  "save_expectation": "VERIFIED_422_MISSING_TIER_PRICE_NOT_RUN_VERSION_1_UNCHANGED",
+  "issue_source_span": "ABSENT_IN_ALL_NEW_ISSUES",
+  "missing_price_ask": "CLERK_WITH_EDIT_DRAFT_DIRECTORY_ENTRY",
+  "negative_expected": "UNIFIED_HTTP_ERROR_BEHAVIOR"
+}
