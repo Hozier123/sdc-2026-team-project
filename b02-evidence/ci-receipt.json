@@ -1,0 +1,27 @@
+{
+  "source_sha": "befac4c33e723559f1f9a4d0ef05b66f0ba4f8ef",
+  "pr_head": "76ddff4dd77932c948f47a6c03deb953e4e0527a",
+  "pr_backend": {
+    "run_id": 41106766505,
+    "conclusion": "success",
+    "tests": 602
+  },
+  "pr_frontend": {
+    "run_id": 41106766527,
+    "conclusion": "success",
+    "tests": 74
+  },
+  "main_backend": {
+    "run_id": 41107201029,
+    "conclusion": "success",
+    "tests": 602
+  },
+  "main_frontend": {
+    "run_id": 41107201211,
+    "conclusion": "success",
+    "tests": 74
+  },
+  "frozen_contracts": "UNCHANGED",
+  "production_build": "PASS",
+  "runtime": "Node 22.23.4"
+}

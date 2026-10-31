@@ -1,0 +1,166 @@
+{
+  "status": "PASS",
+  "url": "https://hozier123.github.io/sdc-2026-team-project/",
+  "version": "1.5.1",
+  "source_sha": "befac4c33e723559f1f9a4d0ef05b66f0ba4f8ef",
+  "index_sha256": "95a7d4786c72f16a251c683122f8dbc4b2dbc43243216c71337f4d43840e6eb8",
+  "asset_count": 31,
+  "assets": [
+    {
+      "path": "assets/_commonjsHelpers-CqkleIqs.js",
+      "status": 200,
+      "sha256": "4c81dcd54e7e877a79145c4c6fde30ac0e8d857f412b73f48f6970e5d7eab938"
+    },
+    {
+      "path": "assets/cinzel.css",
+      "status": 200,
+      "sha256": "8f1d9ca8053f52ff91dd55d2848a88da0989391b9d49b1a91eed15343493e0f7"
+    },
+    {
+      "path": "assets/extends-7F6pTuIq.js",
+      "status": 200,
+      "sha256": "a52e00a4698707d7496b4074daf193be529c02d29aaeafe5d3e942496b2b0abd"
+    },
+    {
+      "path": "assets/fonts/Cinzel-OFL.txt",
+      "status": 200,
+      "sha256": "f2b3029aba64c378bf0963b62945eee15e564fe4330b934c8f2eb058282b5e83"
+    },
+    {
+      "path": "assets/fonts/Cinzel-Variable.ttf",
+      "status": 200,
+      "sha256": "f4d83d34d1f6c741193e4acf4b3dff9531e5a67b6aa65228d00a7db72a4e0f34"
+    },
+    {
+      "path": "assets/fonts/cormorant-300-italic-085cc047a9.woff",
+      "status": 200,
+      "sha256": "085cc047a9c0ee0bf8172ad1c2ded15a74e51b3513b796dc4b695777af3996ed"
+    },
+    {
+      "path": "assets/fonts/cormorant-300-normal-11103aa9a8.woff",
+      "status": 200,
+      "sha256": "11103aa9a8fca34f2592dddf5f1ae8df1450fe8cf74eb713247ec5fd035d3c2e"
+    },
+    {
+      "path": "assets/fonts/cormorant-400-italic-7df07e2269.woff",
+      "status": 200,
+      "sha256": "7df07e2269d2fd52fccb72c4020ef13eace47960aafdb793facc826a2ab4be8f"
+    },
+    {
+      "path": "assets/fonts/cormorant-400-normal-2eaa35e911.woff",
+      "status": 200,
+      "sha256": "2eaa35e911ba220f93ecd8a8c931e00444f58a99428585f7d95f16d9ffc45b67"
+    },
+    {
+      "path": "assets/fonts/cormorant-500-normal-d126a2eb8d.woff",
+      "status": 200,
+      "sha256": "d126a2eb8dafea6f4c1c83867a94600460977e29094f9c0357378328363dfdf1"
+    },
+    {
+      "path": "assets/fonts/Marcellus-OFL.txt",
+      "status": 200,
+      "sha256": "715ba72697e14daa9b29a333545f69bde7c497b9f77d0a2a4c4a5a752d961801"
+    },
+    {
+      "path": "assets/fonts/Marcellus-Regular.ttf",
+      "status": 200,
+      "sha256": "1cf0cd10b17d35e852729962cc1ffaffed94514895972458345e2df34abb2f81"
+    },
+    {
+      "path": "assets/icons-DU2a_GaL.js",
+      "status": 200,
+      "sha256": "b7aa04ec86767f6a2f9ec2fd6eaf280ee49a0dc82d76c2b9275741f92d3589dd"
+    },
+    {
+      "path": "assets/index-CV6UI6Pp.js",
+      "status": 200,
+      "sha256": "93265a9d244f5ee07d736f09234b4a5a1cbe94347e68716bb064c48675035670"
+    },
+    {
+      "path": "assets/index-DjubgMF7.css",
+      "status": 200,
+      "sha256": "27b1c37e9d75ccbb3d8010c7b101c35c4ceecd4b28a1485ea7584273a7b77358"
+    },
+    {
+      "path": "assets/intro-fonts.css",
+      "status": 200,
+      "sha256": "9a1ee60d69e72e041f8fdc339e102528f58786632a2da545fe2efb09a19e3f86"
+    },
+    {
+      "path": "assets/legacy-intro-47392d5399.js",
+      "status": 200,
+      "sha256": "47392d5399a1b3fbbbb417efebc2c404c13db796fcddcf7ccd607646937dc907"
+    },
+    {
+      "path": "assets/legacy-intro-921f6ed987.css",
+      "status": 200,
+      "sha256": "921f6ed9873780b7dc73682e2e778518ceace9e74775eb9141508653a8984c5f"
+    },
+    {
+      "path": "assets/marcellus.css",
+      "status": 200,
+      "sha256": "4ee99be39126e3893e9aa9703434f8d1c28af249656989abf6bf05dcf23238be"
+    },
+    {
+      "path": "assets/nebula.png",
+      "status": 200,
+      "sha256": "742dfad438323565da2932fa2eb93afb7164d67d1d6dd64ce8d7f9990e151b97"
+    },
+    {
+      "path": "assets/night-background-mobile.jpg",
+      "status": 200,
+      "sha256": "e94c155c551752ad8f47c0add9513a6bcc3ba78c69be1bfbb7cc1bb18bf1a301"
+    },
+    {
+      "path": "assets/night-background-mobile.mp4",
+      "status": 200,
+      "sha256": "6fc533cc31f9af161e20bc08ded86a3572ed91227d5514d1940c7df559620a57"
+    },
+    {
+      "path": "assets/PlanetGreeting-CZtFtjdN.css",
+      "status": 200,
+      "sha256": "96adcf896a002730b7e466ceaf0cec3c4332be848b5f760c7147030530525a38"
+    },
+    {
+      "path": "assets/PlanetGreeting-Sjij7eHY.js",
+      "status": 200,
+      "sha256": "7b50252988190bc5c472f64920304251b9affa528f701ef545d8e61e97487646"
+    },
+    {
+      "path": "assets/react-vendor-Cx61a2LQ.js",
+      "status": 200,
+      "sha256": "1f61b646771e25d2ec31d6886445d8ea95426c449cef78e9dd076baa557e4882"
+    },
+    {
+      "path": "assets/three-CvbWAUne.js",
+      "status": 200,
+      "sha256": "34049ed72fdd983a6754c331205c0b09536106a1ec4ad49593115438e9175d64"
+    },
+    {
+      "path": "favicon.svg",
+      "status": 200,
+      "sha256": "1e54841da7984481b350747a850003c630dc74b67c4d792e376339b872ff2ab0"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "95a7d4786c72f16a251c683122f8dbc4b2dbc43243216c71337f4d43840e6eb8"
+    },
+    {
+      "path": "intro-refinement.css",
+      "status": 200,
+      "sha256": "aa44d59211c6a0801fea9c63d427092247058195a5e7792b768686a655d7d1f6"
+    },
+    {
+      "path": "intro-scene.html",
+      "status": 200,
+      "sha256": "675011d3da29fb09d49dcbc0392d522b22173565bf6eeba12bec1cbca1a658fc"
+    },
+    {
+      "path": "intro.html",
+      "status": 200,
+      "sha256": "fe86a4733b52eeacec9db3a769b250fd009929a2df962ada07868d96737c572a"
+    }
+  ],
+  "finished_at_utc": "2026-10-30T18:34:11.409858+00:00"
+}

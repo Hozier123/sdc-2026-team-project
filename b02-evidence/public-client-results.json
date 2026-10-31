@@ -1,0 +1,76 @@
+{
+  "source_commit": "76ddff4dd77932c948f47a6c03deb953e4e0527a",
+  "public_method": "HttpService.catalogProducts",
+  "api": "https://kiraorder-api.replit.app/api/v1/catalog/products",
+  "status": "PASS",
+  "cases": [
+    {
+      "tenant": "T1",
+      "role": "CLERK",
+      "status": "PASS",
+      "items": 40,
+      "limit": 100,
+      "truncated": false,
+      "response_sha256": "f969a51f68b0c330bf98b06b8ba1060835556e8890a107c98ea6a0b92e7eb947"
+    },
+    {
+      "tenant": "T1",
+      "role": "OWNER",
+      "status": "PASS",
+      "items": 40,
+      "limit": 100,
+      "truncated": false,
+      "response_sha256": "f969a51f68b0c330bf98b06b8ba1060835556e8890a107c98ea6a0b92e7eb947"
+    },
+    {
+      "tenant": "T1",
+      "role": "WAREHOUSE",
+      "status": "PASS",
+      "error_code": "FORBIDDEN_ACTION",
+      "request_id": "faac084e-f16e-4478-b0d0-2ff343641c72"
+    },
+    {
+      "tenant": "T2",
+      "role": "CLERK",
+      "status": "PASS",
+      "items": 16,
+      "limit": 100,
+      "truncated": false,
+      "response_sha256": "70292045ea612684ce546ec0a447195e3337aab0baac3a8f574712a2a77eeb78"
+    },
+    {
+      "tenant": "T2",
+      "role": "OWNER",
+      "status": "PASS",
+      "items": 16,
+      "limit": 100,
+      "truncated": false,
+      "response_sha256": "70292045ea612684ce546ec0a447195e3337aab0baac3a8f574712a2a77eeb78"
+    },
+    {
+      "tenant": "T2",
+      "role": "WAREHOUSE",
+      "status": "PASS",
+      "error_code": "FORBIDDEN_ACTION",
+      "request_id": "6b3b2912-2df0-48e6-9b65-4bfe6b11fe46"
+    },
+    {
+      "case": "empty-token",
+      "status": "PASS",
+      "error_code": "INVALID_TOKEN",
+      "request_id": "d8bd431c-7333-4ca3-8994-7d2a40ec15e8"
+    },
+    {
+      "case": "invalid-token",
+      "status": "PASS",
+      "error_code": "INVALID_TOKEN",
+      "request_id": "4047a074-30b4-4916-b205-5f8e3c9a83d1"
+    }
+  ],
+  "methods": [
+    "GET"
+  ],
+  "business_writes": 0,
+  "model_calls": 0,
+  "finished_at_utc": "2026-10-30T18:27:03.879Z"
+}

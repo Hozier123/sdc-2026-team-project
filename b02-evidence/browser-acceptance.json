@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "url": "https://hozier123.github.io/sdc-2026-team-project/#/catalog",
+  "version": "1.5.1",
+  "cases": [
+    {
+      "tenant": "T1",
+      "role": "CLERK",
+      "status": "PASS",
+      "rows": 40,
+      "version": "v1.5.1",
+      "sku_list_sha256": "edd61ea999db68b4a9c402dc7b44522c39bf3393ad2c6e0ce41e9d55ed46ca41",
+      "expected_error": null
+    },
+    {
+      "tenant": "T1",
+      "role": "OWNER",
+      "status": "PASS",
+      "rows": 40,
+      "version": "v1.5.1",
+      "sku_list_sha256": "edd61ea999db68b4a9c402dc7b44522c39bf3393ad2c6e0ce41e9d55ed46ca41",
+      "expected_error": null
+    },
+    {
+      "tenant": "T1",
+      "role": "WAREHOUSE",
+      "status": "PASS",
+      "rows": 0,
+      "version": "v1.5.1",
+      "sku_list_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "expected_error": "FORBIDDEN_ACTION"
+    },
+    {
+      "tenant": "T2",
+      "role": "CLERK",
+      "status": "PASS",
+      "rows": 16,
+      "version": "v1.5.1",
+      "sku_list_sha256": "a58ac25fb8a2f74c1b51dbbb19f543da179d7a4b953ae95245995b0141d4a6e4",
+      "expected_error": null
+    },
+    {
+      "tenant": "T2",
+      "role": "OWNER",
+      "status": "PASS",
+      "rows": 16,
+      "version": "v1.5.1",
+      "sku_list_sha256": "a58ac25fb8a2f74c1b51dbbb19f543da179d7a4b953ae95245995b0141d4a6e4",
+      "expected_error": null
+    },
+    {
+      "tenant": "T2",
+      "role": "WAREHOUSE",
+      "status": "PASS",
+      "rows": 0,
+      "version": "v1.5.1",
+      "sku_list_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "expected_error": "FORBIDDEN_ACTION"
+    }
+  ],
+  "invalid_session_ui": {
+    "status": "PASS",
+    "version": "1.5.1",
+    "message": "Your session has expired\n\nInvalid or missing token.\n\nOpen Connect API in the sidebar to reconnect your session.\n\nINVALID_TOKEN · Request 130441e4-6ef2-4399-9b28-338da3e65eb5"
+  },
+  "actor": "He-side/Codex browser verification; not attributed to a new Ye signoff"
+}
