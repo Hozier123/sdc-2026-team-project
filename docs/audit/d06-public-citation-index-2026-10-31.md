@@ -14,7 +14,7 @@ Final frontend handoff is a separate later observation: the live [release.json](
 
 | Area | Source | Permitted interpretation | Limits |
 | --- | --- | --- | --- |
-| D01 | [Data version status](../handoff/d01-data-status-2026-10-31.md) | Version/hash provenance; PARTIAL | No complete current four-part data snapshot; answer diff review is not full business rescoring |
+| D01 | [Data version and received baseline](../handoff/d01-data-status-2026-10-31.md) | SNAPSHOT_RECEIVED / FILE_VERIFIED; private ZIP and 18/18 internal hashes matched | Owner acceptance pending; external seed equality and per-order stock attribution not independently checked; not full business rescoring |
 | D02 | [Backend guard record](d02-uom-blocking-2026-10-31.md), [PR #91](https://github.com/Hozier123/sdc-2026-team-project/pull/91) | DONE_WITH_KNOWN_LIMITATIONS; merged backend guard | UOM remains 24/31 with seven model-side gaps; not an AI accuracy rerun |
 | PR91 deployment, local index row 29 | [Deployment report](../ops/pr91-deployment-verification-2026-10-31.md), [guard summary](../../evidence/deployment-verification/2026-10-31-pr91/live-guard-summary.json) | Existing execution report, pending Zhou's acceptance for this new citation | FALLBACK; one synthetic draft; not B05, TEST32, D05 or model-quality validation |
 | C11 | [Closeout](../ops/c11-closeout.md), [acceptance](../../evidence/e2e/c11/2026-10-31/acceptance.json) | Repository records SIGNED_OFF / MERGED; form index ZR-C11-20261031-01 | Checks 8/9 are limitations; historical local review/repack timing remains unresolved; not TEST32/Gate A |

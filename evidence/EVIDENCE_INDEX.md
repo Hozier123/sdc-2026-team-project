@@ -2,7 +2,7 @@
 
 ## Final-Round Status Addendum (2026-10-31)
 
-- [D01 data versions and snapshot gap](../docs/handoff/d01-data-status-2026-10-31.md): PARTIAL / SNAPSHOT_PENDING; private answers and inputs are not published.
+- [D01 data versions and received snapshot](../docs/handoff/d01-data-status-2026-10-31.md): SNAPSHOT_RECEIVED / FILE_VERIFIED / PENDING_OWNER_ACCEPTANCE; only summary/hash metadata is published, not private answers, inputs or the baseline package.
 - [D02 scoped backend closeout](../docs/audit/d02-uom-blocking-2026-10-31.md): DONE_WITH_KNOWN_LIMITATIONS; UOM remains 24/31, not a new model-quality result.
 - [D06 public citation index](../docs/audit/d06-public-citation-index-2026-10-31.md): CLOSEOUT_DRAFT / PENDING_ZHOU_REVIEW; new citations are not new signatures or experiments. Formal TEST32 and D05 remain NOT_RUN in the current review record.
 - The historical hash convention below is not universal for later evidence: PR91 deployment JSON has distinct repository-LF and manifest-CRLF hashes. Use the object-specific values in the D06 addendum; do not silently normalize a raw-byte verification.

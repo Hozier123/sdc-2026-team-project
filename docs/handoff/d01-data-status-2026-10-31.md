@@ -1,6 +1,6 @@
 # D01 Data Version Status
 
-Updated: 2026-10-31. Status: **PARTIAL / SNAPSHOT_PENDING**.
+Updated: 2026-10-31. Status: **SNAPSHOT_RECEIVED / FILE_VERIFIED / PENDING_OWNER_ACCEPTANCE**.
 
 This public summary records version provenance, not a completed evaluation or a live database snapshot. Prepared by Kilo from existing records; it is not a new signature by Zhou or an independent reviewer. The reference repository revision used for the byte checks is `e0094f573ab00dde05402bc67a26b15f9d5d9f01`, not a deployed application revision.
 
@@ -29,7 +29,7 @@ The retained freeze record attributes a v5-to-v6 diff and reverse v4-to-v5 check
 
 The [2026-10-24 freeze manifest](2026-10-24-data/TEST32_FREEZE_MANIFEST_2026-10-24.md) is retained as historical v5 metadata. Its pending state is not silently rewritten. Freezing the answer-key amendment does not freeze the D04 scope or prove formal TEST32 execution. Formal TEST32 remains **NOT_RUN: 0/34 executions** in the current review record; 32 logical cases and 34 executions are planned, not completed results.
 
-## Snapshot Gap
+## Snapshot Handoff
 
 ### Final Frontend Handoff
 
@@ -39,15 +39,29 @@ Per Zhou's final handoff, the [workbench](https://hozier123.github.io/sdc-2026-t
 
 Use the repository's [Judges Quick Start Guide](https://github.com/Hozier123/sdc-2026-team-project#judges-quick-start-guide) for demonstration steps. The guide is operational documentation, not proof that a participant study or formal evaluation was run.
 
-B06/F05 observations of v1.5.1 and earlier notes saying v1.5.2 was not published remain historical snapshots. The new release binding does not upgrade old screenshots/tests or provide the missing current database snapshot below.
+B06/F05 observations of v1.5.1 and earlier notes saying v1.5.2 was not published remain historical snapshots. The new release binding does not upgrade old screenshots/tests. The subsequently received database snapshot is recorded separately below.
 
-No complete same-environment, same-time snapshot of catalog, tier prices, inventory and rules has been delivered for D01. Existing evidence has narrower coverage:
+### Received Data Baseline
 
-- Frozen seeds describe initial data, not a database after business writes.
-- B05 material contains partial inventory/alias baselines and table fingerprints, not all four required data groups.
-- The [PR91 post-release summary](../../evidence/deployment-verification/2026-10-31-pr91/post-release-read-only-summary.json) contains checks, not row-level exports.
-- [B06 source observations](../../evidence/b06/2026-10-31/source-observations.json) describe an earlier deployment/configuration observation, not a current consistent database snapshot.
+The custodian supplied a private baseline package covering catalog, tier prices, inventory and tenant rules for T1/T2. Its recorded transaction time is **2026-10-31 16:41:07.984893 UTC+8**, with WAL LSN `0/260C2E8` and transaction snapshot `102420:102420:`. This supersedes the earlier missing-snapshot status; the package is retained privately and is not included in this publication.
 
-Zhou must identify the target environment, tenants, application revision and sampling point. An authorized environment custodian must supply existing suitable artifacts or a read-only consistent export, with capture time, schema/field coverage, row counts, tool revision and raw-byte hashes. Credentials, user authentication records and real contact details must be excluded. Do not reset production, change seed/Gate 0, broaden permissions, or combine different environments to fill the gap.
+| Tenant | Families | Products | Tier-price rows | Inventory rows | Recomputed snapshot stock | Reported seed stock | Difference |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| T1 | 25 | 40 | 80 | 40 | 774 | 795 | -21 across four SKUs |
+| T2 | 10 | 16 | 32 | 16 | 446 | 450 | -4 across one SKU |
 
-Until that delivery and review occur, D01 remains partial. See the [D06 public citation index](../audit/d06-public-citation-index-2026-10-31.md) for publication boundaries.
+Read-only package verification found 19 files: **18/18** raw-byte hashes matched the internal manifest excluding itself, and **10/10** snapshot-index hashes and byte lengths matched. JSON/CSV exports, rules, row counts, relationships, uniqueness, A/B price coverage and inventory deltas were internally consistent. All 26 declared quality checks agreed with the independent file checks. No database connection, SQL execution, seed/reset or business rerun was performed.
+
+| Private object | Raw-byte SHA-256 |
+| --- | --- |
+| Baseline ZIP | `28962718B360C78F6E387FFA00E17D493909ABC081E86E42F9172D3C7014158F` |
+| snapshot_T1.json | `81EEBBCF4FF4168D6999E3EE60C27EEB4ECD97743464F3B1277F9E1C161EBE12` |
+| snapshot_T2.json | `FBA086D4D5D1D22C9460A6346E963C5CF1CA2E1BF830620203A9134FCDA25995` |
+| collection_record.json | `592E6242BCA3B9FF5F7FA7413F78DB75C8ACA1B16898578192F7181A6469A3E3` |
+| deployment_binding.json | `2F9FD45B7C42786F7BBD09E09595428238EE7E376ABF9CCCC512A36D1346ACD0` |
+
+The supplied SQL uses a REPEATABLE READ READ ONLY transaction, a transaction-local timeout, six SELECT statements (metadata and five tables), and ROLLBACK. Static inspection found no business writes; it does not prove how the original collection was executed. Shared snapshot metadata is consistent across both tenants. A transaction snapshot is not proof of no concurrent writes throughout collection, and WAL/TXID identifiers are not a restorable backup.
+
+The custodian reports catalog, prices and rules equal to canonical seed. This update independently checked package consistency, **not an external seed comparison** or attribution of stock differences to specific orders. Tenant rules are included; not all platform runtime configuration is represented. Deployment binding relies on prior release records, not atomic runtime attestation during collection. No customer/user export or suspicious credential/contact values were found by heuristic scanning; this is not an absolute secrecy guarantee.
+
+The data-baseline gap is filled at the file-delivery level. Owner acceptance remains unrecorded; this status does not imply formal TEST32 execution, D05 participant results or a new business sign-off. Do not restore stock to seed merely to remove differences. See the [D06 public citation index](../audit/d06-public-citation-index-2026-10-31.md) for publication boundaries.
