@@ -1,0 +1,79 @@
+{
+  "case_id": "C09",
+  "screenshots": [
+    {
+      "filename": "01-t2-workspace.png",
+      "captured_at": "2026-10-31 02:43:10",
+      "bytes": 619763,
+      "sha256_raw_bytes": "29092fad65554e43a63bdc7e23a299aeb5c18620cbe73462e467f44e0d7af41d"
+    },
+    {
+      "filename": "02-clerk-permissions.png",
+      "captured_at": "2026-10-31 02:43:15",
+      "bytes": 670579,
+      "sha256_raw_bytes": "18d4b381dd6695c09d3fa94c8c547b763d96b19ea8d4dbe00371040b00748bfa"
+    },
+    {
+      "filename": "03-t2-draft-created.png",
+      "captured_at": "2026-10-31 02:46:31",
+      "bytes": 598155,
+      "sha256_raw_bytes": "c581830997b322fec0516d20e97ae34b8aa712fc7c3109124a72a5fa5aecd256"
+    },
+    {
+      "filename": "04-t2-saved-ready-baseline.png",
+      "captured_at": "2026-10-31 02:46:37",
+      "bytes": 571317,
+      "sha256_raw_bytes": "7328bbbe353184665729aa6f5b822764023047fd79257158e76c6ce7b2d02856"
+    },
+    {
+      "filename": "05-t2-delivery-order.png",
+      "captured_at": "2026-10-31 02:47:23",
+      "bytes": 719374,
+      "sha256_raw_bytes": "ad608519cc67c3d4fa6814198e76521a7a8e8807eb5b0fea226a07d877e92763"
+    },
+    {
+      "filename": "06-t2-approval-trail.png",
+      "captured_at": "2026-10-31 02:47:47",
+      "bytes": 837335,
+      "sha256_raw_bytes": "0d2547e754ce8515865a0339ac837f4cabda9772b5b13ecd69c43e519815a0a0"
+    },
+    {
+      "filename": "07-fresh-draft-stock-after-approval.png",
+      "captured_at": "2026-10-31 02:50:07",
+      "bytes": 668640,
+      "sha256_raw_bytes": "7921602f27b53565ff440aa52ef229b668eed322424f97896975ed597544e1b8"
+    },
+    {
+      "filename": "08-stock-verification-draft-closed.png",
+      "captured_at": "2026-10-31 02:51:33",
+      "bytes": 709878,
+      "sha256_raw_bytes": "990b113f1a10db120546375b67add8f7dc38d77cd7c4187fbd712b280bff638f"
+    },
+    {
+      "filename": "09-t2-pack-ambiguity-blocked.png",
+      "captured_at": "2026-10-31 02:53:23",
+      "bytes": 666427,
+      "sha256_raw_bytes": "6a6844538af443e50492e0514800ea802bd3a552212c972af3589497fb54a502"
+    },
+    {
+      "filename": "10-pack-ambiguity-draft-closed.png",
+      "captured_at": "2026-10-31 02:54:27",
+      "bytes": 686519,
+      "sha256_raw_bytes": "7b1a679c5efcde73f074cc5ee21ab023cb7489f30f5c190045e39d3a60fd7040"
+    },
+    {
+      "filename": "11-t1-cross-tenant-order-not-found.png",
+      "captured_at": "2026-10-31 02:57:32",
+      "bytes": 415163,
+      "sha256_raw_bytes": "d1a374e84b31ff8962e6ebe3fbb6676481e8b3a7b699f816523b7d61b7bd930c"
+    },
+    {
+      "filename": "12-t1-cross-tenant-delivery-not-found.png",
+      "captured_at": "2026-10-31 02:58:17",
+      "bytes": 409636,
+      "sha256_raw_bytes": "51763a79d68dfc25c632f71b2fc550ce0744721d7058a1b98067460c1a17f0d3"
+    }
+  ],
+  "integrity": "Original PNG bytes preserved; no cropping, resizing or re-encoding.",
+  "capture_timezone": "UTC+08:00"
+}

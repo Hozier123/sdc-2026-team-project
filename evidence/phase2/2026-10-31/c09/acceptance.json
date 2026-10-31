@@ -1,0 +1,155 @@
+{
+  "case_id": "C09",
+  "status": "MANUAL_UI_SEQUENCE_COMPLETED_AWAITING_REVIEW",
+  "execution_date": "2026-10-31",
+  "timezone": "UTC+08:00",
+  "executor_role_in_plan": "Ye",
+  "independent_reviewer_in_plan": "Zhou",
+  "independent_review_status": "PENDING",
+  "scope": "T2 industry-specific complete order workflow, correct T2 prices and rules, and T1 cross-tenant read rejection.",
+  "identity": "T2_CLERK_OBSERVED_IN_UI",
+  "planned_unambiguous_input": "Liquid soap 2 btl 1L",
+  "planned_ambiguous_input": "Liquid soap 2 btl",
+  "checks": {
+    "T2_server_identity": "UI_COMPANY_AND_ROLE_OBSERVED; RAW_ME_RESPONSE_NOT_CAPTURED",
+    "T2_product_and_tier_price": "UI_PRODUCT_QUANTITY_UNIT_PRICE_OBSERVED; SKU_AND_PACK_PENDING",
+    "save": "SAVED_V1_OBSERVED",
+    "approval_and_delivery_order": "UI_DO_GENERATED_OBSERVED",
+    "stock_delta": "UI_FRESH_DRAFT_COMPARISON_40_TO_38_OBSERVED",
+    "order_audit": "CURRENT_ORDER_APPROVE_AND_INVENTORY_DEDUCT_EVENTS_OBSERVED_IN_UI",
+    "T1_cross_tenant_read_rejected": "BOTH_ORDER_AND_DO_RESOURCE_NOT_FOUND_OBSERVED_IN_UI",
+    "T2_pack_ambiguity": "UNSELECTED_1L_5L_CANDIDATES_AND_UI_BLOCK_OBSERVED",
+    "T1_cross_tenant_order_read": "RESOURCE_NOT_FOUND_OBSERVED_IN_UI",
+    "T1_cross_tenant_delivery_read": "RESOURCE_NOT_FOUND_OBSERVED_IN_UI"
+  },
+  "evidence_boundaries": "Do not infer live data from seed values; record actual per-order mode, IDs, responses, versions and observations. Historical T2 parse-only probes do not satisfy this acceptance.",
+  "source_screenshots": [
+    "01-t2-workspace.png",
+    "02-clerk-permissions.png",
+    "03-t2-draft-created.png",
+    "04-t2-saved-ready-baseline.png",
+    "05-t2-delivery-order.png",
+    "06-t2-approval-trail.png",
+    "07-fresh-draft-stock-after-approval.png",
+    "08-stock-verification-draft-closed.png",
+    "09-t2-pack-ambiguity-blocked.png",
+    "10-pack-ambiguity-draft-closed.png",
+    "11-t1-cross-tenant-order-not-found.png",
+    "12-t1-cross-tenant-delivery-not-found.png"
+  ],
+  "identity_observation": {
+    "company_label": "Kilat Hardware & Clean...",
+    "role": "Order clerk",
+    "api_connection_indicator": "green",
+    "frontend_displayed_version": "1.4.0",
+    "scope": "Manual UI evidence"
+  },
+  "primary_order": {
+    "draft_id": "DRF_60F98F66474843FC9D5251DC5224527D",
+    "customer": "Kedai Kilat 01",
+    "tier": "A",
+    "input": "Liquid soap 2 btl 1L",
+    "product_display": "Liquid soap",
+    "quantity": 2,
+    "unit": "btl",
+    "tier_unit_price_rm": "12.00",
+    "total_rm": "24.00",
+    "stock_before_ui": 40,
+    "saved_version": 1,
+    "extraction_mode_label": "AI extraction",
+    "sku_and_pack_confirmation": "PENDING_AUDIT_OR_RESPONSE; original message includes 1L",
+    "delivery_order": {
+      "do_number": "DO_20261030_7ACFA8AF",
+      "display_date": "31 Oct 2026",
+      "approved_by": "USR_T2_CLERK",
+      "approval_time_ui": "02:47 MYT",
+      "approval_type": "Direct approval",
+      "saved_version": 1,
+      "quantity": 2,
+      "unit": "btl",
+      "unit_price_rm": "12.00",
+      "total_rm": "24.00",
+      "read_only_label": true
+    },
+    "audit_ui": {
+      "field_changes": "No product fields changed after initial extraction.",
+      "events": [
+        {
+          "action": "Inventory deduct",
+          "actor": "USR_T2_CLERK",
+          "time": "31 Oct 2026 02:47 MYT"
+        },
+        {
+          "action": "Approve",
+          "actor": "USR_T2_CLERK",
+          "time": "31 Oct 2026 02:47 MYT"
+        }
+      ],
+      "limitation": "No full SKU/pack snapshot or deduction quantity is shown in this change-only UI."
+    },
+    "baseline_status": "Ready to approve",
+    "final_status_ui": "Delivery order ready"
+  },
+  "stock_verification": {
+    "auxiliary_draft_id": "DRF_F78998629E2849858B92289B548F8B40",
+    "input": "Liquid soap 1 btl 1L",
+    "customer": "Kedai Kilat 01",
+    "stock_before": 40,
+    "fresh_draft_stock_after": 38,
+    "expected_delta": -2,
+    "scope": "Manual UI comparison using a fresh unapproved draft; no DB query or concurrency proof.",
+    "same_day_order_check": "BLOCKING_OBSERVED",
+    "auxiliary_cleanup": "CLOSED_OBSERVED_IN_UI",
+    "close_reason": "C09 stock verification completed. Close this auxiliary draft without approval."
+  },
+  "ambiguity_test": {
+    "draft_id": "DRF_295FE95948C74C88ADFE638AA0B16FDB",
+    "input": "Liquid soap 2 btl",
+    "quantity": 2,
+    "unit": "btl",
+    "candidates": [
+      {
+        "pack": "1L",
+        "price_rm": "12.00",
+        "stock": 38
+      },
+      {
+        "pack": "5L",
+        "price_rm": "45.00",
+        "stock": 20
+      }
+    ],
+    "selected_candidate": null,
+    "pending_checks": [
+      "Which pack size?",
+      "same day order"
+    ],
+    "approval_control": "Resolve checks",
+    "scope": "UI blocking observed; direct API bypass not tested",
+    "cleanup": "CLOSED_OBSERVED_IN_UI",
+    "close_reason": "C09 pack ambiguity verified. Close this test draft without approval."
+  },
+  "cross_tenant_order_read": {
+    "identity_company_ui": "Sinaran Food Supply",
+    "role_ui": "Order clerk",
+    "target_draft_id": "DRF_60F98F66474843FC9D5251DC5224527D",
+    "error_code_ui": "RESOURCE_NOT_FOUND",
+    "resource_content_displayed": false,
+    "scope": "Manual UI observation; HTTP status and raw response not captured"
+  },
+  "cross_tenant_delivery_read": {
+    "identity_company_ui": "Sinaran Food Supply",
+    "role_ui": "Order clerk",
+    "target_do": "DO_20261030_7ACFA8AF",
+    "error_code_ui": "RESOURCE_NOT_FOUND",
+    "resource_content_displayed": false,
+    "request_id_ui": "485d2566-ee17-42dc-bfaa-eb48b742e47a",
+    "scope": "Manual UI observation; HTTP status and raw response not captured"
+  },
+  "evidence_limits": [
+    "Historical deployment SHAs not captured.",
+    "No raw API responses, HTTP status capture, DB queries or concurrency proof.",
+    "Full SKU and pack snapshot for the approved order is not displayed by the change-only audit UI; original message specifies 1L, and matching price/stock plus the ambiguity candidates support but do not directly prove the stored SKU.",
+    "AI extraction is a UI label, not independently verified provider execution."
+  ]
+}
