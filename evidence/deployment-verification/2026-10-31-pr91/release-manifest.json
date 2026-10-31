@@ -40,8 +40,8 @@
     "post_release_live_guard": "16/16 PASS",
     "post_release_read_only_checks": "58/58 PASS"
   },
-  "account_requirement_status": "WAITING_ZHOU_OFFICIAL_CONFIRMATION",
-  "account_source_trace": "Original 2026-10-25 He team confirmation located; no organiser written source attached",
+  "account_requirement_status": "CLOSED_USER_CONFIRMED_NOT_REQUIRED",
+  "account_source_trace": "Original 2026-10-25 He team confirmation located; user reconfirmed on 2026-10-31 that no account addition or further organiser inquiry is required; no organiser written exemption claimed",
   "permissions_changed": false,
   "b05_actual_trials_started": false,
   "closed_bc_statuses_changed": false,
