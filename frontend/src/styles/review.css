@@ -1,3 +1,15 @@
+/* Keep comparison guidance beside the evidence and options it describes. */
+.original-review-instruction {
+  padding: 0 var(--space-panel) 20px;
+  margin: 0;
+  color: var(--text);
+  line-height: 1.6;
+}
+.candidate-review-instruction {
+  margin: 0 0 12px 22px;
+  color: var(--text);
+  line-height: 1.6;
+}
 /* Product review owns field readability and the action rail at every breakpoint. */
 @media screen {
   .app-shell .review-fields { font-variant-numeric: tabular-nums; }
@@ -121,3 +133,11 @@
   .app-shell .products-panel .line-fields .readonly-field { white-space: normal; overflow-wrap: anywhere; }
   .app-shell .review-rail :is(.checks-panel, .clarification-card, .escalation-card) { padding: 20px; }
 }
+
+/* R08 read-only identity candidates (missing tier price diagnostics) */
+.app-shell .checks-panel .r08-identity { margin-top: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel2); }
+.app-shell .checks-panel .r08-identity-heading { margin: 0 0 10px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.app-shell .checks-panel .r08-identity-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.app-shell .checks-panel .r08-identity-list li { display: grid; gap: 2px; }
+.app-shell .checks-panel .r08-identity-list li > strong { color: var(--text); font-size: 14px; font-weight: 600; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-shell .checks-panel .r08-identity-list li > span { color: var(--muted); font-size: 13px; line-height: 1.5; }

@@ -18,6 +18,7 @@ import {
   type Reason,
   money,
 } from "../lib/types";
+import { MISSING_TIER_PRICE_SAVE_ERROR } from "../lib/r08";
 export const pretty = (text: string) =>
   text
     .toLowerCase()
@@ -94,6 +95,8 @@ export function ErrorNotice({
   const expired =
     error instanceof ApiError &&
     ["INVALID_TOKEN", "UNAUTHORIZED", "HTTP_401"].includes(error.error_code);
+  const missingTierPrice =
+    error instanceof ApiError && error.error_code === "MISSING_TIER_PRICE";
   const Icon = denied || expired ? LockKeyhole : AlertCircle;
   const message =
     error instanceof Error
@@ -111,9 +114,11 @@ export function ErrorNotice({
             ? "You don’t have access to this action"
             : expired
               ? "Your session has expired"
-              : "Unable to complete this request"}
+              : missingTierPrice
+                ? MISSING_TIER_PRICE_SAVE_ERROR.title
+                : "Unable to complete this request"}
         </strong>
-        <p>{message}</p>
+        <p>{missingTierPrice ? MISSING_TIER_PRICE_SAVE_ERROR.body : message}</p>
         {(denied || expired) && (
           <p>
             {denied

@@ -38,6 +38,8 @@ import {
 } from "../lib/types";
 import { useRequestScope, useResource } from "../lib/hooks";
 import type { CatalogProduct } from "../lib/catalog";
+import { issueCopy, issueGuidance } from "../lib/issueCopy";
+import { r08Diagnostics, tierPriceLabel } from "../lib/r08";
 import { EXTRACTION } from "../lib/extraction";
 import { clearPriceResolutions, createManualLine, selectCatalogProduct } from "../lib/manualRecovery";
 import {
@@ -282,50 +284,36 @@ export function NewOrder({
     </div>
   );
 }
-const ISSUE_COPY: Record<string, { title: string; body: string }> = {
-  MULTIPLE_PACK_SIZES: {
-    title: "Which pack size?",
-    body: "Ask the customer for the pack size, then select the matching product.",
-  },
-  MULTIPLE_GRADES: {
-    title: "Which grade?",
-    body: "Ask the customer for the grade, then select the matching product.",
-  },
-  MISSING_UOM: {
-    title: "Confirm the order unit",
-    body: "The unit is missing. Confirm how the quantity should be supplied.",
-  },
-  LOW_CONFIDENCE_MATCH: {
-    title: "Confirm the product",
-    body: "No confident match. Confirm the product, quantity and unit with the customer.",
-  },
-  INSUFFICIENT_STOCK: {
-    title: "There isn’t enough stock",
-    body: "Confirm a smaller quantity with the customer, then update the product line. No role can approve insufficient stock.",
-  },
-  SAME_DAY_ORDER: {
-    title: "An order already exists today",
-    body: "Choose an add-on or close this duplicate before approval.",
-  },
-};
-function issueGuidance(issue: Issue, editable: boolean): string {
-  const known = ISSUE_COPY[issue.code]?.body;
-  if (known) return known;
-  if (issue.condition_kind === "STOCK")
-    return "Stock availability is checked automatically. Resolve any stock shortage in the product lines.";
-  if (issue.condition_kind === "PRICE") {
-    if (issue.ask === "OWNER")
-      return "An owner must review this price request before approval.";
-    return editable
-      ? "In Customer conditions, confirm the tier price or record a requested discount, then save changes."
-      : "This price request still needs a decision before approval.";
-  }
-  if (issue.condition_kind) {
-    return editable
-      ? "Review this customer condition, record the outcome, then save changes."
-      : "This customer condition still needs a decision before approval.";
-  }
-  return "Review and resolve this item before approval.";
+export function R08IdentityCandidates({ issue }: { issue: Issue }) {
+  if (issue.resolved) return null;
+  const r08 = r08Diagnostics(issue);
+  if (!r08 || r08.identity_candidates.length === 0) return null;
+  return (
+    <div className="r08-identity">
+      <p className="r08-identity-heading">
+        Compatible products identified · identity check, read-only and not
+        selectable
+      </p>
+      <ul className="r08-identity-list">
+        {r08.identity_candidates.map((candidate) => (
+          <li key={candidate.sku_id}>
+            <strong title={candidate.display_name}>{candidate.display_name}</strong>
+            <span>
+              {candidate.pack_size}
+              {` · Grade ${candidate.grade ?? "—"}`}
+              {candidate.base_unit ? ` · per ${candidate.base_unit}` : ""}
+              {` · ${candidate.available_qty} in stock`}
+            </span>
+            <span
+              className={candidate.tier_unit_price ? "mint-text" : "amber-text"}
+            >
+              Tier price {tierPriceLabel(candidate.tier_unit_price)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 export function OrderDetail({
   id,
@@ -485,7 +473,8 @@ export function OrderDetail({
     }
   }
   async function approve() {
-    if (busy) return;
+    if (busy || edit || reconcileRequired || !draft ||
+      !draft.allowed_actions.some((action) => action === "APPROVE_AND_GENERATE_DO" || action === "SUBMIT_FOR_OWNER")) return;
     const current = beginRequest();
     setBusy(true);
     setError(undefined);
@@ -661,6 +650,7 @@ export function OrderDetail({
                 </div>
               </div>
               <MessageEvidence draft={draft} />
+              <p className="original-review-instruction">Compare every product, quantity, unit and customer condition with this message before approval. Add any missing product explicitly.</p>
             </section>
             <section className="panel products-panel">
               <div className="panel-heading">
@@ -749,33 +739,36 @@ export function OrderDetail({
                           )}
                         </div>
                         {line.candidate_skus.length > 0 && !line.sku_id && (
-                          <div className="candidate-grid">
-                            {line.candidate_skus.map((c) => (
-                              <button
-                                type="button"
-                                key={c.sku_id}
-                                className={`candidate ${input.sku_id === c.sku_id ? "selected" : ""}`}
-                                disabled={!editable || busy}
-                                onClick={() => choose(line, c)}
-                              >
-                                <span className="radio-dot">
-                                  {input.sku_id === c.sku_id && (
-                                    <Check size={11} />
-                                  )}
-                                </span>
-                                <div>
-                                  <strong>{c.display_name}</strong>
-                                  <span className="candidate-specification">
-                                    {c.pack_size}
-                                    {c.grade ? ` · Grade ${c.grade}` : ""}
+                          <div>
+                            <p className="candidate-review-instruction">{service.mode === "demo" ? "Local demo options" : service.fixture ? "Fixture product options" : "Backend product options"} · Select a product, then confirm its quantity and unit. Save to refresh checks.</p>
+                            <div className="candidate-grid">
+                              {line.candidate_skus.map((c) => (
+                                <button
+                                  type="button"
+                                  key={c.sku_id}
+                                  className={`candidate ${input.sku_id === c.sku_id ? "selected" : ""}`}
+                                  disabled={!editable || busy}
+                                  onClick={() => choose(line, c)}
+                                >
+                                  <span className="radio-dot">
+                                    {input.sku_id === c.sku_id && (
+                                      <Check size={11} />
+                                    )}
                                   </span>
-                                  <small>
-                                    {money(c.tier_unit_price)} / {c.base_unit}{" "}
-                                    <i /> {c.available_qty} in stock
-                                  </small>
-                                </div>
-                              </button>
-                            ))}
+                                  <div>
+                                    <strong>{c.display_name}</strong>
+                                    <span className="candidate-specification">
+                                      {c.pack_size}
+                                      {c.grade ? ` · Grade ${c.grade}` : ""}
+                                    </span>
+                                    <small>
+                                      {money(c.tier_unit_price)} / {c.base_unit}{" "}
+                                      <i /> {c.available_qty} in stock
+                                    </small>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         )}
                         {editable && service.mode === "live" && !service.fixture &&
@@ -1168,14 +1161,18 @@ export function OrderDetail({
                           ? "Customer price request"
                           : issue.condition_kind
                             ? "A delivery condition"
-                            : (ISSUE_COPY[issue.code]?.title ??
+                            : (issueCopy(issue)?.title ??
                               issue.code.replaceAll("_", " ").toLowerCase())}
                     </strong>
+                    {!issue.resolved && issue.code === "LOW_CONFIDENCE_MATCH" && issue.span && (
+                      <p>From the message: “{issue.span}”</p>
+                    )}
                     {!issue.resolved && (
                       <p>
                         {issueGuidance(issue, editable)}
                       </p>
                     )}
+                    <R08IdentityCandidates issue={issue} />
                     {issue.code === "INSUFFICIENT_STOCK" && (
                       <small className="amber-text">
                         Requested {String(issue.data_used.effective_qty)} ·
